@@ -1,4 +1,4 @@
-Database Tables
+Database Tables & Endpoints
 
 ## USERS
 Item | Type 
