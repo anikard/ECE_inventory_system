@@ -1,0 +1,190 @@
+<html ng-app="products_app">
+<head>
+  <title>Products</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+  
+
+<style type="text/css">
+    body { 
+      font-family: Helvetica, Arial, sans-serif;
+      text-align: center;
+    }
+
+    .feedback-input {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight:500;
+      font-size: 18px;
+      border-radius: 5px;
+      line-height: 22px;
+      background-color: transparent;
+      border:2px solid steelblue;
+      transition: all 0.5s;
+      padding: 13px;
+      margin-bottom: 15px;
+      width:100%;
+      box-sizing: border-box;
+      outline:0;
+      width: 50%;
+    }
+
+    .feedback-input:focus { border:2px solid #28A1B4; }
+
+
+    [type="submit"] {
+      font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+      width: 100%;
+      background: #6C93B4;
+      border-radius:5px;
+      border:0;
+      cursor:pointer;
+      font-size:24px;
+      padding-top:10px;
+      padding-bottom:10px;
+      transition: all 0.5s;
+      margin-top:-4px;
+      font-weight:700;
+      width: 50%;
+      color: white;
+    }
+    [type="submit"]:hover { background: teal; }
+
+    textarea {
+      height: 150px;
+      line-height: 150%;
+      resize:vertical;
+      width: 50%;
+    }
+
+    /*remove button*/
+    .remove {
+      font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+      width: 100%;
+      background: rgba(0, 50, 50, 0.1);;
+      bproduct-radius:5px;
+      bproduct:3px solid #6C93B4;
+      cursor:pointer;
+      font-size:15px;
+      padding-top:7px;
+      padding-bottom:7px;
+      transition: all 0.5s;
+      margin-top:3px;
+      letter-spacing: 2px;
+      width: 50%;
+      color: white;
+    }
+    .remove:hover { background: rgba(150, 200, 200, 0.6); }
+
+
+    .customerTable {
+      margin:0px auto;
+      padding:0px;
+      width:80%;
+      height: 30em;
+      overflow-y:scroll;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 14px;
+    }
+
+    .customerTable .prods {
+      display: inline-block;
+      width: 180px;
+      height: 160px;
+      margin: 0.5em;
+      padding: 0.2em;
+    }
+
+    .customerTable .prods p {
+      margin: 0.1em auto;
+    }
+   
+  </style>
+
+
+  <script>
+    var products_app = angular.module('products_app', []);
+
+    products_app.factory('ProductsFactory', function($http) {
+      var factory = {};
+      var products = [];
+
+      factory.getproducts = function(callback) {
+        $http.get('/products').success(function(output) {
+          products = output;
+          callback(products);
+        }) 
+      }
+
+
+      factory.addProduct = function(info, callback) {
+        $http.post('/addProduct', info).success(function(output) {
+            products = output;
+            callback(products);
+        })
+      } 
+
+      return factory;
+    });
+
+
+    products_app.controller('productsController', function($scope, ProductsFactory, $document) {
+        $scope.products = ProductsFactory.getproducts(function(data) {
+        $scope.products = data;
+      });
+      $scope.addProduct = function() {
+        ProductsFactory.addProduct($scope.new_product, function(data) {
+          $scope.new_product.date = new Date();
+          $scope.products.push($scope.new_product);
+          $scope.new_product = {};
+        });
+      }
+
+        $scope.removeProduct = function(product) {
+          ProductsFactory.removeProduct(product, function(data) {
+            for (var i =0; i < $scope.products.length; i++)
+            {  if ($scope.products[i]._id === product._id) {
+                  $scope.products.splice(i,1);
+                  break;
+                }
+            }
+        });
+
+      }
+
+    })
+
+
+  </script>
+</head>
+
+<body ng-controller="productsController">
+
+<a href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a>
+
+  <h1>PRODUCTS</h1>
+  <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
+
+
+<div class="customerTable" id = "cTable" >
+
+  <div class = "prods" ng-repeat="product in products | filter: filter_name | orderBy:'-date'">
+     
+    <img style = "height:100px; width: 100px" src="{{product.image_url}}">
+    <p>{{product.name}}</p>
+    <p><span style = "font-style:italic">{{product.description}}</span></p>
+    <p>({{product.num_left}} items in stock)</p>
+
+  </div>
+</div>
+
+  <h1>Add a product</h1>
+
+
+  <input class = "feedback-input" type="text" ng-model="new_product.name" placeholder="name">
+  <input class = "feedback-input" type="url" ng-model="new_product.image_url" placeholder="image url">
+  <textarea class = "feedback-input" ng-model="new_product.description"></textarea>
+  <input class = "feedback-input" type="number" ng-model="new_product.num_left" placeholder="quantity">
+  <input type="submit" ng-click="addProduct()">
+  <br>
+
+</body>
+</html>

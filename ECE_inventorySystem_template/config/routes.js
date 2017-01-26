@@ -1,0 +1,72 @@
+/********************************************************/
+/*                       ROUTES                         */
+/********************************************************/
+
+  // require the controller
+  var customers = require('./../server/controllers/customers.js');
+  var orders = require('./../server/controllers/orders.js');
+  var products = require('./../server/controllers/products.js');
+  var dashboard = require('./../server/controllers/dashboard.js');
+
+  module.exports = (function(app) {
+    app.post('/addUser', function(req, res) {
+      customers.update(req, res);
+      dashboard.show(req, res);
+    });
+
+    app.get('/activeUser', function(req, res) {
+      customers.find_active(req, res);
+    });
+
+    app.get('/logout', function(req, res) {
+      customers.deactivate(req, res);
+    });
+
+    app.get('/dispOrders', function(req, res) {
+      orders.displayOrders(req, res);
+    });
+
+    app.get('/dispCustomers', function(req, res) {
+      customers.displayCustomers(req, res);
+    });
+
+    app.get('/dashboard', function(req, res) {
+      dashboard.show(req, res);
+    });
+
+    app.get('/dispProducts', function(req, res) {
+      products.displayProducts(req, res);
+    });
+
+    app.post('/addProduct', function(req, res) {
+      products.add(req, res); 
+    });
+
+    app.get('/orders', function(req, res) {
+      orders.show(req, res); // delegating to the controller and passing along req and res
+    });
+
+    app.post('/addOrder', function(req, res) {
+      orders.add(req, res); 
+    });
+
+    app.post('/deleteOrder', function(req, res) {
+      orders.delete(req, res); 
+    });
+
+    app.get('/products', function(req, res) {
+      products.show(req, res); 
+    });
+
+    app.get('/customers', function(req, res) {
+      customers.show(req, res); 
+    });
+
+     app.post('/add', function(req, res) {
+      customers.add(req, res);
+    });
+
+     app.post('/delete', function(req, res) {
+      customers.delete(req, res); 
+    });
+  });
