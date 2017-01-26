@@ -1,4 +1,4 @@
-Database Tables
+Database Tables & Endpoints
 
 ## USERS
 Item | Type 
@@ -7,6 +7,7 @@ id | Integer
 username | String
 Password | encoded String
 Email | String
+Status | String
 
 ## ITEMS
 Item | Type | Required?
