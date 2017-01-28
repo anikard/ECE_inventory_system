@@ -204,6 +204,11 @@
         }) 
       }
 
+      factory.viewOrder = function(order, callback) {
+        callback(order);
+        
+      }
+
       factory.addOrder = function(info, callback) {
         $http.post('/addOrder', info).success(function(output) {
             orders = output;
@@ -248,6 +253,18 @@
         });
 
       }
+
+
+      $scope.viewOrder = function(order) {
+          OrderFactory.viewOrder(order, function(data) {
+            $scope.thisOrder = data;
+            console.log(data);
+        });
+
+      }
+
+
+
 
     })
 
