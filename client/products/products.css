@@ -1,0 +1,91 @@
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  text-align: center;
+}
+
+.feedback-input {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight:500;
+  font-size: 18px;
+  border-radius: 5px;
+  line-height: 22px;
+  background-color: transparent;
+  border:2px solid steelblue;
+  transition: all 0.5s;
+  padding: 13px;
+  margin-bottom: 15px;
+  width:100%;
+  box-sizing: border-box;
+  outline:0;
+  width: 50%;
+}
+
+.feedback-input:focus { border:2px solid #28A1B4; }
+
+
+[type="submit"] {
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+  width: 100%;
+  background: #6C93B4;
+  border-radius:5px;
+  border:0;
+  cursor:pointer;
+  font-size:24px;
+  padding-top:10px;
+  padding-bottom:10px;
+  transition: all 0.5s;
+  margin-top:-4px;
+  font-weight:700;
+  width: 50%;
+  color: white;
+}
+[type="submit"]:hover { background: teal; }
+
+textarea {
+  height: 150px;
+  line-height: 150%;
+  resize:vertical;
+  width: 50%;
+}
+
+/*remove button*/
+.remove {
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+  width: 100%;
+  background: rgba(0, 50, 50, 0.1);;
+  bproduct-radius:5px;
+  bproduct:3px solid #6C93B4;
+  cursor:pointer;
+  font-size:15px;
+  padding-top:7px;
+  padding-bottom:7px;
+  transition: all 0.5s;
+  margin-top:3px;
+  letter-spacing: 2px;
+  width: 50%;
+  color: white;
+}
+.remove:hover { background: rgba(150, 200, 200, 0.6); }
+
+
+.customerTable {
+  margin:0px auto;
+  padding:0px;
+  width:80%;
+  height: 30em;
+  overflow-y:scroll;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+
+.customerTable .prods {
+  display: inline-block;
+  width: 180px;
+  height: 160px;
+  margin: 0.5em;
+  padding: 0.2em;
+}
+
+.customerTable .prods p {
+  margin: 0.1em auto;
+}

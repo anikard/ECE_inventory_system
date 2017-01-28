@@ -1,0 +1,41 @@
+<html ng-app="products_app">
+<head>
+  <title>Products</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+  <script type="text/javascript" src="./products.js"></script>
+  <link rel="stylesheet" href="products.css">
+
+</head>
+
+<body ng-controller="productsController">
+
+<a href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a>
+
+  <h1>PRODUCTS</h1>
+  <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
+
+
+<div class="customerTable" id = "cTable" >
+
+  <div class = "prods" ng-repeat="product in products | filter: filter_name | orderBy:'-date'">
+
+    <img style = "height:100px; width: 100px" src="{{product.image_url}}">
+    <p>{{product.name}}</p>
+    <p><span style = "font-style:italic">{{product.description}}</span></p>
+    <p>({{product.num_left}} items in stock)</p>
+
+  </div>
+</div>
+
+  <h1>Add a product</h1>
+
+
+  <input class = "feedback-input" type="text" ng-model="new_product.name" placeholder="name">
+  <input class = "feedback-input" type="url" ng-model="new_product.image_url" placeholder="image url">
+  <textarea class = "feedback-input" ng-model="new_product.description"></textarea>
+  <input class = "feedback-input" type="number" ng-model="new_product.num_left" placeholder="quantity">
+  <input type="submit" ng-click="addProduct()">
+  <br>
+
+</body>
+</html>
