@@ -11,7 +11,7 @@ var Product = mongoose.model('Product');
 module.exports = (function() {
  	return { 
  		displayOrders: function(req, res) {
- 			res.redirect('orders.html');
+ 			res.redirect('orders/orders.html');
  		},
 	  	show: function(req, res) {
 
