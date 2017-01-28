@@ -16,23 +16,35 @@
 
 
 <div class="customerTable" id = "cTable" >
+  <table>
+    <tr>
+      <td> Name </td>
+      <td> Model </td>
+      <td> Quantity </td>
+      <td> Tags </td>
+      <td> Action </td>
+    </tr>
 
-  <div class = "prods" ng-repeat="product in products | filter: filter_name | orderBy:'-date'">
-
-    <img style = "height:100px; width: 100px" src="{{product.image_url}}">
-    <p>{{product.name}}</p>
-    <p><span style = "font-style:italic">{{product.description}}</span></p>
-    <p>({{product.num_left}} items in stock)</p>
-
-  </div>
+    <tr ng-repeat="product in products | filter: filter_name | orderBy:'-date'">
+      <td ng-bind="product.name"></td>
+      <td ng-bind="product.model"></td>
+      <td ng-bind="product.num_left"></td>
+      <td ng-bind="product.tags"></td>
+      <td><button class="remove" ng-click="viewProduct(product)" data-toogle="modal" data-target"#productModal">View</button></td>
+    </tr>
+  </table>
 </div>
+
 
   <h1>Add a product</h1>
 
 
   <input class = "feedback-input" type="text" ng-model="new_product.name" placeholder="name">
   <input class = "feedback-input" type="url" ng-model="new_product.image_url" placeholder="image url">
-  <textarea class = "feedback-input" ng-model="new_product.description"></textarea>
+  <textarea class = "feedback-input" ng-model="new_product.description" placeholder="description"></textarea>
+  <input class = "feedback-input" type="text" ng-model="new_product.model" placeholder="model">
+  <input class = "feedback-input" type="text" ng-model="new_product.location" placeholder="location">
+  <textarea class = "feedback-input" ng-model="new_product.tags" placeholder="tags (comma separated)"></textarea>
   <input class = "feedback-input" type="number" ng-model="new_product.num_left" placeholder="quantity">
   <input type="submit" ng-click="addProduct()">
   <br>
