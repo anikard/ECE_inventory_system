@@ -254,6 +254,7 @@
       }
 
         $scope.removeOrder = function(order) {
+          $('#orderModal').modal('hide');
           OrderFactory.removeOrder(order, function(data) {
             for (var i =0; i < $scope.orders.length; i++)
             {  if ($scope.orders[i]._id === order._id) {
@@ -394,6 +395,7 @@
         </form>
       </div>
       <div class="modal-footer">
+        <button class="btn btn-danger" ng-click='removeOrder(thisOrder)' >Cancel order</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary" ng-click="respondToOrder()">Respond</button>
       </div>
