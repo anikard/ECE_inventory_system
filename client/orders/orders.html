@@ -1,0 +1,416 @@
+<html ng-app="orders_app">
+<head>
+  <title>Orders</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<style type="text/css">
+    body { 
+      font-family: Helvetica, Arial, sans-serif;
+      text-align: center;
+    }
+
+    .feedback-input {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight:500;
+      font-size: 18px;
+      border-radius: 5px;
+      line-height: 22px;
+      background-color: transparent;
+      border:2px solid steelblue;
+      transition: all 0.5s;
+      padding: 13px;
+      margin-bottom: 15px;
+      width:100%;
+      box-sizing: border-box;
+      outline:0;
+      width: 50%;
+    }
+
+    .feedback-input:focus { border:2px solid #28A1B4; }
+
+
+    [type="submit"] {
+      font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+      width: 100%;
+      background: #6C93B4;
+      border-radius:5px;
+      border:0;
+      cursor:pointer;
+      font-size:24px;
+      padding-top:10px;
+      padding-bottom:10px;
+      transition: all 0.5s;
+      margin-top:-4px;
+      font-weight:700;
+      width: 50%;
+      color: white;
+    }
+    [type="submit"]:hover { background: teal; }
+
+
+    /*remove button*/
+    .remove {
+      font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+      width: 100%;
+      background: rgba(0, 50, 50, 0.1);;
+      border-radius:5px;
+      border:3px solid #6C93B4;
+      cursor:pointer;
+      font-size:15px;
+      padding-top:7px;
+      padding-bottom:7px;
+      transition: all 0.5s;
+      margin-top:3px;
+      letter-spacing: 2px;
+      width: 50%;
+      color: white;
+    }
+    .remove:hover { background: rgba(150, 200, 200, 0.6); }
+
+
+    .customerTable {
+      margin:0px;padding:0px;
+      width:100%;
+      height: 21em;
+      overflow-y:scroll;
+      
+      -moz-border-radius-bottomleft:14px;
+      -webkit-border-bottom-left-radius:14px;
+      border-bottom-left-radius:14px;
+      
+      -moz-border-radius-bottomright:14px;
+      -webkit-border-bottom-right-radius:14px;
+      border-bottom-right-radius:14px;
+      
+      -moz-border-radius-topright:14px;
+      -webkit-border-top-right-radius:14px;
+      border-top-right-radius:14px;
+      
+      -moz-border-radius-topleft:14px;
+      -webkit-border-top-left-radius:14px;
+      border-top-left-radius:14px;
+    }.customerTable table{
+        border-collapse: collapse;
+            border-spacing: 0;
+      width:100%;
+      margin:0px;padding:0px;
+    }
+    .customerTable tr {
+      height:3em;
+    }
+ 
+    .customerTable tr:last-child td:last-child {
+      -moz-border-radius-bottomright:14px;
+      -webkit-border-bottom-right-radius:14px;
+      border-bottom-right-radius:14px;
+    }
+    .customerTable table tr:first-child td:first-child {
+      -moz-border-radius-topleft:14px;
+      -webkit-border-top-left-radius:14px;
+      border-top-left-radius:14px;
+    }
+    .customerTable table tr:first-child td:last-child {
+      -moz-border-radius-topright:14px;
+      -webkit-border-top-right-radius:14px;
+      border-top-right-radius:14px;
+    }.customerTable tr:last-child td:first-child{
+      -moz-border-radius-bottomleft:14px;
+      -webkit-border-bottom-left-radius:14px;
+      border-bottom-left-radius:14px;
+    }.customerTable tr:hover td{
+      background-color:#ffffff;
+        
+
+    }
+    .customerTable td{
+      vertical-align:middle;
+      
+      background-color:#b7cece;
+
+      border:1px solid #a8e0e0;
+      border-width:0px 1px 1px 0px;
+      text-align:center;
+      padding:8px;
+      font-size:13px;
+      font-family:Arial;
+      font-weight:normal;
+      color:#000000;
+    }.customerTable tr:last-child td{
+      border-width:0px 1px 0px 0px;
+    }.customerTable tr td:last-child{
+      border-width:0px 0px 1px 0px;
+    }.customerTable tr:last-child td:last-child{
+      border-width:0px 0px 0px 0px;
+    }
+    .customerTable tr:first-child td{
+        background:-o-linear-gradient(bottom, #005fbf 5%, #003f7f 100%);  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #005fbf), color-stop(1, #003f7f) );
+      background:-moz-linear-gradient( center top, #005fbf 5%, #003f7f 100% );
+      filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#005fbf", endColorstr="#003f7f");  background: -o-linear-gradient(top,#005fbf,003f7f);
+
+      background-color:#005fbf;
+      border:0px solid #a8e0e0;
+      text-align:center;
+      border-width:0px 0px 1px 1px;
+      font-size:15px;
+      font-family:Arial;
+      font-weight:bold;
+      color:#ffffff;
+    }
+    .customerTable tr:first-child:hover td{
+      background:-o-linear-gradient(bottom, #005fbf 5%, #003f7f 100%);  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #005fbf), color-stop(1, #003f7f) );
+      background:-moz-linear-gradient( center top, #005fbf 5%, #003f7f 100% );
+      filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#005fbf", endColorstr="#003f7f");  background: -o-linear-gradient(top,#005fbf,003f7f);
+
+      background-color:#005fbf;
+    }
+    .customerTable tr:first-child td:first-child{
+      border-width:0px 0px 1px 0px;
+    }
+    .customerTable tr:first-child td:last-child{
+      border-width:0px 0px 1px 1px;
+    }
+
+  </style>
+
+
+  <script>
+    var orders_app = angular.module('orders_app', []);
+
+    orders_app.factory('OrderFactory', function($http) {
+      var factory = {};
+      var orders = [];
+      var customers = [];
+      var products = [];
+
+      factory.getproducts = function(callback) {
+        $http.get('/products').success(function(output) {
+          products = output;
+          callback(products);
+        }) 
+      }
+
+      factory.getcustomers = function(callback) {
+        $http.get('/customers').success(function(output) {
+          customers = output;
+          callback(customers);
+        }) 
+      }
+      
+      factory.getorders = function(callback) {
+        $http.get('/orders').success(function(output) {
+          orders = output;
+          callback(orders);
+        }) 
+      }
+
+      factory.viewOrder = function(order, callback) {
+        callback(order);
+        
+      }
+
+      factory.addOrder = function(info, callback) {
+        $http.post('/addOrder', info).success(function(output) {
+            orders = output;
+            callback(orders);
+        })
+      } 
+
+      factory.updateOrder = function(info, callback) {
+        $http.post('/updateOrder', info).success(function(output) {
+            // TODO
+        })
+      } 
+
+
+      factory.removeOrder = function(order, callback) {
+        $http.post('/deleteOrder', order).success(function(output) {
+            orders = output;
+            callback(orders);
+        })
+      }
+
+      return factory;
+    });
+
+
+    orders_app.controller('ordersController', function($scope, OrderFactory, $document) {
+        $scope.orders = OrderFactory.getorders(function(data) {
+        $scope.orders = data;
+      });
+      $scope.addOrder = function() {
+        $scope.new_order.customer_name = $document[ 0 ].getElementById('customerList').value; 
+        $scope.new_order.product = $document[ 0 ].getElementById('productList').value;
+        $scope.new_order.status = "pending"; 
+        // TODO: reason in db
+        OrderFactory.addOrder($scope.new_order, function(data) {
+          $scope.new_order.date = new Date();
+          $scope.orders.push($scope.new_order);
+          $scope.new_order = {};
+        });
+      }
+
+        $scope.removeOrder = function(order) {
+          $('#orderModal').modal('hide');
+          OrderFactory.removeOrder(order, function(data) {
+            for (var i =0; i < $scope.orders.length; i++)
+            {  if ($scope.orders[i]._id === order._id) {
+                  $scope.orders.splice(i,1);
+                  break;
+                }
+            }
+        });
+
+      }
+
+
+      $scope.viewOrder = function(order) {
+          OrderFactory.viewOrder(order, function(data) {
+            $scope.thisOrder = data;
+            console.log(data);
+        });
+
+      }
+
+
+      $scope.respondToOrder = function() {
+        $('#orderModal').modal('hide');
+        console.log($scope.orderResponse);
+        OrderFactory.updateOrder($scope.orderResponse, function(data) {
+          $scope.orderResponse = {};
+        });
+      }
+
+
+    })
+
+    orders_app.controller('productsController', function($scope, OrderFactory) {
+        $scope.products = OrderFactory.getproducts(function(data) {
+        $scope.products = data;
+      })
+    })
+
+    orders_app.controller('customersController', function($scope, OrderFactory) {
+        $scope.customers = OrderFactory.getcustomers(function(data) {
+        $scope.customers = data;
+      })
+    })
+
+  </script>
+
+
+
+</head>
+
+<body ng-controller="ordersController">
+
+<a href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a>
+
+  <h1>ORDERS</h1>
+  <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
+
+
+<div class="customerTable" id = "cTable" >
+                <table >
+                    <tr>
+                        <td> Customer Name </td>
+                        <td> Product </td>
+                        <td> Quantity </td>
+                        <td> Date Issued </td>
+                        <td> Date Fulfilled </td>
+                        <td> Status </td>
+                        <td> View Order </td>
+                    </tr>
+                    <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-date'">
+                        
+                        <td ng-bind="order.customer_name"></td>
+                        <td ng-bind="order.product"></td>
+                        <td ng-bind="order.quantity"></td>
+                        <td ng-bind="order.date | date:'short'"></td>
+                        <td ng-bind="order.dateDone | date:'short'"></td>
+                        <td ng-bind="order.status"></td>
+                        <td><button class = "remove" ng-click='viewOrder(order)' data-toggle="modal" data-target="#orderModal">View</button></td>
+                        <!-- <td><button class = "remove" ng-click='removeOrder(order)' >Remove</button></td> -->
+               
+                    </tr>
+
+                </table>
+            </div>
+
+  <h1>Create Order</h1>
+
+  <select class = "feedback-input" ng-controller="customersController" id = "customerList" name="customerOptions" ng-model="new_order.customer_name">
+        <option value="" selected disabled>Customer Name</option>
+         <option ng-repeat="customer in customers" value="{{customer.name}}" ng-bind="customer.name"></option>
+  </select> 
+
+  <select class = "feedback-input" ng-controller="productsController" id = "productList" name="productsOptions" ng-model="new_order.product">
+        <option value="" selected disabled>Products</option>
+         <option ng-repeat="product in products" value="{{product.name}}">{{product.name}} || {{product.description}}</option>
+     </select>  
+  <input class = "feedback-input" type="number" ng-model="new_order.quantity" placeholder="quantity">
+  <textarea class = "feedback-input" ng-model="new_order.reason" placeholder="Reason"></textarea>
+  <input type="submit" ng-click="addOrder()">
+  <br>
+
+
+
+<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#orderModal">View Order Modal</button>
+ -->
+<div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+
+        </button>
+          <h1 class="modal-title" id="exampleModalLabel">View Order</h1>
+
+      </div>
+      <div class="modal-body" align="left">
+
+        <div class="form-group" >
+            <p> <b> Customer: </b> {{thisOrder.customer_name}}</p>
+            <p><b>Product:  </b>{{thisOrder.product}}</p>
+            <p><b>Quantity:  </b>{{thisOrder.quantity}}</p>
+            <p><b>Reason:  </b>{{thisOrder.reason}}</p>
+            <p><b>Current Status:  </b>{{thisOrder.status}}</p>
+          </div>
+          <h3>Respond:</h3>
+        <form>
+          <div class="form-group">
+                <div class="radio">
+                  <label><input type="radio" name="optionResponse" class="approveButton" ng-model="orderResponse.yesOrNo" value = "approve">Approve</label>
+                </div>
+                <div class="radio">
+                  <label><input type="radio" name="optionResponse" class="denyButton" ng-model="orderResponse.yesOrNo" value = "deny">Deny</label>
+                </div>
+            <label for="message-text" class="form-control-label">Comment:</label>
+            <textarea class="form-control" id="message-text" ng-model="orderResponse.comment"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-danger" ng-click='removeOrder(thisOrder)' >Cancel order</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" ng-click="respondToOrder()">Respond</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <script type="text/javascript">
+    $('#orderModal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget); 
+      var modal = $(this);
+    })
+  </script>
+
+
+</body>
+</html>
