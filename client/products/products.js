@@ -18,6 +18,10 @@ products_app.factory('ProductsFactory', function($http) {
     })
   }
 
+  factory.viewProduct = function(product, callback) {
+    callback(product);
+  }
+
   return factory;
 });
 
@@ -39,6 +43,10 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
   $scope.viewProduct = function(product) {
     console.log("View product selected");
     console.log(product.name);
+    ProductsFactory.viewProduct(product, function(data) {
+      $scope.thisProduct = data;
+      console.log(data);
+    })
   }
 
   $scope.removeProduct = function(product) {
@@ -51,4 +59,10 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
         }
     });
   }
+
+  $('#productModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var modal = $(this);
+  })
+
 })

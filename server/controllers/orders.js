@@ -11,7 +11,7 @@ var Product = mongoose.model('Product');
 module.exports = (function() {
  	return { 
  		displayOrders: function(req, res) {
- 			res.redirect('orders.html');
+ 			res.redirect('orders/orders.html');
  		},
 	  	show: function(req, res) {
 
@@ -49,13 +49,13 @@ module.exports = (function() {
 		                console.log("Successfully added an order!");
 
 		                // decrement number of products in stock
-				        Product.update(
-				        	{ name: req.body.product },
-							{ $inc: { num_left: -req.body.quantity } },
-							function(err, numberAffected, rawResponse) {
-		   							console.log('error', err);
-		   							}
-						)
+				  //       Product.update(
+				  //       	{ name: req.body.product },
+						// 	{ $inc: { num_left: -req.body.quantity } },
+						// 	function(err, numberAffected, rawResponse) {
+		   	// 						console.log('error', err);
+		   	// 						}
+						// )
 
 				    	res.end(); //  end the function to return
 		            }
@@ -82,13 +82,13 @@ module.exports = (function() {
 				    console.log("Successfully removed an order!");
 
 					// increment number of products in stock
-				        Product.update(
-				        	{ name: req.body.product },
-							{ $inc: { num_left: req.body.quantity } },
-							function(err, numberAffected, rawResponse) {
-		   							console.log('error', err);
-		   							}
-						)
+				  //       Product.update(
+				  //       	{ name: req.body.product },
+						// 	{ $inc: { num_left: req.body.quantity } },
+						// 	function(err, numberAffected, rawResponse) {
+		   	// 						console.log('error', err);
+		   	// 						}
+						// )
 
 				    res.end(); //  end the function to return
 			    }

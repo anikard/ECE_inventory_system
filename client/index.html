@@ -76,7 +76,6 @@
       var user;
 
       factory.addUser = function(info, callback) {
-         console.log('2', info);
         $http.post('/addUser', info).success(function(output) {
             
         })
@@ -88,7 +87,6 @@
     discussion_app.controller('userController', function($scope, UserFactory, $document) {
 
       $scope.addUser = function() {
-        console.log('1');
   
         UserFactory.addUser($scope.new_user, function(data) {
           
