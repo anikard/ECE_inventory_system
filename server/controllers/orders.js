@@ -3,9 +3,9 @@
 /********************************************************/
 
 var mongoose = require('mongoose');
-var Order = mongoose.model('Order');
-var Customer = mongoose.model('Customer');
-var Product = mongoose.model('Product');
+var Order = mongoose.model('Request');
+var Customer = mongoose.model('User');
+var Product = mongoose.model('Item');
 
 
 module.exports = (function() {
@@ -35,11 +35,11 @@ module.exports = (function() {
 	   		Customer.findOne({name: req.body.customer_name}, function(err, thisCustomer){
 		        
 
-		        var order = new Order({quantity: req.body.quantity});
-		        order._customer = thisCustomer._id;
-		        order.customer_name = thisCustomer.name;
-		        thisCustomer.orders.push(order);
-		        order.product = req.body.product;
+		        var order = new Order({
+		        	quantity: req.body.quantity,
+		        	userId: thisCustomer._id,
+		        	itemId: req.body.product,
+		        });
 
 		        order.save(function(err){
 		          thisCustomer.save(function(err){
