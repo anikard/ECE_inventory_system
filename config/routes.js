@@ -54,6 +54,10 @@
       orders.delete(req, res); 
     });
 
+    app.post('/updateOrder', function(req, res) {
+      orders.update(req, res); 
+    });
+
     app.get('/products', function(req, res) {
       products.show(req, res); 
     });
