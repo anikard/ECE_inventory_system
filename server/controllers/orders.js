@@ -94,6 +94,21 @@ module.exports = (function() {
 			    }
 
 				});
-		}
+		},
+
+		update: function(req, res) {
+			Order.findByIdAndUpdate(
+				req.body._id, 
+				{ $set: {
+					status: req.body.status,
+					note: req.body.note,
+				}}, 
+				{ new: true }, 
+				function (err, order) {
+					if (err) console.log("Error");
+					res.json(order);
+				});
+		},
+
  	}
 })();
