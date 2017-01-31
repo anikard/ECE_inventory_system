@@ -3,9 +3,9 @@
 /********************************************************/
 
 var mongoose = require('mongoose');
-var Order = mongoose.model('Order');
-var Customer = mongoose.model('Customer');
-var Product = mongoose.model('Product');
+var Order = mongoose.model('Request');
+var Customer = mongoose.model('User');
+var Product = mongoose.model('Item');
 var Log = mongoose.model('Log');
 
 
@@ -26,7 +26,7 @@ module.exports = (function() {
 					console.log('Error saving log');
 				}
 				res.end();
+ 			});
  		},
-
  	}
 })();

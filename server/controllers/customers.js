@@ -3,7 +3,7 @@
 /********************************************************/
 
 var mongoose = require('mongoose');
-var Customer = mongoose.model('Customer');
+var Customer = mongoose.model('User');
 
 module.exports = (function() {
  	return { 

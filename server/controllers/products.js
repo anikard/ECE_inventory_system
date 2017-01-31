@@ -3,7 +3,7 @@
 /********************************************************/
 
 var mongoose = require('mongoose');
-var Product = mongoose.model('Product');
+var Product = mongoose.model('Item');
 
 module.exports = (function() {
  	return { 
