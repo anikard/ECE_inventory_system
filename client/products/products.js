@@ -19,6 +19,7 @@ products_app.factory('ProductsFactory', function($http) {
   }
 
   factory.viewProduct = function(product, callback) {
+    console.log("Factory view called");
     callback(product);
   }
 
@@ -59,10 +60,11 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
         }
     });
   }
-
+/*
   $('#productModal').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);
     var modal = $(this);
   })
+  */
 
 })

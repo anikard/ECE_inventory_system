@@ -2,9 +2,254 @@
 <head>
   <title>Products</title>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!--
   <script type="text/javascript" src="./products.js"></script>
   <link rel="stylesheet" href="products.css">
+-->
+<style type="text/css">
+    body {
+      font-family: Helvetica, Arial, sans-serif;
+      text-align: center;
+    }
+
+    .feedback-input {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight:500;
+      font-size: 18px;
+      border-radius: 5px;
+      line-height: 22px;
+      background-color: transparent;
+      border:2px solid steelblue;
+      transition: all 0.5s;
+      padding: 13px;
+      margin-bottom: 15px;
+      width:100%;
+      box-sizing: border-box;
+      outline:0;
+      width: 50%;
+    }
+
+    .feedback-input:focus { border:2px solid #28A1B4; }
+
+
+    [type="submit"] {
+      font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+      width: 100%;
+      background: #6C93B4;
+      border-radius:5px;
+      border:0;
+      cursor:pointer;
+      font-size:24px;
+      padding-top:10px;
+      padding-bottom:10px;
+      transition: all 0.5s;
+      margin-top:-4px;
+      font-weight:700;
+      width: 50%;
+      color: white;
+    }
+    [type="submit"]:hover { background: teal; }
+
+
+    /*remove button*/
+    .remove {
+      font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+      width: 100%;
+      background: rgba(0, 50, 50, 0.1);;
+      border-radius:5px;
+      border:3px solid #6C93B4;
+      cursor:pointer;
+      font-size:15px;
+      padding-top:7px;
+      padding-bottom:7px;
+      transition: all 0.5s;
+      margin-top:3px;
+      letter-spacing: 2px;
+      width: 50%;
+      color: white;
+    }
+    .remove:hover { background: rgba(150, 200, 200, 0.6); }
+
+
+    .customerTable {
+      margin:0px;padding:0px;
+      width:100%;
+      height: 21em;
+      overflow-y:scroll;
+
+      -moz-border-radius-bottomleft:14px;
+      -webkit-border-bottom-left-radius:14px;
+      border-bottom-left-radius:14px;
+
+      -moz-border-radius-bottomright:14px;
+      -webkit-border-bottom-right-radius:14px;
+      border-bottom-right-radius:14px;
+
+      -moz-border-radius-topright:14px;
+      -webkit-border-top-right-radius:14px;
+      border-top-right-radius:14px;
+
+      -moz-border-radius-topleft:14px;
+      -webkit-border-top-left-radius:14px;
+      border-top-left-radius:14px;
+    }.customerTable table{
+        border-collapse: collapse;
+            border-spacing: 0;
+      width:100%;
+      margin:0px;padding:0px;
+    }
+    .customerTable tr {
+      height:3em;
+    }
+
+    .customerTable tr:last-child td:last-child {
+      -moz-border-radius-bottomright:14px;
+      -webkit-border-bottom-right-radius:14px;
+      border-bottom-right-radius:14px;
+    }
+    .customerTable table tr:first-child td:first-child {
+      -moz-border-radius-topleft:14px;
+      -webkit-border-top-left-radius:14px;
+      border-top-left-radius:14px;
+    }
+    .customerTable table tr:first-child td:last-child {
+      -moz-border-radius-topright:14px;
+      -webkit-border-top-right-radius:14px;
+      border-top-right-radius:14px;
+    }.customerTable tr:last-child td:first-child{
+      -moz-border-radius-bottomleft:14px;
+      -webkit-border-bottom-left-radius:14px;
+      border-bottom-left-radius:14px;
+    }.customerTable tr:hover td{
+      background-color:#ffffff;
+
+
+    }
+    .customerTable td{
+      vertical-align:middle;
+
+      background-color:#b7cece;
+
+      border:1px solid #a8e0e0;
+      border-width:0px 1px 1px 0px;
+      text-align:center;
+      padding:8px;
+      font-size:13px;
+      font-family:Arial;
+      font-weight:normal;
+      color:#000000;
+    }.customerTable tr:last-child td{
+      border-width:0px 1px 0px 0px;
+    }.customerTable tr td:last-child{
+      border-width:0px 0px 1px 0px;
+    }.customerTable tr:last-child td:last-child{
+      border-width:0px 0px 0px 0px;
+    }
+    .customerTable tr:first-child td{
+        background:-o-linear-gradient(bottom, #005fbf 5%, #003f7f 100%);  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #005fbf), color-stop(1, #003f7f) );
+      background:-moz-linear-gradient( center top, #005fbf 5%, #003f7f 100% );
+      filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#005fbf", endColorstr="#003f7f");  background: -o-linear-gradient(top,#005fbf,003f7f);
+
+      background-color:#005fbf;
+      border:0px solid #a8e0e0;
+      text-align:center;
+      border-width:0px 0px 1px 1px;
+      font-size:15px;
+      font-family:Arial;
+      font-weight:bold;
+      color:#ffffff;
+    }
+    .customerTable tr:first-child:hover td{
+      background:-o-linear-gradient(bottom, #005fbf 5%, #003f7f 100%);  background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #005fbf), color-stop(1, #003f7f) );
+      background:-moz-linear-gradient( center top, #005fbf 5%, #003f7f 100% );
+      filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#005fbf", endColorstr="#003f7f");  background: -o-linear-gradient(top,#005fbf,003f7f);
+
+      background-color:#005fbf;
+    }
+    .customerTable tr:first-child td:first-child{
+      border-width:0px 0px 1px 0px;
+    }
+    .customerTable tr:first-child td:last-child{
+      border-width:0px 0px 1px 1px;
+    }
+
+  </style>
+
+  <script>
+
+  var products_app = angular.module('products_app', []);
+
+  products_app.factory('ProductsFactory', function($http) {
+    var factory = {};
+    var products = [];
+
+    factory.getproducts = function(callback) {
+      $http.get('/products').success(function(output) {
+        products = output;
+        callback(products);
+      })
+    }
+
+    factory.addProduct = function(info, callback) {
+      $http.post('/addProduct', info).success(function(output) {
+          products = output;
+          callback(products);
+      })
+    }
+
+    factory.viewProduct = function(product, callback) {
+      console.log("Factory view called on : " + product.name);
+      callback(product);
+    }
+
+    return factory;
+  });
+
+
+  products_app.controller('productsController', function($scope, ProductsFactory, $document) {
+      $scope.products = ProductsFactory.getproducts(function(data) {
+      $scope.products = data;
+    });
+
+    $scope.addProduct = function() {
+      console.log("Query submited!");
+      ProductsFactory.addProduct($scope.new_product, function(data) {
+        $scope.new_product.date = new Date();
+        $scope.products.push($scope.new_product);
+        $scope.new_product = {};
+      });
+    }
+
+    $scope.viewProduct = function(product) {
+      console.log("View product selected");
+      console.log(product.name);
+      ProductsFactory.viewProduct(product, function(data) {
+        $scope.thisProduct = data;
+        console.log(data);
+      })
+    }
+
+    $scope.removeProduct = function(product) {
+      $('#productModal').modal('hide');
+      ProductsFactory.removeProduct(product, function(data) {
+        for (var i =0; i < $scope.products.length; i++)
+          {  if ($scope.products[i]._id === product._id) {
+                $scope.products.splice(i,1);
+                break;
+              }
+          }
+      });
+    }
+
+  })
+
+
+  </script>
+
 
 </head>
 
@@ -31,7 +276,8 @@
       <td ng-bind="product.model"></td>
       <td ng-bind="product.num_left"></td>
       <td ng-bind="product.tags"></td>
-      <td><button class="remove" ng-click="viewProduct(product)" data-toogle="modal" data-target"#productModal">View</button></td>
+      <!--<td><button class="remove" ng-click="viewProduct(product)" data-toogle="modal" data-target"#productModal">View</button></td>-->
+      <td><button class = "remove" ng-click='viewProduct(product)' data-toggle="modal" data-target="#productModal">View</button></td>
     </tr>
   </table>
 </div>
@@ -52,6 +298,7 @@
 
   <!-- Start of modal code -->
   <!-- TODO: Refactor into separate files -->
+
   <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -64,18 +311,21 @@
 
       </div>
       <div class="modal-body" align="left">
+        Hello Modal!
 
         <div class="form-group" >
-            <p><b>Name: </b> {{thisOrder.customer_name}}</p>
-            <p><b>Image:  </b>{{thisOrder.product}}</p>
-            <p><b>Model:  </b>{{thisOrder.quantity}}</p>
-            <p><b>Quantity:  </b>{{thisOrder.reason}}</p>
-            <p><b>Description:  </b>{{thisOrder.status}}</p>
-            <p><b>Location:  </b>{{thisOrder.reason}}</p>
-            <p><b>Tags:  </b>{{thisOrder.status}}</p>
+            <p><b>Name: </b> {{thisProduct.name}}</p>
+            <p><b>Image:  </b>{{thisProduct.image_url}}</p>
+            <p><b>Model:  </b>{{thisProduct.model}}</p>
+            <p><b>Quantity:  </b>{{thisProduct.num_left}}</p>
+            <p><b>Description:  </b>{{thisProduct.description}}</p>
+            <p><b>Location:  </b>{{thisProduct.location}}</p>
+            <p><b>Tags:  </b>{{thisProduct.tags}}</p>
         </div>
 
-        <!--
+
+
+        <!-- Original Comment
           <h3>Respond:</h3>
         <form>
           <div class="form-group">
@@ -91,11 +341,14 @@
         </form>
       </div>
     -->
+
       <div class="modal-footer">
-        <button class="btn btn-danger" ng-click='deleteProduct(thisProduct)' >Delete Product</button>
+        <!--<button class="btn btn-danger" ng-click='deleteProduct(thisProduct)' >Delete Product</button>-->
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <!--
         <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)">Request</button>
         <button type="button" class="btn btn-primary" ng-click="editProduct(thisProduct)">Edit</button>
+      -->
       </div>
     </div>
   </div>
@@ -104,6 +357,7 @@
 
   <script type="text/javascript">
     $('#productModal').on('show.bs.modal', function (event) {
+      console.log("product modal called");
       var button = $(event.relatedTarget);
       var modal = $(this);
     })
