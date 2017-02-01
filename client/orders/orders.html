@@ -242,8 +242,16 @@
         $scope.orders = data;
       });
       $scope.addOrder = function() {
-        $scope.new_order.customer_name = $document[ 0 ].getElementById('customerList').value; 
+        
+        var customerSelected = $document[ 0 ].getElementById('customerList');
+        $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
+        $scope.new_order.customer_id = customerSelected.value; // id
         $scope.new_order.product = $document[ 0 ].getElementById('productList').value;
+        console.log("ADDING ORDER");
+        console.log($scope.new_order.customer_name);
+        console.log($scope.new_order.customer_id);
+        console.log($scope.new_order.product);
+
         $scope.new_order.status = "pending"; 
         // TODO: reason in db
         OrderFactory.addOrder($scope.new_order, function(data) {
@@ -344,7 +352,7 @@
 
   <select class = "feedback-input" ng-controller="customersController" id = "customerList" name="customerOptions" ng-model="new_order.customer_name">
         <option value="" selected disabled>Customer Name</option>
-         <option ng-repeat="customer in customers" value="{{customer.name}}" ng-bind="customer.name"></option>
+         <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.name"></option>
   </select> 
 
   <select class = "feedback-input" ng-controller="productsController" id = "productList" name="productsOptions" ng-model="new_order.product">
