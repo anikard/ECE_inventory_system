@@ -14,86 +14,53 @@ module.exports = (function() {
  			res.redirect('orders/orders.html');
  		},
 	  	show: function(req, res) {
-
-	  		Customer.find({}).populate('orders').exec(function(err, post){
-			    if(err){
-			      console.log("Error");
-			    } else{
-			    }
-			});
-
-
-	     	Order.find({}, function(err, results) {
+	     	Order.find({})
+	     	.populate('itemId')
+	     	.populate('userId')
+	     	.exec(function(err, results) {
 		       	if(err) {
 		         	console.log(err);
 		       	} else {
 		         	res.json(results);
 		       	}
-	   		})
+	   		});
 	 	},
+	 	
 	   	add: function(req, res) {
-	   		Customer.findOne({name: req.body.customer_name}, function(err, thisCustomer){
-		        
-
+	   		Customer.findOne({name: req.body.customer_name}, function(err, user){
 		        var order = new Order({
 		        	quantity: req.body.quantity,
-		        	userId: thisCustomer._id,
+		        	userId: user._id,
 		        	itemId: req.body.product,
+		        	note: "",
+ 					status: "open",
 		        });
 
 		        order.save(function(err){
-		          thisCustomer.save(function(err){
-		            if(err) {
-		              console.log('Error');
-		            } else {
-		                console.log("Successfully added an order!");
-
-		                // decrement number of products in stock
-				  //       Product.update(
-				  //       	{ name: req.body.product },
-						// 	{ $inc: { num_left: -req.body.quantity } },
-						// 	function(err, numberAffected, rawResponse) {
-		   	// 						console.log('error', err);
-		   	// 						}
-						// )
-
-				    	res.end(); //  end the function to return
-		            }
-		          });
+		        	if (!err) {
+		        		console.log("Successfully added an order!");
+		        	}
+		        	res.end();
 		        });
-
-		        
 		    });
-
 		},
 
 		delete: function(req, res) {
-			// remove order from array in customer
-			Customer.update(
-					{_id: req.body._customer},
-                   	{ $pull: { orders: req.body._id} }
-                 );
-
-			Order.findOneAndRemove({_id: req.body._id}, 
-				function(err){
-				 if(err){
-				    console.log("Error");
-			    } else {
-				    console.log("Successfully removed an order!");
-
-					// increment number of products in stock
-				  //       Product.update(
-				  //       	{ name: req.body.product },
-						// 	{ $inc: { num_left: req.body.quantity } },
-						// 	function(err, numberAffected, rawResponse) {
-		   	// 						console.log('error', err);
-		   	// 						}
-						// )
-
-				    res.end(); //  end the function to return
-			    }
-
-				});
+			// Customer.update(
+			// 		{_id: req.body._customer},
+   //                 	{ $pull: { orders: req.body._id} }
+   //               );
+			Order.findByIdAndUpdate(
+				req.body._id, 
+				{ $set: {
+					status: "closed",
+				}}, 
+				{ new: true }, 
+				function (err, order) {
+					if (err) console.log("Error");
+					res.end();
+				}
+			);
 		},
 
 		update: function(req, res) {
