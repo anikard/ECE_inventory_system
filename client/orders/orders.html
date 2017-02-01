@@ -245,13 +245,15 @@
         
         var customerSelected = $document[ 0 ].getElementById('customerList');
         $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
-        $scope.new_order.customer_id = customerSelected.value; // id
+        $scope.new_order.userId = customerSelected.value; // id
 
         var itemSelected = $document[ 0 ].getElementById('productList');
         $scope.new_order.item_name = itemSelected.options[itemSelected.selectedIndex].text.split("|").pop();
-        $scope.new_order.item_id = itemSelected.value; // id
+        $scope.new_order.itemId = itemSelected.value; // id
 
-        $scope.new_order.status = "pending"; 
+        console.log($scope.new_order);
+
+       // $scope.new_order.status = "pending"; 
         OrderFactory.addOrder($scope.new_order, function(data) {
           $scope.new_order.date = new Date();
           $scope.orders.push($scope.new_order);
