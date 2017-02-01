@@ -248,11 +248,10 @@
         $scope.new_order.customer_id = customerSelected.value; // id
 
         var itemSelected = $document[ 0 ].getElementById('productList');
-        $scope.new_order.item_name = itemSelected.options[itemSelected.selectedIndex].text;
+        $scope.new_order.item_name = itemSelected.options[itemSelected.selectedIndex].text.split("|").pop();
         $scope.new_order.item_id = itemSelected.value; // id
 
         $scope.new_order.status = "pending"; 
-        // TODO: reason in db
         OrderFactory.addOrder($scope.new_order, function(data) {
           $scope.new_order.date = new Date();
           $scope.orders.push($scope.new_order);
@@ -334,7 +333,7 @@
                     <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-date'">
                         
                         <td ng-bind="order.customer_name"></td>
-                        <td ng-bind="order.product"></td>
+                        <td ng-bind="order.item_name"></td>
                         <td ng-bind="order.quantity"></td>
                         <td ng-bind="order.date | date:'short'"></td>
                         <td ng-bind="order.dateDone | date:'short'"></td>
