@@ -246,11 +246,10 @@
         var customerSelected = $document[ 0 ].getElementById('customerList');
         $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
         $scope.new_order.customer_id = customerSelected.value; // id
-        $scope.new_order.product = $document[ 0 ].getElementById('productList').value;
-        console.log("ADDING ORDER");
-        console.log($scope.new_order.customer_name);
-        console.log($scope.new_order.customer_id);
-        console.log($scope.new_order.product);
+
+        var itemSelected = $document[ 0 ].getElementById('productList');
+        $scope.new_order.item_name = itemSelected.options[itemSelected.selectedIndex].text;
+        $scope.new_order.item_id = itemSelected.value; // id
 
         $scope.new_order.status = "pending"; 
         // TODO: reason in db
@@ -357,7 +356,7 @@
 
   <select class = "feedback-input" ng-controller="productsController" id = "productList" name="productsOptions" ng-model="new_order.product">
         <option value="" selected disabled>Products</option>
-         <option ng-repeat="product in products" value="{{product.name}}">{{product.name}} || {{product.description}}</option>
+         <option ng-repeat="product in products" value="{{product._id}}">{{product.name}} || {{product.description}}</option>
      </select>  
   <input class = "feedback-input" type="number" ng-model="new_order.quantity" placeholder="quantity">
   <textarea class = "feedback-input" ng-model="new_order.reason" placeholder="Reason"></textarea>
