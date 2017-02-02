@@ -10,32 +10,32 @@ var orders_app = angular.module('orders_app', []);
         $http.get('/products').success(function(output) {
           products = output;
           callback(products);
-        }) 
+        })
       }
 
       factory.getcustomers = function(callback) {
         $http.get('/customers').success(function(output) {
           customers = output;
           callback(customers);
-        }) 
+        })
       }
-      
+
       factory.getorders = function(callback) {
         $http.get('/orders').success(function(output) {
           orders = output;
 
-          orders.forEach(function(elem) { 
+          orders.forEach(function(elem) {
             elem["customer_name"] = elem["userId"].name;
           })
           console.log(orders);
-          
+
           callback(orders);
-        }) 
+        })
       }
 
       factory.viewOrder = function(order, callback) {
         callback(order);
-        
+
       }
 
       factory.addOrder = function(info, callback) {
@@ -43,13 +43,13 @@ var orders_app = angular.module('orders_app', []);
             orders = output;
             callback(orders);
         })
-      } 
+      }
 
       factory.updateOrder = function(info, callback) {
         $http.post('/updateOrder', info).success(function(output) {
             // TODO
         })
-      } 
+      }
 
 
       factory.removeOrder = function(order, callback) {
@@ -68,7 +68,9 @@ var orders_app = angular.module('orders_app', []);
         $scope.orders = data;
       });
       $scope.addOrder = function() {
-        
+
+        console.log("addOrder from order controller scope");
+
         var customerSelected = $document[ 0 ].getElementById('customerList');
         // TO FIX FEB 1 2017
         $scope.new_order.userId = customerSelected.value; // id
@@ -81,7 +83,7 @@ var orders_app = angular.module('orders_app', []);
 
         console.log($scope.new_order);
 
-       // $scope.new_order.status = "pending"; 
+       // $scope.new_order.status = "pending";
         OrderFactory.addOrder($scope.new_order, function(data) {
           $scope.new_order.date = new Date();
           $scope.orders.push($scope.new_order);
