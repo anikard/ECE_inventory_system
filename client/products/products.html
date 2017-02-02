@@ -186,6 +186,14 @@
   products_app.factory('ProductsFactory', function($http) {
     var factory = {};
     var products = [];
+    var customers = [];
+
+    factory.getcustomers = function(callback) {
+        $http.get('/customers').success(function(output) {
+          customers = output;
+          callback(customers);
+        })
+      }
 
     factory.getproducts = function(callback) {
       $http.get('/products').success(function(output) {
@@ -206,6 +214,15 @@
       callback(product);
     }
 
+    factory.deleteProduct = function(product, callback) {
+      $http.post('/deleteProduct', product).success(function (ouptut) {
+        console.log("Factory deleted : " + product.name);
+        products = output;
+        callback(products);
+      });
+
+    }
+
     return factory;
   });
 
@@ -224,6 +241,61 @@
       });
     }
 
+    $scope.deleteProduct = function(event, product) {
+          //TODO: Confirm Deletion popup
+          /*
+          var confirm = $mdDialog.confirm()
+            .title('Confirm Deltion')
+            .textContent('Delete this item.')
+            .targetEvent(event)
+            .ok('Confirm')
+            .cancel('Cancel');
+
+          $mdDialog.show(confirm).then(function() {
+            console.log("confirm deletion chosen");
+            $('#productModal').modal('hide');
+          }, function() {
+            console.log("cancel deletion chosen");
+            $('#productModal').modal('hide');
+          });
+          */
+
+          //TODO: Remove the product form the view
+          /*
+          ProductsFactory.deleteProduct(product, function(data) {
+            for (var i =0; i < $scope.products.length; i++)
+            {  if ($scope.products[i]._id === product._id) {
+                  $scope.products.splice(i,1);
+                  break;
+                }
+            }
+        });
+        */
+      }
+
+    $scope.confirmDeleteModal = function(product) {
+      console.log("confirm delete");
+      console.log(product.name);
+      $('#deleteConfirmModal').modal('hide');
+    }
+
+    $scope.cancelDeleteModal = function() {
+      console.log("cancel Delete");
+      $('#deleteConfirmModal').modal('hide');
+    }
+
+    $scope.editProduct = function(product) {
+      console.log("edit product called");
+    }
+
+    $scope.requestProduct = function(product) {
+      console.log("request called");
+    }
+
+    $scope.addOrder = function() {
+      console.log("order added");
+    }
+
     $scope.viewProduct = function(product) {
       console.log("View product selected");
       console.log(product.name);
@@ -233,6 +305,13 @@
       })
     }
 
+    $scope.hideRequestModal = function() {
+      console.log("Hide Request Modal");
+      $('#requestModal').modal('hide');
+    }
+
+
+/*
     $scope.removeProduct = function(product) {
       $('#productModal').modal('hide');
       ProductsFactory.removeProduct(product, function(data) {
@@ -244,7 +323,14 @@
           }
       });
     }
+    */
 
+  })
+
+  products_app.controller('customersController', function($scope, ProductsFactory) {
+      $scope.customers = ProductsFactory.getcustomers(function(data) {
+      $scope.customers = data;
+    })
   })
 
 
@@ -311,11 +397,9 @@
 
       </div>
       <div class="modal-body" align="left">
-        Hello Modal!
-
         <div class="form-group" >
+            <p><img style = "height:100px; width: 100px" src="{{thisProduct.image_url}}"></p>
             <p><b>Name: </b> {{thisProduct.name}}</p>
-            <p><b>Image:  </b>{{thisProduct.image_url}}</p>
             <p><b>Model:  </b>{{thisProduct.model}}</p>
             <p><b>Quantity:  </b>{{thisProduct.num_left}}</p>
             <p><b>Description:  </b>{{thisProduct.description}}</p>
@@ -323,41 +407,117 @@
             <p><b>Tags:  </b>{{thisProduct.tags}}</p>
         </div>
 
-
-
-        <!-- Original Comment
-          <h3>Respond:</h3>
-        <form>
-          <div class="form-group">
-                <div class="radio">
-                  <label><input type="radio" name="optionResponse" class="approveButton" ng-model="orderResponse.yesOrNo" value = "approve">Approve</label>
-                </div>
-                <div class="radio">
-                  <label><input type="radio" name="optionResponse" class="denyButton" ng-model="orderResponse.yesOrNo" value = "deny">Deny</label>
-                </div>
-            <label for="message-text" class="form-control-label">Comment:</label>
-            <textarea class="form-control" id="message-text" ng-model="orderResponse.comment"></textarea>
-          </div>
-        </form>
-      </div>
-    -->
-
       <div class="modal-footer">
-        <!--<button class="btn btn-danger" ng-click='deleteProduct(thisProduct)' >Delete Product</button>-->
+        <button class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmModal">Delete Product</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
         <!--
-        <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)">Request</button>
+        <button class = "remove" ng-click='viewProduct(product)' data-toggle="modal" data-target="#productModal">View</button>
+        -->
+
+        <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Request</button>
         <button type="button" class="btn btn-primary" ng-click="editProduct(thisProduct)">Edit</button>
-      -->
+
       </div>
     </div>
   </div>
 </div>
+</div>
 
+
+
+<div class="modal fade" id="requestModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+
+      </button>
+        <h1 class="modal-title" id="exampleModalLabel">Request Product</h1>
+
+    </div>
+    <div class="modal-body" align="center">
+      <h1>Create Order</h1>
+
+      <select class = "feedback-input" ng-controller="customersController" id = "customerList" name="customerOptions" ng-model="new_order.customer_name">
+          <option value="" selected disabled>Customer Name</option>
+           <option ng-repeat="customer in customers" value="{{customer.name}}" ng-bind="customer.name"></option>
+      </select>
+
+<!--
+      <select class = "feedback-input" ng-controller="productsController" id = "productList" name="productsOptions" ng-model="new_order.product">
+          <option value="" selected disabled>Products</option>
+           <option ng-repeat="product in products" value="{{product.name}}">{{product.name}} || {{product.description}}</option>
+       </select>
+     -->
+     <p><b>Product:</b> {{thisProduct.name}} </p>
+       <input class = "feedback-input" type="number" ng-model="new_order.quantity" placeholder="quantity">
+      <textarea class = "feedback-input" ng-model="new_order.reason" placeholder="Reason"></textarea>
+      <input type="submit" ng-click="addOrder()">
+
+
+    <div class="modal-footer">
+      <!--
+      <button class="btn btn-danger" ng-click='deleteProduct($event, thisProduct)' >Delete Product</button>
+    -->
+
+
+      <button type="button" class="btn btn-secondary close" aria-hidden="true" data-dismiss="modal" aria-label="Close">Close</button>
+
+      <!--
+      <button class = "remove" ng-click='viewProduct(product)' data-toggle="modal" data-target="#productModal">View</button>
+
+      <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Request</button>
+      <button type="button" class="btn btn-primary" ng-click="editProduct(thisProduct)">Edit</button>
+    -->
+
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+
+<div class="modal fade" id="deleteConfirmModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+
+      </button>
+        <h1 class="modal-title" id="exampleModalLabel">Confirm Deletion</h1>
+
+    </div>
+    <div class="modal-body" align="left">
+      <div class="form-group" >
+        Confirm Deletion
+      </div>
+
+
+    <div class="modal-footer">
+
+      <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmDeleteModal(thisProduct)>Confirm</button>
+      <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelDeleteModal()>Cancel</button>
+
+    </div>
+  </div>
+</div>
+</div>
+</div>
 
   <script type="text/javascript">
     $('#productModal').on('show.bs.modal', function (event) {
       console.log("product modal called");
+      var button = $(event.relatedTarget);
+      var modal = $(this);
+    })
+  </script>
+
+  <script type="text/javascript">
+    $('#requestModal').on('show.bs.modal', function (event) {
+      console.log("request modal called");
       var button = $(event.relatedTarget);
       var modal = $(this);
     })
