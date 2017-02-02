@@ -76,7 +76,7 @@ var orders_app = angular.module('orders_app', []);
         $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
 
         var itemSelected = $document[ 0 ].getElementById('productList');
-        $scope.new_order.item_name = itemSelected.options[itemSelected.selectedIndex].text.split("|").pop();
+        $scope.new_order.item_name = ((itemSelected.options[itemSelected.selectedIndex].text).split("|"))[0];
         $scope.new_order.itemId = itemSelected.value; // id
 
         console.log($scope.new_order);
