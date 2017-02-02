@@ -17,20 +17,20 @@
 
 <a href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a>
 
-  <h1>ORDERS</h1>
+  <h1>REQUESTS</h1>
   <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
 
 
 <div class="customerTable" id = "cTable" >
                 <table >
                     <tr>
-                        <td> Customer Name </td>
-                        <td> Product </td>
+                        <td> User Name </td>
+                        <td> Item </td>
                         <td> Quantity </td>
                         <td> Date Issued </td>
                         <td> Date Fulfilled </td>
                         <td> Status </td>
-                        <td> View Order </td>
+                        <td> View Request </td>
                     </tr>
                     <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-date'">
 
@@ -48,15 +48,15 @@
                 </table>
             </div>
 
-  <h1>Create Order</h1>
+  <h1>Create Request</h1>
 
   <select class = "feedback-input" ng-controller="customersController" id = "customerList" name="customerOptions" ng-model="new_order.customer_name">
-        <option value="" selected disabled>Customer Name</option>
+        <option value="" selected disabled>User Name</option>
          <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.name"></option>
   </select> 
 
   <select class = "feedback-input" ng-controller="productsController" id = "productList" name="productsOptions" ng-model="new_order.product">
-        <option value="" selected disabled>Products</option>
+        <option value="" selected disabled>Item</option>
          <option ng-repeat="product in products" value="{{product._id}}">{{product.name}} || {{product.description}}</option>
      </select>  
   <input class = "feedback-input" type="number" ng-model="new_order.quantity" placeholder="quantity">
@@ -76,14 +76,14 @@
           <span aria-hidden="true">&times;</span>
 
         </button>
-          <h1 class="modal-title" id="exampleModalLabel">View Order</h1>
+          <h1 class="modal-title" id="exampleModalLabel">View Request</h1>
 
       </div>
       <div class="modal-body" align="left">
 
         <div class="form-group" >
-            <p> <b> Customer: </b> {{thisOrder.customer_name}}</p>
-            <p><b>Product:  </b>{{thisOrder.product}}</p>
+            <p> <b> User: </b> {{thisOrder.customer_name}}</p>
+            <p><b>Item:  </b>{{thisOrder.product}}</p>
             <p><b>Quantity:  </b>{{thisOrder.quantity}}</p>
             <p><b>Reason:  </b>{{thisOrder.reason}}</p>
             <p><b>Current Status:  </b>{{thisOrder.status}}</p>
