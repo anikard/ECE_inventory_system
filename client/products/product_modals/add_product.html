@@ -1,0 +1,12 @@
+<h1>Add a product</h1>
+
+
+<input class = "feedback-input" type="text" ng-model="new_product.name" placeholder="name">
+<input class = "feedback-input" type="url" ng-model="new_product.image_url" placeholder="image url">
+<textarea class = "feedback-input" ng-model="new_product.description" placeholder="description"></textarea>
+<input class = "feedback-input" type="text" ng-model="new_product.model" placeholder="model">
+<input class = "feedback-input" type="text" ng-model="new_product.location" placeholder="location">
+<textarea class = "feedback-input" ng-model="new_product.tags" placeholder="tags (comma separated)"></textarea>
+<input class = "feedback-input" type="number" ng-model="new_product.num_left" placeholder="quantity">
+<input type="submit" ng-click="addProduct()">
+<br>

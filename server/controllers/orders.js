@@ -9,7 +9,7 @@ var Product = mongoose.model('Item');
 
 
 module.exports = (function() {
- 	return { 
+ 	return {
  		displayOrders: function(req, res) {
  			res.redirect('orders/orders.html');
  		},
@@ -25,9 +25,10 @@ module.exports = (function() {
 		       	}
 	   		});
 	 	},
-	 	
+
 	   	add: function(req, res) {
 	   		Customer.findOne({name: req.body.customer_name}, function(err, user){
+          console.log(user);
 		        var order = new Order({
 		        	quantity: req.body.quantity,
 		        	userId: user._id,
@@ -51,11 +52,11 @@ module.exports = (function() {
    //                 	{ $pull: { orders: req.body._id} }
    //               );
 			Order.findByIdAndUpdate(
-				req.body._id, 
+				req.body._id,
 				{ $set: {
 					status: "closed",
-				}}, 
-				{ new: true }, 
+				}},
+				{ new: true },
 				function (err, order) {
 					if (err) console.log("Error");
 					res.end();
@@ -65,12 +66,12 @@ module.exports = (function() {
 
 		update: function(req, res) {
 			Order.findByIdAndUpdate(
-				req.body._id, 
+				req.body._id,
 				{ $set: {
 					status: req.body.status,
 					note: req.body.note,
-				}}, 
-				{ new: true }, 
+				}},
+				{ new: true },
 				function (err, order) {
 					if (err) console.log("Error");
 					res.json(order);

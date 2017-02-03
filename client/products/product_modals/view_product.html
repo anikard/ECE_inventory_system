@@ -1,0 +1,56 @@
+<div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+
+      </button>
+        <h1 class="modal-title" id="exampleModalLabel">View Product</h1>
+
+    </div>
+    <div class="modal-body" align="left">
+      <div class="form-group" >
+          <p><img style = "height:100px; width: 100px" src="{{thisProduct.image_url}}"></p>
+          <p>
+            <label><b>Name: </b></label>
+            <input type="text" ng-readonly="!editing" value="{{thisProduct.name}}"/>
+          </p>
+          <p>
+            <label><b>Model:  </b></label>
+            <input type="text" ng-readonly="!editing" value="{{thisProduct.model}}"/>
+          </p>
+          <p>
+            <label><b>Quantity:  </b></label>
+            <input type="number" ng-readonly="!editing" value="{{thisProduct.num_left}}"/>
+          </p>
+          <p>
+            <label><b>Description:  </b></label>
+            <input type="text" ng-readonly="!editing" value="{{thisProduct.description}}"/>
+          </p>
+          <p>
+            <label><b>Location:  </b></label>
+            <input type="text" ng-readonly="!editing" value="{{thisProduct.location}}"/>
+          </p>
+          <p>
+            <label><b>Tags:  </b><label>
+            <input type="text" ng-readonly="!editing" value="{{thisProduct.tags}}"/>
+          </p>
+      </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmModal">Delete Product</button>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+      <!--
+      <button class = "remove" ng-click='viewProduct(product)' data-toggle="modal" data-target="#productModal">View</button>
+      -->
+
+      <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Request</button>
+      <button type="button" class="btn btn-primary" ng-click="editProduct(thisProduct)">{{editing == true ? 'Save Edits' : 'Edit' }}</button>
+
+    </div>
+  </div>
+</div>
+</div>
+</div>

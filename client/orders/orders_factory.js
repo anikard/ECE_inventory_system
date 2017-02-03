@@ -54,6 +54,7 @@ var orders_app = angular.module('orders_app', []);
 
       factory.removeOrder = function(order, callback) {
         $http.post('/deleteOrder', order).success(function(output) {
+            console.log(output.length);
             orders = output;
             callback(orders);
         })

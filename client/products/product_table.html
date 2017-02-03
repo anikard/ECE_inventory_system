@@ -1,0 +1,20 @@
+<div class="customerTable" id = "cTable" >
+  <table>
+    <tr>
+      <td> Name </td>
+      <td> Model </td>
+      <td> Quantity </td>
+      <td> Tags </td>
+      <td> Action </td>
+    </tr>
+
+    <tr ng-repeat="product in products | filter: filter_name | orderBy:'-date'">
+      <td ng-bind="product.name"></td>
+      <td ng-bind="product.model"></td>
+      <td ng-bind="product.num_left"></td>
+      <td ng-bind="product.tags"></td>
+      <!--<td><button class="remove" ng-click="viewProduct(product)" data-toogle="modal" data-target"#productModal">View</button></td>-->
+      <td><button class = "remove" ng-click='viewProduct(product)' data-toggle="modal" data-target="#productModal">View</button></td>
+    </tr>
+  </table>
+</div>

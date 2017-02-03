@@ -39,7 +39,7 @@
     });
 
     app.post('/addProduct', function(req, res) {
-      products.add(req, res); 
+      products.add(req, res);
     });
 
     app.get('/orders', function(req, res) {
@@ -47,23 +47,31 @@
     });
 
     app.post('/addOrder', function(req, res) {
-      orders.add(req, res); 
+      orders.add(req, res);
     });
 
     app.post('/deleteOrder', function(req, res) {
-      orders.delete(req, res); 
+      orders.delete(req, res);
     });
 
     app.post('/updateOrder', function(req, res) {
-      orders.update(req, res); 
+      orders.update(req, res);
     });
 
     app.get('/products', function(req, res) {
-      products.show(req, res); 
+      products.show(req, res);
+    });
+
+    app.post('/deleteProduct', function(req, res) {
+      products.delete(req, res);
+    });
+
+    app.post('/updateProduct', function(req, res) {
+      products.update(req, res);
     });
 
     app.get('/customers', function(req, res) {
-      customers.show(req, res); 
+      customers.show(req, res);
     });
 
      app.post('/add', function(req, res) {
@@ -71,6 +79,6 @@
     });
 
      app.post('/delete', function(req, res) {
-      customers.delete(req, res); 
+      customers.delete(req, res);
     });
   });
