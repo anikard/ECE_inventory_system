@@ -32,14 +32,27 @@ products_app.factory('ProductsFactory', function($http) {
     callback(product);
   }
 
+  factory.updateProduct = function(info, callback) {
+    $http.post('/updateProduct', info).success(function(output) {
+      // TODO
+    })
+  }
+
   factory.deleteProduct = function(product, callback) {
-    $http.post('/deleteProduct', product).success(function (ouptut) {
-      console.log("Factory deleted : " + product.name);
+
+    $http.post('/deleteProduct', product).success(function(output) {
+      console.log(output.length);
       products = output;
       callback(products);
-    });
-
+    })
   }
+
+  factory.addOrder = function(info, callback) {
+        $http.post('/addOrder', info).success(function(output) {
+            orders = output;
+            callback(orders);
+        })
+      }
 
   return factory;
 });
@@ -79,7 +92,7 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
         */
 
         //TODO: Remove the product form the view
-        /*
+/*
         ProductsFactory.deleteProduct(product, function(data) {
           for (var i =0; i < $scope.products.length; i++)
           {  if ($scope.products[i]._id === product._id) {
@@ -88,13 +101,25 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
               }
           }
       });
-      */
+*/
     }
 
   $scope.confirmDeleteModal = function(product) {
     console.log("confirm delete");
     console.log(product.name);
+    ProductsFactory.deleteProduct(product, function(data) {
+      for (var i =0; i < $scope.products.length; i++)
+      {  if ($scope.products[i]._id === product._id) {
+            $scope.products.splice(i,1);
+            console.log("remainig products:");
+            console.log($scope.products);
+            break;
+          }
+          console.log("Break doesn't occur");
+      }
+  });
     $('#deleteConfirmModal').modal('hide');
+    $('#productModal').modal('hide');
   }
 
   $scope.cancelDeleteModal = function() {
@@ -107,6 +132,7 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
     oldProduct = product;
     if ($scope.editing) {
       //TODO: throw confirmation dialog
+      $('#editConfirmModal').modal('show');
       //TODO: persist edit to db
       $scope.editing = false;
     }
@@ -115,13 +141,31 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
     }
   }
 
+  $scope.confirmEditModal = function(product) {
+    console.log("confirm edit");
+    ProductsFactory.editProduct(product, function (data) {
+
+    })
+  }
+
+  $scope.cancelEditModal = function() {
+    console.log("Cancel Edit");
+    $('#editConfirmModal').modal('hide');
+  }
+
   $scope.requestProduct = function(product) {
     console.log("request called");
   }
 
 
   $scope.addOrder = function() {
-    console.log("order added");
+    var customerSelected = $document[ 0 ].getElementById('customerList');
+    $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
+    console.log($scope.new_order);
+    ProductsFactory.addOrder($scope.new_order, function(data) {
+      $scope.new_order = {};
+    })
+    $('#requestModal').modal('hide');
   }
 
 
@@ -130,6 +174,7 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
     console.log(product.name);
     ProductsFactory.viewProduct(product, function(data) {
       $scope.thisProduct = data;
+      $scope.new_order = {};
       $scope.new_order.itemId = data._id;
       $scope.editing = false;
       console.log(data);
@@ -148,5 +193,3 @@ products_app.controller('customersController', function($scope, ProductsFactory)
     $scope.customers = data;
   })
 })
-
-angular.bootstrap(document.getElementById("ordersAppModal"), ['orders_app'])

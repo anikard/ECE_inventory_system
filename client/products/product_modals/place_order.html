@@ -1,0 +1,55 @@
+<div ng-app="orders_app" id="ordersAppModal">
+<div class="modal fade" id="requestModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+
+      </button>
+        <h1 class="modal-title" id="exampleModalLabel">Request Product</h1>
+
+    </div>
+    <div class="modal-body" align="center">
+      <h1>Create Order</h1>
+
+
+      <select class = "feedback-input" ng-controller="customersController" id = "customerList" name="customerOptions" ng-model="new_order.customer_name">
+        <option value="" selected disabled>User Name</option>
+        <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.name"></option>
+      </select>
+
+<!--
+      <select class = "feedback-input" ng-controller="productsController" id = "productList" name="productsOptions" ng-model="new_order.product">
+          <option value="" selected disabled>Products</option>
+           <option ng-repeat="product in products" value="{{product.name}}">{{product.name}} || {{product.description}}</option>
+       </select>
+     -->
+     <input class = "feedback-input" type="text" value="{{thisProduct.name}}" ng-readonly="true" />
+
+      <input class = "feedback-input" type="number" ng-model="new_order.quantity" placeholder="quantity">
+      <textarea class = "feedback-input" ng-model="new_order.reason" placeholder="Reason"></textarea>
+      <input type="submit" ng-click="addOrder()">
+
+
+    <div class="modal-footer">
+      <!--
+      <button class="btn btn-danger" ng-click='deleteProduct($event, thisProduct)' >Delete Product</button>
+    -->
+
+
+      <button type="button" class="btn btn-secondary close" aria-hidden="true" data-dismiss="modal" aria-label="Close">Close</button>
+
+      <!--
+      <button class = "remove" ng-click='viewProduct(product)' data-toggle="modal" data-target="#productModal">View</button>
+
+      <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Request</button>
+      <button type="button" class="btn btn-primary" ng-click="editProduct(thisProduct)">Edit</button>
+    -->
+
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</div>

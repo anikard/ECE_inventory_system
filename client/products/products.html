@@ -6,7 +6,6 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="./orders/orders_factory.js"></script>
 
   <script type="text/javascript" src="./products_factory.js"></script>
   <link rel="stylesheet" href="./products_style.css">
@@ -43,81 +42,77 @@
 </div>
 
 
-  <h1>Add a product</h1>
+<h1>Add a product</h1>
 
 
-  <input class = "feedback-input" type="text" ng-model="new_product.name" placeholder="name">
-  <input class = "feedback-input" type="url" ng-model="new_product.image_url" placeholder="image url">
-  <textarea class = "feedback-input" ng-model="new_product.description" placeholder="description"></textarea>
-  <input class = "feedback-input" type="text" ng-model="new_product.model" placeholder="model">
-  <input class = "feedback-input" type="text" ng-model="new_product.location" placeholder="location">
-  <textarea class = "feedback-input" ng-model="new_product.tags" placeholder="tags (comma separated)"></textarea>
-  <input class = "feedback-input" type="number" ng-model="new_product.num_left" placeholder="quantity">
-  <input type="submit" ng-click="addProduct()">
-  <br>
+<input class = "feedback-input" type="text" ng-model="new_product.name" placeholder="name">
+<input class = "feedback-input" type="url" ng-model="new_product.image_url" placeholder="image url">
+<textarea class = "feedback-input" ng-model="new_product.description" placeholder="description"></textarea>
+<input class = "feedback-input" type="text" ng-model="new_product.model" placeholder="model">
+<input class = "feedback-input" type="text" ng-model="new_product.location" placeholder="location">
+<textarea class = "feedback-input" ng-model="new_product.tags" placeholder="tags (comma separated)"></textarea>
+<input class = "feedback-input" type="number" ng-model="new_product.num_left" placeholder="quantity">
+<input type="submit" ng-click="addProduct()">
+<br>
 
-  <!-- Start of modal code -->
-  <!-- TODO: Refactor into separate files -->
+<div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
 
-  <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+      </button>
+        <h1 class="modal-title" id="exampleModalLabel">View Product</h1>
 
-        </button>
-          <h1 class="modal-title" id="exampleModalLabel">View Product</h1>
-
+    </div>
+    <div class="modal-body" align="left">
+      <div class="form-group" >
+          <p><img style = "height:100px; width: 100px" src="{{thisProduct.image_url}}"></p>
+          <p>
+            <label><b>Name: </b></label>
+            <input type="text" ng-readonly="!editing" value="{{thisProduct.name}}"/>
+          </p>
+          <p>
+            <label><b>Model:  </b></label>
+            <input type="text" ng-readonly="!editing" value="{{thisProduct.model}}"/>
+          </p>
+          <p>
+            <label><b>Quantity:  </b></label>
+            <input type="number" ng-readonly="!editing" value="{{thisProduct.num_left}}"/>
+          </p>
+          <p>
+            <label><b>Description:  </b></label>
+            <input type="text" ng-readonly="!editing" value="{{thisProduct.description}}"/>
+          </p>
+          <p>
+            <label><b>Location:  </b></label>
+            <input type="text" ng-readonly="!editing" value="{{thisProduct.location}}"/>
+          </p>
+          <p>
+            <label><b>Tags:  </b><label>
+            <input type="text" ng-readonly="!editing" value="{{thisProduct.tags}}"/>
+          </p>
       </div>
-      <div class="modal-body" align="left">
-        <div class="form-group" >
-            <p><img style = "height:100px; width: 100px" src="{{thisProduct.image_url}}"></p>
-            <p>
-              <label><b>Name: </b></label>
-              <input type="text" ng-readonly="!editing" value="{{thisProduct.name}}"/>
-            </p>
-            <p>
-              <label><b>Model:  </b></label>
-              <input type="text" ng-readonly="!editing" value="{{thisProduct.model}}"/>
-            </p>
-            <p>
-              <label><b>Quantity:  </b></label>
-              <input type="number" ng-readonly="!editing" value="{{thisProduct.num_left}}"/>
-            </p>
-            <p>
-              <label><b>Description:  </b></label>
-              <input type="text" ng-readonly="!editing" value="{{thisProduct.description}}"/>
-            </p>
-            <p>
-              <label><b>Location:  </b></label>
-              <input type="text" ng-readonly="!editing" value="{{thisProduct.location}}"/>
-            </p>
-            <p>
-              <label><b>Tags:  </b><label>
-              <input type="text" ng-readonly="!editing" value="{{thisProduct.tags}}"/>
-            </p>
-        </div>
 
-      <div class="modal-footer">
-        <button class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmModal">Delete Product</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+    <div class="modal-footer">
+      <button class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmModal">Delete Product</button>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 
-        <!--
-        <button class = "remove" ng-click='viewProduct(product)' data-toggle="modal" data-target="#productModal">View</button>
-        -->
+      <!--
+      <button class = "remove" ng-click='viewProduct(product)' data-toggle="modal" data-target="#productModal">View</button>
+      -->
 
-        <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Request</button>
-        <button type="button" class="btn btn-primary" ng-click="editProduct(thisProduct)">{{editing == true ? 'Save Edits' : 'Edit' }}</button>
+      <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Request</button>
+      <button type="button" class="btn btn-primary" ng-click="editProduct(thisProduct)">{{editing == true ? 'Save Edits' : 'Edit' }}</button>
 
-      </div>
     </div>
   </div>
 </div>
 </div>
+</div>
 
 
-<div ng-app="orders_app" id="ordersAppModal">
 <div class="modal fade" id="requestModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 <div class="modal-dialog" role="document">
   <div class="modal-content">
@@ -133,7 +128,7 @@
       <h1>Create Order</h1>
 
 
-      <select class = "feedback-input" ng-controller="customersController" id = "customerList" name="customerOptions" ng-model="new_order.customer_name">
+      <select class = "feedback-input" ng-controller="customersController" id = "customerList" name="customerOptions" ng-model="new_order.userId">
         <option value="" selected disabled>User Name</option>
         <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.name"></option>
       </select>
@@ -171,7 +166,6 @@
 </div>
 </div>
 </div>
-</div>
 
 
 <div class="modal fade" id="deleteConfirmModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -201,6 +195,35 @@
 </div>
 </div>
 </div>
+
+<div class="modal fade" id="editConfirmModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+
+      </button>
+        <h1 class="modal-title" id="exampleModalLabel">Confirm Deletion</h1>
+
+    </div>
+    <div class="modal-body" align="left">
+      <div class="form-group" >
+        Confirm Edits
+      </div>
+
+
+    <div class="modal-footer">
+
+      <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmEditModal(thisProduct)>Confirm</button>
+      <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelEditModal()>Cancel</button>
+
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
 
   <script type="text/javascript">
     $('#productModal').on('show.bs.modal', function (event) {
