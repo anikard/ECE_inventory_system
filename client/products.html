@@ -287,6 +287,15 @@
 
     $scope.editProduct = function(product) {
       console.log("edit product called");
+      oldProduct = product;
+      if ($scope.editing) {
+        //TODO: throw confirmation dialog
+        //TODO: persist edit to db
+        $scope.editing = false;
+      }
+      else {
+        $scope.editing = true;
+      }
     }
 
     $scope.requestProduct = function(product) {
@@ -305,6 +314,7 @@
       ProductsFactory.viewProduct(product, function(data) {
         $scope.thisProduct = data;
         $scope.new_order.itemId = data._id;
+        $scope.editing = false;
         console.log(data);
       })
     }
@@ -403,12 +413,30 @@
       <div class="modal-body" align="left">
         <div class="form-group" >
             <p><img style = "height:100px; width: 100px" src="{{thisProduct.image_url}}"></p>
-            <p><b>Name: </b> {{thisProduct.name}}</p>
-            <p><b>Model:  </b>{{thisProduct.model}}</p>
-            <p><b>Quantity:  </b>{{thisProduct.num_left}}</p>
-            <p><b>Description:  </b>{{thisProduct.description}}</p>
-            <p><b>Location:  </b>{{thisProduct.location}}</p>
-            <p><b>Tags:  </b>{{thisProduct.tags}}</p>
+            <p>
+              <label><b>Name: </b></label>
+              <input type="text" ng-readonly="!editing" value="{{thisProduct.name}}"/>
+            </p>
+            <p>
+              <label><b>Model:  </b></label>
+              <input type="text" ng-readonly="!editing" value="{{thisProduct.model}}"/>
+            </p>
+            <p>
+              <label><b>Quantity:  </b></label>
+              <input type="number" ng-readonly="!editing" value="{{thisProduct.num_left}}"/>
+            </p>
+            <p>
+              <label><b>Description:  </b></label>
+              <input type="text" ng-readonly="!editing" value="{{thisProduct.description}}"/>
+            </p>
+            <p>
+              <label><b>Location:  </b></label>
+              <input type="text" ng-readonly="!editing" value="{{thisProduct.location}}"/>
+            </p>
+            <p>
+              <label><b>Tags:  </b><label>
+              <input type="text" ng-readonly="!editing" value="{{thisProduct.tags}}"/>
+            </p>
         </div>
 
       <div class="modal-footer">
@@ -420,7 +448,7 @@
         -->
 
         <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Request</button>
-        <button type="button" class="btn btn-primary" ng-click="editProduct(thisProduct)">Edit</button>
+        <button type="button" class="btn btn-primary" ng-click="editProduct(thisProduct)">{{editing == true ? 'Save Edits' : 'Edit' }}</button>
 
       </div>
     </div>
@@ -456,7 +484,7 @@
            <option ng-repeat="product in products" value="{{product.name}}">{{product.name}} || {{product.description}}</option>
        </select>
      -->
-     <p><b>Product:</b> {{thisProduct.name}} </p>
+     <input class = "feedback-input" type="text" value="{{thisProduct.name}}" ng-readonly="true" />
 
       <input class = "feedback-input" type="number" ng-model="new_order.quantity" placeholder="quantity">
       <textarea class = "feedback-input" ng-model="new_order.reason" placeholder="Reason"></textarea>
