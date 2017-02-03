@@ -6,9 +6,9 @@ var mongoose = require('mongoose');
 var Product = mongoose.model('Item');
 
 module.exports = (function() {
- 	return { 
+ 	return {
  		displayProducts: function(req, res) {
- 			res.redirect('products.html');
+ 			res.redirect('products/products.html');
  		},
 	  	show: function(req, res) {
 	     	Product.find({}, function(err, results) {
@@ -20,7 +20,7 @@ module.exports = (function() {
 	   		})
 	 	},
 	 	add: function(req, res) {
-			var product = new Product({name: req.body.name, 
+			var product = new Product({name: req.body.name,
 				description: req.body.description,
 				num_left: req.body.num_left,
 				image_url: req.body.image_url});
@@ -34,6 +34,6 @@ module.exports = (function() {
 			    }
 			})
 		}
-	   	
+
  	}
 })();
