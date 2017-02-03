@@ -5,13 +5,14 @@
 var mongoose = require('mongoose'); 
 var Schema = mongoose.Schema;
 var RequestSchema = new mongoose.Schema({
-  userId: {type:Schema.ObjectId, ref:'User'},
-  itemId: {type:Schema.ObjectId, ref:'Item'},
-  quantity: Number,
-  reason: String,
-  note: String,
-  status: String,
-  date: { type : Date, default: Date.now }   
+  user: {type:Schema.ObjectId, ref:'User'},
+  item: {type:Schema.ObjectId, ref:'Item'},
+  quantity: {type: Number, default: 0},
+  reason: {type: String, default: ""},
+  note: {type: String, default:""},
+  status: {type: String, default:"open"},
+  date: { type : Date, default: Date.now },
+  dateFulfilled: { type : Date, default: null},
 });
 
 mongoose.model('Request', RequestSchema);
