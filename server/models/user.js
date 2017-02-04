@@ -5,6 +5,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var UserSchema = new mongoose.Schema({
+  username: {type: String, default: ""},
   name: {type: String, default: ""},
   netId: {type: String, default: ""},
   date: { type : Date, default: Date.now },

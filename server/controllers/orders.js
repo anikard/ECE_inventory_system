@@ -71,6 +71,18 @@ module.exports = (function() {
 	 	},
 
 	   	add: function(req, res) {
+	   		if(!req.body.quantity) {
+	   			res.status(500).send({ error: "Missing quantity field" });
+	   			return;
+	   		}
+	   		if(!req.body.user) {
+	   			res.status(500).send({ error: "Missing userId field" });
+	   			return;
+	   		}
+	   		if(!req.body.item) {
+	   			res.status(500).send({ error: "Missing itemId field" });
+	   			return;
+	   		}
    			User.findOne({ '_id': req.body.userId }, function (err, user) {
    				if(err) {
    		         	res.status(500).send({ error: "No such user" });
