@@ -1,0 +1,110 @@
+<html ng-app="discussion_app">
+<head>
+  <title>Welcome</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+
+<style type="text/css">
+
+	::selection {
+      background: steelblue; /* Gecko Browsers */
+      color: beige;
+    }
+    ::-moz-selection {
+      background: steelblue; /* Gecko Browsers */
+      color: beige;
+    }
+
+    body { 
+      font-family: Helvetica, Arial, sans-serif;
+      text-align: center;
+    }
+
+    form {
+      margin-top: 15%;
+    }
+
+    h3 {
+      margin-bottom: 2em;
+    }
+
+    .feedback-input {
+      font-family: Helvetica, Arial, sans-serif;
+      font-weight:500;
+      font-size: 18px;
+      border-radius: 5px;
+      line-height: 22px;
+      background-color: transparent;
+      border:2px solid steelblue;
+      transition: all 0.5s;
+      padding: 13px;
+      margin-bottom: 15px;
+      width:100%;
+      box-sizing: border-box;
+      outline:0;
+      width: 50%;
+    }
+
+    .feedback-input:focus { border:2px solid #28A1B4; }
+
+
+    [type="submit"] {
+      font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+      width: 100%;
+      background: #6C93B4;
+      border-radius:5px;
+      border:0;
+      cursor:pointer;
+      font-size:24px;
+      padding-top:10px;
+      padding-bottom:10px;
+      transition: all 0.5s;
+      margin-top:-4px;
+      font-weight:700;
+      width: 50%;
+      color: white;
+    }
+    [type="submit"]:hover { background: teal; }
+
+  </style>
+
+
+  <script>
+    var discussion_app = angular.module('discussion_app', []);
+
+    discussion_app.factory('UserFactory', function($http) {
+      var factory = {};
+      var user;
+
+      factory.addUser = function(info, callback) {
+        $http.post('/addUser', info).success(function(output) {
+            
+        })
+      } 
+
+      return factory;
+    });
+
+    discussion_app.controller('userController', function($scope, UserFactory, $document) {
+
+      $scope.addUser = function() {
+  
+        UserFactory.addUser($scope.new_user, function(data) {
+          
+        });
+      }
+
+    
+
+  });
+
+  </script>
+</head>
+
+<body ng-controller="userController">
+  <form>
+    <h3>Enter your name:</h3>
+    <input style = "display:inline-block; width:40%;" type = "text" class = "feedback-input" ng-model="new_user.name">
+    <input style = "display:inline-block; width:20%;" type="submit" value = "Enter" ng-click="addUser()">
+  </form>
+</body>
+</html>
