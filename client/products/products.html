@@ -71,27 +71,27 @@
           <p><img style = "height:100px; width: 100px" src="{{thisProduct.image_url}}"></p>
           <p>
             <label><b>Name: </b></label>
-            <input type="text" ng-readonly="!editing" value="{{thisProduct.name}}"/>
+            <input id=productName type="text" ng-readonly="!editing" ng-model="currentProduct.name"/>
           </p>
           <p>
             <label><b>Model:  </b></label>
-            <input type="text" ng-readonly="!editing" value="{{thisProduct.model}}"/>
+            <input type="text" ng-readonly="!editing" ng-model="currentProduct.model"/>
           </p>
           <p>
             <label><b>Quantity:  </b></label>
-            <input type="number" ng-readonly="!editing" value="{{thisProduct.num_left}}"/>
+            <input type="number" ng-readonly="!editing" ng-model="currentProduct.num_left"/>
           </p>
           <p>
             <label><b>Description:  </b></label>
-            <input type="text" ng-readonly="!editing" value="{{thisProduct.description}}"/>
+            <input type="text" ng-readonly="!editing" ng-model="currentProduct.description"/>
           </p>
           <p>
             <label><b>Location:  </b></label>
-            <input type="text" ng-readonly="!editing" value="{{thisProduct.location}}"/>
+            <input type="text" ng-readonly="!editing" ng-model="currentProduct.location"/>
           </p>
           <p>
             <label><b>Tags:  </b><label>
-            <input type="text" ng-readonly="!editing" value="{{thisProduct.tags}}"/>
+            <input type="text" ng-readonly="!editing" ng-model="currentProduct.tags"/>
           </p>
       </div>
 
@@ -216,7 +216,7 @@
     <div class="modal-footer">
 
       <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmEditModal(thisProduct)>Confirm</button>
-      <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelEditModal()>Cancel</button>
+      <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelEditModal(thisProduct)>Cancel</button>
 
     </div>
   </div>
