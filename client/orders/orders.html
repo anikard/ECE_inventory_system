@@ -31,7 +31,7 @@
                         <td> Status </td>
                         <td> View Request </td>
                     </tr>
-                    <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-date'">
+                    <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
 
                         <td ng-bind="order.customer_name"></td>
                         <td ng-bind="order.item_name"></td>
@@ -86,8 +86,9 @@
             <p><b>Reason:  </b>{{thisOrder.reason}}</p>
             <p><b>Current Status:  </b>{{thisOrder.status}}</p>
           </div>
+          
+        <form id="request_response_form">
           <h3>Respond:</h3>
-        <form>
           <div class="form-group">
                 <div class="radio">
                   <label><input type="radio" name="optionResponse" class="approveButton" ng-model="orderResponse.yesOrNo" value = "approve">Approve</label>
@@ -101,9 +102,9 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-danger" ng-click='removeOrder(thisOrder)' >Cancel order</button>
+        <button class="btn btn-danger" ng-click='removeOrder(thisOrder)'  id = "cancelOrderButton">Cancel order</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" ng-click="respondToOrder()">Respond</button>
+        <button type="button" class="btn btn-primary" ng-click="respondToOrder()" id = "respondOrderButton">Respond</button>
       </div>
     </div>
   </div>
