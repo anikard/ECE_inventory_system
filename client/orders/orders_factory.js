@@ -117,6 +117,7 @@ var orders_app = angular.module('orders_app', []);
 
       $scope.respondToOrder = function() {
         $('#orderModal').modal('hide');
+        $scope.orderResponse.dateFulfilled = new Date();
         console.log($scope.orderResponse);
         OrderFactory.updateOrder($scope.orderResponse, function(data) {
           $scope.orderResponse = {};
