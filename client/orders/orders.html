@@ -31,7 +31,7 @@
                         <td> Status </td>
                         <td> View Request </td>
                     </tr>
-                    <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-date'">
+                    <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
 
                         <td ng-bind="order.customer_name"></td>
                         <td ng-bind="order.item_name"></td>
