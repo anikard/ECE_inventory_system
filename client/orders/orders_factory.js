@@ -73,12 +73,15 @@ var orders_app = angular.module('orders_app', []);
         console.log("addOrder from order controller scope");
 
         var customerSelected = $document[ 0 ].getElementById('customerList');
-        // TO FIX FEB 1 2017
-        $scope.new_order.userId = customerSelected.value; // id
-        // $scope.new_order.userId.name = customerSelected.options[customerSelected.selectedIndex].text;
-        $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
-
         var itemSelected = $document[ 0 ].getElementById('productList');
+        
+        if (!customerSelected.value || !itemSelected.value || !$scope.new_order || !$scope.new_order.quantity || !$scope.new_order.reason) {
+          console.log('Form incomplete');
+          return;
+        }
+
+        $scope.new_order.userId = customerSelected.value; // id
+        $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
         $scope.new_order.item_name = ((itemSelected.options[itemSelected.selectedIndex].text).split("|"))[0];
         $scope.new_order.itemId = itemSelected.value; // id
 
