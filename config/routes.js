@@ -10,13 +10,9 @@
   var tags = require('./../server/controllers/tags.js');
   var authenticator = require('./../server/controllers/authenticator.js');
 
-//security stuff
-var passport = require('passport');
-require('./passport');
 
 
   module.exports = (function(app) {
-      app.use(passport.initialize());      
 
     app.post('/addUser', function(req, res) {
       customers.update(req, res);
