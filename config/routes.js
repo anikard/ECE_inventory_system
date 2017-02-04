@@ -7,6 +7,7 @@
   var orders = require('./../server/controllers/orders.js');
   var products = require('./../server/controllers/products.js');
   var dashboard = require('./../server/controllers/dashboard.js');
+  var tags = require('./../server/controllers/tags.js');
 
   module.exports = (function(app) {
     app.post('/addUser', function(req, res) {
@@ -80,5 +81,17 @@
 
      app.post('/delete', function(req, res) {
       customers.delete(req, res);
+    });
+
+    app.get('/tags', function(req, res) {
+      tags.show(req, res);
+    });
+
+    app.post('/addTag', function(req, res) {
+      tags.add(req, res);
+    });
+
+    app.post('/deleteTag', function(req, res) {
+      tags.delete(req, res);
     });
   });

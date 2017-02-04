@@ -7,6 +7,48 @@ var Request = mongoose.model('Request');
 var User = mongoose.model('User');
 var Item = mongoose.model('Item');
 
+var findRequestsByUser = function(name) {
+	Request.find({})
+ 	.populate('item user')
+ 	.exec(function(err, results) {
+       	if(err) {
+         	console.log(err);
+         	return null;
+       	} else {
+       		results.forEach(function(e){
+       			e.customer_name = e.user.name;
+       		});
+         	return results;
+       	}
+		});
+};
+
+var findRequestsByItem = function(item) {
+	Request.find({})
+ 	.populate('item user')
+ 	.exec(function(err, results) {
+       	if(err) {
+         	console.log(err);
+         	return null;
+       	} else {
+       		results.forEach(function(e){
+       			e.customer_name = e.user.name;
+       		});
+         	return results;
+       	}
+		});
+};
+
+var findUserByName = function(name) {
+	User.findOne({ 'name': name }, function (err, user) {
+		if(err) {
+         	console.log(err);
+         	return null;
+       	} else {
+         	return user;
+       	}
+	})
+};
 
 module.exports = (function() {
  	return {
@@ -14,34 +56,44 @@ module.exports = (function() {
  			res.redirect('orders/orders.html');
  		},
 	  	show: function(req, res) {
-	     	res.json(this.findAllRequests());
+  			Request.find({})
+  		 	.populate('item user')
+  		 	.exec(function(err, results) {
+  		       	if(err) {
+  		         	res.status(500).send({ error: err});
+  		       	} else {
+  		       		results.forEach(function(e){
+  		       			e.customer_name = e.user?e.user.name:"";
+  		       		});
+  		         	res.json(results);
+  		       	}
+  				});
 	 	},
 
 	   	add: function(req, res) {
-	   		var user = this.findUserById(req.body.userId);
-	   		console.log("Detail:");
-	   		console.log(user._id);
-	   		if (!user) {
-	   			res.status(500).send({ error: "No such user" });
-	   		}
-
-	        var request = new Request({
-	        	userId: user._id,
-	        	quantity: req.body.quantity | 0,
-	        	itemId: req.body.itemId | "",
-	        	reason: req.body.reason | "",
-	        	note: req.body.note | "",
-				status: req.body.status | "open",
-	        });
-
-	        request.save(function(err){
-	        	if (err) {
-	        		res.status(500).send({ error: err });
-	        	} else {
-	        		console.log("Successfully added an order!");
-	        		res.status(200).send("Successfully added an order!");
-	        	}
-	        });
+   			User.findOne({ '_id': req.body.userId }, function (err, user) {
+   				if(err) {
+   		         	res.status(500).send({ error: "No such user" });
+   		       	} else {
+         	        var request = new Request({
+         	        	user: user._id,
+         	        	quantity: req.body.quantity || 0,
+         	        	item: req.body.itemId || "",
+         	        	reason: req.body.reason || "",
+         	        	note: req.body.note || "",
+         				status: req.body.status || "open",
+         	        });
+         	        console.log(request);
+         	        request.save(function(err){
+         	        	if (err) {
+         	        		res.status(500).send({ error: err });
+         	        	} else {
+         	        		console.log("Successfully added an order!");
+         	        		res.status(200).send("Successfully added an order!");
+         	        	}
+         	        });
+   		       	}
+   			});
 		},
 
 		close: function(req, res) {
@@ -68,8 +120,8 @@ module.exports = (function() {
 					if (err) {
 						res.status(500).send({ error: err });
 					} else {
-						console.log("Successfully added an order!");
-	        			res.status(200).send("Successfully added an order!");
+						console.log("Successfully deleted an order!");
+	        			res.status(200).send("Successfully deleted an order!");
 					}
 					res.end();
 				}
@@ -77,136 +129,53 @@ module.exports = (function() {
 		},
 
 		update: function(req, res) {
-			var request = this.findRequestsById(req.body._id);
-			if (!request)
-				res.status(500).send({ error: "Cannot find order" });
-
-			var item = this.findItemById(request.itemId);
-			if (!item)
-				res.status(500).send({ error: "Cannot find product in the order" });
-
-			if (request.status === "open" && req.body.status === "approved") {
-				if (item.quantity && item.quantity >= request.quantity) {
-					item.quantity-=request.quantity;
-					request.note = req.body.note | request.note;
-					request.status = "approved";
-					request.save(function (err) {
-						if(!err) {
-							item.save(function (err) {
-								res.json(request);
-							});
-						}
-					});
-
+			Request.findOne({ '_id': req.body._id }, function (err, request) {
+				if (err) {
+					res.status(500).send({ error: "Cannot find order" });
 				} else {
-					res.status(500).send({ error: "quantity requested exceeds st" });
+					Item.findOne({ '_id': request.item }, function (err, item) {
+						if(err) {
+				         	res.status(500).send({ error: "Cannot find item in the order" });
+				       	} else {
+				         	if (request.status === "open" && req.body.status === "approved") {
+				         		if (item.quantity && item.quantity >= request.quantity) {
+				         			item.quantity-=request.quantity;
+				         			request.note = req.body.note || request.note;
+				         			request.status = "approved";
+				         			request.save(function (err) {
+				         				if(!err) {
+				         					item.save(function (err) {
+				         						res.json(request);
+				         					});
+				         				}
+				         			});
+
+				         		} else {
+				         			res.status(500).send({ error: "quantity requested exceeds stock limit" });
+				         		}
+				         	} else {
+				         		console.log(request);
+				         		request.note = req.body.note || request.note;
+				         		request.status = req.body.status || request.status;
+				         		request.quantity = req.body.quantity || request.quantity;
+				         		request.reason = req.body.reason || request.reason;
+				         		request.item = req.body.itemId || request.item;
+				         		request.user = req.body.userId || request.user;
+				         		request.save(function (err){
+				         			if(!err){
+				         				res.json(request);
+				         			}
+				         		})
+				         	}
+				       	}
+					});
 				}
-			} else {
-				request.note = req.body.note | request.note;
-				request.status = req.body.status | request.status;
-				request.quantity = req.body.quantity | request.quantity;
-				request.reason = req.body.reason | request.reason;
-				request.itemId = req.body.itemId | request.itemId;
-				request.userId = req.body.userId | request.userId;
-				request.save(function (err){
-					if(!err){
-						res.json(request);
-					}
-				})
-			}
+			});
+
+			
 		},
 
-		findRequestsById: function(id) {
-			Request.findOne({ '_id': id }, function (err, request) {
-			  if (err) return null;
-			  return request;
-			})
-		},
-
-		findAllRequests: function() {
-			Request.find({})
-	     	.populate('item user')
-	     	.exec(function(err, results) {
-		       	if(err) {
-		         	console.log(err);
-		         	return null;
-		       	} else {
-		       		results.forEach(function(e){
-		       			//e.customer_name = e.user.name;
-		       		});
-		         	return results;
-		       	}
-	   		});
-		},
-
-		findRequestsByUser: function(name) {
-			Request.find({})
-	     	.populate('item user')
-	     	.exec(function(err, results) {
-		       	if(err) {
-		         	console.log(err);
-		         	return null;
-		       	} else {
-		       		results.forEach(function(e){
-		       			e.customer_name = e.user.name;
-		       		});
-		         	return results;
-		       	}
-	   		});
-		},
-
-		findRequestsByItem: function(item) {
-			Request.find({})
-	     	.populate('item user')
-	     	.exec(function(err, results) {
-		       	if(err) {
-		         	console.log(err);
-		         	return null;
-		       	} else {
-		       		results.forEach(function(e){
-		       			e.customer_name = e.user.name;
-		       		});
-		         	return results;
-		       	}
-	   		});
-		},
-
-		findUserByName: function(name) {
-			User.findOne({ 'name': name }, function (err, user) {
-				if(err) {
-		         	console.log(err);
-		         	return null;
-		       	} else {
-		         	return user;
-		       	}
-			})
-		},
-
-		findUserById: function(userId) {
-			User.findOne({ '_id': userId }, function (err, user) {
-				if(err) {
-		         	console.log(err);
-		         	return null;
-		       	} else {
-		       		console.log("Success!");
-		       		console.log(user._id);
-		       		console.log(user.name);
-		         	return user;
-		       	}
-			})
-		},
-
-
-		findItemById: function(id) {
-			Item.findOne({ '_id': id }, function (err, item) {
-				if(err) {
-		         	console.log(err);
-		         	return null;
-		       	} else {
-		         	return item;
-		       	}
-			})
-		},
+		
  	}
 })();
 
