@@ -8,8 +8,16 @@
   var products = require('./../server/controllers/products.js');
   var dashboard = require('./../server/controllers/dashboard.js');
   var tags = require('./../server/controllers/tags.js');
+  var authenticator = require('./../server/controllers/authenticator.js');
+
+//security stuff
+var passport = require('passport');
+require('./passport');
+
 
   module.exports = (function(app) {
+      app.use(passport.initialize());      
+
     app.post('/addUser', function(req, res) {
       customers.update(req, res);
       dashboard.show(req, res);
@@ -94,4 +102,14 @@
     app.post('/deleteTag', function(req, res) {
       tags.delete(req, res);
     });
+    app.post('/register', function(req, res, next){
+	 authenticator.register(req, res, next)
+     });
+
+    app.post('/login', function(req, res, next){
+	 authenticator.login(req, res, next)
+     });
+
+     
+
   });
