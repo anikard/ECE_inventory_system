@@ -1,5 +1,6 @@
 
 var products_app = angular.module('products_app', []);
+//var currentTags = ["test1", "test2"];
 
 products_app.factory('ProductsFactory', function($http) {
   var factory = {};
@@ -76,6 +77,7 @@ products_app.factory('ProductsFactory', function($http) {
 products_app.controller('productsController', function($scope, ProductsFactory, $document) {
     $scope.products = ProductsFactory.getproducts(function(data) {
     $scope.products = data;
+    $scope.currentTags = [];
   });
 
   $scope.addProduct = function() {
@@ -211,6 +213,17 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
   $scope.hideRequestModal = function() {
     console.log("Hide Request Modal");
     $('#requestModal').modal('hide');
+  }
+
+  $scope.tagClicked = function(customer) {
+    console.log("tagClicked");
+    console.log(customer);
+    console.log($scope.currentTags);
+    $scope.currentTags.push(customer.name);
+  }
+
+  $scope.newTag = function() {
+    console.log("newTag");
   }
 
 })
