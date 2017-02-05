@@ -50,7 +50,24 @@
 <textarea class = "feedback-input" ng-model="new_product.description" placeholder="description"></textarea>
 <input class = "feedback-input" type="text" ng-model="new_product.model" placeholder="model">
 <input class = "feedback-input" type="text" ng-model="new_product.location" placeholder="location">
-<textarea class = "feedback-input" ng-model="new_product.tags" placeholder="tags (comma separated)"></textarea>
+
+<br>
+<span ng-repeat="cTag in currentTags" ng-bind="cTag"></span>
+<br>
+<!-- TODO: view array of tags
+      1. Make it so that tags can be added form currently available customers
+      2. Make it so that these tags are shown aobve in array of tags
+      3. Give third option to add new tag/customer
+      4. Make adding a new tag/customer add it to current product tag array-->
+
+      <select class = "feedback-input" ng-controller="customersController" id = "customerList" name="customerOptions" ng-model="new_order.userId">
+        <option value="" ng-click="newTag()">Add a tag</option>
+        <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.name" ng-click="tagClicked(customer)"></option>
+      </select>
+
+<!--<textarea class = "feedback-input" ng-model="new_product.tags" placeholder="tags (comma separated)"></textarea>-->
+
+
 <input class = "feedback-input" type="number" ng-model="new_product.num_left" placeholder="quantity">
 <input type="submit" ng-click="addProduct()">
 <br>
@@ -71,28 +88,59 @@
           <p><img style = "height:100px; width: 100px" src="{{thisProduct.image_url}}"></p>
           <p>
             <label><b>Name: </b></label>
-            <input type="text" ng-readonly="!editing" value="{{thisProduct.name}}"/>
+
+            <input id=productName type="text" ng-readonly="!editing" ng-model="currentProduct.name"/>
           </p>
           <p>
             <label><b>Model:  </b></label>
-            <input type="text" ng-readonly="!editing" value="{{thisProduct.model}}"/>
+            <input type="text" ng-readonly="!editing" ng-model="currentProduct.model"/>
           </p>
           <p>
             <label><b>Quantity:  </b></label>
-            <input type="number" ng-readonly="!editing" value="{{thisProduct.num_left}}"/>
+            <input type="number" ng-readonly="!editing" ng-model="currentProduct.num_left"/>
           </p>
           <p>
             <label><b>Description:  </b></label>
-            <input type="text" ng-readonly="!editing" value="{{thisProduct.description}}"/>
+            <input type="text" ng-readonly="!editing" ng-model="currentProduct.description"/>
           </p>
           <p>
             <label><b>Location:  </b></label>
-            <input type="text" ng-readonly="!editing" value="{{thisProduct.location}}"/>
+            <input type="text" ng-readonly="!editing" ng-model="currentProduct.location"/>
           </p>
           <p>
             <label><b>Tags:  </b><label>
-            <input type="text" ng-readonly="!editing" value="{{thisProduct.tags}}"/>
+            <input type="text" ng-readonly="!editing" ng-model="currentProduct.tags"/>
           </p>
+      </div>
+
+      <br>
+      <h2>Requests made on this item</h2>
+
+
+    <div class="customerTable" id = "cTable" ng-controller="ordersController">
+                    <table >
+                        <tr>
+                            <td> User Name </td>
+                            <td> Item </td>
+                            <td> Quantity </td>
+                            <td> Date Issued </td>
+                            <td> Date Fulfilled </td>
+                            <td> Status </td>
+                            <!--<td> View Request </td>-->
+                        </tr>
+                        <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
+
+                            <td ng-bind="order.customer_name"></td>
+                            <td ng-bind="order.item_name"></td>
+                            <td ng-bind="order.quantity"></td>
+                            <td ng-bind="order.date | date:'short'"></td>
+                            <td ng-bind="order.dateDone | date:'short'"></td>
+                            <td ng-bind="order.status"></td>
+                            <!--<td><button class = "remove" ng-click='viewOrder(order)' data-toggle="modal" data-target="#orderModal">View</button></td>-->
+
+                        </tr>
+
+                    </table>
       </div>
 
     <div class="modal-footer">
@@ -216,7 +264,8 @@
     <div class="modal-footer">
 
       <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmEditModal(thisProduct)>Confirm</button>
-      <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelEditModal()>Cancel</button>
+
+      <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelEditModal(thisProduct)>Cancel</button>
 
     </div>
   </div>

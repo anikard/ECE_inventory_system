@@ -13,6 +13,7 @@ var RequestSchema = new mongoose.Schema({
   status: {type: String, default:"open"},
   date: { type : Date, default: Date.now },
   dateFulfilled: { type : Date, default: null},
+
 });
 
 mongoose.model('Request', RequestSchema);

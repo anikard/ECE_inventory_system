@@ -1,10 +1,14 @@
 
 var products_app = angular.module('products_app', []);
 
+
 products_app.factory('ProductsFactory', function($http) {
   var factory = {};
   var products = [];
   var customers = [];
+
+  var orders = [];
+  var originalProduct = {};
 
   factory.getcustomers = function(callback) {
       $http.get('/customers').success(function(output) {
@@ -19,6 +23,20 @@ products_app.factory('ProductsFactory', function($http) {
       callback(products);
     })
   }
+
+
+  factory.getorders = function(callback) {
+        $http.get('/orders').success(function(output) {
+          orders = output;
+
+          orders.forEach(function(elem) {
+            elem["customer_name"] = elem["userId"].name;
+          })
+          console.log(orders);
+
+          callback(orders);
+        })
+    }
 
   factory.addProduct = function(info, callback) {
     $http.post('/addProduct', info).success(function(output) {
@@ -61,6 +79,8 @@ products_app.factory('ProductsFactory', function($http) {
 products_app.controller('productsController', function($scope, ProductsFactory, $document) {
     $scope.products = ProductsFactory.getproducts(function(data) {
     $scope.products = data;
+
+    $scope.currentTags = [];
   });
 
   $scope.addProduct = function() {
@@ -129,7 +149,7 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
 
   $scope.editProduct = function(product) {
     console.log("edit product called");
-    oldProduct = product;
+
     if ($scope.editing) {
       //TODO: throw confirmation dialog
       $('#editConfirmModal').modal('show');
@@ -137,19 +157,32 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
       $scope.editing = false;
     }
     else {
+
+      console.log("Going into edit mode, save product to oldProduct");
+      originalProduct = angular.copy(product);
+      console.log(originalProduct);
       $scope.editing = true;
     }
   }
 
   $scope.confirmEditModal = function(product) {
     console.log("confirm edit");
+
+    console.log(product);
+    /*
     ProductsFactory.editProduct(product, function (data) {
 
     })
+    */
+    $('#editConfirmModal').modal('hide');
   }
 
-  $scope.cancelEditModal = function() {
+  $scope.cancelEditModal = function(product) {
     console.log("Cancel Edit");
+    console.log(originalProduct);
+    console.log($scope.currentProduct);
+    $scope.currentProduct = angular.copy(originalProduct);
+    console.log($scope.currentProduct);
     $('#editConfirmModal').modal('hide');
   }
 
@@ -172,6 +205,9 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
   $scope.viewProduct = function(product) {
     console.log("View product selected");
     console.log(product.name);
+
+    $scope.currentProduct = angular.copy(product);
+    originalProduct = angular.copy(product);
     ProductsFactory.viewProduct(product, function(data) {
       $scope.thisProduct = data;
       $scope.new_order = {};
@@ -186,10 +222,32 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
     $('#requestModal').modal('hide');
   }
 
+  $scope.tagClicked = function(customer) {
+    console.log("tagClicked");
+    console.log(customer);
+    console.log($scope.currentTags);
+    $scope.currentTags.push(customer.name);
+  }
+
+  $scope.newTag = function() {
+    console.log("newTag");
+  }
+
 })
 
 products_app.controller('customersController', function($scope, ProductsFactory) {
     $scope.customers = ProductsFactory.getcustomers(function(data) {
-    $scope.customers = data;
+
+      $scope.customers = data;
+      console.log("inside prod cust");
+      console.log($scope.customers)
+  })
+})
+
+products_app.controller('ordersController', function($scope, ProductsFactory) {
+    $scope.orders = ProductsFactory.getorders(function(data) {
+      $scope.orders = data;
+      console.log("inside prod order");
+      console.log($scope.orders);
   })
 })

@@ -8,6 +8,7 @@ var LogSchema = new mongoose.Schema({
   userId: {type:Schema.ObjectId, ref:'User'},
   action: {type: String, default: ""},
   note: {type: String, default: ""},
+
   date: { type : Date, default: Date.now }   
 });
 

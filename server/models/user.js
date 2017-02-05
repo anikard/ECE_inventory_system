@@ -19,6 +19,7 @@ var UserSchema = new mongoose.Schema({
   status: {type: String, default: ""},
   hash: {type: String, default: ""}
 
+
   //orders: [{type: Schema.Types.ObjectId, ref:'Order'}],
   //active: String
 }); 
@@ -48,6 +49,7 @@ UserSchema.methods.generateJWT = function() {
     exp: parseInt(exp.getTime() / 1000),
   }, 'SECRET');
 };
+
 
 
 mongoose.model('User', UserSchema);

@@ -87,6 +87,7 @@
       customers.delete(req, res);
     });
 
+
     app.get('/tags', function(req, res) {
       tags.show(req, res);
     });
@@ -107,5 +108,6 @@
      });
 
      
+
 
   });

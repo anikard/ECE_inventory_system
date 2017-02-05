@@ -12,6 +12,7 @@ var ItemSchema = new mongoose.Schema({
   location: {type: String, default: ""}, 
   tags: [String],
   image: {type: String, default: ""}
+
 });
 
 mongoose.model('Item', ItemSchema);

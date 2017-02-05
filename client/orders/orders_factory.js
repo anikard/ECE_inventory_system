@@ -73,12 +73,16 @@ var orders_app = angular.module('orders_app', []);
         console.log("addOrder from order controller scope");
 
         var customerSelected = $document[ 0 ].getElementById('customerList');
-        // TO FIX FEB 1 2017
-        $scope.new_order.userId = customerSelected.value; // id
-        // $scope.new_order.userId.name = customerSelected.options[customerSelected.selectedIndex].text;
-        $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
 
         var itemSelected = $document[ 0 ].getElementById('productList');
+
+        if (!customerSelected.value || !itemSelected.value || !$scope.new_order || !$scope.new_order.quantity || !$scope.new_order.reason) {
+          console.log('Form incomplete');
+          return;
+        }
+
+        $scope.new_order.userId = customerSelected.value; // id
+        $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
         $scope.new_order.item_name = ((itemSelected.options[itemSelected.selectedIndex].text).split("|"))[0];
         $scope.new_order.itemId = itemSelected.value; // id
 
@@ -109,6 +113,17 @@ var orders_app = angular.module('orders_app', []);
       $scope.viewOrder = function(order) {
           OrderFactory.viewOrder(order, function(data) {
             $scope.thisOrder = data;
+
+            if ($scope.thisOrder.status != "open") {
+              ($document[0].getElementById('request_response_form')).style.display = "none";
+              ($document[0].getElementById('cancelOrderButton')).style.display = "none";
+              ($document[0].getElementById('respondOrderButton')).style.display = "none";
+            }
+            else {
+              ($document[0].getElementById('request_response_form')).style.display = "block";
+              ($document[0].getElementById('cancelOrderButton')).style.display = "inline";
+              ($document[0].getElementById('respondOrderButton')).style.display = "inline";
+            }
             console.log(data);
         });
 
@@ -117,6 +132,8 @@ var orders_app = angular.module('orders_app', []);
 
       $scope.respondToOrder = function() {
         $('#orderModal').modal('hide');
+
+        $scope.orderResponse.dateFulfilled = new Date();
         console.log($scope.orderResponse);
         OrderFactory.updateOrder($scope.orderResponse, function(data) {
           $scope.orderResponse = {};
@@ -135,5 +152,9 @@ var orders_app = angular.module('orders_app', []);
     orders_app.controller('customersController', function($scope, OrderFactory) {
         $scope.customers = OrderFactory.getcustomers(function(data) {
         $scope.customers = data;
+
+        //TODO: delete this line and the two below
+        console.log("inside ord cust");
+        console.log($scope.customers);
       })
     })

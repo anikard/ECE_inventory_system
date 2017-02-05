@@ -50,6 +50,7 @@ var findUserByName = function(name) {
 	})
 };
 
+
 module.exports = (function() {
  	return {
  		displayOrders: function(req, res) {
@@ -135,6 +136,7 @@ module.exports = (function() {
 						console.log("Successfully deleted an order!");
 	        			res.status(200).send("Successfully deleted an order!");
 					}
+
 					res.end();
 				}
 			);
