@@ -64,7 +64,7 @@ module.exports = (function() {
   		         	res.status(500).send({ error: err});
   		       	} else {
   		       		results.forEach(function(e){
-  		       			e.customer_name = e.user?e.user.name:"";
+  		       			e.customer_name = e.user?e.user.name:"SAMPLE_NAME"; // TO FIX
   		       		});
   		         	res.json(results);
   		       	}
@@ -76,11 +76,11 @@ module.exports = (function() {
 	   			res.status(500).send({ error: "Missing quantity field" });
 	   			return;
 	   		}
-	   		if(!req.body.user) {
+	   		if(!req.body.userId) {
 	   			res.status(500).send({ error: "Missing userId field" });
 	   			return;
 	   		}
-	   		if(!req.body.item) {
+	   		if(!req.body.itemId) {
 	   			res.status(500).send({ error: "Missing itemId field" });
 	   			return;
 	   		}
