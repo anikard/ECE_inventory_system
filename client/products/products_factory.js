@@ -204,5 +204,7 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
 products_app.controller('customersController', function($scope, ProductsFactory) {
     $scope.customers = ProductsFactory.getcustomers(function(data) {
     $scope.customers = data;
+    console.log("inside prod cust");
+    console.log($scope.customers)
   })
 })

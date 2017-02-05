@@ -74,7 +74,7 @@ var orders_app = angular.module('orders_app', []);
 
         var customerSelected = $document[ 0 ].getElementById('customerList');
         var itemSelected = $document[ 0 ].getElementById('productList');
-        
+
         if (!customerSelected.value || !itemSelected.value || !$scope.new_order || !$scope.new_order.quantity || !$scope.new_order.reason) {
           console.log('Form incomplete');
           return;
@@ -149,5 +149,8 @@ var orders_app = angular.module('orders_app', []);
     orders_app.controller('customersController', function($scope, OrderFactory) {
         $scope.customers = OrderFactory.getcustomers(function(data) {
         $scope.customers = data;
+        //TODO: delete this line and the two below
+        console.log("inside ord cust");
+        console.log($scope.customers);
       })
     })
