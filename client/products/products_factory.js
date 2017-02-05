@@ -5,6 +5,7 @@ products_app.factory('ProductsFactory', function($http) {
   var factory = {};
   var products = [];
   var customers = [];
+  var orders = [];
   var originalProduct = {};
 
   factory.getcustomers = function(callback) {
@@ -20,6 +21,19 @@ products_app.factory('ProductsFactory', function($http) {
       callback(products);
     })
   }
+
+  factory.getorders = function(callback) {
+        $http.get('/orders').success(function(output) {
+          orders = output;
+
+          orders.forEach(function(elem) {
+            elem["customer_name"] = elem["userId"].name;
+          })
+          console.log(orders);
+
+          callback(orders);
+        })
+    }
 
   factory.addProduct = function(info, callback) {
     $http.post('/addProduct', info).success(function(output) {
@@ -203,8 +217,16 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
 
 products_app.controller('customersController', function($scope, ProductsFactory) {
     $scope.customers = ProductsFactory.getcustomers(function(data) {
-    $scope.customers = data;
-    console.log("inside prod cust");
-    console.log($scope.customers)
+      $scope.customers = data;
+      console.log("inside prod cust");
+      console.log($scope.customers)
+  })
+})
+
+products_app.controller('ordersController', function($scope, ProductsFactory) {
+    $scope.orders = ProductsFactory.getorders(function(data) {
+      $scope.orders = data;
+      console.log("inside prod order");
+      console.log($scope.orders);
   })
 })

@@ -107,6 +107,36 @@
           </p>
       </div>
 
+      <br>
+      <h2>Requests made on this item</h2>
+
+
+    <div class="customerTable" id = "cTable" ng-controller="ordersController">
+                    <table >
+                        <tr>
+                            <td> User Name </td>
+                            <td> Item </td>
+                            <td> Quantity </td>
+                            <td> Date Issued </td>
+                            <td> Date Fulfilled </td>
+                            <td> Status </td>
+                            <!--<td> View Request </td>-->
+                        </tr>
+                        <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
+
+                            <td ng-bind="order.customer_name"></td>
+                            <td ng-bind="order.item_name"></td>
+                            <td ng-bind="order.quantity"></td>
+                            <td ng-bind="order.date | date:'short'"></td>
+                            <td ng-bind="order.dateDone | date:'short'"></td>
+                            <td ng-bind="order.status"></td>
+                            <!--<td><button class = "remove" ng-click='viewOrder(order)' data-toggle="modal" data-target="#orderModal">View</button></td>-->
+
+                        </tr>
+
+                    </table>
+      </div>
+
     <div class="modal-footer">
       <button class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmModal">Delete Product</button>
       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
