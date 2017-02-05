@@ -3,9 +3,52 @@
 /********************************************************/
 
 var mongoose = require('mongoose');
-var Order = mongoose.model('Request');
-var Customer = mongoose.model('User');
-var Product = mongoose.model('Item');
+var Request = mongoose.model('Request');
+var User = mongoose.model('User');
+var Item = mongoose.model('Item');
+
+var findRequestsByUser = function(name) {
+	Request.find({})
+ 	.populate('item user')
+ 	.exec(function(err, results) {
+       	if(err) {
+         	console.log(err);
+         	return null;
+       	} else {
+       		results.forEach(function(e){
+       			e.customer_name = e.user.name;
+       		});
+         	return results;
+       	}
+		});
+};
+
+var findRequestsByItem = function(item) {
+	Request.find({})
+ 	.populate('item user')
+ 	.exec(function(err, results) {
+       	if(err) {
+         	console.log(err);
+         	return null;
+       	} else {
+       		results.forEach(function(e){
+       			e.customer_name = e.user.name;
+       		});
+         	return results;
+       	}
+		});
+};
+
+var findUserByName = function(name) {
+	User.findOne({ 'name': name }, function (err, user) {
+		if(err) {
+         	console.log(err);
+         	return null;
+       	} else {
+         	return user;
+       	}
+	})
+};
 
 
 module.exports = (function() {
@@ -14,69 +57,139 @@ module.exports = (function() {
  			res.redirect('orders/orders.html');
  		},
 	  	show: function(req, res) {
-	     	Order.find({})
-	     	.populate('itemId')
-	     	.populate('userId')
-	     	.exec(function(err, results) {
-		       	if(err) {
-		         	console.log(err);
-		       	} else {
-		         	res.json(results);
-		       	}
-	   		});
+  			Request.find({})
+  		 	.populate('item user')
+  		 	.exec(function(err, results) {
+  		       	if(err) {
+  		         	res.status(500).send({ error: err});
+  		       	} else {
+  		       		results.forEach(function(e){
+  		       			e.customer_name = e.user?e.user.name:"";
+  		       		});
+  		         	res.json(results);
+  		       	}
+  				});
 	 	},
 
 	   	add: function(req, res) {
-	   		Customer.findOne({name: req.body.customer_name}, function(err, user){
-          console.log(user);
-		        var order = new Order({
-		        	quantity: req.body.quantity,
-		        	userId: user._id,
-		        	itemId: req.body.product,
-		        	note: "",
- 					status: "open",
-		        });
-
-		        order.save(function(err){
-		        	if (!err) {
-		        		console.log("Successfully added an order!");
-		        	}
-		        	res.end();
-		        });
-		    });
+	   		if(!req.body.quantity) {
+	   			res.status(500).send({ error: "Missing quantity field" });
+	   			return;
+	   		}
+	   		if(!req.body.user) {
+	   			res.status(500).send({ error: "Missing userId field" });
+	   			return;
+	   		}
+	   		if(!req.body.item) {
+	   			res.status(500).send({ error: "Missing itemId field" });
+	   			return;
+	   		}
+   			User.findOne({ '_id': req.body.userId }, function (err, user) {
+   				if(err) {
+   		         	res.status(500).send({ error: "No such user" });
+   		       	} else {
+         	        var request = new Request({
+         	        	user: user._id,
+         	        	quantity: req.body.quantity || 0,
+         	        	item: req.body.itemId || "",
+         	        	reason: req.body.reason || "",
+         	        	note: req.body.note || "",
+         				status: req.body.status || "open",
+         	        });
+         	        console.log(request);
+         	        request.save(function(err){
+         	        	if (err) {
+         	        		res.status(500).send({ error: err });
+         	        	} else {
+         	        		console.log("Successfully added an order!");
+         	        		res.status(200).send("Successfully added an order!");
+         	        	}
+         	        });
+   		       	}
+   			});
 		},
 
-		delete: function(req, res) {
+		close: function(req, res) {
 			// Customer.update(
 			// 		{_id: req.body._customer},
    //                 	{ $pull: { orders: req.body._id} }
    //               );
-			Order.findByIdAndUpdate(
-				req.body._id,
+			request.findByIdAndUpdate(
+				req.body._id, 
 				{ $set: {
 					status: "closed",
-				}},
-				{ new: true },
-				function (err, order) {
+				}}, 
+				{ new: true }, 
+				function (err, request) {
 					if (err) console.log("Error");
 					res.end();
 				}
 			);
 		},
 
-		update: function(req, res) {
-			Order.findByIdAndUpdate(
-				req.body._id,
-				{ $set: {
-					status: req.body.status,
-					note: req.body.note,
-				}},
-				{ new: true },
-				function (err, order) {
-					if (err) console.log("Error");
-					res.json(order);
-				});
+		delete: function(req, res) {
+			Request.remove({ _id: req.body._id}, 
+				function (err, request) {
+					if (err) {
+						res.status(500).send({ error: err });
+					} else {
+						console.log("Successfully deleted an order!");
+	        			res.status(200).send("Successfully deleted an order!");
+					}
+
+					res.end();
+				}
+			);
 		},
 
+		update: function(req, res) {
+			Request.findOne({ '_id': req.body._id }, function (err, request) {
+				if (err) {
+					res.status(500).send({ error: "Cannot find order" });
+				} else {
+					Item.findOne({ '_id': request.item }, function (err, item) {
+						if(err) {
+				         	res.status(500).send({ error: "Cannot find item in the order" });
+				       	} else {
+				         	if (request.status === "open" && req.body.status === "approved") {
+				         		if (item.quantity && item.quantity >= request.quantity) {
+				         			item.quantity-=request.quantity;
+				         			request.note = req.body.note || request.note;
+				         			request.status = "approved";
+				         			request.save(function (err) {
+				         				if(!err) {
+				         					item.save(function (err) {
+				         						res.json(request);
+				         					});
+				         				}
+				         			});
+
+				         		} else {
+				         			res.status(500).send({ error: "quantity requested exceeds stock limit" });
+				         		}
+				         	} else {
+				         		console.log(request);
+				         		request.note = req.body.note || request.note;
+				         		request.status = req.body.status || request.status;
+				         		request.quantity = req.body.quantity || request.quantity;
+				         		request.reason = req.body.reason || request.reason;
+				         		request.item = req.body.itemId || request.item;
+				         		request.user = req.body.userId || request.user;
+				         		request.save(function (err){
+				         			if(!err){
+				         				res.json(request);
+				         			}
+				         		})
+				         	}
+				       	}
+					});
+				}
+			});
+
+			
+		},
+
+		
  	}
 })();
+

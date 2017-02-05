@@ -73,6 +73,7 @@ var orders_app = angular.module('orders_app', []);
         console.log("addOrder from order controller scope");
 
         var customerSelected = $document[ 0 ].getElementById('customerList');
+
         var itemSelected = $document[ 0 ].getElementById('productList');
 
         if (!customerSelected.value || !itemSelected.value || !$scope.new_order || !$scope.new_order.quantity || !$scope.new_order.reason) {
@@ -112,6 +113,7 @@ var orders_app = angular.module('orders_app', []);
       $scope.viewOrder = function(order) {
           OrderFactory.viewOrder(order, function(data) {
             $scope.thisOrder = data;
+
             if ($scope.thisOrder.status != "open") {
               ($document[0].getElementById('request_response_form')).style.display = "none";
               ($document[0].getElementById('cancelOrderButton')).style.display = "none";
@@ -130,6 +132,7 @@ var orders_app = angular.module('orders_app', []);
 
       $scope.respondToOrder = function() {
         $('#orderModal').modal('hide');
+
         $scope.orderResponse.dateFulfilled = new Date();
         console.log($scope.orderResponse);
         OrderFactory.updateOrder($scope.orderResponse, function(data) {
@@ -149,6 +152,7 @@ var orders_app = angular.module('orders_app', []);
     orders_app.controller('customersController', function($scope, OrderFactory) {
         $scope.customers = OrderFactory.getcustomers(function(data) {
         $scope.customers = data;
+
         //TODO: delete this line and the two below
         console.log("inside ord cust");
         console.log($scope.customers);

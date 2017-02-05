@@ -20,10 +20,15 @@ module.exports = (function() {
 	   		})
 	 	},
 	 	add: function(req, res) {
-			var product = new Product({name: req.body.name,
+			var product = new Product({
+        name: req.body.name,
 				description: req.body.description,
-				num_left: req.body.num_left,
-				image_url: req.body.image_url});
+				quantity: req.body.num_left,
+				image: req.body.image,
+        model: req.body.model,
+        location: req.body.location,
+        tags: req.body.tags,
+      });
 
 			product.save(function(err){
 			    if(err){

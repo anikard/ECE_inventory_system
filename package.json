@@ -5,6 +5,10 @@
     "body-parser": "latest",
     "ejs": "latest",
     "express": "latest",
-    "mongoose": "latest"
+    "jsonwebtoken": "^7.2.1",
+    "mongoose": "latest",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0"
+
   }
 }

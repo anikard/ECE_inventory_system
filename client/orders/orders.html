@@ -31,6 +31,7 @@
                         <td> Status </td>
                         <td> View Request </td>
                     </tr>
+
                     <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
 
                         <td ng-bind="order.customer_name"></td>
@@ -49,11 +50,13 @@
 
   <h1>Create Request</h1>
 
+
  <form id="createReqForm">
  <select class = "feedback-input" ng-controller="customersController" id = "customerList" name="customerOptions" ng-model="new_order.customer_name" required>
         <option value="" selected disabled>User Name</option>
          <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.name"></option>
   </select>
+
 
   <select class = "feedback-input" ng-controller="productsController" id = "productList" name="productsOptions" ng-model="new_order.product" required>
         <option value="" selected disabled>Item</option>
@@ -90,6 +93,7 @@
             <p><b>Reason:  </b>{{thisOrder.reason}}</p>
             <p><b>Current Status:  </b>{{thisOrder.status}}</p>
           </div>
+
           
         <form id="request_response_form">
           <h3>Respond:</h3>
@@ -106,6 +110,7 @@
         </form>
       </div>
       <div class="modal-footer">
+
         <button class="btn btn-danger" ng-click='removeOrder(thisOrder)'  id = "cancelOrderButton">Cancel order</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary" ng-click="respondToOrder()" id = "respondOrderButton">Respond</button>

@@ -50,6 +50,7 @@
 <textarea class = "feedback-input" ng-model="new_product.description" placeholder="description"></textarea>
 <input class = "feedback-input" type="text" ng-model="new_product.model" placeholder="model">
 <input class = "feedback-input" type="text" ng-model="new_product.location" placeholder="location">
+
 <br>
 <span ng-repeat="cTag in currentTags" ng-bind="cTag"></span>
 <br>
@@ -87,6 +88,7 @@
           <p><img style = "height:100px; width: 100px" src="{{thisProduct.image_url}}"></p>
           <p>
             <label><b>Name: </b></label>
+
             <input id=productName type="text" ng-readonly="!editing" ng-model="currentProduct.name"/>
           </p>
           <p>
@@ -262,6 +264,7 @@
     <div class="modal-footer">
 
       <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmEditModal(thisProduct)>Confirm</button>
+
       <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelEditModal(thisProduct)>Cancel</button>
 
     </div>
