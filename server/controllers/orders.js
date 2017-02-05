@@ -76,11 +76,11 @@ module.exports = (function() {
 	   			res.status(500).send({ error: "Missing quantity field" });
 	   			return;
 	   		}
-	   		if(!req.body.user) {
+	   		if(!req.body.userId) {
 	   			res.status(500).send({ error: "Missing userId field" });
 	   			return;
 	   		}
-	   		if(!req.body.item) {
+	   		if(!req.body.itemId) {
 	   			res.status(500).send({ error: "Missing itemId field" });
 	   			return;
 	   		}
