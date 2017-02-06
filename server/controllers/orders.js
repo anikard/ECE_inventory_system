@@ -66,7 +66,7 @@ module.exports = (function() {
   		       	} else {
   		       		results.forEach(function(e){
   		       			e.customer_name = e.user?e.user.name:"";
-  		       			// e.item_name = e.item?e.item.name:"";
+  		       			e.item_name = e.item?e.item.name:"";
   		       		});
   		         	res.json(results);
   		       	}

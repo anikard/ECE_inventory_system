@@ -25,7 +25,7 @@ var orders_app = angular.module('orders_app', []);
           orders = output;
 
           orders.forEach(function(elem) {
-            elem["customer_name"] = elem["userId"].name;
+            //elem["customer_name"] = elem["userId"].name;
           })
           console.log(orders);
 
