@@ -64,7 +64,7 @@ module.exports = (function() {
   		         	res.status(500).send({ error: err});
   		       	} else {
   		       		results.forEach(function(e){
-  		       			e.customer_name = e.user?e.user.name:"";
+  		       			e.customer_name = e.user?e.user.name:"SAMPLE_NAME"; // TO FIX
   		       		});
   		         	res.json(results);
   		       	}
