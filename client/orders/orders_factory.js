@@ -67,9 +67,10 @@ var orders_app = angular.module('orders_app', []);
 
 
     orders_app.controller('ordersController', function($scope, OrderFactory, $document) {
-        $scope.orders = OrderFactory.getorders(function(data) {
+      $scope.orders = OrderFactory.getorders(function(data) {
         $scope.orders = data;
       });
+
       $scope.addOrder = function() {
 
         console.log("addOrder from order controller scope");

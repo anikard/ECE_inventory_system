@@ -69,6 +69,7 @@ products_app.factory('ProductsFactory', function($http) {
   factory.updateProduct = function(info, callback) {
     $http.post('/updateProduct', info).success(function(output) {
       // TODO
+      console.log("product Successfully updated in factory");
     })
   }
 
@@ -188,12 +189,18 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
     console.log("confirm edit");
 
     console.log(product);
-    /*
-    ProductsFactory.editProduct(product, function (data) {
 
+    ProductsFactory.updateProduct(product, function (data) {
+      console.log("confirm edit calling factory");
     })
-    */
+
     $('#editConfirmModal').modal('hide');
+    $('#productModal').modal('hide');
+
+    $scope.products = ProductsFactory.getproducts(function(data) {
+      $scope.products = data;
+      $scope.currentTags = [];
+    });
   }
 
   $scope.cancelEditModal = function(product) {
