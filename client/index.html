@@ -71,16 +71,23 @@
   <script>
     var discussion_app = angular.module('discussion_app', []);
 
+    discussion_app.factory('posts', ['$http', 'auth', function($http, auth){
+
+
+    }])
+
+
+
     //https://thinkster.io/tutorials/mean-stack/creating-an-angular-service-for-authentication
     discussion_app.factory('auth', ['$http', '$window', function($http, $window){
        var auth = {};
 
        auth.saveToken = function (token){
-          $window.localStorage['flapper-news-token'] = token;
+          $window.localStorage['inventoryToken'] = token;
         };
 
         auth.getToken = function (){
-          return $window.localStorage['flapper-news-token'];
+          return $window.localStorage['inventoryToken'];
         }
 
         auth.isLoggedIn = function(){
@@ -104,60 +111,40 @@
           }
         };
 
-        auth.register = function(user){
+        auth.registerUser = function(user, callback){
           return $http.post('/register', user).success(function(data){
             auth.saveToken(data.token);
+            console.log(data);
+            callback(data.token);
           });
         };
 
-        auth.logIn = function(user){
+        auth.loginUser = function(user, callback){
           return $http.post('/login', user).success(function(data){
             auth.saveToken(data.token);
+            console.log(data);
+            callback(data.token);
           });
         };
 
-        auth.logOut = function(){
-          $window.localStorage.removeItem('flapper-news-token');
+        auth.logout = function(callback){
+          $window.localStorage.removeItem('inventoryToken');
+          console.log("removed from storage log out");
+          callback();
         };
 
       return auth;
     }])
 
 
-
-    discussion_app.factory('UserFactory', function($http) {
-      var factory = {};
-      var user;
-
-      factory.addUser = function(info, callback) {
-        $http.post('/addUser', info).success(function(output) {
-            
-        })
-      } 
-
-      factory.loginUser = function(info, callback) {
-        $http.post('/login', info).success(function(output) {
-            console.log("factory logged in");
-            console.log(output);
-        })
-      } 
-
-      factory.registerUser = function(info, callback) {
-        $http.post('/register', info).success(function(output) {
-            console.log("factory registered");
-            console.log(output);
-        })
-      }
-
-      return factory;
-    });
-
-    discussion_app.controller('userController', function($scope, UserFactory, $document) {
+    discussion_app.controller('userController', function($scope, auth, $document, $location) {
 
       $scope.loginUser = function() {
         console.log("scope logging in");
-        UserFactory.loginUser($scope.new_user, function(data) {
-          
+        auth.loginUser($scope.new_user, function(data) {
+          $scope.isLoggedIn = true;
+          document.getElementById("navTop").style.display = "block";
+          // window.location.assign("/customers.html");
         });
         document.getElementById("unField").value = '';
         document.getElementById("pdField").value = '';
@@ -165,46 +152,47 @@
 
       $scope.registerUser = function() {
         console.log("scope registering ");
-        UserFactory.registerUser($scope.new_user, function(data) {
-          
+        auth.registerUser($scope.new_user, function(data) {
+          $scope.isLoggedIn = true;
+          // window.location.assign("/customers.html");
         });
         document.getElementById("unField").value = '';
         document.getElementById("pdField").value = '';
       }
 
+      $scope.logout = function() {
+        console.log("scope logging out ");
+        auth.logout(function() {
+          $scope.isLoggedIn = false;
+          document.getElementById("navTop").style.display = "none";
+        });
+      }
+
   
   });
 
-
-  discussion_app.controller('AuthCtrl', [
+  discussion_app.controller('NavCtrl', [
     '$scope',
-    '$state',
     'auth',
-    function($scope, $state, auth){
-      $scope.user = {};
+    function($scope, auth){
+      $scope.isLoggedIn = auth.isLoggedIn;
+      $scope.currentUser = auth.currentUser;
+      $scope.logOut = auth.logOut;
+    }]);
 
-      $scope.register = function(){
-        auth.register($scope.user).error(function(error){
-          $scope.error = error;
-        }).then(function(){
-          $state.go('home');
-        });
-      };
 
-      $scope.logIn = function(){
-        auth.logIn($scope.user).error(function(error){
-          $scope.error = error;
-        }).then(function(){
-          $state.go('home');
-        });
-      };
-    }])  
 
   </script>
 </head>
 
-<body ng-controller="userController">
-  <form>
+<body>
+
+<div ng-controller="userController" id = "navTop" style="display:none;">
+  <a href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a> | <a href="" ng-click="logout()">logout</a>
+</div>
+
+
+  <form ng-controller="userController">
     <h2>Login</h2>
 
     <div ng-show="error" class="alert alert-danger row">
@@ -223,7 +211,7 @@
       ng-model="new_user.password" ></input>
     </div>
     <input style = "display:inline; width:15%" type="submit" value = "Login" ng-click="loginUser()">
-    <input style = "display:inline; width:15%; " type="submit" value = "Register" ng-click="registerUser()">
+    <input style = "display:inline; width:15%; " type="submit" value = "Register" ng-click="registerUser()" >
   </form>
 </body>
 </html>

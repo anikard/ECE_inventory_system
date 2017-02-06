@@ -27,6 +27,10 @@
       customers.deactivate(req, res);
     });
 
+    app.get('/home', function(req, res) {
+      customers.home(req, res);
+    });
+
     app.get('/dispOrders', function(req, res) {
       orders.displayOrders(req, res);
     });
@@ -104,10 +108,35 @@
      });
 
     app.post('/login', function(req, res, next){
-	 authenticator.login(req, res, next)
-     });
+    	 authenticator.login(req, res, next)
+         });
 
-     
+    // app.config(function ($stateProvider) {
+
+    //   $stateProvider
+    //     .state('login', {
+    //       url: '/login',
+    //       templateUrl: '/index.html',
+    //       controller: 'AuthCtrl',
+    //       onEnter: ['$state', 'auth', function($state, auth){
+    //         if(auth.isLoggedIn()){
+    //           $state.go('customers.html');
+    //         }
+    //       }]
+    //     })
+    //     .state('register', {
+    //       url: '/register',
+    //       templateUrl: '/index.html',
+    //       controller: 'AuthCtrl',
+    //       onEnter: ['$state', 'auth', function($state, auth){
+    //         if(auth.isLoggedIn()){
+    //           $state.go('customers.html');
+    //         }
+    //       }]
+    //     });
+
+
+    // });
 
 
   });
