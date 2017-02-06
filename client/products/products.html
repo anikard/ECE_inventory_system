@@ -44,8 +44,8 @@
 
 <h1>Add a product</h1>
 
-
-<input class = "feedback-input" type="text" ng-model="new_product.name" placeholder="name">
+<form id="createItemForm">
+<input class = "feedback-input" type="text" ng-model="new_product.name" placeholder="name" required>
 <input class = "feedback-input" type="url" ng-model="new_product.image_url" placeholder="image url">
 <textarea class = "feedback-input" ng-model="new_product.description" placeholder="description"></textarea>
 <input class = "feedback-input" type="text" ng-model="new_product.model" placeholder="model">
@@ -74,9 +74,10 @@
 <!--<textarea class = "feedback-input" ng-model="new_product.tags" placeholder="tags (comma separated)"></textarea>-->
 
 
-<input class = "feedback-input" type="number" ng-model="new_product.quantity" placeholder="quantity">
-<input type="submit" ng-click="addProduct()">
+<input class = "feedback-input" type="number" ng-model="new_product.quantity" placeholder="quantity" required>
+<input type="submit" ng-disabled="createItemForm.$invalid" ng-click="addProduct()">
 <br>
+</form>
 
 <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 <div class="modal-dialog" role="document">
@@ -95,7 +96,7 @@
           <p>
             <label><b>Name: </b></label>
 
-            <input id=productName type="text" ng-readonly="!editing" ng-model="currentProduct.name"/>
+            <input id=productName type="text" ng-readonly="!editing" ng-model="currentProduct.name" required/>
           </p>
           <p>
             <label><b>Model:  </b></label>
@@ -103,7 +104,7 @@
           </p>
           <p>
             <label><b>Quantity:  </b></label>
-            <input type="number" ng-readonly="!editing" ng-model="currentProduct.quantity"/>
+            <input type="number" ng-readonly="!editing" ng-model="currentProduct.quantity"required/>
           </p>
           <p>
             <label><b>Description:  </b></label>

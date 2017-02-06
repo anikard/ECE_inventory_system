@@ -57,6 +57,10 @@ products_app.factory('ProductsFactory', function($http) {
   factory.addProduct = function(info, callback) {
     console.log("aP info");
     console.log(info);
+    if (!info.name || !info.quantity) {
+      console.log("Add item form incomplete");
+      return;
+    }
     $http.post('/addProduct', info).success(function(output) {
         products = output;
         callback(products);
@@ -69,6 +73,10 @@ products_app.factory('ProductsFactory', function($http) {
   }
 
   factory.updateProduct = function(info, callback) {
+    if (!info.name || !info.quantity) {
+      console.log("Update item form incomplete");
+      return;
+    }
     $http.post('/updateProduct', info).success(function(output) {
       // TODO
       console.log("product Successfully updated in factory");
