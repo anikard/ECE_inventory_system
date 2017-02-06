@@ -81,30 +81,95 @@
         })
       } 
 
+      factory.loginUser = function(info, callback) {
+        $http.post('/login', info).success(function(output) {
+            console.log("factory logged in");
+            console.log(output);
+        })
+      } 
+
+      factory.registerUser = function(info, callback) {
+        $http.post('/register', info).success(function(output) {
+            console.log("factory registered");
+            console.log(output);
+        })
+      }
+
       return factory;
     });
 
     discussion_app.controller('userController', function($scope, UserFactory, $document) {
 
-      $scope.addUser = function() {
-  
-        UserFactory.addUser($scope.new_user, function(data) {
+      $scope.loginUser = function() {
+        console.log("scope logging in");
+        UserFactory.loginUser($scope.new_user, function(data) {
           
         });
+        document.getElementById("unField").value = '';
+        document.getElementById("pdField").value = '';
       }
 
-    
+      $scope.registerUser = function() {
+        console.log("scope registering ");
+        UserFactory.registerUser($scope.new_user, function(data) {
+          
+        });
+        document.getElementById("unField").value = '';
+        document.getElementById("pdField").value = '';
+      }
 
+  
   });
+
+
+  discussion_app.controller('AuthCtrl', [
+    '$scope',
+    '$state',
+    'auth',
+    function($scope, $state, auth){
+      $scope.user = {};
+
+      $scope.register = function(){
+        auth.register($scope.user).error(function(error){
+          $scope.error = error;
+        }).then(function(){
+          $state.go('home');
+        });
+      };
+
+      $scope.logIn = function(){
+        auth.logIn($scope.user).error(function(error){
+          $scope.error = error;
+        }).then(function(){
+          $state.go('home');
+        });
+      };
+    }])  
 
   </script>
 </head>
 
 <body ng-controller="userController">
   <form>
-    <h3>Enter your name:</h3>
-    <input style = "display:inline-block; width:40%;" type = "text" class = "feedback-input" ng-model="new_user.name">
-    <input style = "display:inline-block; width:20%;" type="submit" value = "Enter" ng-click="addUser()">
+    <h2>Login</h2>
+
+    <div ng-show="error" class="alert alert-danger row">
+      <span>{{ error.message }}</span>
+    </div>
+    <div class="form-group">
+      <input type="text" id="unField" style = "display:inline-block; width:40%;"
+      class="form-control feedback-input"
+      placeholder="Username"
+      ng-model="new_user.username" ></input>
+    </div>
+    <div class="form-group">
+      <input type="password" id="pdField" style = "display:inline-block; width:40%;"
+      class="form-control feedback-input"
+      placeholder="Password"
+      ng-model="new_user.password" ></input>
+    </div>
+    <input style = "display:inline; width:15%" type="submit" value = "Login" ng-click="loginUser()">
+    <input style = "display:inline; width:15%; " type="submit" value = "Register" ng-click="registerUser()">
   </form>
 </body>
 </html>
