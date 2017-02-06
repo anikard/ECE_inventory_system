@@ -55,6 +55,8 @@ products_app.factory('ProductsFactory', function($http) {
   }
 
   factory.addProduct = function(info, callback) {
+    console.log("aP info");
+    console.log(info);
     $http.post('/addProduct', info).success(function(output) {
         products = output;
         callback(products);
@@ -103,10 +105,10 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
   $scope.addProduct = function() {
     console.log("Query submited!");
     console.log("new product");
+    $scope.new_product.tags = $scope.currentTags;
     console.log($scope.new_product);
     ProductsFactory.addProduct($scope.new_product, function(data) {
       $scope.new_product.date = new Date();
-      $scope.new_product.tags = $scope.currentTags;
       $scope.products.push($scope.new_product);
       $scope.new_product = {};
     });
@@ -189,7 +191,7 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
     console.log("confirm edit");
 
     console.log(product);
-
+    product.tags = $scope.currentTags;
     ProductsFactory.updateProduct(product, function (data) {
       console.log("confirm edit calling factory");
     })
@@ -234,6 +236,7 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
 
     $scope.currentProduct = angular.copy(product);
     originalProduct = angular.copy(product);
+    $scope.currentTags = product.tags;
     ProductsFactory.viewProduct(product, function(data) {
       $scope.thisProduct = data;
       $scope.new_order = {};
@@ -298,6 +301,10 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
     }
     console.log("remove tag called");
     console.log(tag);
+  }
+
+  $scope.closeItemModal = function() {
+    $scope.currentTags = [];
   }
 
 })

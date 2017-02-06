@@ -32,7 +32,8 @@ module.exports = (function() {
 
 			product.save(function(err){
 			    if(err){
-				    console.log("Error");
+            res.status(500).send({ error: err })
+				    console.log("Add product Error");
 			    } else {
 				    console.log("Successfully added a product!");
 				    res.end(); //  end the function to return
