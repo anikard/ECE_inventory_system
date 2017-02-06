@@ -33,7 +33,7 @@
     <tr ng-repeat="product in products | filter: filter_name | orderBy:'-date'">
       <td ng-bind="product.name"></td>
       <td ng-bind="product.model"></td>
-      <td ng-bind="product.num_left"></td>
+      <td ng-bind="product.quantity"></td>
       <td ng-bind="product.tags"></td>
       <!--<td><button class="remove" ng-click="viewProduct(product)" data-toogle="modal" data-target"#productModal">View</button></td>-->
       <td><button class = "remove" ng-click='viewProduct(product)' data-toggle="modal" data-target="#productModal">View</button></td>
@@ -68,14 +68,18 @@
       4. Make adding a new tag/customer add it to current product tag array-->
 
       <select class = "feedback-input" ng-controller="customersController" id = "customerList" name="customerOptions" ng-model="new_order.userId">
-        <option value="" ng-click="newTag()">Add a tag</option>
+        <option value="" ng-click="createNewTag()">Add a tag</option>
         <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.name" ng-click="tagClicked(customer)"></option>
       </select>
 
+      <select class = "feedback-input" ng-controller="tagsController" id = "tagList" name="tagOptions" ng-model="new_order.tags[new_order.tags.length]">
+        <option value="" ng-click="createNewTag()">Add a tag</option>
+        <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
+      </select>
 <!--<textarea class = "feedback-input" ng-model="new_product.tags" placeholder="tags (comma separated)"></textarea>-->
 
 
-<input class = "feedback-input" type="number" ng-model="new_product.num_left" placeholder="quantity">
+<input class = "feedback-input" type="number" ng-model="new_product.quantity" placeholder="quantity">
 <input type="submit" ng-click="addProduct()">
 <br>
 
@@ -104,7 +108,7 @@
           </p>
           <p>
             <label><b>Quantity:  </b></label>
-            <input type="number" ng-readonly="!editing" ng-model="currentProduct.num_left"/>
+            <input type="number" ng-readonly="!editing" ng-model="currentProduct.quantity"/>
           </p>
           <p>
             <label><b>Description:  </b></label>
@@ -279,6 +283,37 @@
 </div>
 </div>
 </div>
+
+<div class="modal fade" id="newTagModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+
+      </button>
+        <h1 class="modal-title" id="exampleModalLabel">Add a Tag</h1>
+
+    </div>
+    <div class="modal-body" align="left">
+      <div class="form-group" >
+        <label><b>New Tag:  </b></label>
+        <input class="feedback-input" type="text" ng-model="newTag.name">
+      </div>
+    </div>
+
+
+    <div class="modal-footer">
+
+      <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmNewTag(thisProduct)>Confirm</button>
+
+      <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelNewTag(thisProduct)>Cancel</button>
+
+    </div>
+  </div>
+</div>
+</div>
+
 
 
   <script type="text/javascript">

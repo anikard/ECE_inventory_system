@@ -26,7 +26,8 @@ module.exports = (function() {
 	   				if (tag) {
 	   					res.status(500).send({ error: "Tag already exist!" });
 	   				} else {
-	   					var tag = new Tag({name: req.body.name || ""});
+	   					var tag = new Tag({name: req.body.name || ""}); // Modified due to blank name error
+              console.log("tag is : " + tag);
 	   					tag.save(function(err){
 	   						if (err) {
 	   							res.status(500).send({ error: err });
@@ -38,11 +39,11 @@ module.exports = (function() {
 	   			}
 	   		});
 
-	   		
+
 		},
 
 		delete: function(req, res) {
-			Tag.remove({ name: req.body.name}, 
+			Tag.remove({ name: req.body.name},
 				function (err, request) {
 					if (err) {
 						res.status(500).send({ error: err });
@@ -53,7 +54,6 @@ module.exports = (function() {
 				}
 			);
 		},
-		
+
  	}
 })();
-

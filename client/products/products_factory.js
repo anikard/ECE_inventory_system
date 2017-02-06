@@ -6,6 +6,7 @@ products_app.factory('ProductsFactory', function($http) {
   var factory = {};
   var products = [];
   var customers = [];
+  var tags = [];
 
   var orders = [];
   var originalProduct = {};
@@ -16,6 +17,13 @@ products_app.factory('ProductsFactory', function($http) {
         callback(customers);
       })
     }
+
+  factory.gettags = function(callback) {
+    $http.get('/tags').success(function(output) {
+      tags = output;
+      callback(tags);
+    })
+  }
 
   factory.getproducts = function(callback) {
     $http.get('/products').success(function(output) {
@@ -30,13 +38,21 @@ products_app.factory('ProductsFactory', function($http) {
           orders = output;
 
           orders.forEach(function(elem) {
-            elem["customer_name"] = elem["userId"].name;
+            //elem["customer_name"] = elem["userId"].name;
+            elem.customer_name = "SAMPLE NAME";
           })
           console.log(orders);
 
           callback(orders);
         })
     }
+
+  factory.addTag = function(info, callback) {
+    $http.post('/addTag', info).success(function(output) {
+      tags = output;
+      callback(tags);
+    })
+  }
 
   factory.addProduct = function(info, callback) {
     $http.post('/addProduct', info).success(function(output) {
@@ -85,8 +101,11 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
 
   $scope.addProduct = function() {
     console.log("Query submited!");
+    console.log("new product");
+    console.log($scope.new_product);
     ProductsFactory.addProduct($scope.new_product, function(data) {
       $scope.new_product.date = new Date();
+      $scope.new_product.tags = $scope.currentTags;
       $scope.products.push($scope.new_product);
       $scope.new_product = {};
     });
@@ -231,8 +250,35 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
     }
   }
 
-  $scope.newTag = function() {
+  $scope.addTag = function() {
+    console.log("add tag");
+    console.log($scope.newTag);
+    $scope.currentTags.push($scope.newTag.name);
+    //$scope.tags.push($scope.newTag);
+    //$scope.newTag = {};
+
+    ProductsFactory.addTag($scope.newTag, function(data) {
+      //$scope.tags.push($scope.newTag.name);
+      $scope.newTag = {};
+    });
+
+  }
+
+  $scope.createNewTag = function() {
     console.log("newTag");
+    //Throw modal
+    $('#newTagModal').modal('show');
+  }
+
+  $scope.confirmNewTag = function(tag) {
+    console.log("confirm new tag");
+    $scope.addTag();
+    $('#newTagModal').modal('hide');
+  }
+
+  $scope.cancelNewTag = function() {
+    $scope.newTag = {};
+    $('#newTagModal').modal('hide');
   }
 
   $scope.removeTag = function(tag) {
@@ -256,6 +302,8 @@ products_app.controller('customersController', function($scope, ProductsFactory)
       console.log("inside prod cust");
       console.log($scope.customers)
   })
+  console.log("customers");
+  console.log($scope.customers);
 })
 
 products_app.controller('ordersController', function($scope, ProductsFactory) {
@@ -264,4 +312,17 @@ products_app.controller('ordersController', function($scope, ProductsFactory) {
       console.log("inside prod order");
       console.log($scope.orders);
   })
+  console.log("orders");
+  console.log($scope.orders);
+})
+
+products_app.controller('tagsController', function($scope, ProductsFactory) {
+  console.log("tagCTRL outer");
+  $scope.tags = ProductsFactory.gettags(function(data) {
+    console.log("tagCTRL inner");
+    console.log(data);
+    $scope.tags = data;
+  })
+  console.log("tags")
+  console.log($scope.tags);
 })

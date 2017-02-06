@@ -23,7 +23,7 @@ module.exports = (function() {
 			var product = new Product({
         name: req.body.name,
 				description: req.body.description,
-				quantity: req.body.num_left,
+				quantity: req.body.quantity,
 				image: req.body.image,
         model: req.body.model,
         location: req.body.location,
@@ -41,11 +41,15 @@ module.exports = (function() {
 		},
 
     delete: function(req, res) {
-      Product.findByIdAndUpdate(
-        req.body._id,
-        { new: true },
-        function (err, product) {
-          if (err) console.log("Delete Product Error");
+      Product.remove({ _id: req.body._id},
+        function (err, request) {
+          if (err) {
+            res.status(500).send({ error: err })
+            console.log("Delete Product Error");
+          } else {
+						console.log("Successfully deleted a product!");
+	        			res.status(200).send("Successfully deleted a product!");
+					}
           res.end();
         }
       );
@@ -57,10 +61,10 @@ module.exports = (function() {
         {$set: {
           name: req.body.name,
           description: req.body.descrition,
-          quantity: req.body.num_left,
+          quantity: req.body.quantity,
           model: req.body.model,
           location: req.body.location,
-          //TODO: tags
+          tags: req.body.tags,
           //TODO: image_url
         }},
         { new: true },
