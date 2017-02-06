@@ -226,11 +226,25 @@ products_app.controller('productsController', function($scope, ProductsFactory, 
     console.log("tagClicked");
     console.log(customer);
     console.log($scope.currentTags);
-    $scope.currentTags.push(customer.name);
+    if($scope.currentTags.indexOf(customer.name) == -1) {
+      $scope.currentTags.push(customer.name);
+    }
   }
 
   $scope.newTag = function() {
     console.log("newTag");
+  }
+
+  $scope.removeTag = function(tag) {
+    for (var i =0; i < $scope.currentTags.length; i++)
+    {
+      if ($scope.currentTags[i] === tag) {
+          $scope.currentTags.splice(i,1);
+          break;
+        }
+    }
+    console.log("remove tag called");
+    console.log(tag);
   }
 
 })

@@ -52,7 +52,14 @@
 <input class = "feedback-input" type="text" ng-model="new_product.location" placeholder="location">
 
 <br>
-<span ng-repeat="cTag in currentTags" ng-bind="cTag"></span>
+<span>
+  &nbsp;
+  <span class="tag-class" ng-repeat="cTag in currentTags">
+    <span ng-bind="cTag"></span>
+    <button ng-click="removeTag(cTag)"><span aria-hidden="true">&times;</span></button>
+  </span>
+  &nbsp;
+</span>
 <br>
 <!-- TODO: view array of tags
       1. Make it so that tags can be added form currently available customers
