@@ -20,8 +20,8 @@ var orders_app = angular.module('orders_app', []);
         })
       }
 
-      factory.getorders = function(callback) {
-        $http.post('/orders', userId).success(function(output) {
+      factory.getorders = function(info, callback) {
+        $http.post('/orders', info).success(function(output) {
           orders = output;
 
           console.log(orders);
