@@ -81,6 +81,16 @@ module.exports = (function() {
 			    }
 
 				});
+		},
+
+		getUser: function(req, res) {
+			Customer.findOne({ '_id': req.body._id }, function (err, user) {
+				if(err) {
+		         	res.status(500).send({ error: err });
+		       	} else {
+		         	res.json(user);
+		       	}
+			});
 		}
  	}
 })();

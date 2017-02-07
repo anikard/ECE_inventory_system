@@ -23,6 +23,10 @@
       customers.find_active(req, res);
     });
 
+    app.get('/getUser', function(req, res) {
+      customers.getUser(req, res);
+    });
+
     app.get('/logout', function(req, res) {
       customers.deactivate(req, res);
     });
