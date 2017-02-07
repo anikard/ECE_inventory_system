@@ -169,10 +169,8 @@ var orders_app = angular.module('orders_app', []);
 
         auth.isLoggedIn = function(){
           var token = auth.getToken();
-
           if(token){
             var payload = JSON.parse($window.atob(token.split('.')[1]));
-
             return payload.exp > Date.now() / 1000;
           } else {
             return false;
@@ -183,14 +181,12 @@ var orders_app = angular.module('orders_app', []);
           if(auth.isLoggedIn()){
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
-
             return payload.username;
           }
         };
 
         auth.logout = function(callback){
           $window.localStorage.removeItem('inventoryToken');
-          console.log("removed from storage log out");
           callback();
         };
 
@@ -198,8 +194,8 @@ var orders_app = angular.module('orders_app', []);
     }])
 
     orders_app.controller('authController', function($scope, auth) {
-        $scope.username = auth.currentUser();
-        console.log($scope.username);
+        $scope.myName = auth.currentUser();
+        console.log($scope.myName);
 
         $scope.logout = function() {
           console.log("scope logging out ");
@@ -207,6 +203,10 @@ var orders_app = angular.module('orders_app', []);
             $scope.isLoggedIn = false;
             window.location.assign("/");
           });
+        }
+
+        $scope.isAuthorized = function() {
+          return true;
         }
     })
 

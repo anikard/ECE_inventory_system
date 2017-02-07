@@ -14,12 +14,14 @@
 
 <body ng-controller="ordersController">
 
-
-
 <div ng-controller="authController">
-  <a href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a> | <a href="" ng-click="logout()">logout</a>
+  <a href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
 
+
+  <!-- <div ng-if="myName">Welcome, {{ myName }}</div> -->
 </div>
+
+
 
   <h1>REQUESTS</h1>
   <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
@@ -100,9 +102,12 @@
           </div>
 
           
-        <form id="request_response_form">
+        <!-- <form id="request_response_form"> -->
           <!-- TODO -->
-          <!-- <form id="request_response_form" ng-show="isLoggedIn()"> -->
+
+    <div ng-controller="authController">
+      <div ng-if="isAuthorized()">
+        <form id="request_response_form" ng-controller="ordersController">
           <h3>Respond:</h3>
           <div class="form-group">
                 <div class="radio">
@@ -115,6 +120,9 @@
             <textarea class="form-control" id="message-text" ng-model="orderResponse.comment"></textarea>
           </div>
         </form>
+      </div>
+    </div>
+
       </div>
       <div class="modal-footer">
 
