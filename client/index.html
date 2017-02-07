@@ -150,6 +150,7 @@
             $scope.myName = auth.currentUser();
             document.getElementById("navTop").style.display = "block";
             document.getElementById("loginForm").style.display = "none";
+            $scope.authorized = (auth.currentUserStatus()=="admin");
 
             // window.location.assign("/customers.html");
         });
