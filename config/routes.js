@@ -59,6 +59,10 @@
       orders.show(req, res); // delegating to the controller and passing along req and res
     });
 
+    app.post('/orders', function(req, res) {
+      orders.show(req, res); // delegating to the controller and passing along req and res
+    });
+
     app.post('/addOrder', function(req, res) {
       orders.add(req, res);
     });

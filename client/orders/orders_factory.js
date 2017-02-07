@@ -20,8 +20,8 @@ var orders_app = angular.module('orders_app', []);
         })
       }
 
-      factory.getorders = function(callback) {
-        $http.get('/orders').success(function(output) {
+      factory.getorders = function(info, callback) {
+        $http.post('/orders', info).success(function(output) {
           orders = output;
 
           console.log(orders);
@@ -66,7 +66,9 @@ var orders_app = angular.module('orders_app', []);
 
 
     orders_app.controller('ordersController', function($scope, OrderFactory, auth, $document) {
-        $scope.orders = OrderFactory.getorders(function(data) {
+        console.log("USER ID: " + auth.currentUserID());
+        var thisId = {userId: auth.currentUserID()};
+        $scope.orders = OrderFactory.getorders(thisId, function(data) {
         $scope.orders = data;
 
       });
@@ -74,6 +76,14 @@ var orders_app = angular.module('orders_app', []);
         $scope.myName = auth.currentUser();
         console.log("MY NAME: " + $scope.myName);
         $scope.authorized = (auth.currentUserStatus()=="admin");
+        if ($scope.authorized) {
+          $document[ 0 ].getElementById('customerList').display = "block";
+          $document[ 0 ].getElementById('thisCustomerInput').display = "none";
+        }
+        else {
+          $document[ 0 ].getElementById('customerList').display = "none";
+          $document[ 0 ].getElementById('thisCustomerInput').display = "block";
+        }
 
         // AUTH
         $scope.logout = function() {
@@ -93,20 +103,40 @@ var orders_app = angular.module('orders_app', []);
 
         console.log("addOrder from order controller scope");
 
-        var customerSelected = $document[ 0 ].getElementById('customerList');
+        
+        if ($scope.authorized) {
+          var customerSelected = $document[ 0 ].getElementById('customerList');
 
-        var itemSelected = $document[ 0 ].getElementById('productList');
+          var itemSelected = $document[ 0 ].getElementById('productList');
 
-        if (!customerSelected.value || !itemSelected.value || !$scope.new_order || !$scope.new_order.quantity || !$scope.new_order.reason) {
-          console.log('Form incomplete');
-          return;
+          if (!customerSelected.value || !itemSelected.value || !$scope.new_order || !$scope.new_order.quantity || !$scope.new_order.reason) {
+            console.log('Form incomplete');
+            return;
+          }
+
+          $scope.new_order.userId = customerSelected.value; // id
+          $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
+          $scope.new_order.item_name = ((itemSelected.options[itemSelected.selectedIndex].text).split("|"))[0];
+          $scope.new_order.itemId = itemSelected.value; // id
+          $scope.new_order.status = "open";
+        }
+        else {
+
+          var itemSelected = $document[ 0 ].getElementById('productList');
+
+          if (!itemSelected.value || !$scope.new_order || !$scope.new_order.quantity || !$scope.new_order.reason) {
+            console.log('Form incomplete');
+            return;
+          }
+
+          $scope.new_order.userId = auth.currentUserID(); // id
+          console.log("GOT ID = " + $scope.new_order.userId);
+          $scope.new_order.customer_name = $scope.myName;
+          $scope.new_order.item_name = ((itemSelected.options[itemSelected.selectedIndex].text).split("|"))[0];
+          $scope.new_order.itemId = itemSelected.value; // id
+          $scope.new_order.status = "open";
         }
 
-        $scope.new_order.userId = customerSelected.value; // id
-        $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
-        $scope.new_order.item_name = ((itemSelected.options[itemSelected.selectedIndex].text).split("|"))[0];
-        $scope.new_order.itemId = itemSelected.value; // id
-        $scope.new_order.status = "open";
 
         console.log($scope.new_order);
 
@@ -134,16 +164,18 @@ var orders_app = angular.module('orders_app', []);
 
       $scope.viewOrder = function(order) {
           OrderFactory.viewOrder(order, function(data) {
-            $scope.thisOrder = data;
 
+            $scope.thisOrder = data;
+            $scope.thisOrder.customer_name = data.user.username;
+            console.log("THIS ORDER");
+            console.log($scope.thisOrder);
             if ($scope.thisOrder.status != "open") {
-              ($document[0].getElementById('request_response_form')).style.display = "none";
               ($document[0].getElementById('cancelOrderButton')).style.display = "none";
-              ($document[0].getElementById('respondOrderButton')).style.display = "none";
+              ($document[0].getElementById('request_response_form')).style.display = "none";
             }
             else {
-              ($document[0].getElementById('request_response_form')).style.display = "block";
               ($document[0].getElementById('cancelOrderButton')).style.display = "inline";
+              ($document[0].getElementById('request_response_form')).style.display = "block";
               ($document[0].getElementById('respondOrderButton')).style.display = "inline";
             }
             console.log(data);
@@ -224,6 +256,15 @@ var orders_app = angular.module('orders_app', []);
             var payload = JSON.parse($window.atob(token.split('.')[1]));
             
             return payload.username;
+          }
+        };
+
+        auth.currentUserID = function(){
+          if(auth.isLoggedIn()){
+            var token = auth.getToken();
+            var payload = JSON.parse($window.atob(token.split('.')[1]));
+            
+            return payload._id;
           }
         };
 
