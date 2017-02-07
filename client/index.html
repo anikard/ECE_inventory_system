@@ -149,6 +149,8 @@
             $scope.isLoggedIn = true;
             $scope.myName = auth.currentUser();
             document.getElementById("navTop").style.display = "block";
+            document.getElementById("loginForm").style.display = "none";
+
             // window.location.assign("/customers.html");
         });
           document.getElementById("unField").value = '';
@@ -175,21 +177,14 @@
         auth.logout(function() {
           $scope.isLoggedIn = false;
           document.getElementById("navTop").style.display = "none";
+          document.getElementById("loginForm").style.display = "block";
         });
       }
 
   
   });
 
-  discussion_app.controller('NavCtrl', [
-    '$scope',
-    'auth',
-    function($scope, auth){
-      $scope.isLoggedIn = auth.isLoggedIn;
-      $scope.currentUser = auth.currentUser;
-      $scope.logOut = auth.logOut;
-    }]);
-
+ 
 
 
   </script>
@@ -198,7 +193,7 @@
 <body>
 
 <div ng-controller="userController" id = "navTop" style="display:none;">
-  <a href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
+  <a ng-if="authorized" href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
 </div>
 
 
@@ -206,10 +201,10 @@
   <h2>Team Blank</h2>
   <h4>Anika, Kevin, Mike, Efe</h4>
 
-  <form ng-controller="userController">
+  <form ng-controller="userController" id="loginForm">
     <h2>Login</h2>
 
-    <div ng-show="error" style="color:#C7254E;">
+    <div ng-show="error" style="color:#C7254E;" >
       <span>{{ error.message }}</span>
     </div>
     <div class="form-group">
