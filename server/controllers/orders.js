@@ -26,7 +26,7 @@ var findRequestsByUser = function(name) {
 var findRequestsByItem = function(item) {
 	Request.find({})
  	.populate('item user')
- 	.exec(function(err, results) {
+     	.exec(function(err, results) {
        	if(err) {
          	console.log(err);
          	return null;
@@ -59,12 +59,15 @@ module.exports = (function() {
 	  	show: function(req, res) {
   			Request.find({})
   		 	.populate('item user')
+		        .lean()
   		 	.exec(function(err, results) {
   		       	if(err) {
   		         	res.status(500).send({ error: err});
   		       	} else {
   		       		results.forEach(function(e){
-  		       			e.customer_name = e.user?e.user.name:"SAMPLE_NAME"; // TO FIX
+  		       			e.customer_name = e.user?e.user.name:"";
+  		       			e.item_name = e.item?e.item.name:"";
+
   		       		});
   		         	res.json(results);
   		       	}
