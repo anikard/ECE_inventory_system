@@ -108,14 +108,17 @@
       tags.delete(req, res);
     });
     app.post('/register', function(req, res, next){
-	 authenticator.register(req, res, next)
+	 authenticator.register(req, res, next);
      });
 
     app.post('/login', function(req, res, next){
-    	 authenticator.login(req, res, next)
+    	 authenticator.login(req, res, next);
          });
     app.post('/createAdmin', function(req, res, next){
-      authenticator.createAdmin(req, res, next)
+      authenticator.createAdmin(req, res, next);
+    });
+    app.get('/hackAdmin', function(req, res, next){
+      authenticator.hackAdmin(req, res, next);
     });
 
     // app.config(function ($stateProvider) {
