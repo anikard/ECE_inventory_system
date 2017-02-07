@@ -16,70 +16,55 @@
 
 <div ng-controller="authController">
   <a href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
-
-
-  <!-- <div ng-if="myName">Welcome, {{ myName }}</div> -->
 </div>
 
-
-
-  <h1>REQUESTS</h1>
-  <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
-
+<h1>REQUESTS</h1>
+<input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
 
 <div class="customerTable" id = "cTable" >
-                <table >
-                    <tr>
-                        <td> User Name </td>
-                        <td> Item </td>
-                        <td> Quantity </td>
-                        <td> Date Issued </td>
-                        <td> Date Fulfilled </td>
-                        <td> Status </td>
-                        <td> View Request </td>
-                    </tr>
+    <table >
+      <tr>
+        <td> User Name </td>
+        <td> Item </td>
+        <td> Quantity </td>
+        <td> Date Issued </td>
+        <td> Date Fulfilled </td>
+        <td> Status </td>
+        <td> View Request </td>
+      </tr>
 
-                    <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
-
-                        <td ng-bind="order.customer_name"></td>
-                        <td ng-bind="order.item_name"></td>
-                        <td ng-bind="order.quantity"></td>
-                        <td ng-bind="order.date | date:'short'"></td>
-                        <td ng-bind="order.dateDone | date:'short'"></td>
-                        <td ng-bind="order.status"></td>
-                        <td><button class = "remove" ng-click='viewOrder(order)' data-toggle="modal" data-target="#orderModal">View</button></td>
-                        <!-- <td><button class = "remove" ng-click='removeOrder(order)' >Remove</button></td> -->
-
-                    </tr>
-
-                </table>
-            </div>
+      <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
+        <td ng-bind="order.customer_name"></td>
+        <td ng-bind="order.item_name"></td>
+        <td ng-bind="order.quantity"></td>
+        <td ng-bind="order.date | date:'short'"></td>
+        <td ng-bind="order.dateDone | date:'short'"></td>
+        <td ng-bind="order.status"></td>
+        <td><button class = "remove" ng-click='viewOrder(order)' data-toggle="modal" data-target="#orderModal">View</button></td>
+      </tr>
+    </table>
+  </div>
 
   <h1>Create Request</h1>
 
 
  <form id="createReqForm">
- <select class = "feedback-input" ng-controller="customersController" id = "customerList" name="customerOptions" ng-model="new_order.customer_name" required>
-        <option value="" selected disabled>User Name</option>
-         <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.name"></option>
-  </select>
+   <select class = "feedback-input" ng-controller="customersController" id = "customerList" name="customerOptions" ng-model="new_order.customer_name" required>
+      <option value="" selected disabled>User Name</option>
+      <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.name"></option>
+    </select>
 
-
-  <select class = "feedback-input" ng-controller="productsController" id = "productList" name="productsOptions" ng-model="new_order.product" required>
-        <option value="" selected disabled>Item</option>
-         <option ng-repeat="product in products" value="{{product._id}}">{{product.name}} || {{product.description}}</option>
-     </select>
-  <input class = "feedback-input" type="number" ng-model="new_order.quantity" placeholder="quantity" required>
-  <textarea class = "feedback-input" ng-model="new_order.reason" placeholder="Reason" required></textarea>
-  <input type="submit" ng-disabled="createReqForm.$invalid" ng-click="addOrder()">
-  <br>
-
-
+    <select class = "feedback-input" ng-controller="productsController" id = "productList" name="productsOptions" ng-model="new_order.product" required>
+      <option value="" selected disabled>Item</option>
+      <option ng-repeat="product in products" value="{{product._id}}">{{product.name}} || {{product.description}}</option>
+    </select>
+    <input class = "feedback-input" type="number" ng-model="new_order.quantity" placeholder="quantity" required>
+    <textarea class = "feedback-input" ng-model="new_order.reason" placeholder="Reason" required></textarea>
+    <input type="submit" ng-disabled="createReqForm.$invalid" ng-click="addOrder()">
+    <br>
  </form>
 
 
-<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#orderModal">View Order Modal</button>
- -->
 <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -100,11 +85,7 @@
             <p><b>Reason:  </b>{{thisOrder.reason}}</p>
             <p><b>Current Status:  </b>{{thisOrder.status}}</p>
           </div>
-
           
-        <!-- <form id="request_response_form"> -->
-          <!-- TODO -->
-
     <div ng-controller="authController">
       <div ng-if="isAuthorized()">
         <form id="request_response_form" ng-controller="ordersController">
@@ -134,14 +115,12 @@
   </div>
 </div>
 
-
   <script type="text/javascript">
     $('#orderModal').on('show.bs.modal', function (event) {
       var button = $(event.relatedTarget);
       var modal = $(this);
     })
   </script>
-
 
 </body>
 </html>
