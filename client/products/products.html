@@ -41,12 +41,13 @@
   </table>
 </div>
 
-<!--<span ng-if="authorized">-->
+<span ng-show="authorized">
+<!--<span ng-controller="productsController">-->
 <h1>Add a product {{$scope.isAuthorized}} </h1>
 
 <form id="createItemForm">
 <input class = "feedback-input" type="text" ng-model="new_product.name" placeholder="name" required>
-<input class = "feedback-input" type="url" ng-model="new_product.image_url" placeholder="image url">
+<!--<input class = "feedback-input" type="url" ng-model="new_product.image_url" placeholder="image url">-->
 <textarea class = "feedback-input" ng-model="new_product.description" placeholder="description"></textarea>
 <input class = "feedback-input" type="text" ng-model="new_product.model" placeholder="model">
 <input class = "feedback-input" type="text" ng-model="new_product.location" placeholder="location">
@@ -78,6 +79,7 @@
 <input type="submit" ng-disabled="createItemForm.$invalid" ng-click="addProduct()">
 <br>
 </form>
+</span>
 <!--</span>-->
 
 <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -93,8 +95,10 @@
     </div>
     <div class="modal-body" align="left">
       <div class="form-group" >
+        <!--
           <p><img style = "height:100px; width: 100px" src="currentProduct.image_url"></p>
           <p>
+          -->
             <label><b>Name: </b></label>
 
             <input id=productName type="text" ng-readonly="!editing" ng-model="currentProduct.name" required/>
@@ -144,9 +148,9 @@
       <br>
 
       <div class="modal-footer">
-        <!--<span ng-if="authorized">-->
+        <span ng-show="authorized">
         <button class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmModal">Delete Product</button>
-        <!--</span>-->
+        </span>
         <button type="button" class="btn btn-secondary" ng-click="closeItemModal()" data-dismiss="modal">Close</button>
 
         <!--
@@ -155,9 +159,9 @@
 
         <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Request</button>
 
-        <!--<span ng-if="authorized">-->
+        <span ng-show="authorized">
         <button type="button" class="btn btn-primary" ng-click="editProduct(currentProduct)">{{editing == true ? 'Save Edits' : 'Edit' }}</button>
-        <!--</span>-->
+        </span>
 
       </div>
 

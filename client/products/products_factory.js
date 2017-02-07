@@ -115,7 +115,7 @@ products_app.factory('ProductsFactory', function($http) {
 
 
 products_app.controller('productsController', function($scope, auth, ProductsFactory, $document) {
-    $scope.authorized = true;
+    $scope.authorized = false;
     $scope.myName = auth.currentUser();
     console.log($scope.myName);
 
