@@ -28,7 +28,7 @@ module.exports = (function() {
   },
 
   createAdmin: function(req, res, next){
-    User.find({status: 'admin'}, function(err, admin) {
+    User.findOne({status: 'admin'}, function(err, admin) {
         if(err) {
           res.status(400).json({error: err});
         } else {
