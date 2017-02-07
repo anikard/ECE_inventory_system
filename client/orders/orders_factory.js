@@ -86,6 +86,7 @@ var orders_app = angular.module('orders_app', []);
         $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
         $scope.new_order.item_name = ((itemSelected.options[itemSelected.selectedIndex].text).split("|"))[0];
         $scope.new_order.itemId = itemSelected.value; // id
+        $scope.new_order.status = "open";
 
         console.log($scope.new_order);
 
@@ -134,7 +135,7 @@ var orders_app = angular.module('orders_app', []);
       $scope.respondToOrder = function() {
         $('#orderModal').modal('hide');
 
-        $scope.orderResponse.dateFulfilled = new Date();
+        // $scope.orderResponse.dateFulfilled = new Date();
         console.log($scope.orderResponse);
         OrderFactory.updateOrder($scope.orderResponse, function(data) {
           $scope.orderResponse = {};
