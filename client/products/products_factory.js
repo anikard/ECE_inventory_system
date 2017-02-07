@@ -104,9 +104,9 @@ products_app.factory('ProductsFactory', function($http) {
 
 
 products_app.controller('productsController', function($scope, auth, ProductsFactory, $document) {
-    $scope.authorized = true;
     $scope.myName = auth.currentUser();
     console.log($scope.myName);
+    $scope.authorized = (auth.currentUserStatus()=="admin");
 
     $scope.logout = function() {
       console.log("scope logging out ");
@@ -389,6 +389,15 @@ products_app.factory('auth', ['$http', '$window', function($http, $window){
         return payload.username;
       }
     };
+
+    auth.currentUserStatus = function(){
+          if(auth.isLoggedIn()){
+            var token = auth.getToken();
+            var payload = JSON.parse($window.atob(token.split('.')[1]));
+            
+            return payload.status;
+          }
+        };
 
     auth.logout = function(callback){
       $window.localStorage.removeItem('inventoryToken');
