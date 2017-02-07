@@ -16,7 +16,7 @@
 
   <a ng-if="authorized" href="/dispCustomers">users</a> | <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
 
-  <h1>PRODUCTS</h1>
+  <h1>ITEMS</h1>
   <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
 
 
@@ -41,12 +41,13 @@
   </table>
 </div>
 
-<!--<span ng-if="authorized">-->
-<h1>Add a product {{$scope.isAuthorized}} </h1>
+<span ng-show="authorized">
+<!--<span ng-controller="productsController">-->
+<h1>Add an Item</h1>
 
 <form id="createItemForm">
 <input class = "feedback-input" type="text" ng-model="new_product.name" placeholder="name" required>
-<input class = "feedback-input" type="url" ng-model="new_product.image_url" placeholder="image url">
+<!--<input class = "feedback-input" type="url" ng-model="new_product.image_url" placeholder="image url">-->
 <textarea class = "feedback-input" ng-model="new_product.description" placeholder="description"></textarea>
 <input class = "feedback-input" type="text" ng-model="new_product.model" placeholder="model">
 <input class = "feedback-input" type="text" ng-model="new_product.location" placeholder="location">
@@ -78,23 +79,26 @@
 <input type="submit" ng-disabled="createItemForm.$invalid" ng-click="addProduct()">
 <br>
 </form>
+</span>
 <!--</span>-->
 
 <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 <div class="modal-dialog" role="document">
   <div class="modal-content">
     <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" ng-click="closeItemModal" aria-label="Close">
+      <button type="button" class="close" data-dismiss="modal" ng-click="closeItemModal()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
 
       </button>
-        <h1 class="modal-title" id="exampleModalLabel">View Product</h1>
+        <h1 class="modal-title" id="exampleModalLabel">View Item</h1>
 
     </div>
     <div class="modal-body" align="left">
       <div class="form-group" >
+        <!--
           <p><img style = "height:100px; width: 100px" src="currentProduct.image_url"></p>
           <p>
+          -->
             <label><b>Name: </b></label>
 
             <input id=productName type="text" ng-readonly="!editing" ng-model="currentProduct.name" required/>
@@ -144,9 +148,9 @@
       <br>
 
       <div class="modal-footer">
-        <!--<span ng-if="authorized">-->
+        <span ng-show="authorized">
         <button class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmModal">Delete Product</button>
-        <!--</span>-->
+        </span>
         <button type="button" class="btn btn-secondary" ng-click="closeItemModal()" data-dismiss="modal">Close</button>
 
         <!--
@@ -155,9 +159,9 @@
 
         <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Request</button>
 
-        <!--<span ng-if="authorized">-->
+        <span ng-show="authorized">
         <button type="button" class="btn btn-primary" ng-click="editProduct(currentProduct)">{{editing == true ? 'Save Edits' : 'Edit' }}</button>
-        <!--</span>-->
+        </span>
 
       </div>
 
@@ -166,7 +170,7 @@
       <h2>Requests made on this item</h2>
 
 
-    <div class="customerTable" id = "cTable" ng-controller="ordersController">
+    <div class="customerTable" id = "cTable">
                     <table >
                         <tr>
                             <td> User Name </td>
@@ -179,7 +183,7 @@
                         </tr>
                         <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
 
-                            <td ng-bind="order.customer_name"></td>
+                            <td ng-bind="order.customer_name || order.user.username"></td>
                             <td ng-bind="order.item_name"></td>
                             <td ng-bind="order.quantity"></td>
                             <td ng-bind="order.date | date:'short'"></td>
@@ -205,17 +209,18 @@
         <span aria-hidden="true">&times;</span>
 
       </button>
-        <h1 class="modal-title" id="exampleModalLabel">Request Product</h1>
+        <h1 class="modal-title" id="exampleModalLabel">Request Item</h1>
 
     </div>
     <div class="modal-body" align="center">
       <h1>Create Order</h1>
 
-
+      <span ng-show="authorized">
       <select class = "feedback-input" ng-controller="customersController" id = "customerList" name="customerOptions" ng-model="new_order.userId">
         <option value="" selected disabled>User Name</option>
         <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.name"></option>
       </select>
+      </span>
 
 <!--
       <select class = "feedback-input" ng-controller="productsController" id = "productList" name="productsOptions" ng-model="new_order.product">
