@@ -58,21 +58,46 @@ module.exports = (function() {
  		},
 	  	show: function(req, res) {
 	  		if (req.body.userId) {
-	  			Request.find({user:req.body.userId})
-	  		 	.populate('item user')
-			        .lean()
-	  		 	.exec(function(err, results) {
-	  		       	if(err) {
-	  		         	res.status(500).send({ error: err});
-	  		       	} else {
-	  		       		results.forEach(function(e){
-	  		       			e.customer_name = e.user?e.user.name:"";
-	  		       			e.item_name = e.item?e.item.name:"";
+	  			User.findOne({_id: req.body.userId}, function(err, user) {
+	  			    if(err) {
+	  			      res.status(400).json({error: err});
+	  			    } else {
+	  			      if (user.status === "admin") {
+      		  			Request.find({})
+      		  		 	.populate('item user')
+      				        .lean()
+      		  		 	.exec(function(err, results) {
+      		  		       	if(err) {
+      		  		         	res.status(500).send({ error: err});
+      		  		       	} else {
+      		  		       		results.forEach(function(e){
+      		  		       			e.customer_name = e.user?e.user.name:"";
+      		  		       			e.item_name = e.item?e.item.name:"";
 
-	  		       		});
-	  		         	res.json(results);
-	  		       	}
-  				});
+      		  		       		});
+      		  		         	res.json(results);
+      		  		       	}
+      	  				});
+      		  		 } else {
+	 		  			Request.find({user:req.body.userId})
+	 		  		 	.populate('item user')
+	 				        .lean()
+	 		  		 	.exec(function(err, results) {
+	 		  		       	if(err) {
+	 		  		         	res.status(500).send({ error: err});
+	 		  		       	} else {
+	 		  		       		results.forEach(function(e){
+	 		  		       			e.customer_name = e.user?e.user.name:"";
+	 		  		       			e.item_name = e.item?e.item.name:"";
+
+	 		  		       		});
+	 		  		         	res.json(results);
+	 		  		       	}
+	 		  		       });
+      		  		 }
+
+	  			    }
+	  			});
 	  		} else {
 	  			Request.find({})
 	  		 	.populate('item user')
