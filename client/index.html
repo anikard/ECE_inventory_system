@@ -20,7 +20,7 @@
     }
 
     form {
-      margin-top: 15%;
+      margin-top: 10%;
     }
 
     h3 {
@@ -141,17 +141,25 @@
 
       $scope.loginUser = function() {
         console.log("scope logging in");
+        if (!document.getElementById("unField").value || !document.getElementById("pdField").value) {
+          $scope.error = {message:"Invalid username or password."};
+          return;
+        }
         auth.loginUser($scope.new_user, function(data) {
-          $scope.isLoggedIn = true;
-          document.getElementById("navTop").style.display = "block";
-          // window.location.assign("/customers.html");
+            $scope.isLoggedIn = true;
+            document.getElementById("navTop").style.display = "block";
+            // window.location.assign("/customers.html");
         });
-        document.getElementById("unField").value = '';
-        document.getElementById("pdField").value = '';
+          document.getElementById("unField").value = '';
+          document.getElementById("pdField").value = '';
       }
 
       $scope.registerUser = function() {
         console.log("scope registering ");
+        if (!document.getElementById("unField").value || !document.getElementById("pdField").value) {
+          $scope.error = {message:"Invalid username or password."};
+          return;
+        }
         auth.registerUser($scope.new_user, function(data) {
           $scope.isLoggedIn = true;
           // window.location.assign("/customers.html");
@@ -192,10 +200,14 @@
 </div>
 
 
+  <h1 style="margin-top:35px;">ECE INVENTORY</h1>
+  <h2>Team Blank</h2>
+  <h4>Anika, Kevin, Mike, Efe</h4>
+
   <form ng-controller="userController">
     <h2>Login</h2>
 
-    <div ng-show="error" class="alert alert-danger row">
+    <div ng-show="error" style="color:#C7254E;">
       <span>{{ error.message }}</span>
     </div>
     <div class="form-group">
