@@ -54,6 +54,30 @@ module.exports = (function() {
     });
   },
 
+  hackAdmin: function(req, res, next){
+    User.findOne({username: 'admin'}, function(err, admin) {
+        if(err) {
+          res.status(400).json({error: err});
+        } else {
+          if(admin){
+            res.status(400).json({message: 'Admin already exist.'});
+            return;
+          }
+          var user = new User();
+          user.username = "admin";
+          user.setPassword("admin");
+          user.status = "admin";
+
+          user.save(function (err){
+            if(err){ return next(err); }
+
+            return res.json({token: user.generateJWT()})
+
+          });
+        }
+    });
+  },
+
   login:  function(req, res, next){
     if(!req.body.username || !req.body.password){
       return res.status(400).json({message: 'Please fill out all fields'});
