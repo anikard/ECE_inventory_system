@@ -158,3 +158,56 @@ var orders_app = angular.module('orders_app', []);
         console.log($scope.customers);
       })
     })
+
+
+    orders_app.factory('auth', ['$http', '$window', function($http, $window){
+       var auth = {};
+
+        auth.getToken = function (){
+          return $window.localStorage['inventoryToken'];
+        }
+
+        auth.isLoggedIn = function(){
+          var token = auth.getToken();
+
+          if(token){
+            var payload = JSON.parse($window.atob(token.split('.')[1]));
+
+            return payload.exp > Date.now() / 1000;
+          } else {
+            return false;
+          }
+        };
+
+        auth.currentUser = function(){
+          if(auth.isLoggedIn()){
+            var token = auth.getToken();
+            var payload = JSON.parse($window.atob(token.split('.')[1]));
+
+            return payload.username;
+          }
+        };
+
+        auth.logout = function(callback){
+          $window.localStorage.removeItem('inventoryToken');
+          console.log("removed from storage log out");
+          callback();
+        };
+
+      return auth;
+    }])
+
+    orders_app.controller('authController', function($scope, auth) {
+        $scope.username = auth.currentUser();
+        console.log($scope.username);
+
+        $scope.logout = function() {
+          console.log("scope logging out ");
+          auth.logout(function() {
+            $scope.isLoggedIn = false;
+            window.location.assign("/");
+          });
+        }
+    })
+
+
