@@ -87,7 +87,7 @@ var orders_app = angular.module('orders_app', []);
           console.log('Form incomplete');
           return;
         }
- 
+
         $scope.new_order.userId = customerSelected.value; // id
         $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
         $scope.new_order.item_name = ((itemSelected.options[itemSelected.selectedIndex].text).split("|"))[0];
@@ -247,5 +247,3 @@ var orders_app = angular.module('orders_app', []);
     //       return true;
     //     }
     // })
-
-
