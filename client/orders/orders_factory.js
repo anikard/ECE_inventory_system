@@ -66,7 +66,9 @@ var orders_app = angular.module('orders_app', []);
 
 
     orders_app.controller('ordersController', function($scope, OrderFactory, auth, $document) {
-        $scope.orders = OrderFactory.getorders(auth.currentUserID(), function(data) {
+        console.log("USER ID: " + auth.currentUserID());
+        var thisId = {userId: auth.currentUserID()};
+        $scope.orders = OrderFactory.getorders(thisId, function(data) {
         $scope.orders = data;
 
       });
