@@ -9,6 +9,7 @@ products_app.factory('ProductsFactory', function($http) {
   var tags = [];
 
   var orders = [];
+  var relevantOrders = [];
   var originalProduct = {};
 
   factory.getcustomers = function(callback) {
@@ -68,8 +69,18 @@ products_app.factory('ProductsFactory', function($http) {
   }
 
   factory.viewProduct = function(product, callback) {
-    console.log("Factory view called on : " + product.name);
-    callback(product);
+    factory.getorders(function(data) {
+      console.log("Factory view called on : " + product.name);
+      console.log(product);
+      console.log(data[5]);
+      for (var i = 0; i < orders.length; i++) {
+        if (data[i].item_name === product.name) {
+          relevantOrders.push(orders[i]);
+        }
+      }
+      console.log(relevantOrders);
+      callback(product, relevantOrders);
+    })
   }
 
   factory.updateProduct = function(info, callback) {
@@ -261,7 +272,8 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
     $scope.currentProduct = angular.copy(product);
     originalProduct = angular.copy(product);
     $scope.currentTags = product.tags;
-    ProductsFactory.viewProduct(product, function(data) {
+    ProductsFactory.viewProduct(product, function(data, orders) {
+      $scope.orders = orders;
       $scope.thisProduct = data;
       $scope.new_order = {};
       $scope.new_order.itemId = data._id;
