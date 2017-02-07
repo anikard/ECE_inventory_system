@@ -147,6 +147,7 @@
         }
         auth.loginUser($scope.new_user, function(data) {
             $scope.isLoggedIn = true;
+            $scope.myName = auth.currentUser();
             document.getElementById("navTop").style.display = "block";
             // window.location.assign("/customers.html");
         });
@@ -162,6 +163,7 @@
         }
         auth.registerUser($scope.new_user, function(data) {
           $scope.isLoggedIn = true;
+          $scope.myName = auth.currentUser();
           // window.location.assign("/customers.html");
         });
         document.getElementById("unField").value = '';
@@ -196,7 +198,7 @@
 <body>
 
 <div ng-controller="userController" id = "navTop" style="display:none;">
-  <a href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a> | <a href="" ng-click="logout()">logout</a>
+  <a href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
 </div>
 
 
