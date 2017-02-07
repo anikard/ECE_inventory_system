@@ -34,8 +34,8 @@ products_app.factory('ProductsFactory', function($http) {
   }
 
 
-  factory.getorders = function(callback) {
-        $http.get('/orders').success(function(output) {
+  factory.getorders = function(info, callback) {
+        $http.post('/orders', info).success(function(output) {
           orders = output;
 
           console.log(orders);
@@ -43,6 +43,16 @@ products_app.factory('ProductsFactory', function($http) {
           callback(orders);
         })
     }
+
+    factory.realgetorders = function(callback) {
+          $http.get('/orders').success(function(output) {
+            orders = output;
+
+            console.log(orders);
+
+            callback(orders);
+          })
+      }
 
   factory.addTag = function(info, callback) {
     $http.post('/addTag', info).success(function(output) {
@@ -65,13 +75,11 @@ products_app.factory('ProductsFactory', function($http) {
   }
 
   factory.viewProduct = function(product, callback) {
-    factory.getorders(function(data) {
+    factory.realgetorders(function(data) {
       console.log("Factory view called on : " + product.name);
-      console.log(product);
-      console.log(data[5]);
+      relevantOrders = [];
       for (var i = 0; i < orders.length; i++) {
         if (data[i].item_name === product.name) {
-          
           relevantOrders.push(orders[i]);
         }
       }
@@ -353,8 +361,10 @@ products_app.controller('customersController', function($scope, ProductsFactory)
   console.log($scope.customers);
 })
 
-products_app.controller('ordersController', function($scope, ProductsFactory) {
-    $scope.orders = ProductsFactory.getorders(function(data) {
+products_app.controller('ordersController', function($scope, auth, ProductsFactory) {
+    var thisId = {userId: auth.currentUserID()};
+    console.log("thisId: " + thisId);
+    $scope.orders = ProductsFactory.getorders(function(thisId, data) {
       $scope.orders = data;
       console.log("inside prod order");
       console.log($scope.orders);
