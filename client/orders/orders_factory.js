@@ -75,6 +75,19 @@ var orders_app = angular.module('orders_app', []);
         console.log("MY NAME: " + $scope.myName);
         $scope.authorized = (auth.currentUserStatus()=="admin");
 
+        // AUTH
+        $scope.logout = function() {
+          console.log("scope logging out ");
+          auth.logout(function() {
+            $scope.isLoggedIn = false;
+            window.location.assign("/");
+          });
+        }
+
+        $scope.getCurrentStatus = function() {
+          return auth.currentUserStatus();
+        }
+
 
       $scope.addOrder = function() {
 
@@ -164,18 +177,7 @@ var orders_app = angular.module('orders_app', []);
         });
 
 
-        // AUTH
-        $scope.logout = function() {
-          console.log("scope logging out ");
-          auth.logout(function() {
-            $scope.isLoggedIn = false;
-            window.location.assign("/");
-          });
-        }
 
-        $scope.getCurrentStatus = function() {
-          return auth.currentUserStatus();
-        }
 
       }
 

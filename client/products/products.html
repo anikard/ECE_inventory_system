@@ -14,7 +14,7 @@
 
 <body ng-controller="productsController">
 
-<a href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a> | <a href="/logout">logout</a>
+  <a href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
 
   <h1>PRODUCTS</h1>
   <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
