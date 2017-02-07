@@ -146,14 +146,18 @@ module.exports = (function() {
 		},
 
 		update: function(req, res) {
+			console.log("in controller update");
 			Request.findOne({ '_id': req.body._id }, function (err, request) {
 				if (err) {
+					console.log("error order");
 					res.status(500).send({ error: "Cannot find order" });
 				} else {
 					Item.findOne({ '_id': request.item }, function (err, item) {
 						if(err) {
+							console.log("error item in order");
 				         	res.status(500).send({ error: "Cannot find item in the order" });
 				       	} else {
+				       		console.log("here");
 				         	if (request.status === "open" && req.body.status === "approved") {
 				         		if (item.quantity && item.quantity >= request.quantity) {
 				         			item.quantity-=request.quantity;
@@ -168,6 +172,7 @@ module.exports = (function() {
 				         			});
 
 				         		} else {
+				         			console.log("quantity error");
 				         			res.status(500).send({ error: "quantity requested exceeds stock limit" });
 				         		}
 				         	} else {
@@ -176,8 +181,8 @@ module.exports = (function() {
 				         		request.status = req.body.status || request.status;
 				         		request.quantity = req.body.quantity || request.quantity;
 				         		request.reason = req.body.reason || request.reason;
-				         		request.item = req.body.itemId || request.item;
-				         		request.user = req.body.userId || request.user;
+				         		request.item = (req.body.item && req.body.item._id) || request.item;
+				         		request.user = (req.body.user && req.body.user._id) || request.user;
 				         		request.save(function (err){
 				         			if(!err){
 				         				res.json(request);

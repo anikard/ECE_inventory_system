@@ -48,7 +48,7 @@ var orders_app = angular.module('orders_app', []);
 
       factory.updateOrder = function(info, callback) {
         $http.post('/updateOrder', info).success(function(output) {
-            // TODO
+            callback(output);
         })
       }
 
@@ -65,10 +65,15 @@ var orders_app = angular.module('orders_app', []);
     });
 
 
-    orders_app.controller('ordersController', function($scope, OrderFactory, $document) {
-      $scope.orders = OrderFactory.getorders(function(data) {
+    orders_app.controller('ordersController', function($scope, OrderFactory, auth, $document) {
+        $scope.orders = OrderFactory.getorders(function(data) {
         $scope.orders = data;
+
       });
+
+        $scope.myName = auth.currentUser();
+        console.log("MY NAME: " + $scope.myName);
+        $scope.authorized = true;
 
       $scope.addOrder = function() {
 
@@ -87,6 +92,7 @@ var orders_app = angular.module('orders_app', []);
         $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
         $scope.new_order.item_name = ((itemSelected.options[itemSelected.selectedIndex].text).split("|"))[0];
         $scope.new_order.itemId = itemSelected.value; // id
+        $scope.new_order.status = "open";
 
         console.log($scope.new_order);
 
@@ -134,12 +140,42 @@ var orders_app = angular.module('orders_app', []);
 
       $scope.respondToOrder = function() {
         $('#orderModal').modal('hide');
+        // $scope.orderResponse.dateFulfilled = new Date();
+        console.log("RESPONDING TO ORDER");
+        var approved = $document[0].getElementsByClassName('approveButton')[0].checked;
+        var denied = $document[0].getElementsByClassName('denyButton')[0].checked;
 
-        $scope.orderResponse.dateFulfilled = new Date();
-        console.log($scope.orderResponse);
-        OrderFactory.updateOrder($scope.orderResponse, function(data) {
+        console.log(approved);
+        console.log(denied);
+
+        $scope.responseToOrder = {};
+
+        if (approved) { $scope.responseToOrder.status = "approved"; }
+        else if (denied) { $scope.responseToOrder.status = "denied"; }
+        $scope.responseToOrder.note = $document[0].getElementById('message-text').value;;
+        $scope.responseToOrder._id = $scope.thisOrder._id;
+
+
+        console.log($scope.responseToOrder);
+        OrderFactory.updateOrder($scope.responseToOrder, function(data) {
           $scope.orderResponse = {};
+          $scope.responseToOrder = {};
         });
+
+
+        // AUTH
+        $scope.logout = function() {
+          console.log("scope logging out ");
+          auth.logout(function() {
+            $scope.isLoggedIn = false;
+            window.location.assign("/");
+          });
+        }
+
+        $scope.isAuthorized = function() {
+          return true;
+        }
+
       }
 
 
@@ -195,21 +231,19 @@ var orders_app = angular.module('orders_app', []);
       return auth;
     }])
 
-    orders_app.controller('authController', function($scope, auth) {
-        $scope.myName = auth.currentUser();
-        console.log($scope.myName);
+    // orders_app.controller('authController', function($scope, auth) {
+    //     $scope.myName = auth.currentUser();
+    //     console.log($scope.myName);
 
-        $scope.logout = function() {
-          console.log("scope logging out ");
-          auth.logout(function() {
-            $scope.isLoggedIn = false;
-            window.location.assign("/");
-          });
-        }
+    //     $scope.logout = function() {
+    //       console.log("scope logging out ");
+    //       auth.logout(function() {
+    //         $scope.isLoggedIn = false;
+    //         window.location.assign("/");
+    //       });
+    //     }
 
-        $scope.isAuthorized = function() {
-          return true;
-        }
-    })
-
-
+    //     $scope.isAuthorized = function() {
+    //       return true;
+    //     }
+    // })
