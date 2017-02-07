@@ -139,14 +139,20 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
     $scope.products = ProductsFactory.getproducts(function(data) {
     $scope.products = data;
 
+
     $scope.currentTags = [];
   });
+
+  $scope.tags = ProductsFactory.gettags(function(data) {
+    $scope.tags = data;
+  })
 
   $scope.addProduct = function() {
     console.log("Query submited!");
     console.log("new product");
     $scope.new_product.tags = $scope.currentTags;
     console.log($scope.new_product);
+    $scope.currentTags = [];
     ProductsFactory.addProduct($scope.new_product, function(data) {
       $scope.new_product.date = new Date();
       $scope.products.push($scope.new_product);
@@ -295,10 +301,11 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
   $scope.tagClicked = function(customer) {
     console.log("tagClicked");
     console.log(customer);
-    console.log($scope.currentTags);
-    if($scope.currentTags.indexOf(customer.name) == -1) {
-      $scope.currentTags.push(customer.name);
+    console.log($scope.$parent.currentTags);
+    if($scope.$parent.currentTags.indexOf(customer.name) == -1) {
+      $scope.$parent.currentTags.push(customer.name);
     }
+    console.log($scope.$parent.currentTags);
   }
 
   $scope.addTag = function() {
@@ -380,6 +387,7 @@ products_app.controller('tagsController', function($scope, ProductsFactory) {
     console.log(data);
     $scope.tags = data;
   })
+
   console.log("tags")
   console.log($scope.tags);
 })
@@ -425,6 +433,7 @@ products_app.factory('auth', ['$http', '$window', function($http, $window){
 
   return auth;
 }])
+
 /*
 products_app.controller('authController', function($scope, auth) {
     $scope.myName = auth.currentUser();

@@ -68,7 +68,7 @@
       3. Give third option to add new tag/customer
       4. Make adding a new tag/customer add it to current product tag array-->
 
-      <select class = "feedback-input" ng-controller="tagsController" id = "tagList" name="tagOptions"> <!-- ng-model="new_product.tags[new_product.tags.length]">-->
+      <select class = "feedback-input" ng-controller="productsController" id = "tagList" name="tagOptions"> <!-- ng-model="new_product.tags[new_product.tags.length]">-->
         <option value="" ng-click="createNewTag()">Add a tag</option>
         <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
       </select>
@@ -138,7 +138,7 @@
                 3. Give third option to add new tag/customer
                 4. Make adding a new tag/customer add it to current product tag array-->
 
-                <select class = "feedback-input" ng-if="editing" ng-controller="tagsController" id = "tagList" name="tagOptions" ng-model="new_order.tags[new_order.tags.length]">
+                <select class = "feedback-input" ng-if="editing" ng-controller="productsController" id = "tagList" name="tagOptions" ng-model="new_order.tags[new_order.tags.length]">
                   <option value="" ng-click="createNewTag()">Add a tag</option>
                   <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
                 </select>
