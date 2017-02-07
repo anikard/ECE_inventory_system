@@ -110,6 +110,9 @@
     app.post('/login', function(req, res, next){
     	 authenticator.login(req, res, next)
          });
+    app.post('/createAdmin', function(req, res, next){
+      authenticator.createAdmin(req, res, next)
+    });
 
     // app.config(function ($stateProvider) {
 
