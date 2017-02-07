@@ -133,12 +133,21 @@
           callback();
         };
 
+        auth.currentUserStatus = function(){
+          if(auth.isLoggedIn()){
+            var token = auth.getToken();
+            var payload = JSON.parse($window.atob(token.split('.')[1]));
+            
+            return payload.status;
+          }
+        };
+
       return auth;
     }])
 
 
     discussion_app.controller('userController', function($scope, auth, $document, $location) {
-
+      // $scope.authorized = true; // TO FIX
       $scope.loginUser = function() {
         console.log("scope logging in");
         if (!document.getElementById("unField").value || !document.getElementById("pdField").value) {
@@ -148,9 +157,10 @@
         auth.loginUser($scope.new_user, function(data) {
             $scope.isLoggedIn = true;
             $scope.myName = auth.currentUser();
+            $scope.authorized = (auth.currentUserStatus()=="admin");
             document.getElementById("navTop").style.display = "block";
             document.getElementById("loginForm").style.display = "none";
-            $scope.authorized = (auth.currentUserStatus()=="admin");
+            
 
             // window.location.assign("/customers.html");
         });
@@ -194,7 +204,9 @@
 <body>
 
 <div ng-controller="userController" id = "navTop" style="display:none;">
-  <a ng-if="authorized" href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
+  <a ng-if="authorized" href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
+<!--     <a ng-if="authorized" href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
+ -->
 </div>
 
 

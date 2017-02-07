@@ -135,15 +135,15 @@ var orders_app = angular.module('orders_app', []);
       $scope.viewOrder = function(order) {
           OrderFactory.viewOrder(order, function(data) {
             $scope.thisOrder = data;
-
+            console.log("THIS ORDER");
+            console.log($scope.thisOrder.status);
             if ($scope.thisOrder.status != "open") {
-              ($document[0].getElementById('request_response_form')).style.display = "none";
               ($document[0].getElementById('cancelOrderButton')).style.display = "none";
-              ($document[0].getElementById('respondOrderButton')).style.display = "none";
+              ($document[0].getElementById('request_response_form')).style.display = "none";
             }
             else {
-              ($document[0].getElementById('request_response_form')).style.display = "block";
               ($document[0].getElementById('cancelOrderButton')).style.display = "inline";
+              ($document[0].getElementById('request_response_form')).style.display = "block";
               ($document[0].getElementById('respondOrderButton')).style.display = "inline";
             }
             console.log(data);
