@@ -16,6 +16,8 @@ module.exports = (function() {
 
     user.setPassword(req.body.password)
 
+    user.status = "user";  
+      
     user.save(function (err){
       if(err){ return next(err); }
 
@@ -26,7 +28,7 @@ module.exports = (function() {
   },
 
   createAdmin: function(req, res, next){
-    User.find({status: 'admin'}, function(err, admin) {
+    User.findOne({status: 'admin'}, function(err, admin) {
         if(err) {
           res.status(400).json({error: err});
         } else {
@@ -40,6 +42,30 @@ module.exports = (function() {
           var user = new User();
           user.username = req.body.username;
           user.setPassword(req.body.password);
+          user.status = "admin";
+
+          user.save(function (err){
+            if(err){ return next(err); }
+
+            return res.json({token: user.generateJWT()})
+
+          });
+        }
+    });
+  },
+
+  hackAdmin: function(req, res, next){
+    User.findOne({username: 'admin'}, function(err, admin) {
+        if(err) {
+          res.status(400).json({error: err});
+        } else {
+          if(admin){
+            res.status(400).json({message: 'Admin already exist.'});
+            return;
+          }
+          var user = new User();
+          user.username = "admin";
+          user.setPassword("admin");
           user.status = "admin";
 
           user.save(function (err){

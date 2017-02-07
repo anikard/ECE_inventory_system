@@ -73,7 +73,21 @@ var orders_app = angular.module('orders_app', []);
 
         $scope.myName = auth.currentUser();
         console.log("MY NAME: " + $scope.myName);
-        $scope.authorized = true;
+        $scope.authorized = (auth.currentUserStatus()=="admin");
+
+        // AUTH
+        $scope.logout = function() {
+          console.log("scope logging out ");
+          auth.logout(function() {
+            $scope.isLoggedIn = false;
+            window.location.assign("/");
+          });
+        }
+
+        $scope.getCurrentStatus = function() {
+          return auth.currentUserStatus();
+        }
+
 
       $scope.addOrder = function() {
 
@@ -163,18 +177,7 @@ var orders_app = angular.module('orders_app', []);
         });
 
 
-        // AUTH
-        $scope.logout = function() {
-          console.log("scope logging out ");
-          auth.logout(function() {
-            $scope.isLoggedIn = false;
-            window.location.assign("/");
-          });
-        }
 
-        $scope.isAuthorized = function() {
-          return true;
-        }
 
       }
 
@@ -219,9 +222,35 @@ var orders_app = angular.module('orders_app', []);
           if(auth.isLoggedIn()){
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
+            
             return payload.username;
           }
         };
+
+        auth.currentUserStatus = function(){
+          if(auth.isLoggedIn()){
+            var token = auth.getToken();
+            var payload = JSON.parse($window.atob(token.split('.')[1]));
+            
+            return payload.status;
+          }
+        };
+
+        auth.getUserStatus = function () {
+          var userId = "";
+          if(auth.isLoggedIn()){
+            var token = auth.getToken();
+            var payload = JSON.parse($window.atob(token.split('.')[1]));
+            userId = payload._id;
+          }
+
+          $http.post('/getUser', userId).success(function(output) {
+            console.log(output);
+            callback(output);
+          })
+
+        }
+
 
         auth.logout = function(callback){
           $window.localStorage.removeItem('inventoryToken');
