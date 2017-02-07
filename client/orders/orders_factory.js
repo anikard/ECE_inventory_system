@@ -26,8 +26,7 @@ var orders_app = angular.module('orders_app', []);
 
           console.log(orders);
           orders.forEach(function(elem) {
-            // elem["customer_name"] = elem["userId"].name;
-            elem.customer_name = "SAMPLE NAME"
+            //elem["customer_name"] = elem["userId"].name;
           })
           console.log(orders);
 
@@ -160,3 +159,56 @@ var orders_app = angular.module('orders_app', []);
         console.log($scope.customers);
       })
     })
+
+
+    orders_app.factory('auth', ['$http', '$window', function($http, $window){
+       var auth = {};
+
+        auth.getToken = function (){
+          return $window.localStorage['inventoryToken'];
+        }
+
+        auth.isLoggedIn = function(){
+          var token = auth.getToken();
+          if(token){
+            var payload = JSON.parse($window.atob(token.split('.')[1]));
+            return payload.exp > Date.now() / 1000;
+          } else {
+            return false;
+          }
+        };
+
+        auth.currentUser = function(){
+          if(auth.isLoggedIn()){
+            var token = auth.getToken();
+            var payload = JSON.parse($window.atob(token.split('.')[1]));
+            return payload.username;
+          }
+        };
+
+        auth.logout = function(callback){
+          $window.localStorage.removeItem('inventoryToken');
+          callback();
+        };
+
+      return auth;
+    }])
+
+    orders_app.controller('authController', function($scope, auth) {
+        $scope.myName = auth.currentUser();
+        console.log($scope.myName);
+
+        $scope.logout = function() {
+          console.log("scope logging out ");
+          auth.logout(function() {
+            $scope.isLoggedIn = false;
+            window.location.assign("/");
+          });
+        }
+
+        $scope.isAuthorized = function() {
+          return true;
+        }
+    })
+
+

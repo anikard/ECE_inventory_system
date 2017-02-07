@@ -7,6 +7,9 @@ var Customer = mongoose.model('User');
 
 module.exports = (function() {
  	return { 
+ 		home: function(req, res) {
+			res.redirect('/');
+ 		},
  		displayCustomers: function(req, res) {
  			res.redirect('customers.html');
  		},
