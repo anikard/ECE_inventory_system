@@ -38,10 +38,6 @@ products_app.factory('ProductsFactory', function($http) {
         $http.get('/orders').success(function(output) {
           orders = output;
 
-          orders.forEach(function(elem) {
-            //elem["customer_name"] = elem["userId"].name;
-            elem.customer_name = "SAMPLE NAME";
-          })
           console.log(orders);
 
           callback(orders);
@@ -75,6 +71,7 @@ products_app.factory('ProductsFactory', function($http) {
       console.log(data[5]);
       for (var i = 0; i < orders.length; i++) {
         if (data[i].item_name === product.name) {
+          
           relevantOrders.push(orders[i]);
         }
       }
