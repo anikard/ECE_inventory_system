@@ -6,7 +6,7 @@ The ECE department would like an inventory system to track items.
 
 ## Setup:
 
------Install MongoDB------
+###Install MongoDB
 ```
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
 ```
@@ -26,7 +26,7 @@ sudo apt-get install -y mongodb-org
 sudo service mongod start
 ```
 
------Install Node------
+###Install Node
 ```
 curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 sudo apt-get update
@@ -64,5 +64,5 @@ git clone https://github.com/anikard/ECE_inventory_system
 cd ECE_inventory_system/src && npm install
 node server.js
 ```
-Then access the site at:
+###Then access the site at:
 https://localhost:8443
