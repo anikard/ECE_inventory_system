@@ -55,7 +55,7 @@ Test: Download a package globally without using sudo.
 ```
 ```
 npm install -g gulp bower
-sudo npm install -g mean-cli 
+sudo npm install -g mean-cli
 echo fs.inotify.max_user_watches=582222 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 ```
 Finally, clone and deploy the project
@@ -66,4 +66,3 @@ node server.js
 ```
 ###Then access the site at:
 https://localhost:8443
-
