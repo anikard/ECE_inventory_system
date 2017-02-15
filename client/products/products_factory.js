@@ -270,6 +270,11 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
     var customerSelected = $document[ 0 ].getElementById('customerList');
     $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
     console.log($scope.new_order);
+    console.log("Current user stuff: ");
+    console.log($scope.authorized);
+    if(!$scope.authorized) {
+      $scope.new_order.userId = $scope.myID.userId;
+    }
     ProductsFactory.addOrder($scope.new_order, function(data) {
       $scope.new_order = {};
     })
