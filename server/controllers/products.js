@@ -61,7 +61,7 @@ module.exports = (function() {
         req.body._id,
         {$set: {
           name: req.body.name,
-          description: req.body.descrition,
+          description: req.body.description,
           quantity: req.body.quantity,
           model: req.body.model,
           location: req.body.location,
