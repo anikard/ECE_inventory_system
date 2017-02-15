@@ -1,4 +1,4 @@
-var orders_app = angular.module('orders_app', []);
+var orders_app = angular.module('cart_app', []);
 
     orders_app.factory('OrderFactory', function($http) {
       var factory = {};
@@ -46,6 +46,22 @@ var orders_app = angular.module('orders_app', []);
         })
       }
 
+      factory.addToCart = function(info, callback) {
+        console.log("adding to cart in factory");
+        $http.post('/addToCart', info).success(function(output) {
+            orders = output;
+            callback(orders);
+        })
+      }
+
+      factory.createRequest = function(info, callback) {
+        $http.post('/createRequest', info).success(function(output) {
+            // orders = output;
+            // callback(orders);
+            console.log("created request in factory of cart")
+        })
+      }
+
       factory.updateOrder = function(info, callback) {
         $http.post('/updateOrder', info).success(function(output) {
             callback(output);
@@ -76,14 +92,7 @@ var orders_app = angular.module('orders_app', []);
         $scope.myName = auth.currentUser();
         console.log("MY NAME: " + $scope.myName);
         $scope.authorized = (auth.currentUserStatus()=="admin");
-        if ($scope.authorized) {
-          $document[ 0 ].getElementById('customerList').display = "block";
-          $document[ 0 ].getElementById('thisCustomerInput').display = "none";
-        }
-        else {
-          $document[ 0 ].getElementById('customerList').display = "none";
-          $document[ 0 ].getElementById('thisCustomerInput').display = "block";
-        }
+        
 
         // AUTH
         $scope.logout = function() {
@@ -147,6 +156,48 @@ var orders_app = angular.module('orders_app', []);
           $scope.new_order = {};
         });
       }
+
+      $scope.addToCart = function() {
+
+        console.log("addToCart from cart controller scope");
+
+        var itemSelected = $document[ 0 ].getElementById('productList');
+
+        if (!itemSelected.value || !$scope.new_order || !$scope.new_order.quantity) {
+            alert('Please fill out all the fields.');
+            return;
+          }
+
+        $scope.new_order.item_name = ((itemSelected.options[itemSelected.selectedIndex].text).split("|"))[0];
+        $scope.new_order.itemId = itemSelected.value;
+
+        console.log($scope.new_order);
+
+        OrderFactory.addToCart($scope.new_order, function(data) {
+          $scope.new_order.date = new Date();
+          $scope.orders.push($scope.new_order);
+          $scope.new_order = {};
+        });
+      }
+
+      $scope.createRequest = function() {
+
+        console.log("createRequest from cart controller scope");
+
+        // console.log($scope.this_request.reason);
+
+        $scope.this_request.cartItems = $scope.orders;
+
+        console.log($scope.this_request);
+
+        OrderFactory.createRequest($scope.this_request, function(data) {
+          $scope.orders = {};
+          $scope.this_request = {};
+        });
+      }
+
+
+
 
         $scope.removeOrder = function(order) {
           $('#orderModal').modal('hide');
@@ -300,20 +351,3 @@ var orders_app = angular.module('orders_app', []);
 
       return auth;
     }])
-
-    // orders_app.controller('authController', function($scope, auth) {
-    //     $scope.myName = auth.currentUser();
-    //     console.log($scope.myName);
-
-    //     $scope.logout = function() {
-    //       console.log("scope logging out ");
-    //       auth.logout(function() {
-    //         $scope.isLoggedIn = false;
-    //         window.location.assign("/");
-    //       });
-    //     }
-
-    //     $scope.isAuthorized = function() {
-    //       return true;
-    //     }
-    // })
