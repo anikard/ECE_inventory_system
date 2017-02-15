@@ -44,6 +44,16 @@
       cart.displayCart(req, res);
     });
 
+    app.post('/addToCart', function(req, res) {
+      console.log("adding to cart in routes");
+      //cart.add(req, res); // TODO
+    });
+
+    app.post('/createRequest', function(req, res) {
+      // req = {cartItems: Array of Orders, reason: String}
+      orders.add(req, res);
+    });
+
     app.get('/dispCustomers', function(req, res) {
       customers.displayCustomers(req, res);
     });
