@@ -5,6 +5,7 @@
   // require the controller
   var customers = require('./../server/controllers/customers.js');
   var orders = require('./../server/controllers/orders.js');
+  var cart = require('./../server/controllers/cart.js');
   var products = require('./../server/controllers/products.js');
   var dashboard = require('./../server/controllers/dashboard.js');
   var tags = require('./../server/controllers/tags.js');
@@ -37,6 +38,10 @@
 
     app.get('/dispOrders', function(req, res) {
       orders.displayOrders(req, res);
+    });
+
+    app.get('/dispCart', function(req, res) {
+      cart.displayCart(req, res);
     });
 
     app.get('/dispCustomers', function(req, res) {
