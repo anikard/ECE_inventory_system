@@ -74,8 +74,8 @@ products_app.factory('ProductsFactory', function($http) {
     })
   }
 
-  factory.viewProduct = function(product, callback) {
-    factory.realgetorders(function(data) {
+  factory.viewProduct = function(userID, product, callback) {
+    factory.getorders(userID, function(data) {
       console.log("Factory view called on : " + product.name);
       relevantOrders = [];
       for (var i = 0; i < orders.length; i++) {
@@ -121,6 +121,7 @@ products_app.factory('ProductsFactory', function($http) {
 
 products_app.controller('productsController', function($scope, auth, ProductsFactory, $document) {
     $scope.myName = auth.currentUser();
+    $scope.myID = {userId: auth.currentUserID()};
     console.log($scope.myName);
     $scope.authorized = (auth.currentUserStatus()=="admin");
 
@@ -279,11 +280,13 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
   $scope.viewProduct = function(product) {
     console.log("View product selected");
     console.log(product.name);
+    console.log("Current user id: ");
+    console.log($scope.myID);
 
     $scope.currentProduct = angular.copy(product);
     originalProduct = angular.copy(product);
     $scope.currentTags = product.tags;
-    ProductsFactory.viewProduct(product, function(data, orders) {
+    ProductsFactory.viewProduct($scope.myID, product, function(data, orders) {
       $scope.orders = orders;
       $scope.thisProduct = data;
       $scope.new_order = {};
@@ -414,6 +417,15 @@ products_app.factory('auth', ['$http', '$window', function($http, $window){
         var token = auth.getToken();
         var payload = JSON.parse($window.atob(token.split('.')[1]));
         return payload.username;
+      }
+    };
+
+    auth.currentUserID = function(){
+      if(auth.isLoggedIn()){
+        var token = auth.getToken();
+        var payload = JSON.parse($window.atob(token.split('.')[1]));
+
+        return payload._id;
       }
     };
 
