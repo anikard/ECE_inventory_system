@@ -3,7 +3,7 @@
 /********************************************************/
 
 var mongoose = require('mongoose');
-var Product = mongoose.model('Item');
+var Item = mongoose.model('Item');
 
 module.exports = (function() {
  	return {
@@ -11,7 +11,7 @@ module.exports = (function() {
  			res.redirect('products/products.html');
  		},
 	  	show: function(req, res) {
-	     	Product.find({}, function(err, results) {
+	     	Item.find({}, function(err, results) {
 		       	if(err) {
 		         	console.log(err);
 		       	} else {
@@ -20,36 +20,41 @@ module.exports = (function() {
 	   		})
 	 	},
 	 	add: function(req, res) {
-			var product = new Product({
-        name: req.body.name,
-				description: req.body.description,
-				quantity: req.body.quantity,
-				image: req.body.image,
-        model: req.body.model,
-        location: req.body.location,
-        tags: req.body.tags,
+      Item.findOne({ 'name': req.body.name }, function (err, item) {
+        if (err) {
+          res.status(500).send({ error: err });
+          return;
+        }
+        if (item) {
+          res.status(405).send({ error: "Item already exist!" });
+        } 
+        var newItem = new Item({
+          name: req.body.name,
+          description: req.body.description,
+          quantity: req.body.quantity,
+          image: req.body.image,
+          model: req.body.model,
+          location: req.body.location,
+          tags: req.body.tags,
+        });
+        newItem.save(function(err){
+            if(err){
+              res.status(500).send({ error: err })
+            } else {
+              res.status(200).end(); //  end the function to return
+            }
+        });
       });
-
-			product.save(function(err){
-			    if(err){
-            res.status(500).send({ error: err })
-				    console.log("Add product Error");
-			    } else {
-				    console.log("Successfully added a product!");
-				    res.end(); //  end the function to return
-			    }
-			})
+			
 		},
 
     delete: function(req, res) {
-      Product.remove({ _id: req.body._id},
+      Item.remove({ _id: req.body._id},
         function (err, request) {
           if (err) {
-            res.status(500).send({ error: err })
-            console.log("Delete Product Error");
+            res.status(500).send({ error: err });
           } else {
-						console.log("Successfully deleted a product!");
-	        			res.status(200).send("Successfully deleted a product!");
+      			res.status(200).send("Successfully deleted a item!");
 					}
           res.end();
         }
@@ -57,7 +62,7 @@ module.exports = (function() {
     },
 
     update: function(req, res) {
-      Product.findByIdAndUpdate(
+      Item.findByIdAndUpdate(
         req.body._id,
         {$set: {
           name: req.body.name,
@@ -69,9 +74,9 @@ module.exports = (function() {
           //TODO: image_url
         }},
         { new: true },
-        function (err, product) {
-          if (err) console.log("Update Product Error");
-          res.json(product);
+        function (err, item) {
+          if (err) console.log("Update item Error");
+          res.json(item);
         });
     }
 
