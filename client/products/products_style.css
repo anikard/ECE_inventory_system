@@ -41,6 +41,9 @@
     }
     [type="submit"]:hover { background: teal; }
 
+    option[value=""][disabled] {
+      display: none;
+    }
 
     /*remove button*/
     .remove {

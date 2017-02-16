@@ -68,14 +68,16 @@
       3. Give third option to add new tag/customer
       4. Make adding a new tag/customer add it to current product tag array-->
 
-      <select class = "feedback-input" ng-controller="productsController" id = "tagList" name="tagOptions"> <!-- ng-model="new_product.tags[new_product.tags.length]">-->
-        <option value="" ng-click="createNewTag()">Add a tag</option>
+      <select id="tag_select_modal" class = "feedback-input" ng-controller="productsController" id = "tagList" name="tagOptions"> <!-- ng-model="new_product.tags[new_product.tags.length]">-->
+        <option value="" disabled selected>Add a Tag</option>
+        <option value="1" ng-click="createNewTag()">Create New Tag</option>
         <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
       </select>
+
 <!--<textarea class = "feedback-input" ng-model="new_product.tags" placeholder="tags (comma separated)"></textarea>-->
 
 
-<input class = "feedback-input" type="number" ng-model="new_product.quantity" placeholder="quantity" required>
+<input class = "feedback-input" type="number" min="1" ng-model="new_product.quantity" placeholder="quantity" required>
 <input type="submit" ng-disabled="createItemForm.$invalid" ng-click="addProduct()">
 <br>
 </form>
@@ -109,7 +111,7 @@
           </p>
           <p>
             <label><b>Quantity:  </b></label>
-            <input type="number" ng-readonly="!editing" ng-model="currentProduct.quantity"required/>
+            <input type="number" min="1" ng-readonly="!editing" ng-model="currentProduct.quantity"required/>
           </p>
           <p>
             <label><b>Description:  </b></label>
@@ -138,8 +140,9 @@
                 3. Give third option to add new tag/customer
                 4. Make adding a new tag/customer add it to current product tag array-->
 
-                <select class = "feedback-input" ng-if="editing" ng-controller="productsController" id = "tagList" name="tagOptions" ng-model="new_order.tags[new_order.tags.length]">
-                  <option value="" ng-click="createNewTag()">Add a tag</option>
+                <select id="tag_select_main" class = "feedback-input" ng-if="editing" ng-controller="productsController" id = "tagList" name="tagOptions" ng-model="new_order.tags[new_order.tags.length]">
+                  <option value="" disabled selected>Add a Tag</option>
+                  <option value="1" ng-click="createNewTag()">Create New Tag</option>
                   <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
                 </select>
           </p>
@@ -230,7 +233,7 @@
      -->
      <input class = "feedback-input" type="text" value="{{thisProduct.name}}" ng-readonly="true" />
 
-      <input class = "feedback-input" type="number" ng-model="new_order.quantity" placeholder="quantity">
+      <input class = "feedback-input" type="number" min="1" ng-model="new_order.quantity" placeholder="quantity">
       <textarea class = "feedback-input" ng-model="new_order.reason" placeholder="Reason"></textarea>
       <input type="submit" ng-click="addOrder()">
 
@@ -293,7 +296,7 @@
         <span aria-hidden="true">&times;</span>
 
       </button>
-        <h1 class="modal-title" id="exampleModalLabel">Confirm Deletion</h1>
+        <h1 class="modal-title" id="exampleModalLabel">Confirm Edits</h1>
 
     </div>
     <div class="modal-body" align="left">

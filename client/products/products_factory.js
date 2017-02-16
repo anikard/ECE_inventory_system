@@ -68,14 +68,19 @@ products_app.factory('ProductsFactory', function($http) {
       console.log("Add item form incomplete");
       return;
     }
-    $http.post('/addProduct', info).success(function(output) {
+    $http.post('/addProduct', info)
+      .success(function(output) {
         products = output;
         callback(products);
-    })
+      })
+      .error(function(error){
+        console.log("ERROR FOUND: ");
+        console.log(error);
+      })
   }
 
-  factory.viewProduct = function(product, callback) {
-    factory.realgetorders(function(data) {
+  factory.viewProduct = function(userID, product, callback) {
+    factory.getorders(userID, function(data) {
       console.log("Factory view called on : " + product.name);
       relevantOrders = [];
       for (var i = 0; i < orders.length; i++) {
@@ -121,6 +126,7 @@ products_app.factory('ProductsFactory', function($http) {
 
 products_app.controller('productsController', function($scope, auth, ProductsFactory, $document) {
     $scope.myName = auth.currentUser();
+    $scope.myID = {userId: auth.currentUserID()};
     console.log($scope.myName);
     $scope.authorized = (auth.currentUserStatus()=="admin");
 
@@ -269,6 +275,11 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
     var customerSelected = $document[ 0 ].getElementById('customerList');
     $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
     console.log($scope.new_order);
+    console.log("Current user stuff: ");
+    console.log($scope.authorized);
+    if(!$scope.authorized) {
+      $scope.new_order.userId = $scope.myID.userId;
+    }
     ProductsFactory.addOrder($scope.new_order, function(data) {
       $scope.new_order = {};
     })
@@ -279,11 +290,13 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
   $scope.viewProduct = function(product) {
     console.log("View product selected");
     console.log(product.name);
+    console.log("Current user id: ");
+    console.log($scope.myID);
 
     $scope.currentProduct = angular.copy(product);
     originalProduct = angular.copy(product);
     $scope.currentTags = product.tags;
-    ProductsFactory.viewProduct(product, function(data, orders) {
+    ProductsFactory.viewProduct($scope.myID, product, function(data, orders) {
       $scope.orders = orders;
       $scope.thisProduct = data;
       $scope.new_order = {};
@@ -414,6 +427,15 @@ products_app.factory('auth', ['$http', '$window', function($http, $window){
         var token = auth.getToken();
         var payload = JSON.parse($window.atob(token.split('.')[1]));
         return payload.username;
+      }
+    };
+
+    auth.currentUserID = function(){
+      if(auth.isLoggedIn()){
+        var token = auth.getToken();
+        var payload = JSON.parse($window.atob(token.split('.')[1]));
+
+        return payload._id;
       }
     };
 
