@@ -45,13 +45,19 @@
     });
 
     app.post('/addToCart', function(req, res) {
+      // req.body = {_id: id;, itemId: id, item_name: String, quantity: int}
       console.log("adding to cart in routes");
       //cart.add(req, res); // TODO
     });
 
     app.post('/createRequest', function(req, res) {
-      // req = {cartItems: Array of Orders, reason: String}
+      // req.body = {_id: id;, cartItems: Array of Orders, reason: String}
       orders.add(req, res);
+    });
+
+    app.post('/deleteFromCart', function(req, res) {
+      // req.body = {_id: id; userId: id, item: Object, date: Date, quantity: int}
+      // cart.delete(req, res);
     });
 
     app.get('/dispCustomers', function(req, res) {
