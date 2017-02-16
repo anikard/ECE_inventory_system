@@ -154,10 +154,6 @@
       oauth.code(req, res);
     });
 
-    app.get('/api/oauth/token', (req, res) => {
-      oauth.token(req, res);
-    });
-
     // app.config(function ($stateProvider) {
 
     //   $stateProvider

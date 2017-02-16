@@ -6,6 +6,7 @@ const https = require('https');
 
 const client_id = 'ece-inventory-manager';
 const client_secret = 'G#p8nd#uoKQGMnDdVby=8kX$aIbM9f4iKU$#bY@*v1RkMWnoN%';
+const code_endpoint = 'https://localhost:8443/api/oauth/code';
 
 const oauth2 = require('simple-oauth2').create({
   client: {
@@ -19,9 +20,6 @@ const oauth2 = require('simple-oauth2').create({
   },
 });
 
-const code_endpoint = 'https://localhost:8443/api/oauth/code';
-
-// Authorization uri definition
 const authorizationUri = oauth2.authorizationCode.authorizeURL({
   redirect_uri: code_endpoint,
   scope: 'basic identity:netid:read',
@@ -38,36 +36,6 @@ const requestOptions = (token) => {
       'Authorization': "Bearer " + token,
     }
   };
-}
-
-const colaboptions = (token) => {
-  return {
-    hostname: 'api.colab.duke.edu',
-    port: 443,
-    path: '/identity/v1/',
-    method: 'GET',
-    headers: {
-      'Content-Type': "application/json",
-        'x-api-key': client_id,
-        'Authorization': "Bearer " + token,
-    }
-  };
-}
-
-function parseReponse(response, body) {
-  debug('Checking response body', body);
-
-  try {
-    body = JSON.parse(body);
-  } catch (e) {
-    /* The OAuth2 server does not return a valid JSON */
-  }
-
-  if (response.statusCode >= 400) {
-    return Promise.reject(new HTTPError(response.statusCode, body));
-  }
-
-  return Promise.resolve(body);
 }
 
 module.exports = (function() {
