@@ -78,6 +78,7 @@
 
 
 <input class = "feedback-input" type="number" min="1" ng-model="new_product.quantity" placeholder="quantity" required>
+<div class="error" ng-if="errorMessage">{{ errorMessage }}</div>
 <input type="submit" ng-disabled="createItemForm.$invalid" ng-click="addProduct()">
 <br>
 </form>
