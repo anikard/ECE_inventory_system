@@ -76,6 +76,7 @@ products_app.factory('ProductsFactory', function($http) {
       .error(function(error){
         console.log("ERROR FOUND: ");
         console.log(error);
+        callback(error);
       })
   }
 
@@ -160,9 +161,17 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
     console.log($scope.new_product);
     $scope.currentTags = [];
     ProductsFactory.addProduct($scope.new_product, function(data) {
-      $scope.new_product.date = new Date();
-      $scope.products.push($scope.new_product);
-      $scope.new_product = {};
+      if(data.error) {
+        $scope.errorMessage = data.error;
+        console.log($scope.products);
+      }
+      else {
+        console.log("addProduct success");
+        $scope.errorMessage = null;
+        $scope.new_product.date = new Date();
+        $scope.products.push($scope.new_product);
+        $scope.new_product = {};
+      }
     });
   }
 

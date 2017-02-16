@@ -45,6 +45,11 @@
       display: none;
     }
 
+    .error {
+      font-size: 30px;
+      color: red; 
+    }
+
     /*remove button*/
     .remove {
       font-family: 'Montserrat', Arial, Helvetica, sans-serif;
