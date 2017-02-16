@@ -10,7 +10,7 @@
   var dashboard = require('./../server/controllers/dashboard.js');
   var tags = require('./../server/controllers/tags.js');
   var authenticator = require('./../server/controllers/authenticator.js');
-
+  var oauth = require('./../server/controllers/oauth.js');
 
 
   module.exports = (function(app) {
@@ -144,6 +144,18 @@
     });
     app.get('/hackAdmin', function(req, res, next){
       authenticator.hackAdmin(req, res, next);
+    });
+
+    app.get('/api/oauth/auth', (req, res) => {
+      oauth.auth(req, res);
+    });
+
+    app.get('/api/oauth/code', (req, res) => {
+      oauth.code(req, res);
+    });
+
+    app.get('/api/oauth/token', (req, res) => {
+      oauth.token(req, res);
     });
 
     // app.config(function ($stateProvider) {
