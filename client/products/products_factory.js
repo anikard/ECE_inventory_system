@@ -68,10 +68,15 @@ products_app.factory('ProductsFactory', function($http) {
       console.log("Add item form incomplete");
       return;
     }
-    $http.post('/addProduct', info).success(function(output) {
+    $http.post('/addProduct', info)
+      .success(function(output) {
         products = output;
         callback(products);
-    })
+      })
+      .error(function(error){
+        console.log("ERROR FOUND: ");
+        console.log(error);
+      })
   }
 
   factory.viewProduct = function(userID, product, callback) {
