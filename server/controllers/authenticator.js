@@ -98,7 +98,10 @@ module.exports = (function() {
   },
 
   logout:  function(req, res, next){
-    req.session.destroy();
+    req.session.destroy((err)=>{
+      if (err) res.status(400).json({error: err});
+      else res.status(200).end();
+    });
   },
 
 }
