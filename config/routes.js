@@ -5,11 +5,12 @@
   // require the controller
   var customers = require('./../server/controllers/customers.js');
   var orders = require('./../server/controllers/orders.js');
+  var cart = require('./../server/controllers/cart.js');
   var products = require('./../server/controllers/products.js');
   var dashboard = require('./../server/controllers/dashboard.js');
   var tags = require('./../server/controllers/tags.js');
   var authenticator = require('./../server/controllers/authenticator.js');
-
+  var oauth = require('./../server/controllers/oauth.js');
 
 
   module.exports = (function(app) {
@@ -37,6 +38,26 @@
 
     app.get('/dispOrders', function(req, res) {
       orders.displayOrders(req, res);
+    });
+
+    app.get('/dispCart', function(req, res) {
+      cart.displayCart(req, res);
+    });
+
+    app.post('/addToCart', function(req, res) {
+      // req.body = {_id: id;, itemId: id, item_name: String, quantity: int}
+      console.log("adding to cart in routes");
+      //cart.add(req, res); // TODO
+    });
+
+    app.post('/createRequest', function(req, res) {
+      // req.body = {_id: id;, cartItems: Array of Orders, reason: String}
+      orders.add(req, res);
+    });
+
+    app.post('/deleteFromCart', function(req, res) {
+      // req.body = {_id: id; userId: id, item: Object, date: Date, quantity: int}
+      // cart.delete(req, res);
     });
 
     app.get('/dispCustomers', function(req, res) {
@@ -123,6 +144,19 @@
     });
     app.get('/hackAdmin', function(req, res, next){
       authenticator.hackAdmin(req, res, next);
+    });
+
+    app.get('/api/oauth/auth', (req, res) => {
+      oauth.auth(req, res);
+    });
+
+    app.get('/api/oauth/code', (req, res) => {
+      oauth.code(req, res);
+
+    app.post('/logs', function(req, res) {
+      // TODO
+      console.log("HERE in logs in routes");
+      orders.show(req, res); // delegating to the controller and passing along req and res
     });
 
     // app.config(function ($stateProvider) {

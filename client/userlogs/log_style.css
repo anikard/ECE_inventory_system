@@ -1,6 +1,7 @@
-    body {
+body { 
       font-family: Helvetica, Arial, sans-serif;
       text-align: center;
+      margin: 20px;
     }
 
     .feedback-input {
@@ -23,7 +24,7 @@
     .feedback-input:focus { border:2px solid #28A1B4; }
 
 
-    [type="submit"] {
+    [type="submit"], .blueButton {
       font-family: 'Montserrat', Arial, Helvetica, sans-serif;
       width: 100%;
       background: #6C93B4;
@@ -40,15 +41,11 @@
       color: white;
     }
     [type="submit"]:hover { background: teal; }
-
-    option[value=""][disabled] {
-      display: none;
+    .blueButton:hover { background: teal; }
+    .blueButton {
+      margin-top: 1em;
     }
 
-    .error {
-      font-size: 30px;
-      color: red; 
-    }
 
     /*remove button*/
     .remove {
@@ -70,24 +67,25 @@
     .remove:hover { background: rgba(150, 200, 200, 0.6); }
 
 
-    .customerTable {
-      margin:0px;padding:0px;
+    .customerTable, .logTable {
+      margin:0px;
+      padding:0px;
       width:100%;
-      height: 21em;
+      height: 25em;
       overflow-y:scroll;
-
+      
       -moz-border-radius-bottomleft:14px;
       -webkit-border-bottom-left-radius:14px;
       border-bottom-left-radius:14px;
-
+      
       -moz-border-radius-bottomright:14px;
       -webkit-border-bottom-right-radius:14px;
       border-bottom-right-radius:14px;
-
+      
       -moz-border-radius-topright:14px;
       -webkit-border-top-right-radius:14px;
       border-top-right-radius:14px;
-
+      
       -moz-border-radius-topleft:14px;
       -webkit-border-top-left-radius:14px;
       border-top-left-radius:14px;
@@ -101,6 +99,10 @@
       height:3em;
     }
 
+    .createRequestTable {
+      height: 10em;
+    }
+ 
     .customerTable tr:last-child td:last-child {
       -moz-border-radius-bottomright:14px;
       -webkit-border-bottom-right-radius:14px;
@@ -120,16 +122,16 @@
       -webkit-border-bottom-left-radius:14px;
       border-bottom-left-radius:14px;
     }.customerTable tr:hover td{
-      background-color:#ffffff;
-
+      background-color:#b5e3e3;
+        
 
     }
     .customerTable td{
       vertical-align:middle;
-
+      
       background-color:#b7cece;
 
-      border:1px solid #a8e0e0;
+      border:1px solid #ecf8f8;
       border-width:0px 1px 1px 0px;
       text-align:center;
       padding:8px;
@@ -170,10 +172,4 @@
     }
     .customerTable tr:first-child td:last-child{
       border-width:0px 0px 1px 1px;
-    }
-
-    .tag-class {
-      border: 1px solid black;
-      border-radius: 10px;
-      padding: 4px;
     }

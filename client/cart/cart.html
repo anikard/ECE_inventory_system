@@ -1,0 +1,105 @@
+<html ng-app="cart_app">
+<head>
+  <title>Cart</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="cart_style.css">
+  <script src="cart_factory.js"></script>
+
+</head>
+
+<body ng-controller="ordersController">
+  <a ng-if="authorized" href="/dispCustomers">users</a> | <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
+<h1> {{myName | uppercase}}'S CART</h1>
+<input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search for item">
+
+<div class="customerTable" id = "cTable" >
+    <table>
+      <tr>
+        <td> Item </td>
+        <td> Quantity </td>
+        <td> Date Added </td>
+        <td> Actions </td>
+      </tr>
+
+      <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
+        <td ng-bind="order.item_name"></td>
+        <td ng-bind="order.quantity"></td>
+        <td ng-bind="order.date | date:'short'"></td>
+        <td><button class = "remove" ng-click='removeFromCart(order)'>Remove</button></td>
+      </tr>
+    </table>
+  </div>
+
+
+<button class = "blueButton" data-toggle="modal" data-target="#orderModal">Create Request</button>
+
+
+  <h1 style="margin-top:3em;">Add an item to your cart</h1>
+
+ <form id="createReqForm">
+
+    <!-- <input style = "display:none;" id="thisCustomerInput" class = "feedback-input" type="text" value="{{myName}}" ng-readonly="true" /> -->
+
+    <select class = "feedback-input" ng-controller="productsController" id = "productList" name="productsOptions" ng-model="new_order.product" required>
+      <option value="" selected disabled>Item</option>
+      <option ng-repeat="product in products" value="{{product._id}}">{{product.name}} || {{product.description}}</option>
+    </select>
+    <input class = "feedback-input" type="number" ng-model="new_order.quantity" placeholder="quantity" required>
+    <input type="submit" ng-disabled="createReqForm.$invalid" ng-click="addToCart()">
+    <br>
+ </form>
+
+
+
+<div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+
+        </button>
+          <h1 class="modal-title" id="exampleModalLabel">Create Request</h1>
+
+      </div>
+      <div class="modal-body" align="left">
+
+        <table class="createRequestTable">
+          <tr>
+            <td> Item </td>
+            <td> Quantity </td>
+          </tr>
+
+          <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
+            <td ng-bind="order.item_name"></td>
+            <td ng-bind="order.quantity"></td>
+          </tr>
+        </table>
+
+        <textarea style="display:block; width: 80%; margin-left:10%" class = "feedback-input" ng-model="this_request.reason" placeholder="Reason for Request" required></textarea>
+
+      </div>
+      <div class="modal-footer">
+        <!-- <button class="btn btn-danger" ng-click='removeOrder(thisOrder)'  id = "cancelOrderButton">Cancel order</button> -->
+        <button type="button" class="btn btn-primary" ng-click="createRequest()" id = "respondOrderButton">Create request</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <script type="text/javascript">
+    $('#orderModal').on('show.bs.modal', function (event) {
+      var button = $(event.relatedTarget);
+      var modal = $(this);
+    })
+  </script>
+
+
+</body>
+</html>

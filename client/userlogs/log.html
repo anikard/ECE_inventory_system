@@ -1,0 +1,39 @@
+<html ng-app="log_app">
+<head>
+  <title>Logs</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="log_style.css">
+  <script src="log_factory.js"></script>
+
+</head>
+
+<body ng-controller="logController">
+  <a ng-if="authorized" href="/dispCustomers">users</a> | <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
+<h1> {{myName | uppercase}}'S LOGS</h1>
+<input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search for log"> 
+
+<div id = "cTable" >
+    <table class = "logTable">
+      <tr>
+        <td> Item </td>
+        <td> Quantity </td>
+        <td> Date Added </td>
+        <td> Actions </td>
+      </tr>
+
+      <tr ng-repeat="log in logs | filter: filter_name | orderBy:'-status'">
+        <td ng-bind="log.item_name"></td>
+        <td ng-bind="log.quantity"></td>
+        <td ng-bind="log.date | date:'short'"></td>
+        <td><button class = "blueButton">View</button></td>
+      </tr>
+    </table>
+  </div>
+
+</body>
+</html>
