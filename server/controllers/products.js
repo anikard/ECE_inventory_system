@@ -27,7 +27,7 @@ module.exports = (function() {
         }
         if (item) {
           res.status(405).send({ error: "Item already exist!" });
-        } 
+        }
         var newItem = new Item({
           name: req.body.name,
           description: req.body.description,
@@ -36,6 +36,7 @@ module.exports = (function() {
           model: req.body.model,
           location: req.body.location,
           tags: req.body.tags,
+          // custom_fields: req.body.custom_fields,
         });
         newItem.save(function(err){
             if(err){
@@ -45,7 +46,7 @@ module.exports = (function() {
             }
         });
       });
-			
+
 		},
 
     delete: function(req, res) {
@@ -71,6 +72,7 @@ module.exports = (function() {
           model: req.body.model,
           location: req.body.location,
           tags: req.body.tags,
+          // custom_fields: req.body.custom_fields,
           //TODO: image_url
         }},
         { new: true },

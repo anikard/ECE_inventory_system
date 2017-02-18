@@ -79,6 +79,16 @@
 
 <input class = "feedback-input" type="number" min="1" ng-model="new_product.quantity" placeholder="quantity" required>
 <div class="error" ng-if="errorMessage">{{ errorMessage }}</div>
+
+<!-- LOOP through custom fields display here -->
+<div ng-repeat="field in customFields">
+  <span>
+    <input class = "half-feedback-input" ng-model="field.name" placeholder="Custom Field Name">
+    <input class = "half-feedback-input" ng-model="field.value" placeholder="Custom Field Value">
+  </span>
+</div>
+
+<div><button class="custom-field" ng-click="addCustomField()">New Custom Field</button></div>
 <input type="submit" ng-disabled="createItemForm.$invalid" ng-click="addProduct()">
 <br>
 </form>

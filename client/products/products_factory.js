@@ -130,6 +130,7 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
     $scope.myID = {userId: auth.currentUserID()};
     console.log($scope.myName);
     $scope.authorized = (auth.currentUserStatus()=="admin");
+    $scope.customFields = [];
 
     $scope.logout = function() {
       console.log("scope logging out ");
@@ -157,9 +158,19 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
   $scope.addProduct = function() {
     console.log("Query submited!");
     console.log("new product");
+    console.log($scope.customFields);
     $scope.new_product.tags = $scope.currentTags;
+    var cleanCustomFields = [];
+    for (var i = 0; i < $scope.customFields.length; i++) {
+      if ($scope.customFields[i].name && $scope.customFields[i].value) {
+        cleanCustomFields.push($scope.customFields[i]);
+      }
+    }
+    // Uncomment after back end integration: $scope.new_product.custom_fields = cleanCustomFields;
     console.log($scope.new_product);
+    console.log(cleanCustomFields);
     $scope.currentTags = [];
+    $scope.customFields = [];
     ProductsFactory.addProduct($scope.new_product, function(data) {
       if(data.error) {
         $scope.errorMessage = data.error;
@@ -173,6 +184,14 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
         $scope.new_product = {};
       }
     });
+  }
+
+  $scope.addCustomField = function(){
+    console.log("Add custom field");
+    var newField = {};
+    newField.name = "";
+    newField.value = "";
+    $scope.customFields.push(newField);
   }
 
   $scope.deleteProduct = function(event, product) {
