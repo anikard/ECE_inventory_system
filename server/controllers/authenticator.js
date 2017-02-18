@@ -87,13 +87,19 @@ module.exports = (function() {
       if(err){ return next(err); }
 
       if(user){
-        return res.json({token: user.generateJWT()});
+        token = user.generateJWT();
+        req.session.token = token;
+        return res.json({token: token});
       } else {
         return res.status(401).json(info);
       }
     })(req, res, next);
 
-  }
+  },
+
+  logout:  function(req, res, next){
+    req.session.destroy();
+  },
 
 }
 
