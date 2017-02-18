@@ -6,11 +6,11 @@ var log_app = angular.module('log_app', []);
 
       
       factory.getLogs = function(info, callback) {
-        $http.post('/logs', info).success(function(output) {
-          logs = output;
-          console.log(logs);
-          callback(logs);
-        })
+        // $http.post('/logs', info).success(function(output) {
+        //   logs = output;
+        //   console.log(logs);
+        //   callback(logs);
+        // })
       }
 
       return factory;
@@ -20,9 +20,40 @@ var log_app = angular.module('log_app', []);
     log_app.controller('logController', function($scope, LogFactory, auth, $document) {
         console.log("USER ID: " + auth.currentUserID());
         var thisId = {userId: auth.currentUserID()};
-        $scope.logs = LogFactory.getLogs(thisId, function(data) {
-        $scope.logs = data;
-      });
+        LogFactory.getLogs(thisId, function(data) {
+          $scope.logs = data;
+        });
+
+        $scope.logs = [{
+            _id: 555,
+            init_user: "User A",
+            items: ["resistor"],
+            event: "Disbursement",
+            rec_user: "User B",
+            date: "2/14/17 2:14:17pm",
+            admin_actions: "Approved"
+          },
+          {
+            _id: 155,
+            init_user: "User C",
+            items: ["clock", "resistor"],
+            event: "Request",
+            rec_user: "User B",
+            date: "2/15/17 2:15:17pm",
+            admin_actions: "Denied"
+          },
+          {
+            _id: 255,
+            init_user: "User A",
+            items: ["basket"],
+            event: "Disbursement",
+            rec_user: "User D",
+            date: "2/11/17 2:11:17pm",
+            admin_actions: "Pending"
+          }
+      ];
+
+
 
         $scope.myName = auth.currentUser();
         console.log("MY NAME: " + $scope.myName);

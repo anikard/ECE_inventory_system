@@ -44,6 +44,9 @@ body {
     .blueButton:hover { background: teal; }
     .blueButton {
       margin-top: 1em;
+      font-weight:500;
+      font-size:20px;
+      margin-right: 1em;
     }
 
 
@@ -102,6 +105,9 @@ body {
     .createRequestTable {
       height: 10em;
     }
+    /*.createRequestTable td {
+      height:3em;
+    }*/
  
     .customerTable tr:last-child td:last-child {
       -moz-border-radius-bottomright:14px;

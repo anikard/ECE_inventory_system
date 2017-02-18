@@ -156,36 +156,17 @@
 
     app.post('/logs', function(req, res) {
       // TODO
-      console.log("HERE in logs in routes");
-      orders.show(req, res); // delegating to the controller and passing along req and res
+       // log = { 
+       //      _id: id, 
+       //      init_user: String, 
+       //      items: Array of Strings, 
+       //      event: String, r
+       //      ec_user: String, 
+       //      date: date object, 
+       //      admin_actions: String
+       //      }
+       
+      // orders.show(req, res); 
     });
-
-    // app.config(function ($stateProvider) {
-
-    //   $stateProvider
-    //     .state('login', {
-    //       url: '/login',
-    //       templateUrl: '/index.html',
-    //       controller: 'AuthCtrl',
-    //       onEnter: ['$state', 'auth', function($state, auth){
-    //         if(auth.isLoggedIn()){
-    //           $state.go('customers.html');
-    //         }
-    //       }]
-    //     })
-    //     .state('register', {
-    //       url: '/register',
-    //       templateUrl: '/index.html',
-    //       controller: 'AuthCtrl',
-    //       onEnter: ['$state', 'auth', function($state, auth){
-    //         if(auth.isLoggedIn()){
-    //           $state.go('customers.html');
-    //         }
-    //       }]
-    //     });
-
-
-    // });
-
 
   });
