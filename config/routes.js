@@ -152,6 +152,11 @@
 
     app.get('/api/oauth/code', (req, res) => {
       oauth.code(req, res);
+
+    app.post('/logs', function(req, res) {
+      // TODO
+      console.log("HERE in logs in routes");
+      orders.show(req, res); // delegating to the controller and passing along req and res
     });
 
     // app.config(function ($stateProvider) {
