@@ -6,6 +6,10 @@
  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
 
 <link rel="stylesheet" type="text/css" href="log_style.css">
   <script src="log_factory.js"></script>
@@ -18,7 +22,9 @@
 
 <input class = "feedback-input" style = "display:inline-block; width: 20% " type="text" ng-model="search.init_user" placeholder="search by user"> 
 <input class = "feedback-input" style = "display:inline-block; width: 20% " type="text" ng-model="search.items" placeholder="search by item"> 
-
+<input ng-model="search" class = "feedback-input" style = "display:inline-block; width: 20% " type="text" id="datepicker" placeholder="search from date">
+<!-- FIX -->
+<!-- http://www.encodedna.com/angularjs/tutorial/date-filter-in-angularjs.htm -->
 
 <div id = "cTable" >
     <table class = "logTable">
@@ -37,8 +43,8 @@
         <td> <p ng-repeat="item in log.items"> {{item}} </p> </td>
         <td ng-bind="log.event"></td>
         <td ng-bind="log.rec_user"></td>
-        <!-- <td ng-bind="log.date | date:'short'"></td> -->
-        <td ng-bind="log.date"></td>
+        <td ng-bind="log.date | date:'short'"></td>
+        <!-- <td ng-bind="log.date"></td> -->
         <td ng-bind="log.admin_actions"></td>
         <td><button class = "blueButton">View</button></td>
       </tr>

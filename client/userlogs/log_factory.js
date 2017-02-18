@@ -30,7 +30,7 @@ var log_app = angular.module('log_app', []);
             items: ["resistor"],
             event: "Disbursement",
             rec_user: "User B",
-            date: "2/14/17 2:14:17pm",
+            date: "2017-02-02T19:06:13.093Z",
             admin_actions: "Approved"
           },
           {
@@ -39,7 +39,7 @@ var log_app = angular.module('log_app', []);
             items: ["clock", "resistor"],
             event: "Request",
             rec_user: "User B",
-            date: "2/15/17 2:15:17pm",
+            date: "2017-02-05T19:05:13.093Z",
             admin_actions: "Denied"
           },
           {
@@ -48,11 +48,23 @@ var log_app = angular.module('log_app', []);
             items: ["basket"],
             event: "Disbursement",
             rec_user: "User D",
-            date: "2/11/17 2:11:17pm",
+            date: "2017-02-09T19:06:13.093Z",
             admin_actions: "Pending"
           }
       ];
 
+
+      // $( "#datepicker" ).datepicker();
+      $("#datepicker").datepicker({
+          onSelect: function(dateText, inst) {
+              var dateSelected = $(this).val();
+              // var time = $('#time').val();
+              // alert(dateSelected);
+              // $scope.search = dateSelected;
+              // $("#start").val(date + time.toString(' HH:mm').toString());
+
+          }
+      });
 
 
         $scope.myName = auth.currentUser();
