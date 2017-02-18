@@ -152,6 +152,7 @@
 
     app.get('/api/oauth/code', (req, res) => {
       oauth.code(req, res);
+    });
 
     app.post('/logs', function(req, res) {
       // TODO
