@@ -15,7 +15,9 @@
 <body ng-controller="logController">
   <a ng-if="authorized" href="/dispCustomers">users</a> | <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
 <h1> {{myName | uppercase}}'S LOGS</h1>
-<input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search for log"> 
+
+<input class = "feedback-input" style = "display:inline-block; width: 20% " type="text" ng-model="search.init_user" placeholder="search by user"> 
+<input class = "feedback-input" style = "display:inline-block; width: 20% " type="text" ng-model="search.items" placeholder="search by item"> 
 
 
 <div id = "cTable" >
@@ -30,7 +32,7 @@
         <td> Actions </td>
       </tr>
 
-      <tr style="text-align: center;" ng-repeat="log in logs | filter: filter_name | orderBy:'-status'">
+      <tr style="text-align: center;" ng-repeat="log in logs | filter: search | orderBy:'-status'">
         <td ng-bind="log.init_user"></td>
         <td> <p ng-repeat="item in log.items"> {{item}} </p> </td>
         <td ng-bind="log.event"></td>
