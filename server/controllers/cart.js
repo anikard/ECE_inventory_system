@@ -7,6 +7,28 @@ var Request = mongoose.model('Request');
 var User = mongoose.model('User');
 var Item = mongoose.model('Item');
 
+module.exports = (app) => {
+  app.get('/api/v1/cart/show', function(req, res, next){
+    cart.show(req, res, next);
+  });
+
+  app.post('/api/v1/cart/add', function(req, res, next){
+    cart.add(req, res, next);
+  });
+
+  app.post('/api/v1/cart/update', function(req, res, next){
+    cart.update(req, res, next);
+  });
+
+  app.post('/api/v1/cart/del', function(req, res, next){
+    cart.delete(req, res, next);
+  });
+
+  app.get('/api/v1/cart/empty', function(req, res, next){
+    cart.empty(req, res, next);
+  });
+}
+
 module.exports = (function() {
  	return {
  		displayCart: function(req, res) {
