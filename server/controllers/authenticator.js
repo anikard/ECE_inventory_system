@@ -4,27 +4,27 @@ var passport = require('passport');
 
 module.exports = (app) => {
   app.post('/api/auth/reg', function(req, res, next){
-    authenticator.register(req, res, next);
+    register(req, res, next);
   });
 
   app.post('/api/auth/login', function(req, res, next){
-    authenticator.login(req, res, next);
+    login(req, res, next);
   });
 
   app.get('/api/auth/logout', function(req, res, next) {
-    authenticator.logout(req, res, next);
+    logout(req, res, next);
   });
 
   app.post('/api/auth/createAdmin', function(req, res, next){
-    authenticator.createAdmin(req, res, next);
+    createAdmin(req, res, next);
   });
 
   app.get('/api/auth/hackAdmin', function(req, res, next){
-    authenticator.hackAdmin(req, res, next);
+    hackAdmin(req, res, next);
   });
 
   app.get('/api/auth/admin', function(req, res, next){
-    authenticator.loginAdmin(req, res, next);
+    loginAdmin(req, res, next);
   });
 }
 
@@ -131,8 +131,8 @@ function loginAdmin(req, res, next) {
         res.status(400).json({error: err});
       } else {
         if(admin){
-          req.session.token = user.generateJWT();
-          return res.status(200).send("Token: "+req.session.token);
+          req.session.token = admin.generateJWT();
+          return res.status(200).send({Token: req.session.token});
         }
         var user = new User();
         user.username = "admin";
@@ -142,7 +142,7 @@ function loginAdmin(req, res, next) {
         user.save(function (err){
           if(err){ return next(err); }
           req.session.token = user.generateJWT();
-          return res.status(200).send("Token: "+req.session.token);
+          return res.status(200).send({Token: req.session.token});
         });
       }
   });

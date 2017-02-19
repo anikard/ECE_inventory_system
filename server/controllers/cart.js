@@ -6,6 +6,7 @@ var mongoose = require('mongoose');
 var Request = mongoose.model('Request');
 var User = mongoose.model('User');
 var Item = mongoose.model('Item');
+var Cart = mongoose.model('Cart');
 
 module.exports = (app) => {
   app.get('/api/v1/cart/show', function(req, res, next){
@@ -30,21 +31,53 @@ module.exports = (app) => {
 }
 
 function show(req, res) {
-
+	Cart.findOne({user: req.user._id}, function(err, result) {
+        if(err) {
+          res.status(500).send({ error: err });
+        } else {
+          res.status(200).json(result);
+        }
+    })
 }
 
 function add(req, res) {
-	
+	Cart.findOne({user: req.user._id}, function(err, cart) {
+        if(err) return res.status(500).send({ error: err });
+        
+        _.assign(cart.items, req.body);
+        cart.markModified('items');
+		cart.save();
+    })
 }
 
 function update(req, res) {
-	
+	Cart.findOne({user: req.user._id}, function(err, cart) {
+        if(err) return res.status(500).send({ error: err });
+        
+        _.assign(cart.items, req.body);
+        cart.markModified('items');
+		cart.save();
+    })
 }
 
 function del(req, res) {
-	
+	Cart.findOne({user: req.user._id}, function(err, cart) {
+        if(err) return res.status(500).send({ error: err });
+        
+        delete cart.items[req.body];
+        cart.markModified('items');
+		cart.save();
+    })
 }
 
 function empty(req, res) {
-	
+	Cart.update({ user: req.user._id }, { 
+		$set: {items: {}}
+	}, function(err, field){
+      if(err){
+        res.status(500).send({ error: err })
+      } else {
+        res.status(200).send("success");
+      }
+    });
 }

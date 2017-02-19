@@ -5,7 +5,7 @@
 var mongoose = require('mongoose'); 
 var Schema = mongoose.Schema;
 var LogSchema = new mongoose.Schema({
-  userId: {type:Schema.ObjectId, ref:'User'},
+  user: {type:Schema.ObjectId, ref:'User'},
   action: {type: String, default: ""},
   note: {type: String, default: ""},
 

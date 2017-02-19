@@ -13,6 +13,7 @@ module.exports = (app) => {
   require('./../server/controllers/tags.js')(app);
   require('./../server/controllers/requests.js')(app);
   require('./../server/controllers/items.js')(app);
+  require('./../server/controllers/fields.js')(app);
 
   app.get('/home', function(req, res) {
     res.redirect('/');
