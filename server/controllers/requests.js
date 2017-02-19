@@ -68,7 +68,7 @@ var findUserByName = function(name) {
 	})
 };
 
-function show = (req, res) => {
+function show (req, res) {
 	if (!req.user || !req.user.status)
 		return res.status(401);
 	if (req.user.status === "admin") {
@@ -106,7 +106,7 @@ function show = (req, res) => {
     });
 }
 
-function add = (req, res) => {
+function add (req, res) {
 	if(!req.body.quantity) {
 		res.status(500).send({ error: "Missing quantity field" });
 		return;
@@ -142,7 +142,7 @@ function add = (req, res) => {
 	});
 }
 
-function close = (req, res) => {
+function close (req, res)  {
 	// Customer.update(
 			// 		{_id: req.body._customer},
    //                 	{ $pull: { orders: req.body._id} }
@@ -160,7 +160,7 @@ function close = (req, res) => {
 	);
 }
 
-function del = (req, res) => {
+function del (req, res) {
 	Request.remove({ _id: req.body._id}, 
 		function (err, request) {
 			if (err) {
@@ -175,7 +175,7 @@ function del = (req, res) => {
 	);
 }
 
-function update = (req, res) => {
+function update (req, res) {
 	Request.findOne({ '_id': req.body._id }, function (err, request) {
 		if (err) return res.status(500).send({ error: err});
 

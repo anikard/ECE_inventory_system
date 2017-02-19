@@ -27,7 +27,7 @@ module.exports = (app) => {
 	});
 }
 
-function show = (req, res, next) => {
+function show(req, res, next) {
 	Tag.find({})
 		.exec(function(err, results) {
 			if(err) {
@@ -38,7 +38,7 @@ function show = (req, res, next) => {
 		});
 }
 
-function add = (req, res, next) => {
+function add(req, res, next) {
 	if (!req.body.name)
 			return res.status(400).send({ error: "Empty tag!" });
 		Tag.findOne({ 'name': req.body.name }, function (err, tag) {
@@ -61,7 +61,7 @@ function add = (req, res, next) => {
  	});
 }
 
-function del = (req, res, next) => {
+function del(req, res, next) {
 	Tag.remove({ name: req.body.name},
 		function (err, request) {
 			if (err) {

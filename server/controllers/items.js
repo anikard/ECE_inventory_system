@@ -1,7 +1,3 @@
-/********************************************************/
-/*						CONTROLLER						*/
-/********************************************************/
-
 var mongoose = require('mongoose');
 var Item = mongoose.model('Item');
 
@@ -74,6 +70,5 @@ module.exports = (app) => {
           if (err) console.log("Update item Error");
           res.json(item);
         });
-    }
   });
 }

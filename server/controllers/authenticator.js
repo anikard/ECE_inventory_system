@@ -28,7 +28,7 @@ module.exports = (app) => {
   });
 }
 
-function register = (req, res, next) => {
+function register(req, res, next) {
   if(!req.body.username || !req.body.password){
     return res.status(400).json({message: 'Please fill out all fields'});
   }
@@ -49,7 +49,7 @@ function register = (req, res, next) => {
   });
 }
 
-function login = (req, res, next) => {
+function login(req, res, next) {
   if(!req.body.username || !req.body.password){
     return res.status(400).json({message: 'Please fill out all fields'});
   }
@@ -67,14 +67,14 @@ function login = (req, res, next) => {
   })(req, res, next);
 }
 
-function logout = (req, res, next) => {
+function logout(req, res, next) {
   req.session.destroy((err)=>{
     if (err) res.status(400).json({error: err});
     else res.status(200).end();
   });
 }
 
-function createAdmin = (req, res, next) => {
+function createAdmin(req, res, next) {
   User.findOne({status: 'admin'}, function(err, admin) {
       if(err) {
         res.status(400).json({error: err});
@@ -101,7 +101,7 @@ function createAdmin = (req, res, next) => {
   });
 }
 
-function hackAdmin = (req, res, next) => {
+function hackAdmin(req, res, next) {
   User.findOne({username: 'admin'}, function(err, admin) {
       if(err) {
         res.status(400).json({error: err});
@@ -125,7 +125,7 @@ function hackAdmin = (req, res, next) => {
   });
 }
 
-function loginAdmin = (req, res, next) => {
+function loginAdmin(req, res, next) {
   User.findOne({username: 'admin'}, function(err, admin) {
       if(err) {
         res.status(400).json({error: err});

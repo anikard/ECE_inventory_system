@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Field = mongoose.model('Field');
 
 module.exports = (app) => {
-	app.get('/api/v2/customField/show', function(req, res, next) {
+	app.get('/api/v1/customField/show', function(req, res, next) {
 	  show(req, res, next);
 	});
 
@@ -19,7 +19,7 @@ module.exports = (app) => {
 	});
 }
 
-function show = (req, res) => {
+function show(req, res) {
 	Field.find({})
  	.exec(function(err, results) {
        	if(err) {
@@ -30,7 +30,8 @@ function show = (req, res) => {
 	});
 }
 
-function add = (req, res) => {
+function add(req, res) {
+	if (! req.body.name) return res.status(400).send({ error: "Missing name" });
 	Field.find({})
  	.exec(function(err, results) {
        	if(err) {
@@ -41,7 +42,7 @@ function add = (req, res) => {
 	});
 }
 
-function del = (req, res) => {
+function del(req, res) {
 	Field.find({})
  	.exec(function(err, results) {
        	if(err) {
@@ -52,7 +53,7 @@ function del = (req, res) => {
 	});
 }
 
-function update = (req, res) => {
+function update(req, res) {
 	Field.find({})
  	.exec(function(err, results) {
        	if(err) {
@@ -62,42 +63,3 @@ function update = (req, res) => {
        	}
 	});
 }
-
-
-
-	   	add: function(req, res) {
-	   		Tag.findOne({ 'name': req.body.name }, function (err, tag) {
-	   			if (err) {
-	   				res.status(500).send({ error: err });
-	   			} else {
-	   				if (tag) {
-	   					res.status(500).send({ error: "Tag already exist!" });
-	   				} else {
-	   					var tag = new Tag({name: req.body.name || ""}); // Modified due to blank name error
-              console.log("tag is : " + tag);
-	   					tag.save(function(err){
-	   						if (err) {
-	   							res.status(500).send({ error: err });
-	   						} else {
-	   							res.status(200).send("Successfully added a tag!");
-	   						}
-	   					});
-	   				}
-	   			}
-	   		});
-
-
-		},
-
-		delete: function(req, res) {
-			Tag.remove({ name: req.body.name},
-				function (err, request) {
-					if (err) {
-						res.status(500).send({ error: err });
-					} else {
-	        			res.status(200).send("Successfully deleted a tag!");
-					}
-					res.end();
-				}
-			);
-		},
