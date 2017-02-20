@@ -31,11 +31,11 @@ module.exports = (app) => {
 }
 
 function show(req, res) {
-	Cart.findOne({user: req.user._id}, function(err, result) {
+	Cart.findOne({user: req.user._id}, function(err, cart) {
         if(err) {
           res.status(500).send({ error: err });
         } else {
-          res.status(200).json(result);
+          res.status(200).json(cart.items);
         }
     })
 }
@@ -43,10 +43,24 @@ function show(req, res) {
 function add(req, res) {
 	Cart.findOne({user: req.user._id}, function(err, cart) {
         if(err) return res.status(500).send({ error: err });
+        if(cart) {
+	        _.assign(cart.items, req.body);
+	        cart.markModified('items');
+			cart.save();
+        } else {
+        	cart = new Cart({
+        		user: req.user._id,
+        		items: req.body
+        	})
+        	cart.save((err)=>{
+        		if(err) {
+        		  res.status(500).send({ error: err });
+        		} else {
+        		  res.status(200).send("success");
+        		}
+        	});
+        }
         
-        _.assign(cart.items, req.body);
-        cart.markModified('items');
-		cart.save();
     })
 }
 
@@ -56,17 +70,24 @@ function update(req, res) {
         
         _.assign(cart.items, req.body);
         cart.markModified('items');
-		cart.save();
+		cart.save((err)=>{
+    		if(err) {
+    		  res.status(500).send({ error: err });
+    		} else {
+    		  res.status(200).send("success");
+    		}
+    	});
     })
 }
 
 function del(req, res) {
 	Cart.findOne({user: req.user._id}, function(err, cart) {
         if(err) return res.status(500).send({ error: err });
-        
-        delete cart.items[req.body];
-        cart.markModified('items');
-		cart.save();
+        if (cart) {
+	        delete cart.items[req.body];
+	        cart.markModified('items');
+			cart.save();
+        }
     })
 }
 

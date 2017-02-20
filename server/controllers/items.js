@@ -4,7 +4,7 @@ var Item = mongoose.model('Item');
 var Field = mongoose.model('Field');
 
 module.exports = (app) => {
-  app.get('/api/v2/item/show', function(req, res, next) {
+  app.get('/api/v1/item/show', function(req, res, next) {
     Item.find({}, function(err, results) {
         if(err) {
           res.status(500).send({ error: err });
