@@ -53,18 +53,41 @@ var log_app = angular.module('log_app', []);
           }
       ];
 
+      $scope.originalLogs = $scope.logs;
 
-      // $( "#datepicker" ).datepicker();
+      $scope.filterByDate = function() {
+        $scope.logs = $scope.originalLogs;
+        console.log($scope.logs);
+
+        console.log("in filter function");
+                var df = $scope.dateSelected;
+                var result = [];        
+                for (var i=0; i<$scope.logs.length; i++){
+                    if ($scope.logs[i].date >= df)  {
+                        result.push($scope.logs[i]);
+                    }
+                }    
+                $scope.logs = result;
+      }
+
+       
       $("#datepicker").datepicker({
+        dateFormat: 'yy-mm-dd' ,
           onSelect: function(dateText, inst) {
-              var dateSelected = $(this).val();
-              // var time = $('#time').val();
-              // alert(dateSelected);
-              // $scope.search = dateSelected;
-              // $("#start").val(date + time.toString(' HH:mm').toString());
+              $scope.dateSelected = $(this).val();
 
+              if (!$scope.search) {
+                $scope.search = {};
+              }
           }
       });
+
+      $scope.clearFields = function() {
+          $(".searchBox").val("");
+          $scope.search = {};
+          $scope.logs = $scope.originalLogs;
+
+      }
 
 
         $scope.myName = auth.currentUser();
@@ -84,8 +107,6 @@ var log_app = angular.module('log_app', []);
         $scope.getCurrentStatus = function() {
           return auth.currentUserStatus();
         }
-
-
     })
 
    
@@ -147,7 +168,6 @@ var log_app = angular.module('log_app', []);
           })
 
         }
-
 
         auth.logout = function(callback){
           $window.localStorage.removeItem('inventoryToken');

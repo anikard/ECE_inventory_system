@@ -4,6 +4,7 @@
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
 
  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -20,11 +21,18 @@
   <a ng-if="authorized" href="/dispCustomers">users</a> | <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
 <h1> {{myName | uppercase}}'S LOGS</h1>
 
-<input class = "feedback-input" style = "display:inline-block; width: 20% " type="text" ng-model="search.init_user" placeholder="search by user"> 
-<input class = "feedback-input" style = "display:inline-block; width: 20% " type="text" ng-model="search.items" placeholder="search by item"> 
-<input ng-model="search" class = "feedback-input" style = "display:inline-block; width: 20% " type="text" id="datepicker" placeholder="search from date">
-<!-- FIX -->
-<!-- http://www.encodedna.com/angularjs/tutorial/date-filter-in-angularjs.htm -->
+
+
+<form>
+  <input class = "feedback-input searchBox" style = "display:inline-block; width: 15%; margin-bottom: 0px;" type="text" ng-model="search.init_user" placeholder="search by user"> 
+  <input class = "feedback-input searchBox" style = "display:inline-block; width: 15%; margin-bottom: 0px; margin-left: 2em;" type="text" ng-model="search.items" placeholder="search by item"> 
+
+  <input ng-model="search.date" class = "feedback-input searchBox" style = "display:inline-block; width: 15% ; margin-bottom: 0px; margin-left: 2em;" type="text" id="datepicker" placeholder="search from date">
+  <button class = "blueButton searchBox" style = "display:inline-block; width: 15% ; margin-bottom: 0px; margin-right: 0px;" id="submitDate" ng-click="filterByDate()">Filter by date</button>
+  
+  <button class = "blueButton searchBox" style = "width: 15%; margin-left: 2em; " id="clearFields" ng-click="clearFields()">Clear Fields</button>
+
+</form>
 
 <div id = "cTable" >
     <table class = "logTable">
