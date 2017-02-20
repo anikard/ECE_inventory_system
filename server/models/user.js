@@ -13,13 +13,11 @@ var UserSchema = new mongoose.Schema({
   name: {type: String, default: ""},
   netId: {type: String, default: ""},
   date: { type : Date, default: Date.now },
-  password: {type: String, default: ""},
   salt: {type: String, default: ""},
   email: {type: String, default: ""},
   status: {type: String, default: ""},
-  hash: {type: String, default: ""}
-
-
+  hash: {type: String, default: ""},
+  active: {type: Boolean, default: true}
   //orders: [{type: Schema.Types.ObjectId, ref:'Order'}],
   //active: String
 }); 
