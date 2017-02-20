@@ -6,11 +6,11 @@ module.exports = (app) => {
 		show(req, res, next);
 	});
 
-	app.post('/api/v1/tag/add', function(req, res, next) {
+	app.post('/api/v2/tag/add', function(req, res, next) {
 		add(req, res, next);
 	});
 
-	app.post('/api/v1/tag/del', function(req, res, next) {
+	app.post('/api/v2/tag/del', function(req, res, next) {
 		del(req, res, next);
 	});
 
