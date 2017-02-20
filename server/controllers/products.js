@@ -36,7 +36,7 @@ module.exports = (function() {
           model: req.body.model,
           location: req.body.location,
           tags: req.body.tags,
-          // custom_fields: req.body.custom_fields,
+          custom_fields: req.body.custom_fields,
         });
         newItem.save(function(err){
             if(err){

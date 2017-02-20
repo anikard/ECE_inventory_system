@@ -1,0 +1,59 @@
+<html ng-app="fields_app">
+<head>
+  <title>Custom Fields</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <script type="text/javascript" src="./fields_factory.js"></script>
+  <link rel="stylesheet" href="./fields_style.css">
+
+</head>
+
+<body ng-controller="fieldsController">
+
+  <a ng-if="authorized" href="/dispCustomers">users</a> | <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href"/dispFields">custom fields</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
+
+  <h1>CUSTOM FIELDS</h1>
+  <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
+
+  <div class="fieldsTable" id = "fTable">
+    <table>
+      <tr>
+        <td> Name </td>
+        <td> Type </td>
+        <td> Access </td>
+        <!-- TODO-if time: <td> Default Value </td> -->
+        <td> Action </td>
+      </tr>
+
+      <tr ng-repeat="field in fields | filter: filtner_name: orderBy:'-date'">
+        <td ng-bind="field.name"></td>
+        <td ng-bind="field.type"></td>
+        <td ng-bind="field.access"></td>
+        <!-- <td ng-bind="field.default_value"></td> -->
+        <td><button class="remove" ng-click="viewFrield(field)" data-toggle="modal" data-target="#fieldModal">View</button></td>
+      </tr>
+    </table>
+  </div>
+
+  <h1>Add a Custom Field</h1>
+
+  <form id="createFieldForm">
+    <input class="feedback-input" type="text" ng-model="new_field.name" placeholder="name" required>
+    <select id="type_select" class="feedback-input" name="typeOptions" ng-model="new_field.type">
+      <option value = "" disabled selected>Select Type</option>
+      <option value="short-form">Short Form Text</option>
+      <option value="long-form">Long Form Text</option>
+      <option value="integer">Integer</option>
+      <option value="floating-point">Floating Point Number</option>
+    </select>
+    <label>Is this field private?
+      <input class="feedback-input" type="checkbox" ng-model="field.access" ng-true-value="'private'" ng-false-value="'public'">
+    </label>
+    <div class="error" ng-if="errorMessage">{{ errorMessage }}</div>
+    <input type="submit" ng-disabled="createFieldForm.$invalid" ng-click="addField()">
+    <br>
+  </form>
