@@ -1,0 +1,63 @@
+<html ng-app="log_app">
+<head>
+  <title>Logs</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="log_style.css">
+  <script src="log_factory.js"></script>
+
+</head>
+
+<body ng-controller="logController">
+  <a ng-if="authorized" href="/dispCustomers">users</a> | <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
+<h1> {{myName | uppercase}}'S LOGS</h1>
+
+
+
+<form>
+  <input class = "feedback-input searchBox" style = "display:inline-block; width: 15%; margin-bottom: 0px;" type="text" ng-model="search.init_user" placeholder="search by user"> 
+  <input class = "feedback-input searchBox" style = "display:inline-block; width: 15%; margin-bottom: 0px; margin-left: 2em;" type="text" ng-model="search.items" placeholder="search by item"> 
+
+  <input ng-model="search.date" class = "feedback-input searchBox" style = "display:inline-block; width: 15% ; margin-bottom: 0px; margin-left: 2em;" type="text" id="datepicker" placeholder="search from date">
+  <button class = "blueButton searchBox" style = "display:inline-block; width: 15% ; margin-bottom: 0px; margin-right: 0px;" id="submitDate" ng-click="filterByDate()">Filter by date</button>
+  
+  <button class = "blueButton searchBox" style = "width: 15%; margin-left: 2em; " id="clearFields" ng-click="clearFields()">Clear Fields</button>
+
+</form>
+
+<div id = "cTable" >
+    <table class = "logTable">
+      <tr style="font-weight:bold; text-align: center;">
+        <td> Initiating User </td>
+        <td> Item(s) </td>
+        <td> Event </td>
+        <td> Recipient User </td>
+        <td> Date </td>
+        <td> Administrator Actions </td>
+        <td> Actions </td>
+      </tr>
+
+      <tr style="text-align: center;" ng-repeat="log in logs | filter: search | orderBy:'-status'">
+        <td ng-bind="log.init_user"></td>
+        <td> <p ng-repeat="item in log.items"> {{item}} </p> </td>
+        <td ng-bind="log.event"></td>
+        <td ng-bind="log.rec_user"></td>
+        <td ng-bind="log.date | date:'short'"></td>
+        <!-- <td ng-bind="log.date"></td> -->
+        <td ng-bind="log.admin_actions"></td>
+        <td><button class = "blueButton">View</button></td>
+      </tr>
+    </table>
+  </div>
+
+</body>
+</html>

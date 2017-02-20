@@ -15,6 +15,33 @@
 
   module.exports = (function(app) {
 
+    app.post('/api/auth/reg', function(req, res, next){
+      authenticator.register(req, res, next);
+    });
+
+    app.post('/api/auth/login', function(req, res, next){
+      authenticator.login(req, res, next);
+    });
+
+    app.get('/api/auth/logout', function(req, res, next) {
+      authenticator.logout(req, res, next);
+    });
+
+    app.get('/api/auth/oauth', (req, res, next) => {
+      oauth.auth(req, res, next);
+    });
+
+    app.get('/api/auth/code', (req, res, next) => {
+      oauth.code(req, res, next);
+    });
+
+    app.post('/api/auth/createAdmin', function(req, res, next){
+      authenticator.createAdmin(req, res, next);
+    });
+    app.get('/api/auth/hackAdmin', function(req, res, next){
+      authenticator.hackAdmin(req, res, next);
+    });
+
     app.post('/addUser', function(req, res) {
       customers.update(req, res);
       dashboard.show(req, res);
@@ -26,10 +53,6 @@
 
     app.get('/getUser', function(req, res) {
       customers.getUser(req, res);
-    });
-
-    app.get('/logout', function(req, res) {
-      customers.deactivate(req, res);
     });
 
     app.get('/home', function(req, res) {
@@ -133,53 +156,26 @@
       tags.delete(req, res);
     });
     app.post('/register', function(req, res, next){
-	 authenticator.register(req, res, next);
-     });
+      authenticator.register(req, res, next);
+    });
 
     app.post('/login', function(req, res, next){
     	 authenticator.login(req, res, next);
-         });
-    app.post('/createAdmin', function(req, res, next){
-      authenticator.createAdmin(req, res, next);
-    });
-    app.get('/hackAdmin', function(req, res, next){
-      authenticator.hackAdmin(req, res, next);
     });
 
-    app.get('/api/oauth/auth', (req, res) => {
-      oauth.auth(req, res);
+    app.post('/logs', function(req, res) {
+      // TODO
+       // log = { 
+       //      _id: id, 
+       //      init_user: String, 
+       //      items: Array of Strings, 
+       //      event: String, r
+       //      ec_user: String, 
+       //      date: date object, 
+       //      admin_actions: String
+       //      }
+       
+      // orders.show(req, res); 
     });
-
-    app.get('/api/oauth/code', (req, res) => {
-      oauth.code(req, res);
-    });
-
-    // app.config(function ($stateProvider) {
-
-    //   $stateProvider
-    //     .state('login', {
-    //       url: '/login',
-    //       templateUrl: '/index.html',
-    //       controller: 'AuthCtrl',
-    //       onEnter: ['$state', 'auth', function($state, auth){
-    //         if(auth.isLoggedIn()){
-    //           $state.go('customers.html');
-    //         }
-    //       }]
-    //     })
-    //     .state('register', {
-    //       url: '/register',
-    //       templateUrl: '/index.html',
-    //       controller: 'AuthCtrl',
-    //       onEnter: ['$state', 'auth', function($state, auth){
-    //         if(auth.isLoggedIn()){
-    //           $state.go('customers.html');
-    //         }
-    //       }]
-    //     });
-
-
-    // });
-
 
   });
