@@ -9,7 +9,7 @@ module.exports = (app) => {
   // Get current user info 
   app.get('/api/v1/user', function(req, res, next){
   	if (req.user) {
-  		res.status(200).json(user);
+  		res.status(200).json(req.user);
   	}
   });
 
