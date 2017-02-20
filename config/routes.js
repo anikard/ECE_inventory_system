@@ -130,7 +130,7 @@ module.exports = (app) => {
      //      init_user: String, 
      //      items: Array of Strings, 
      //      event: String, r
-     //      ec_user: String, 
+     //      rec_user: String, 
      //      date: date object, 
      //      admin_actions: String
      //      }

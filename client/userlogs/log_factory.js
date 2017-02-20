@@ -43,6 +43,15 @@ var log_app = angular.module('log_app', []);
             admin_actions: "Denied"
           },
           {
+            _id: 155,
+            init_user: "User C",
+            items: ["cake", "resistor"],
+            event: "Request",
+            rec_user: "User A",
+            date: "2017-02-12T19:05:13.093Z",
+            admin_actions: "Approved"
+          },
+          {
             _id: 255,
             init_user: "User A",
             items: ["basket"],
