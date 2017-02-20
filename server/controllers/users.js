@@ -15,7 +15,7 @@ module.exports = (app) => {
 
   // Get user info 
   app.get('/api/v2/user', function(req, res, next){
-  	User.findOne({ '_id': req.body._id }, function (err, user) {
+  	User.findOne({ '_id': req.body.user }, function (err, user) {
   		if(err) {
   			res.status(500).send({ error: err });
   		} else {
@@ -58,7 +58,7 @@ module.exports = (app) => {
   });
 
   app.post('/api/v2/user/del', function(req, res, next){
-  	User.findOneAndRemove({name: req.body.name}, 
+  	User.findOneAndRemove({'_id': req.body.user}, 
   		function(err){
   			if(err){
   				res.status(500).send({ error: err });
