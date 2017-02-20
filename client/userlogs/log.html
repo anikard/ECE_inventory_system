@@ -24,13 +24,15 @@
 
 
 <form>
-  <input class = "feedback-input searchBox" style = "display:inline-block; width: 15%; margin-bottom: 0px;" type="text" ng-model="search.init_user" placeholder="search by user"> 
-  <input class = "feedback-input searchBox" style = "display:inline-block; width: 15%; margin-bottom: 0px; margin-left: 2em;" type="text" ng-model="search.items" placeholder="search by item"> 
+  <input class = "feedback-input searchBox" style = "display:inline-block; width: 15%; margin-bottom: 0px;" type="text" ng-model="search.init_user" placeholder="initiating user"> 
+  <input class = "feedback-input searchBox" style = "display:inline-block; width: 15%; margin-bottom: 0px; margin-left: 2em;" type="text" ng-model="search.rec_user" placeholder="recipient user"> 
 
-  <input ng-model="search.date" class = "feedback-input searchBox" style = "display:inline-block; width: 15% ; margin-bottom: 0px; margin-left: 2em;" type="text" id="datepicker" placeholder="search from date">
-  <button class = "blueButton searchBox" style = "display:inline-block; width: 15% ; margin-bottom: 0px; margin-right: 0px;" id="submitDate" ng-click="filterByDate()">Filter by date</button>
-  
-  <button class = "blueButton searchBox" style = "width: 15%; margin-left: 2em; " id="clearFields" ng-click="clearFields()">Clear Fields</button>
+  <input class = "feedback-input searchBox" style = "display:inline-block; width: 15%; margin-bottom: 0px; margin-left: 2em;" type="text" ng-model="search.items" placeholder="item"> 
+  <input ng-model="search.date" class = "feedback-input searchBox" style = "display:inline-block; width: 15% ; margin-bottom: 0px; margin-left: 2em;" type="text" id="datepicker" placeholder="start date">
+  <button class = "blueButton searchBox" style = "display:inline-block; width: 12% ; margin-bottom: 0px; margin-right: 0px;" id="submitDate" ng-click="filterByDate()">Filter by date</button>
+  <!-- <div></div> -->
+
+  <button class = "blueButton clearButton searchBox" style = "width: 7%; margin-left: 2em; padding-left: 5px; padding-right: 5px " id="clearFields" ng-click="clearFields()">Clear</button>
 
 </form>
 
@@ -52,7 +54,6 @@
         <td ng-bind="log.event"></td>
         <td ng-bind="log.rec_user"></td>
         <td ng-bind="log.date | date:'short'"></td>
-        <!-- <td ng-bind="log.date"></td> -->
         <td ng-bind="log.admin_actions"></td>
         <td><button class = "blueButton">View</button></td>
       </tr>

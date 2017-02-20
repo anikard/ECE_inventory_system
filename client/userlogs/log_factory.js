@@ -69,13 +69,11 @@ var log_app = angular.module('log_app', []);
                 }    
                 $scope.logs = result;
       }
-
        
       $("#datepicker").datepicker({
         dateFormat: 'yy-mm-dd' ,
           onSelect: function(dateText, inst) {
               $scope.dateSelected = $(this).val();
-
               if (!$scope.search) {
                 $scope.search = {};
               }
@@ -86,9 +84,7 @@ var log_app = angular.module('log_app', []);
           $(".searchBox").val("");
           $scope.search = {};
           $scope.logs = $scope.originalLogs;
-
       }
-
 
         $scope.myName = auth.currentUser();
         console.log("MY NAME: " + $scope.myName);
