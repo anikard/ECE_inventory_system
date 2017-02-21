@@ -3,19 +3,19 @@ var Field = mongoose.model('Field');
 var _ = require('lodash');
 
 module.exports = (app) => {
-	app.get('/api/v1/customField/show', function(req, res, next) {
+	app.get('/api/customField/show', function(req, res, next) {
 	  show(req, res, next);
 	});
 
-	app.post('/api/v2/customField/add', function(req, res, next) {
+	app.post('/api/customField/add', function(req, res, next) {
 	  add(req, res, next);
 	});
 
-	app.post('/api/v2/customField/del', function(req, res, next) {
+	app.post('/api/customField/del', function(req, res, next) {
 	  del(req, res, next);
 	});
 
-	app.post('/api/v2/customField/update', function(req, res, next) {
+	app.post('/api/customField/update', function(req, res, next) {
 	  update(req, res, next);
 	});
 }

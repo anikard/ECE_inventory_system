@@ -13,62 +13,29 @@ module.exports = function(req, res, next) {
   //if(req.method == 'OPTIONS') next();
 
   let uid = req.session && req.session.token && JSON.parse(Buffer.from(req.session.token.split('.')[1], 'base64'));
- 
-  var token = (req.body && req.body.access_token) || (req.query && req.query.access_token) || req.headers['x-access-token'];
-  var key = (req.body && req.body.x_key) || (req.query && req.query.x_key) || req.headers['x-key'];
-  
+  let token = (req.body && req.body.access_token) || (req.query && req.query.access_token) || req.headers['x-access-token'];
   uid = uid || (token && JSON.parse(Buffer.from(token.split('.')[1], 'base64')));
+  let key = (req.body && req.body.x_key) || (req.query && req.query.x_key) || req.headers['x-key'];
 
   if (uid) {
     User.findOne({ '_id': uid._id }, function (err, user) {
-      if (err || !user) {
-        res.status(401);
-        res.json({
-          "status": 401,
-          "message": "Invalid User"
-        });
-        return;
-      }
-      req.user = user;
-      if (req.url.indexOf('/api/v2/') >= 0 && (user.status != "admin" && user.status != "manager") ) {
-        res.status(403);
-        res.json({
-          "status": 403,
-          "message": "Unauthorized"
-        });
-        return;
+      if (err) return res.status(500).json({"error":err});
+      if (user) {
+        req.user = user;
       }
       next();
     });
   } else if (key) {
     User.findOne({ 'apiKey': key }, function (err, user) {
-      if (err || !user) {
-        res.status(401);
-        res.json({
-          "status": 401,
-          "message": "Invalid User"
-        });
-        return;
-      }
-      req.user = user;
-      if (req.url.indexOf('/api/v2/') >= 0 && (user.status != "admin" && user.status != "manager") ) {
-        res.status(403);
-        res.json({
-          "status": 403,
-          "message": "Unauthorized"
-        });
-        return;
+      if (err) return res.status(500).json({"error":err});
+      if (user) {
+        req.user = user;
       }
       next();
     });
   } else {
-    res.status(400);
-    res.json({
-      "status": 400,
-      "message": "Token Expired"
-    });
-    return;
-  } 
+    next();
+  }
 
   // if (token || key) {
   //   try {

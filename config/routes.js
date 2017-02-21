@@ -3,8 +3,7 @@
 /********************************************************/
 
 module.exports = (app) => {
-  app.all('/api/v1/*', [require('./validateRequest')]);
-  app.all('/api/v2/*', [require('./validateRequest')]);
+  app.all('/api/*', [require('./validateRequest')]);
   app.all('*', function(req, res, next) {
     console.log(req.method+" "+req.originalUrl);
     next();
