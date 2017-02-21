@@ -34,7 +34,28 @@ module.exports = function(req, res, next) {
         res.status(403);
         res.json({
           "status": 403,
-          "message": "Not Authorized"
+          "message": "Unauthorized"
+        });
+        return;
+      }
+      next();
+    });
+  } else if (key) {
+    User.findOne({ 'apiKey': key }, function (err, user) {
+      if (err || !user) {
+        res.status(401);
+        res.json({
+          "status": 401,
+          "message": "Invalid User"
+        });
+        return;
+      }
+      req.user = user;
+      if (req.url.indexOf('/api/v2/') >= 0 && (user.status != "admin" && user.status != "manager") ) {
+        res.status(403);
+        res.json({
+          "status": 403,
+          "message": "Unauthorized"
         });
         return;
       }
