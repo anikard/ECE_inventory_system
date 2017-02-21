@@ -3,6 +3,7 @@ var fields_app = angular.module('fields_app', []);
 fields_app.factory('FieldsFactory', function($http) {
   var factory = {};
   var fields = [];
+  var originalField = {};
 
   factory.getfields = function(callback) {
     $http.get('/api/customField/show').success(function(output) {
@@ -102,5 +103,31 @@ fields_app.controller('fieldsController', function($scope, FieldsFactory) {
     $('#deleteConfirmModal').modal('hide');
   }
 
+  $scope.editField = function(field) {
+    if($scope.editing) {
+      $('#editConfirmModal').modal('show');
+      $scope.editing = false;
+    }
+    else {
+      originalField = angular.copy(field);
+      $scope.editing = true;
+    }
+  }
+
+  $scope.confirmEditModal = function(field) {
+    console.log(field);
+    FieldsFactory.updateField(field, function (data){});
+    $('#editConfirmModal').modal('hide');
+    $('#fieldModal').modal('hide');
+    $scope.fields = FieldsFactory.getfields(function(data) {
+      $scope.fields = data;
+      console.log(data);
+    });
+  }
+
+  $scope.cancelEditModal = function(field) {
+    $scope.currentField = angular.copy(originalField);
+    $('editConfirmModal').modal('hide');
+  }
 
 })

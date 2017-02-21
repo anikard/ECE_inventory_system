@@ -63,7 +63,7 @@ function del(req, res) {
 
 function update(req, res) {
 	if (! req.body.name) return res.status(400).send({ error: "Missing name" });
-	Field.update({ name: req.body.name }, {
+	Field.findByIdAndUpdate(req.body._id, {
 		$set: _.pick(req.body, ['name','type','access','req','default'])
 	}, function(err, field){
       if(err){
