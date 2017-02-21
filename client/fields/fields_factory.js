@@ -75,11 +75,31 @@ fields_app.controller('fieldsController', function($scope, FieldsFactory) {
     });
   }
 
-  $scope.deleteField = function(field) {
+  $scope.viewField = function(field) {
+    $scope.currentField = angular.copy(field);
+    $scope.editing = false;
+  }
+
+  $scope.confirmDeleteModal = function(field) {
+    console.log(field);
     FieldsFactory.deleteField(field, function(data) {
+      for (var i = 0; i < $scope.fields.length; i++) {
+        if ($scope.fields[i]._id === field._id) {
+          $scope.fields.splice(i,1);
+          break;
+        }
+      }
       console.log("deleting field, refresh now");
+      $scope.currentField = {};
       // TODO: remove from
-    })
+    });
+    $('#deleteConfirmModal').modal('hide');
+    $('#fieldModal').modal('hide');
+  }
+
+  $scope.cancelDeleteModal = function() {
+    console.log("cancel Delete");
+    $('#deleteConfirmModal').modal('hide');
   }
 
 

@@ -35,7 +35,7 @@
         <td ng-bind="field.type"></td>
         <td ng-bind="field.access"></td>
         <!-- <td ng-bind="field.default_value"></td> -->
-        <td><button class="remove" ng-click="viewFrield(field)" data-toggle="modal" data-target="#fieldModal">View</button></td>
+        <td><button class="remove" ng-click="viewField(field)" data-toggle="modal" data-target="#fieldModal">View</button></td>
         <td><button class="remove" ng-click="deleteField(field)">Delete</button></td>
       </tr>
     </table>
@@ -61,3 +61,72 @@
     <input type="submit" ng-disabled="createFieldForm.$invalid" ng-click="addField()">
     <br>
   </form>
+
+  <!-- VIEW FIELD MODAL -->
+  <div class="modal fade" id="fieldModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" ng-click="closeItemModal()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+
+          </button>
+          <h1 class="modal-title" id="exampleModalLabel">View Custom Field</h1>
+
+        </div>
+        <div class="modal-body" align="left">
+          <div class="form-group" >
+            <p>
+              <label><b>Name: </b></label>
+              <input id=fieldName type="text" ng-readonly="!editing" ng-model="currentField.name" required/>
+            </p>
+            <p>
+              <label><b>Type:  </b></label>
+              <select id="type_select" ng-readonly="!editing" ng-model="currentField.type">
+                <option value = "" disabled selected>Select Type</option>
+                <option value="short-form">Short Form Text</option>
+                <option value="long-form">Long Form Text</option>
+                <option value="integer">Integer</option>
+                <option value="floating-point">Floating Point Number</option>
+              </select>
+            </p>
+            <p>
+              <label><b>Access Private?:  </b></label>
+              <input type="checkbox" ng-readonly="!editing" ng-model="currentField.access"ng-true-value="private" ng-false-value="public"/>
+            </p>
+        </div>
+      </div>
+
+        <br>
+
+        <div class="modal-footer">
+          <button class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmModal">Delete Custom Field</button>
+          <button type="button" class="btn btn-secondary" ng-click="closeFieldModal()" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" ng-click="editField(currentField)">{{editing == true ? 'Save Edits' : 'Edit' }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRM MODAL -->
+  <div class="modal fade" id="deleteConfirmModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h1 class="modal-title" id="exampleModalLabel">Confirm Deletion</h1>
+        </div>
+        <div class="modal-body" align="left">
+          <div class="form-group" >
+            Confirm Deletion
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmDeleteModal(currentField)>Confirm</button>
+            <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelDeleteModal()>Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
