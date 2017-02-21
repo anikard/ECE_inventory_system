@@ -12,6 +12,7 @@ module.exports = (app) => {
   	app.use('/api/request/update', util.requirePrivileged);
 
 	app.get('/api/request/show', function(req, res, next) {
+		console.log("in requests.js app show");
 	  show(req, res, next);
 	});
 
