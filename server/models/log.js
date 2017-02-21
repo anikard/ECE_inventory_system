@@ -10,11 +10,7 @@ var LogSchema = new mongoose.Schema({
   event: {type: String, default: ""},
   rec_user: {type:Schema.ObjectId, ref:'User'},
   date: { type : Date, default: Date.now },
-  admin_actions {type: String, default: ""}  
+  admin_actions: {type: String, default: ""}  
 });
 
 mongoose.model('Log', LogSchema);
-
-
-     //      init_user: String, 
-     //      items: Array of Strings, 

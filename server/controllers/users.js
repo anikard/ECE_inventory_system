@@ -13,6 +13,26 @@ module.exports = (app) => {
   	}
   });
 
+  app.get('/api/v1/user/apiKey/get', function(req, res, next){
+    if (req.user) {
+      let key = req.user.generateApiKey();
+      req.user.save((err)=>{
+        if (err) res.status(500).send({ error: err });
+        else res.status(200).json(key);
+      });
+    }
+  });
+
+  app.get('/api/v1/user/apiKey/revoke', function(req, res, next){
+    if (req.user) {
+      req.user.revokeApiKey();
+      req.user.save((err)=>{
+        if (err) res.status(500).send({ error: err });
+        else res.status(200).json("success");
+      });
+    }
+  });
+
   // Get user info 
   app.get('/api/v2/user', function(req, res, next){
   	User.findOne({ '_id': req.body.user }, function (err, user) {
