@@ -7,10 +7,12 @@ var Request = mongoose.model('Request');
 var User = mongoose.model('User');
 var Item = mongoose.model('Item');
 var Cart = mongoose.model('Cart');
+var util = require('./util.js');
 var _ = require('lodash');
 
-
 module.exports = (app) => {
+  app.all('/api/cart/*', util.requireLogin);
+  
   app.get('/api/cart/show', function(req, res, next){
     show(req, res, next);
   });
@@ -38,8 +40,21 @@ function show(req, res) {
 	Cart.findOne({user: req.user._id}, function(err, cart) {
         if(err) {
           res.status(500).send({ error: err });
-        } else {
+        } 
+        if (cart) {
           res.status(200).json(cart.items);
+        } else {
+          cart = new Cart({
+            user: req.user,
+            items: {}
+          });
+          cart.save((err,cart)=>{
+            if(err) {
+              res.status(500).send({ error: err });
+            } else {
+              res.status(200).json(cart.items);
+            }
+          });
         }
     })
 }
@@ -51,7 +66,7 @@ function add(req, res) {
         if(cart) {
 	        _.assign(cart.items, req.body);
 	        cart.markModified('items');
-			cart.save();
+			    cart.save();
         } else {
         	cart = new Cart({
         		user: req.user._id,

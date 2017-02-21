@@ -1,8 +1,14 @@
 var mongoose = require('mongoose');
 var Field = mongoose.model('Field');
 var _ = require('lodash');
+var util = require('./util.js');
 
 module.exports = (app) => {
+  app.use('/api/customField/show', util.requireLogin);
+  app.use('/api/customField/add', util.requirePrivileged);
+  app.use('/api/customField/del', util.requirePrivileged);
+  app.use('/api/customField/update', util.requirePrivileged);
+
 	app.get('/api/customField/show', function(req, res, next) {
 	  show(req, res, next);
 	});
