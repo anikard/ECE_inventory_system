@@ -3,8 +3,11 @@
 /********************************************************/
 
 module.exports = (app) => {
-  app.all('/api/v1/*', [require('./validateRequest')]);
-  app.all('/api/v2/*', [require('./validateRequest')]);
+  app.all('/api/*', [require('./validateRequest')]);
+  app.all('*', function(req, res, next) {
+    console.log(req.method+" "+req.originalUrl);
+    next();
+  });
 
   require('./../server/controllers/oauth.js')(app);
   require('./../server/controllers/authenticator.js')(app);
@@ -14,6 +17,7 @@ module.exports = (app) => {
   require('./../server/controllers/requests.js')(app);
   require('./../server/controllers/items.js')(app);
   require('./../server/controllers/fields.js')(app);
+  require('./../server/controllers/logs.js')(app);
 
   app.get('/home', function(req, res) {
     res.redirect('/');
@@ -134,7 +138,7 @@ module.exports = (app) => {
      //      init_user: String,
      //      items: Array of Strings,
      //      event: String, r
-     //      ec_user: String,
+     //      rec_user: String,
      //      date: date object,
      //      admin_actions: String
      //      }

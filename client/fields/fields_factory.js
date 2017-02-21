@@ -5,7 +5,7 @@ fields_app.factory('FieldsFactory', function($http) {
   var fields = [];
 
   factory.getfields = function(callback) {
-    $http.get('/api/v1/customField/show').success(function(output) {
+    $http.get('/api/customField/show').success(function(output) {
       fields = output;
       callback(fields);
     })
@@ -14,7 +14,7 @@ fields_app.factory('FieldsFactory', function($http) {
   factory.addField = function(info, callback) {
     console.log("inside factory addField");
     console.log(info);
-    $http.post('/api/v2/customField/add', info)
+    $http.post('/api/customField/add', info)
       .success(function(output) {
         fields = output;
         callback(fields);
@@ -29,13 +29,13 @@ fields_app.factory('FieldsFactory', function($http) {
   }
 
   factory.updateField = function(info, callback) {
-    $http.post('/api/v2/customField/update', info).success(function(output) {
+    $http.post('/api/customField/update', info).success(function(output) {
       console.log("field updated success!");
     });
   }
 
   factory.deleteField = function(field, callback) {
-    $http.post('/api/v2/customField/del', field).success(function(output) {
+    $http.post('/api/customField/del', field).success(function(output) {
       fields = output;
       callback(output);
     });
@@ -78,7 +78,7 @@ fields_app.controller('fieldsController', function($scope, FieldsFactory) {
   $scope.deleteField = function(field) {
     FieldsFactory.deleteField(field, function(data) {
       console.log("deleting field, refresh now");
-      // TODO: remove from 
+      // TODO: remove from
     })
   }
 

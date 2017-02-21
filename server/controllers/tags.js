@@ -2,28 +2,16 @@ var mongoose = require('mongoose');
 var Tag = mongoose.model('Tag');
 
 module.exports = (app) => {
-	app.get('/api/v1/tag/show', function(req, res, next) {
+	app.get('/api/tag/show', function(req, res, next) {
 		show(req, res, next);
 	});
 
-	app.post('/api/v1/tag/add', function(req, res, next) {
+	app.post('/api/tag/add', function(req, res, next) {
 		add(req, res, next);
 	});
 
-	app.post('/api/v1/tag/del', function(req, res, next) {
+	app.post('/api/tag/del', function(req, res, next) {
 		del(req, res, next);
-	});
-
-	app.get('/tags', function(req, res) {
-	  res.status(400).send("Use /api/v1/tag/show");
-	});
-
-	app.post('/addTag', function(req, res) {
-	  res.status(400).send("Use /api/v1/tag/add");
-	});
-
-	app.post('/deleteTag', function(req, res) {
-	  res.status(400).send("Use /api/v1/tag/del");
 	});
 }
 

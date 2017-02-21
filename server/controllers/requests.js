@@ -4,23 +4,25 @@ var User = mongoose.model('User');
 var Item = mongoose.model('Item');
 
 module.exports = (app) => {
-	app.get('/api/v1/request/show', function(req, res, next) {
+
+	app.get('/api/request/show', function(req, res, next) {
+		console.log("in requests.js app show");
 	  show(req, res, next);
 	});
 
-	app.post('/api/v1/request/add', function(req, res, next) {
+	app.post('/api/request/add', function(req, res, next) {
 	  add(req, res, next);
 	});
 
-	app.post('/api/v1/request/close', function(req, res, next) {
+	app.post('/api/request/close', function(req, res, next) {
 	  close(req, res, next);
 	});
 
-	app.post('/api/v1/request/del', function(req, res, next) {
+	app.post('/api/request/del', function(req, res, next) {
 	  del(req, res, next);
 	});
 
-	app.post('/api/v1/request/update', function(req, res, next) {
+	app.post('/api/request/update', function(req, res, next) {
 	  update(req, res, next);
 	});
 }

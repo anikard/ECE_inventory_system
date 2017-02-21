@@ -14,28 +14,28 @@ products_app.factory('ProductsFactory', function($http) {
   var originalProduct = {};
 
   factory.getcustomers = function(callback) {
-      $http.get('/api/v1/user').success(function(output) {
+      $http.get('/api/user').success(function(output) {
         customers = output;
         callback(customers);
       })
     }
 
   factory.gettags = function(callback) {
-    $http.get('/api/v1/tag/show').success(function(output) {
+    $http.get('/api/tag/show').success(function(output) {
       tags = output;
       callback(tags);
     })
   }
 
   factory.getfields = function(callback) {
-    $http.get('/api/v1/customField/show').success(function(output) {
+    $http.get('/api/customField/show').success(function(output) {
       fields = output;
       callback(fields);
     })
   }
 
   factory.getproducts = function(callback) {
-    $http.get('/api/v1/item/show').success(function(output) {
+    $http.get('/api/item/show').success(function(output) {
       products = output;
       callback(products);
     })
@@ -43,7 +43,7 @@ products_app.factory('ProductsFactory', function($http) {
 
 
   factory.getorders = function(info, callback) {
-        $http.get('/api/v1/request/show', info).success(function(output) {
+        $http.get('/api/request/show', info).success(function(output) {
           orders = output;
 
           console.log(orders);
@@ -53,7 +53,7 @@ products_app.factory('ProductsFactory', function($http) {
     }
 
     factory.realgetorders = function(callback) {
-          $http.get('/api/v1/request/show').success(function(output) {
+          $http.get('/api/request/show').success(function(output) {
             orders = output;
 
             console.log(orders);
@@ -63,7 +63,7 @@ products_app.factory('ProductsFactory', function($http) {
       }
 
   factory.addTag = function(info, callback) {
-    $http.post('/api/v1/tag/add', info).success(function(output) {
+    $http.post('/api/tag/add', info).success(function(output) {
       tags = output;
       callback(tags);
     })
@@ -76,7 +76,7 @@ products_app.factory('ProductsFactory', function($http) {
       console.log("Add item form incomplete");
       return;
     }
-    $http.post('/api/v2/item/add', info)
+    $http.post('/api/item/add', info)
       .success(function(output) {
         products = output;
         callback(products);
@@ -107,7 +107,7 @@ products_app.factory('ProductsFactory', function($http) {
       console.log("Update item form incomplete");
       return;
     }
-    $http.post('/api/v2/item/update', info).success(function(output) {
+    $http.post('/api/item/update', info).success(function(output) {
       // TODO
       console.log("product Successfully updated in factory");
     })
@@ -115,7 +115,7 @@ products_app.factory('ProductsFactory', function($http) {
 
   factory.deleteProduct = function(product, callback) {
 
-    $http.post('/api/v2/item/del', product).success(function(output) {
+    $http.post('/api/item/del', product).success(function(output) {
       console.log(output.length);
       products = output;
       callback(products);

@@ -7,30 +7,34 @@ var Request = mongoose.model('Request');
 var User = mongoose.model('User');
 var Item = mongoose.model('Item');
 var Cart = mongoose.model('Cart');
+var _ = require('lodash');
+
 
 module.exports = (app) => {
-  app.get('/api/v1/cart/show', function(req, res, next){
+  app.get('/api/cart/show', function(req, res, next){
     show(req, res, next);
   });
 
-  app.post('/api/v1/cart/add', function(req, res, next){
+  app.post('/api/cart/add', function(req, res, next){
+	console.log("in cart.js app post");
     add(req, res, next);
   });
 
-  app.post('/api/v1/cart/update', function(req, res, next){
+  app.post('/api/cart/update', function(req, res, next){
     update(req, res, next);
   });
 
-  app.post('/api/v1/cart/del', function(req, res, next){
+  app.post('/api/cart/del', function(req, res, next){
     del(req, res, next);
   });
 
-  app.get('/api/v1/cart/empty', function(req, res, next){
+  app.get('/api/cart/empty', function(req, res, next){
     empty(req, res, next);
   });
 }
 
 function show(req, res) {
+	console.log("in show function for cart");
 	Cart.findOne({user: req.user._id}, function(err, cart) {
         if(err) {
           res.status(500).send({ error: err });
@@ -41,6 +45,7 @@ function show(req, res) {
 }
 
 function add(req, res) {
+	console.log(" here in cart.js add()");
 	Cart.findOne({user: req.user._id}, function(err, cart) {
         if(err) return res.status(500).send({ error: err });
         if(cart) {
