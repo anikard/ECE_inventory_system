@@ -2,8 +2,15 @@ var mongoose = require('mongoose');
 var Request = mongoose.model('Request');
 var User = mongoose.model('User');
 var Item = mongoose.model('Item');
+var util = require('./util.js');
 
 module.exports = (app) => {
+	app.use('/api/request/show', util.requireLogin);
+	app.use('/api/request/add', util.requirePrivileged);
+	app.use('/api/request/close', util.requirePrivileged);
+  	app.use('/api/request/del', util.requirePrivileged);
+  	app.use('/api/request/update', util.requirePrivileged);
+
 	app.get('/api/request/show', function(req, res, next) {
 	  show(req, res, next);
 	});

@@ -2,8 +2,11 @@ var mongoose = require('mongoose');
 var _ = require('lodash');
 var Log = mongoose.model('Log');
 var User = mongoose.model('User');
+var util = require('./util.js');
 
 module.exports = (app) => {
+	//app.use('/api/log/*', util.requireLogin);
+
 	app.get('/api/log/show', function(req, res, next) {
 		Log.find({})
 			.exec(function(err, results) {
