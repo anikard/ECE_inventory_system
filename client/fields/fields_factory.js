@@ -5,14 +5,16 @@ fields_app.factory('FieldsFactory', function($http) {
   var fields = [];
 
   factory.getfields = function(callback) {
-    $http.get('/fields').success(function(output) {
+    $http.get('/api/v1/customField/show').success(function(output) {
       fields = output;
       callback(fields);
     })
   }
 
   factory.addField = function(info, callback) {
-    $http.post('/addField', info)
+    console.log("inside factory addField");
+    console.log(info);
+    $http.post('/api/v2/customField/add', info)
       .success(function(output) {
         fields = output;
         callback(fields);
@@ -23,17 +25,17 @@ fields_app.factory('FieldsFactory', function($http) {
   }
 
   factory.viewField = function(field, callback) {
-    console.log("Factory fiew called on : " field.name);
+    console.log("Factory fiew called on : " + field.name);
   }
 
   factory.updateField = function(info, callback) {
-    $http.post('/updateField', info).success(function(output) {
+    $http.post('/api/v2/customField/update', info).success(function(output) {
       console.log("field updated success!");
     });
   }
 
   factory.deleteField = function(field, callback) {
-    $http.post('/deleteField', field).success(function(output) {
+    $http.post('/api/v2/customField/del', field).success(function(output) {
       fields = output;
       callback(output);
     });
@@ -42,6 +44,11 @@ fields_app.factory('FieldsFactory', function($http) {
 });
 
 fields_app.controller('fieldsController', function($scope, FieldsFactory) {
+
+  $scope.fields = FieldsFactory.getfields(function(data) {
+    $scope.fields = data;
+  })
+
   $scope.logout = function() {
     console.log("scope logging out ");
     auth.logout(function() {
@@ -51,6 +58,10 @@ fields_app.controller('fieldsController', function($scope, FieldsFactory) {
   }
 
   $scope.addField = function() {
+    console.log($scope.new_field);
+    if(!$scope.new_field.access) {
+      $scope.new_field.access = "public";
+    }
     FieldsFactory.addField($scope.new_field, function(data) {
       if(data.error) {
         $scope.errorMessage = data.error;
@@ -62,6 +73,13 @@ fields_app.controller('fieldsController', function($scope, FieldsFactory) {
         $scope.new_field = {};
       }
     });
+  }
+
+  $scope.deleteField = function(field) {
+    FieldsFactory.deleteField(field, function(data) {
+      console.log("deleting field, refresh now");
+      // TODO: remove from 
+    })
   }
 
 

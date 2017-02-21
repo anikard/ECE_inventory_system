@@ -49,6 +49,11 @@ body {
       margin-right: 1em;
     }
 
+    .clearButton {
+      background: #2C93B4;
+    }
+    .clearButton:hover { background: #5BBA1D; }
+
 
     /*remove button*/
     .remove {
@@ -102,7 +107,11 @@ body {
       height:3em;
     }
 
-    .createRequestTable {
+    .logTable tr {
+      height:3em;
+    }
+
+    .logTable {
       height: 10em;
     }
     /*.createRequestTable td {

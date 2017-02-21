@@ -14,7 +14,7 @@
 
 <body ng-controller="productsController">
 
-  <a ng-if="authorized" href="/dispCustomers">users</a> | <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
+  <a ng-if="authorized" href="/dispCustomers">users</a> | <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispFields">custom fields</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
 
   <h1>ITEMS</h1>
   <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
@@ -79,6 +79,35 @@
 
 
     <input class = "feedback-input" type="number" min="1" ng-model="new_product.quantity" placeholder="quantity" required>
+    <div ng-repeat="field in fields">
+      <input ng-show="field.type=='short-form'"class="feedback-input" type="text" ng-model="new_product.fields[field.name]" placeholder="{{field.name}}">
+      <textarea ng-show="field.type=='long-form'"class="feedback-input" type="text" ng-model="new_product.fields[field.name]" placeholder="{{field.name}}"></textarea>
+      <input ng-show="field.type=='integer' || field.type=='floating-point'"class="feedback-input" type="number" ng-model="new_product.fields[field.name]" placeholder="{{field.name}}">
+
+    </div>
+
+    <br>
+    <span>
+      &nbsp;
+      <span class="tag-class" ng-repeat="cTag in currentTags">
+        <span ng-bind="cTag"></span>
+        <button ng-click="removeTag(cTag)"><span aria-hidden="true">&times;</span></button>
+      </span>
+      &nbsp;
+    </span>
+    <br>
+<!-- TODO: view array of tags
+      1. Make it so that tags can be added form currently available customers
+      2. Make it so that these tags are shown aobve in array of tags
+      3. Give third option to add new tag/customer
+      4. Make adding a new tag/customer add it to current product tag array-->
+
+    <select id="tag_select_modal" class = "feedback-input" ng-controller="productsController" id = "tagList" name="tagOptions"> <!-- ng-model="new_product.tags[new_product.tags.length]">-->
+      <option value="" disabled selected>Add a Tag</option>
+      <option value="1" ng-click="createNewTag()">Create New Tag</option>
+      <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
+    </select>
+
     <div class="error" ng-if="errorMessage">{{ errorMessage }}</div>
 
     <!-- LOOP through custom fields display here -->
@@ -129,11 +158,17 @@
           </p>
           <p>
             <label><b>Description:  </b></label>
-            <input type="text" ng-readonly="!editing" ng-model="currentProduct.description"/>
+            <textarea ng-readonly="!editing" ng-model="currentProduct.description"></textarea>
           </p>
           <p>
             <label><b>Location:  </b></label>
             <input type="text" ng-readonly="!editing" ng-model="currentProduct.location"/>
+          </p>
+          <p ng-repeat="field in fields">
+            <label><b>{{ field.name }}: </b></label>
+            <input ng-show="field.type=='short-form'" type="text" ng-readonly="!editing" ng-model="currentProduct.fields[field.name]">
+            <textarea ng-show="field.type=='long-form'"type="text" ng-readonly="!editing" ng-model="currentProduct.fields[field.name]"></textarea>
+            <input ng-show="field.type=='integer' || field.type=='floating-point'" type="number" ng-readonly="!editing" ng-model="currentProduct.fields[field.name]">
           </p>
           <p>
             <label><b>Tags:  </b><label>

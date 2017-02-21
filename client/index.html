@@ -14,7 +14,7 @@
       color: beige;
     }
 
-    body { 
+    body {
       font-family: Helvetica, Arial, sans-serif;
       text-align: center;
     }
@@ -120,7 +120,7 @@
         };
 
         auth.loginUser = function(user, callback){
-          return $http.post('/login', user).success(function(data){
+          return $http.post('/api/auth/login', user).success(function(data){
             auth.saveToken(data.token);
             console.log(data);
             callback(data.token);
@@ -137,7 +137,7 @@
           if(auth.isLoggedIn()){
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
-            
+
             return payload.status;
           }
         };
@@ -160,7 +160,7 @@
             $scope.authorized = (auth.currentUserStatus()=="admin");
             document.getElementById("navTop").style.display = "block";
             document.getElementById("loginForm").style.display = "none";
-            
+
 
             // window.location.assign("/customers.html");
         });
@@ -192,10 +192,10 @@
         });
       }
 
-  
+
   });
 
- 
+
 
 
   </script>
