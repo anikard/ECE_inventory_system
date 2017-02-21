@@ -2,6 +2,7 @@
 //var validateUser = require('./../server/controllers/authenticator.js').validateUser;
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
+var jwt = require('jsonwebtoken');
 
 module.exports = function(req, res, next) {
  
@@ -12,19 +13,25 @@ module.exports = function(req, res, next) {
   // We skip the token outh for [OPTIONS] requests.
   //if(req.method == 'OPTIONS') next();
 
-  let uid = req.session && req.session.token && JSON.parse(Buffer.from(req.session.token.split('.')[1], 'base64'));
+  let uid = req.session && req.session.token; //&& JSON.parse(Buffer.from(req.session.token.split('.')[1], 'base64'));
   let token = (req.body && req.body.access_token) || (req.query && req.query.access_token) || req.headers['x-access-token'];
-  uid = uid || (token && JSON.parse(Buffer.from(token.split('.')[1], 'base64')));
+  uid = uid || token;
   let key = (req.body && req.body.x_key) || (req.query && req.query.x_key) || req.headers['x-key'];
 
   if (uid) {
-    User.findOne({ '_id': uid._id }, function (err, user) {
-      if (err) return res.status(500).json({"error":err});
-      if (user) {
-        req.user = user;
-      }
-      next();
-    });
+      jwt.verify(uid, 'D6MDhL3A3FQyaCwEY0JH', (err, decoded)=>{
+        if (!err && decoded) {
+          User.findOne({ '_id': decoded._id }, function (err, user) {
+            if (err) return res.status(500).json({"error":err});
+            if (user) {
+              req.user = user;
+            }
+            next();
+          });
+        } else 
+          next();
+      });
+
   } else if (key) {
     User.findOne({ 'apiKey': key }, function (err, user) {
       if (err) return res.status(500).json({"error":err});

@@ -1,7 +1,12 @@
 var mongoose = require('mongoose');
 var Tag = mongoose.model('Tag');
+var util = require('./util.js');
 
 module.exports = (app) => {
+	//app.use('/api/tag/show', util.requireLogin);
+	app.use('/api/tag/add', util.requirePrivileged);
+  	app.use('/api/tag/del', util.requirePrivileged);
+
 	app.get('/api/tag/show', function(req, res, next) {
 		show(req, res, next);
 	});
