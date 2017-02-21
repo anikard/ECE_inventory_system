@@ -8,7 +8,7 @@ var orders_app = angular.module('cart_app', []);
 
       factory.getproducts = function(callback) {
         console.log("getting products in cart");
-        $http.get('/api/v1/item/show').success(function(output) {
+        $http.get('/api/item/show').success(function(output) {
           products = output;
           console.log("got products in cart");
           console.log(products);
@@ -19,7 +19,7 @@ var orders_app = angular.module('cart_app', []);
       
       factory.getorders = function(info, callback) {
         console.log("getting cartItems in cart");
-        $http.post('/api/v1/cart/show', info).success(function(output) {
+        $http.get('/api/cart/show', info).success(function(output) {
           orders = output;
 
           console.log(orders);
@@ -44,7 +44,7 @@ var orders_app = angular.module('cart_app', []);
       factory.addToCart = function(info, callback) {
         console.log("adding to cart in factory");
         // $http.post('/addToCart', info).success(function(output) {
-        $http.post('/api/v1/cart/add', info).success(function(output) {
+        $http.post('/api/cart/add', info).success(function(output) {
             orders = output;
             callback(orders);
         })

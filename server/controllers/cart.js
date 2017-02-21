@@ -34,6 +34,7 @@ module.exports = (app) => {
 }
 
 function show(req, res) {
+	console.log("in show function for cart");
 	Cart.findOne({user: req.user._id}, function(err, cart) {
         if(err) {
           res.status(500).send({ error: err });
