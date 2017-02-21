@@ -12,7 +12,7 @@ require('./config/mongoose.js');
 
 // require bodyParser since we need to handle post data for adding a user
 var bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json()); // ****
 
 // static file server pointing to the "client" directory
@@ -48,4 +48,6 @@ var httpServer = http.createServer(app);
 var httpsServer = https.createServer(credentials, app);
 
 httpServer.listen(8000);
-httpsServer.listen(8443);
+httpsServer.listen(8443, ()=>{
+	console.log('Listening on port 8443')
+});

@@ -17,7 +17,8 @@ var UserSchema = new mongoose.Schema({
   email: {type: String, default: ""},
   status: {type: String, default: ""},
   hash: {type: String, default: ""},
-  active: {type: Boolean, default: true}
+  active: {type: Boolean, default: true},
+  apiKey: {type: String, default: ""},
   //orders: [{type: Schema.Types.ObjectId, ref:'Order'}],
   //active: String
 }); 
@@ -51,6 +52,15 @@ UserSchema.methods.generateJWT = function() {
   }, 'SECRET');
 };
 
+UserSchema.methods.generateApiKey = function() {
+  if (this.apiKey) return this.apiKey;
+  this.apiKey = crypto.randomBytes(64).toString('hex');
+  return this.apiKey;
+};
+
+UserSchema.methods.revokeApiKey = function() {
+  this.apiKey = "";
+};
 
 
 mongoose.model('User', UserSchema);

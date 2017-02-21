@@ -11,24 +11,24 @@ var _ = require('lodash');
 
 
 module.exports = (app) => {
-  app.get('/api/v1/cart/show', function(req, res, next){
+  app.get('/api/cart/show', function(req, res, next){
     show(req, res, next);
   });
 
-  app.post('/api/v1/cart/add', function(req, res, next){
-  	console.log("in cart.js app post");
+  app.post('/api/cart/add', function(req, res, next){
+	console.log("in cart.js app post");
     add(req, res, next);
   });
 
-  app.post('/api/v1/cart/update', function(req, res, next){
+  app.post('/api/cart/update', function(req, res, next){
     update(req, res, next);
   });
 
-  app.post('/api/v1/cart/del', function(req, res, next){
+  app.post('/api/cart/del', function(req, res, next){
     del(req, res, next);
   });
 
-  app.get('/api/v1/cart/empty', function(req, res, next){
+  app.get('/api/cart/empty', function(req, res, next){
     empty(req, res, next);
   });
 }

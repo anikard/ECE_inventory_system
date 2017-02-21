@@ -14,7 +14,3 @@ var LogSchema = new mongoose.Schema({
 });
 
 mongoose.model('Log', LogSchema);
-
-
-     //      init_user: String, 
-     //      items: Array of Strings, 
