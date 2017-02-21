@@ -7,6 +7,8 @@ var Request = mongoose.model('Request');
 var User = mongoose.model('User');
 var Item = mongoose.model('Item');
 var Cart = mongoose.model('Cart');
+var _ = require('lodash');
+
 
 module.exports = (app) => {
   app.get('/api/v1/cart/show', function(req, res, next){
@@ -14,6 +16,7 @@ module.exports = (app) => {
   });
 
   app.post('/api/v1/cart/add', function(req, res, next){
+  	console.log("in cart.js app post");
     add(req, res, next);
   });
 
@@ -41,6 +44,7 @@ function show(req, res) {
 }
 
 function add(req, res) {
+	console.log(" here in cart.js add()");
 	Cart.findOne({user: req.user._id}, function(err, cart) {
         if(err) return res.status(500).send({ error: err });
         if(cart) {

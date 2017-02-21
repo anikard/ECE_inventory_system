@@ -5,6 +5,7 @@ var Item = mongoose.model('Item');
 
 module.exports = (app) => {
 	app.get('/api/v1/request/show', function(req, res, next) {
+		console.log("in requests.js app show");
 	  show(req, res, next);
 	});
 

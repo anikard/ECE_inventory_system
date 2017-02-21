@@ -7,15 +7,19 @@ var orders_app = angular.module('cart_app', []);
       var products = [];
 
       factory.getproducts = function(callback) {
-        $http.get('/products').success(function(output) {
+        console.log("getting products in cart");
+        $http.get('/api/v1/item/show').success(function(output) {
           products = output;
+          console.log("got products in cart");
+          console.log(products);
           callback(products);
         })
       }
 
       
       factory.getorders = function(info, callback) {
-        $http.post('/orders', info).success(function(output) {
+        console.log("getting cartItems in cart");
+        $http.post('/api/v1/cart/show', info).success(function(output) {
           orders = output;
 
           console.log(orders);
@@ -39,7 +43,8 @@ var orders_app = angular.module('cart_app', []);
 
       factory.addToCart = function(info, callback) {
         console.log("adding to cart in factory");
-        $http.post('/addToCart', info).success(function(output) {
+        // $http.post('/addToCart', info).success(function(output) {
+        $http.post('/api/v1/cart/add', info).success(function(output) {
             orders = output;
             callback(orders);
         })
@@ -67,12 +72,14 @@ var orders_app = angular.module('cart_app', []);
 
     orders_app.controller('ordersController', function($scope, OrderFactory, auth, $document) {
         console.log("USER ID: " + auth.currentUserID());
+        $scope.orders = {};
         var thisId = {userId: auth.currentUserID()};
-        $scope.orders = OrderFactory.getorders(thisId, function(data) {
-        $scope.orders = data;
+        OrderFactory.getorders(thisId, function(data) {
+          $scope.orders = data;
 
-      });
-
+        });
+        console.log("scope cartItems");
+        console.log($scope.orders);
         $scope.myName = auth.currentUser();
         console.log("MY NAME: " + $scope.myName);
         $scope.authorized = (auth.currentUserStatus()=="admin");
