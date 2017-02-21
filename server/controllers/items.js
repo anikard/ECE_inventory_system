@@ -4,7 +4,7 @@ var Item = mongoose.model('Item');
 var Field = mongoose.model('Field');
 
 module.exports = (app) => {
-  app.get('/api/v1/item/show', function(req, res, next) {
+  app.get('/api/item/show', function(req, res, next) {
     Item.find({}, function(err, results) {
         if(err) {
           res.status(500).send({ error: err });
@@ -14,7 +14,7 @@ module.exports = (app) => {
     });
   });
 
-  app.post('/api/v2/item/add', function(req, res, next) {
+  app.post('/api/item/add', function(req, res, next) {
     Item.findOne({ 'name': req.body.name }, function (err, item) {
       if (err) {
         return res.status(500).send({ error: err });
@@ -34,7 +34,7 @@ module.exports = (app) => {
     });
   });
 
-  app.post('/api/v2/item/del', function(req, res, next) {
+  app.post('/api/item/del', function(req, res, next) {
     Item.remove({ _id: req.body._id},
       function (err, request) {
         if (err) {
@@ -47,7 +47,7 @@ module.exports = (app) => {
     );
   });
 
-  app.post('/api/v2/item/update', function(req, res, next) {
+  app.post('/api/item/update', function(req, res, next) {
     if (! req.body._id) return res.status(400).send({ error: "Missing ref id" });
     props = _.pick(req.body, ['name','quantity','model','description','tags','image','fields']);
     Item.findByIdAndUpdate(

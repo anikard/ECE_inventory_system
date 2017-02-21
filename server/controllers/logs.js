@@ -4,7 +4,7 @@ var Log = mongoose.model('Log');
 var User = mongoose.model('User');
 
 module.exports = (app) => {
-	app.get('/api/v1/log/show', function(req, res, next) {
+	app.get('/api/log/show', function(req, res, next) {
 		Log.find({})
 			.exec(function(err, results) {
 				if(err) {
@@ -15,7 +15,7 @@ module.exports = (app) => {
 			});
 	});
 
-	app.get('/api/v1/log/filter', function(req, res, next) {
+	app.get('/api/log/filter', function(req, res, next) {
 		Log.find(_.pick(req.query,['user','item']))
 		.populate('item init_user rec_user')
 		.exec(function(err, results) {
@@ -27,7 +27,7 @@ module.exports = (app) => {
 		});
 	});
 
-	app.post('/api/v1/log/filter', function(req, res, next) {
+	app.post('/api/log/filter', function(req, res, next) {
 		let query = {};
 		if (req.body.startDate || req.body.endDate) {
 			query.date = {};
