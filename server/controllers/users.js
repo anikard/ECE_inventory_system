@@ -39,7 +39,7 @@ module.exports = (app) => {
 
   // Get user info 
   app.get('/api/user/:id/info', function(req, res, next){
-  	User.findOne({ '_id': id }, function (err, user) {
+  	User.findOne({ '_id': req.params.id }, function (err, user) {
   		if(err) {
   			res.status(500).send({ error: err });
   		} else {

@@ -12,6 +12,8 @@ const path = require('path');
 const session = require('express-session');
 const passport = require('passport');
 const bodyParser = require("body-parser");
+const MongoStore = require('connect-mongo')(session);
+const mongoose = require('mongoose');
 
 const numCPUs = require('os').cpus().length;
 
@@ -30,6 +32,7 @@ app.use(express.static(path.join(__dirname, './client')));
 app.set('trust proxy', 1) // trust first proxy
 app.use(session({
   secret: '6ECjhQp5BK6ZUp',
+  store: new MongoStore({ mongooseConnection: mongoose.connection }),
   resave: false,
   saveUninitialized: true,
   cookie: { secure: true }
@@ -65,4 +68,4 @@ if (cluster.isMaster) {
   https.createServer(credentials, app).listen(8443, ()=>{
   	console.log(`Worker ${process.pid} started, listening on port 8443`);
   }); 
-}
+} 

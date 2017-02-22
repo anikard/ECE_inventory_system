@@ -14,7 +14,8 @@
     "simple-oauth2": "^1.0.3",
     "request": "^2.67.0",
     "lodash": "latest",
-    "compression": "latest"
+    "compression": "latest",
+    "connect-mongo": "latest"
 
   }
 }
