@@ -7,27 +7,35 @@ products_app.factory('ProductsFactory', function($http) {
   var products = [];
   var customers = [];
   var tags = [];
+  var fields = [];
 
   var orders = [];
   var relevantOrders = [];
   var originalProduct = {};
 
   factory.getcustomers = function(callback) {
-      $http.get('/customers').success(function(output) {
+      $http.get('/api/user').success(function(output) {
         customers = output;
         callback(customers);
       })
     }
 
   factory.gettags = function(callback) {
-    $http.get('/tags').success(function(output) {
+    $http.get('/api/tag/show').success(function(output) {
       tags = output;
       callback(tags);
     })
   }
 
+  factory.getfields = function(callback) {
+    $http.get('/api/customField/show').success(function(output) {
+      fields = output;
+      callback(fields);
+    })
+  }
+
   factory.getproducts = function(callback) {
-    $http.get('/products').success(function(output) {
+    $http.get('/api/item/show').success(function(output) {
       products = output;
       callback(products);
     })
@@ -35,7 +43,7 @@ products_app.factory('ProductsFactory', function($http) {
 
 
   factory.getorders = function(info, callback) {
-        $http.post('/orders', info).success(function(output) {
+        $http.get('/api/request/show', info).success(function(output) {
           orders = output;
 
           console.log(orders);
@@ -45,7 +53,7 @@ products_app.factory('ProductsFactory', function($http) {
     }
 
     factory.realgetorders = function(callback) {
-          $http.get('/orders').success(function(output) {
+          $http.get('/api/request/show').success(function(output) {
             orders = output;
 
             console.log(orders);
@@ -55,7 +63,7 @@ products_app.factory('ProductsFactory', function($http) {
       }
 
   factory.addTag = function(info, callback) {
-    $http.post('/addTag', info).success(function(output) {
+    $http.post('/api/tag/add', info).success(function(output) {
       tags = output;
       callback(tags);
     })
@@ -68,7 +76,7 @@ products_app.factory('ProductsFactory', function($http) {
       console.log("Add item form incomplete");
       return;
     }
-    $http.post('/addProduct', info)
+    $http.post('/api/item/add', info)
       .success(function(output) {
         products = output;
         callback(products);
@@ -99,7 +107,7 @@ products_app.factory('ProductsFactory', function($http) {
       console.log("Update item form incomplete");
       return;
     }
-    $http.post('/updateProduct', info).success(function(output) {
+    $http.post('/api/item/update', info).success(function(output) {
       // TODO
       console.log("product Successfully updated in factory");
     })
@@ -107,7 +115,7 @@ products_app.factory('ProductsFactory', function($http) {
 
   factory.deleteProduct = function(product, callback) {
 
-    $http.post('/deleteProduct', product).success(function(output) {
+    $http.post('/api/item/del', product).success(function(output) {
       console.log(output.length);
       products = output;
       callback(products);
@@ -115,7 +123,7 @@ products_app.factory('ProductsFactory', function($http) {
   }
 
   factory.addOrder = function(info, callback) {
-        $http.post('/addOrder', info).success(function(output) {
+        $http.post('/ap1/v1/request/add', info).success(function(output) {
             orders = output;
             callback(orders);
         })
@@ -130,6 +138,7 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
     $scope.myID = {userId: auth.currentUserID()};
     console.log($scope.myName);
     $scope.authorized = (auth.currentUserStatus()=="admin");
+    $scope.customFields = [];
 
     $scope.logout = function() {
       console.log("scope logging out ");
@@ -144,22 +153,39 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
     }
 
     $scope.products = ProductsFactory.getproducts(function(data) {
-    $scope.products = data;
+      $scope.products = data;
 
 
-    $scope.currentTags = [];
-  });
+      $scope.currentTags = [];
+    });
 
   $scope.tags = ProductsFactory.gettags(function(data) {
     $scope.tags = data;
   })
 
+  $scope.fields = ProductsFactory.getfields(function(data) {
+    $scope.fields = data;
+  })
+
+  console.log($scope.tags);
+  console.log($scope.fields);
+
   $scope.addProduct = function() {
     console.log("Query submited!");
     console.log("new product");
+    console.log($scope.customFields);
     $scope.new_product.tags = $scope.currentTags;
+    var cleanCustomFields = [];
+    for (var i = 0; i < $scope.customFields.length; i++) {
+      if ($scope.customFields[i].name && $scope.customFields[i].value) {
+        cleanCustomFields.push($scope.customFields[i]);
+      }
+    }
+    // Uncomment after back end integration: $scope.new_product.custom_fields = cleanCustomFields;
     console.log($scope.new_product);
+    console.log(cleanCustomFields);
     $scope.currentTags = [];
+    $scope.customFields = [];
     ProductsFactory.addProduct($scope.new_product, function(data) {
       if(data.error) {
         $scope.errorMessage = data.error;
@@ -173,6 +199,14 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
         $scope.new_product = {};
       }
     });
+  }
+
+  $scope.addCustomField = function(){
+    console.log("Add custom field");
+    var newField = {};
+    newField.name = "";
+    newField.value = "";
+    $scope.customFields.push(newField);
   }
 
   $scope.deleteProduct = function(event, product) {
@@ -299,6 +333,7 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
   $scope.viewProduct = function(product) {
     console.log("View product selected");
     console.log(product.name);
+    console.log(product._id);
     console.log("Current user id: ");
     console.log($scope.myID);
 
@@ -334,11 +369,8 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
     console.log("add tag");
     console.log($scope.newTag);
     $scope.currentTags.push($scope.newTag.name);
-    //$scope.tags.push($scope.newTag);
-    //$scope.newTag = {};
 
     ProductsFactory.addTag($scope.newTag, function(data) {
-      //$scope.tags.push($scope.newTag.name);
       $scope.newTag = {};
     });
 
@@ -402,6 +434,7 @@ products_app.controller('ordersController', function($scope, auth, ProductsFacto
   console.log($scope.orders);
 })
 
+// TODO: refactoring Is this used?
 products_app.controller('tagsController', function($scope, ProductsFactory) {
   console.log("tagCTRL outer");
   $scope.tags = ProductsFactory.gettags(function(data) {
@@ -412,6 +445,15 @@ products_app.controller('tagsController', function($scope, ProductsFactory) {
 
   console.log("tags")
   console.log($scope.tags);
+})
+
+// TODO: refactoring Is this used?
+products_app.controller('fieldsController', function($scope, ProductsFactory) {
+  $scope.fields = ProductsFactory.getfields(function(data) {
+    console.log("Fields in Products");
+    console.log(data);
+    $scope.fields = data;
+  })
 })
 
 products_app.factory('auth', ['$http', '$window', function($http, $window){

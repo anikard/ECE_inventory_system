@@ -14,99 +14,134 @@
 
 <body ng-controller="productsController">
 
-  <a ng-if="authorized" href="/dispCustomers">users</a> | <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
+  <a ng-if="authorized" href="/dispCustomers">users</a> | <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispFields">custom fields</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
 
   <h1>ITEMS</h1>
   <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
 
 
-<div class="customerTable" id = "cTable" >
-  <table>
-    <tr>
-      <td> Name </td>
-      <td> Model </td>
-      <td> Quantity </td>
-      <td> Tags </td>
-      <td> Action </td>
-    </tr>
+  <div class="customerTable" id = "cTable" >
+    <table>
+      <tr>
+        <td> Name </td>
+        <td> Model </td>
+        <td> Quantity </td>
+        <td> Tags </td>
+        <td> Action </td>
+      </tr>
 
-    <tr ng-repeat="product in products | filter: filter_name | orderBy:'-date'">
-      <td ng-bind="product.name"></td>
-      <td ng-bind="product.model"></td>
-      <td ng-bind="product.quantity"></td>
-      <td ng-bind="product.tags"></td>
-      <!--<td><button class="remove" ng-click="viewProduct(product)" data-toogle="modal" data-target"#productModal">View</button></td>-->
-      <td><button class = "remove" ng-click='viewProduct(product)' data-toggle="modal" data-target="#productModal">View</button></td>
-    </tr>
-  </table>
-</div>
+      <tr ng-repeat="product in products | filter: filter_name | orderBy:'-date'">
+        <td ng-bind="product.name"></td>
+        <td ng-bind="product.model"></td>
+        <td ng-bind="product.quantity"></td>
+        <td ng-bind="product.tags"></td>
+        <!--<td><button class="remove" ng-click="viewProduct(product)" data-toogle="modal" data-target"#productModal">View</button></td>-->
+        <td><button class = "remove" ng-click='viewProduct(product)' data-toggle="modal" data-target="#productModal">View</button></td>
+      </tr>
+    </table>
+  </div>
 
 
 <span ng-show="authorized">
 <!--<span ng-controller="productsController">-->
-<h1>Add an Item</h1>
+  <h1>Add an Item</h1>
 
-<form id="createItemForm">
-<input class = "feedback-input" type="text" ng-model="new_product.name" placeholder="name" required>
-<!--<input class = "feedback-input" type="url" ng-model="new_product.image_url" placeholder="image url">-->
-<textarea class = "feedback-input" ng-model="new_product.description" placeholder="description"></textarea>
-<input class = "feedback-input" type="text" ng-model="new_product.model" placeholder="model">
-<input class = "feedback-input" type="text" ng-model="new_product.location" placeholder="location">
+  <form id="createItemForm">
+    <input class = "feedback-input" type="text" ng-model="new_product.name" placeholder="name" required>
+    <!--<input class = "feedback-input" type="url" ng-model="new_product.image_url" placeholder="image url">-->
+    <textarea class = "feedback-input" ng-model="new_product.description" placeholder="description"></textarea>
+    <input class = "feedback-input" type="text" ng-model="new_product.model" placeholder="model">
+    <input class = "feedback-input" type="text" ng-model="new_product.location" placeholder="location">
 
-<br>
-<span>
-  &nbsp;
-  <span class="tag-class" ng-repeat="cTag in currentTags">
-    <span ng-bind="cTag"></span>
-    <button ng-click="removeTag(cTag)"><span aria-hidden="true">&times;</span></button>
-  </span>
-  &nbsp;
-</span>
-<br>
+    <br>
+    <span>
+      &nbsp;
+      <span class="tag-class" ng-repeat="cTag in currentTags">
+        <span ng-bind="cTag"></span>
+        <button ng-click="removeTag(cTag)"><span aria-hidden="true">&times;</span></button>
+      </span>
+      &nbsp;
+    </span>
+    <br>
 <!-- TODO: view array of tags
       1. Make it so that tags can be added form currently available customers
       2. Make it so that these tags are shown aobve in array of tags
       3. Give third option to add new tag/customer
       4. Make adding a new tag/customer add it to current product tag array-->
 
-      <select id="tag_select_modal" class = "feedback-input" ng-controller="productsController" id = "tagList" name="tagOptions"> <!-- ng-model="new_product.tags[new_product.tags.length]">-->
-        <option value="" disabled selected>Add a Tag</option>
-        <option value="1" ng-click="createNewTag()">Create New Tag</option>
-        <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
-      </select>
+    <select id="tag_select_modal" class = "feedback-input" ng-controller="productsController" id = "tagList" name="tagOptions"> <!-- ng-model="new_product.tags[new_product.tags.length]">-->
+      <option value="" disabled selected>Add a Tag</option>
+      <option value="1" ng-click="createNewTag()">Create New Tag</option>
+      <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
+    </select>
 
-<!--<textarea class = "feedback-input" ng-model="new_product.tags" placeholder="tags (comma separated)"></textarea>-->
+    <!--<textarea class = "feedback-input" ng-model="new_product.tags" placeholder="tags (comma separated)"></textarea>-->
 
 
-<input class = "feedback-input" type="number" min="1" ng-model="new_product.quantity" placeholder="quantity" required>
-<div class="error" ng-if="errorMessage">{{ errorMessage }}</div>
-<input type="submit" ng-disabled="createItemForm.$invalid" ng-click="addProduct()">
-<br>
-</form>
+    <input class = "feedback-input" type="number" min="1" ng-model="new_product.quantity" placeholder="quantity" required>
+    <div ng-repeat="field in fields">
+      <input ng-show="field.type=='short-form'"class="feedback-input" type="text" ng-model="new_product.fields[field.name]" placeholder="{{field.name}}">
+      <textarea ng-show="field.type=='long-form'"class="feedback-input" type="text" ng-model="new_product.fields[field.name]" placeholder="{{field.name}}"></textarea>
+      <input ng-show="field.type=='integer'"class="feedback-input" type="number" ng-model="new_product.fields[field.name]" placeholder="{{field.name}}">
+      <input ng-show="field.type=='floating-point'"class="feedback-input" type="number" step="0.01" ng-model="new_product.fields[field.name]" placeholder="{{field.name}}">
+    </div>
+
+    <br>
+    <span>
+      &nbsp;
+      <span class="tag-class" ng-repeat="cTag in currentTags">
+        <span ng-bind="cTag"></span>
+        <button ng-click="removeTag(cTag)"><span aria-hidden="true">&times;</span></button>
+      </span>
+      &nbsp;
+    </span>
+    <br>
+<!-- TODO: view array of tags
+      1. Make it so that tags can be added form currently available customers
+      2. Make it so that these tags are shown aobve in array of tags
+      3. Give third option to add new tag/customer
+      4. Make adding a new tag/customer add it to current product tag array-->
+
+    <select id="tag_select_modal" class = "feedback-input" ng-controller="productsController" id = "tagList" name="tagOptions"> <!-- ng-model="new_product.tags[new_product.tags.length]">-->
+      <option value="" disabled selected>Add a Tag</option>
+      <option value="1" ng-click="createNewTag()">Create New Tag</option>
+      <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
+    </select>
+
+    <div class="error" ng-if="errorMessage">{{ errorMessage }}</div>
+
+    <!-- LOOP through custom fields display here -->
+    <!--
+    <div ng-repeat="field in customFields">
+      <span>
+        <input class = "half-feedback-input" ng-model="field.name" placeholder="Custom Field Name">
+        <input class = "half-feedback-input" ng-model="field.value" placeholder="Custom Field Value">
+      </span>
+    </div>
+
+    <div><button class="custom-field" ng-click="addCustomField()">New Custom Field</button></div>
+  -->
+    <input type="submit" ng-disabled="createItemForm.$invalid" ng-click="addProduct()">
+    <br>
+  </form>
 </span>
 <!--</span>-->
+<!--TODO: Formatting-->
 
+<!-- PRODUCT MODAL -->
 <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-<div class="modal-dialog" role="document">
-  <div class="modal-content">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" ng-click="closeItemModal()" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-
-      </button>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" ng-click="closeItemModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
         <h1 class="modal-title" id="exampleModalLabel">View Item</h1>
-
-    </div>
-    <div class="modal-body" align="left">
-      <div class="form-group" >
-        <!--
-          <p><img style = "height:100px; width: 100px" src="currentProduct.image_url"></p>
-          <p>
-          -->
-            <label><b>Name: </b></label>
-
-            <input id=productName type="text" ng-readonly="!editing" ng-model="currentProduct.name" required/>
-          </p>
+      </div>
+      <div class="modal-body" align="left">
+        <div class="form-group" >
+          <label><b>Name: </b></label>
+          <input id=productName type="text" ng-readonly="!editing" ng-model="currentProduct.name" required/>
           <p>
             <label><b>Model:  </b></label>
             <input type="text" ng-readonly="!editing" ng-model="currentProduct.model"/>
@@ -117,94 +152,78 @@
           </p>
           <p>
             <label><b>Description:  </b></label>
-            <input type="text" ng-readonly="!editing" ng-model="currentProduct.description"/>
+            <textarea ng-readonly="!editing" ng-model="currentProduct.description"></textarea>
           </p>
           <p>
             <label><b>Location:  </b></label>
             <input type="text" ng-readonly="!editing" ng-model="currentProduct.location"/>
           </p>
+          <p ng-repeat="field in fields">
+            <label><b>{{ field.name }}: </b></label>
+            <input ng-show="field.type=='short-form'" type="text" ng-readonly="!editing" ng-model="currentProduct.fields[field.name]">
+            <textarea ng-show="field.type=='long-form'"type="text" ng-readonly="!editing" ng-model="currentProduct.fields[field.name]"></textarea>
+            <input ng-show="field.type=='integer'" type="number" ng-readonly="!editing" ng-model="currentProduct.fields[field.name]">
+            <input ng-show="field.type=='floating-point'" type="number" step="0.01" ng-readonly="!editing" ng-model="new_product.fields[field.name]">
+          </p>
           <p>
             <label><b>Tags:  </b><label>
             <span>
-            &nbsp;
-            <span class="tag-class" ng-repeat="cTag in currentTags">
-              <span ng-bind="cTag"></span>
-              <button ng-if="editing" ng-click="removeTag(cTag)"><span aria-hidden="true">&times;</span></button>
+              &nbsp;
+              <span class="tag-class" ng-repeat="cTag in currentTags">
+                <span ng-bind="cTag"></span>
+                <button ng-if="editing" ng-click="removeTag(cTag)"><span aria-hidden="true">&times;</span></button>
+              </span>
+              &nbsp;
             </span>
-            &nbsp;
-          </span>
-          <br>
+            <br>
           </p>
           <p>
-          <!-- TODO: view array of tags
-                1. Make it so that tags can be added form currently available customers
-                2. Make it so that these tags are shown aobve in array of tags
-                3. Give third option to add new tag/customer
-                4. Make adding a new tag/customer add it to current product tag array-->
-
-                <select id="tag_select_main" class = "feedback-input" ng-if="editing" ng-controller="productsController" id = "tagList" name="tagOptions" ng-model="new_order.tags[new_order.tags.length]">
-                  <option value="" disabled selected>Add a Tag</option>
-                  <option value="1" ng-click="createNewTag()">Create New Tag</option>
-                  <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
-                </select>
+            <select id="tag_select_main" class = "feedback-input" ng-if="editing" ng-controller="productsController" id = "tagList" name="tagOptions" ng-model="new_order.tags[new_order.tags.length]">
+              <option value="" disabled selected>Add a Tag</option>
+              <option value="1" ng-click="createNewTag()">Create New Tag</option>
+              <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
+            </select>
           </p>
+        </div>
+        <br>
+        <div class="modal-footer">
+          <span ng-show="authorized">
+            <button class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmModal">Delete Product</button>
+          </span>
+          <button type="button" class="btn btn-secondary" ng-click="closeItemModal()" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Request</button>
+          <span ng-show="authorized">
+            <button type="button" class="btn btn-primary" ng-click="editProduct(currentProduct)">{{editing == true ? 'Save Edits' : 'Edit' }}</button>
+          </span>
+        </div>
+        <br>
+        <h2>Requests made on this item</h2>
+        <div class="customerTable" id = "cTable">
+          <table>
+            <tr>
+              <td> User Name </td>
+              <td> Item </td>
+              <td> Quantity </td>
+              <td> Date Issued </td>
+              <td> Date Fulfilled </td>
+              <td> Status </td>
+            </tr>
+            <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
+              <td ng-bind="order.customer_name || order.user.username"></td>
+              <td ng-bind="order.item_name"></td>
+              <td ng-bind="order.quantity"></td>
+              <td ng-bind="order.date | date:'short'"></td>
+              <td ng-bind="order.dateDone | date:'short'"></td>
+              <td ng-bind="order.status"></td>
+            </tr>
+          </table>
+        </div>
       </div>
-
-      <br>
-
-      <div class="modal-footer">
-        <span ng-show="authorized">
-        <button class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmModal">Delete Product</button>
-        </span>
-        <button type="button" class="btn btn-secondary" ng-click="closeItemModal()" data-dismiss="modal">Close</button>
-
-        <!--
-        <button class = "remove" ng-click='viewProduct(product)' data-toggle="modal" data-target="#productModal">View</button>
-        -->
-
-        <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Request</button>
-
-        <span ng-show="authorized">
-        <button type="button" class="btn btn-primary" ng-click="editProduct(currentProduct)">{{editing == true ? 'Save Edits' : 'Edit' }}</button>
-        </span>
-
-      </div>
-
-      <br>
-
-      <h2>Requests made on this item</h2>
-
-
-    <div class="customerTable" id = "cTable">
-                    <table >
-                        <tr>
-                            <td> User Name </td>
-                            <td> Item </td>
-                            <td> Quantity </td>
-                            <td> Date Issued </td>
-                            <td> Date Fulfilled </td>
-                            <td> Status </td>
-                            <!--<td> View Request </td>-->
-                        </tr>
-                        <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
-
-                            <td ng-bind="order.customer_name || order.user.username"></td>
-                            <td ng-bind="order.item_name"></td>
-                            <td ng-bind="order.quantity"></td>
-                            <td ng-bind="order.date | date:'short'"></td>
-                            <td ng-bind="order.dateDone | date:'short'"></td>
-                            <td ng-bind="order.status"></td>
-                            <!--<td><button class = "remove" ng-click='viewOrder(order)' data-toggle="modal" data-target="#orderModal">View</button></td>-->
-
-                        </tr>
-
-                    </table>
-      </div>
+    </div>
   </div>
 </div>
-</div>
-</div>
 
+<!--REQUEST MODAL -->
 
 <div class="modal fade" id="requestModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 <div class="modal-dialog" role="document">
@@ -261,64 +280,54 @@
 </div>
 </div>
 
-
+<!-- DELETE CONFIRM MODAL -->
 <div class="modal fade" id="deleteConfirmModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-<div class="modal-dialog" role="document">
-  <div class="modal-content">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-
-      </button>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
         <h1 class="modal-title" id="exampleModalLabel">Confirm Deletion</h1>
-
-    </div>
-    <div class="modal-body" align="left">
-      <div class="form-group" >
-        Confirm Deletion
       </div>
-
-
-    <div class="modal-footer">
-
-      <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmDeleteModal(thisProduct)>Confirm</button>
-      <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelDeleteModal()>Cancel</button>
-
+      <div class="modal-body" align="left">
+        <div class="form-group" >
+          Confirm Deletion
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmDeleteModal(thisProduct)>Confirm</button>
+          <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelDeleteModal()>Cancel</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
-</div>
-</div>
 
+<!-- EDIT CONFIRM MODAL -->
 <div class="modal fade" id="editConfirmModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-<div class="modal-dialog" role="document">
-  <div class="modal-content">
-    <div class="modal-header">
-      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-
-      </button>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
         <h1 class="modal-title" id="exampleModalLabel">Confirm Edits</h1>
-
-    </div>
-    <div class="modal-body" align="left">
-      <div class="form-group" >
-        Confirm Edits
       </div>
-
-
-    <div class="modal-footer">
-
-      <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmEditModal(currentProduct)>Confirm</button>
-
-      <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelEditModal(currentProduct)>Cancel</button>
-
+      <div class="modal-body" align="left">
+        <div class="form-group" >
+          Confirm Edits
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmEditModal(currentProduct)>Confirm</button>
+          <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelEditModal(currentProduct)>Cancel</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
-</div>
-</div>
 
+
+<!-- NEW TAG MODAL -->
 <div class="modal fade" id="newTagModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 <div class="modal-dialog" role="document">
   <div class="modal-content">

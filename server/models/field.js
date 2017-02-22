@@ -2,7 +2,7 @@
 /*							MODEL						*/
 /********************************************************/
 
-var mongoose = require('mongoose'); 
+var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var FieldSchema = new mongoose.Schema({
   name: {type: String, default: ""},
