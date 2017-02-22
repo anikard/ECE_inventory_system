@@ -19,6 +19,26 @@
   <h1>ITEMS</h1>
   <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
 
+  <select id="search-tag" class = "feedback-input" id = "tagList" name="tagOptions"> <!-- ng-model="new_product.tags[new_product.tags.length]">-->
+    <option value="" disabled selected>Search Tags</option>
+    <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="searchTag(tag)"></option>
+  </select>
+  <label>Exclude?
+    <input class="feedback-input" type="checkbox" ng-model="exclude">
+  </label>
+
+  <br>
+  <span>
+    &nbsp;
+    <span class="tag-class" ng-repeat="sTag in searchTags">
+      <span ng-bind="sTag"></span>
+      <button ng-click="removeSearchTag(sTag)"><span aria-hidden="true">&times;</span></button>
+    </span>
+    &nbsp;
+  </span>
+  <br>
+
+
 
   <div class="customerTable" id = "cTable" >
     <table>
@@ -96,11 +116,6 @@
       &nbsp;
     </span>
     <br>
-<!-- TODO: view array of tags
-      1. Make it so that tags can be added form currently available customers
-      2. Make it so that these tags are shown aobve in array of tags
-      3. Give third option to add new tag/customer
-      4. Make adding a new tag/customer add it to current product tag array-->
 
     <select id="tag_select_modal" class = "feedback-input" ng-controller="productsController" id = "tagList" name="tagOptions"> <!-- ng-model="new_product.tags[new_product.tags.length]">-->
       <option value="" disabled selected>Add a Tag</option>
@@ -110,17 +125,6 @@
 
     <div class="error" ng-if="errorMessage">{{ errorMessage }}</div>
 
-    <!-- LOOP through custom fields display here -->
-    <!--
-    <div ng-repeat="field in customFields">
-      <span>
-        <input class = "half-feedback-input" ng-model="field.name" placeholder="Custom Field Name">
-        <input class = "half-feedback-input" ng-model="field.value" placeholder="Custom Field Value">
-      </span>
-    </div>
-
-    <div><button class="custom-field" ng-click="addCustomField()">New Custom Field</button></div>
-  -->
     <input type="submit" ng-disabled="createItemForm.$invalid" ng-click="addProduct()">
     <br>
   </form>

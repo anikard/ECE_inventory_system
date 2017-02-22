@@ -157,6 +157,8 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
 
 
       $scope.currentTags = [];
+      $scope.searchTags = [];
+      $scope.exclude = false;
     });
 
   $scope.tags = ProductsFactory.gettags(function(data) {
@@ -355,6 +357,7 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
     $('#requestModal').modal('hide');
   }
 
+  // TODO: Remove parent mess (due to ng-controller="productsController" in select tag probably)
   $scope.tagClicked = function(customer) {
     console.log("tagClicked");
     console.log(customer);
@@ -363,6 +366,17 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
       $scope.$parent.currentTags.push(customer.name);
     }
     console.log($scope.$parent.currentTags);
+  }
+
+  // TODO: refactor to combine tagClicked and searchTag to be tagClicked(tag, tagList);
+  $scope.searchTag = function(tag) {
+    console.log("searchTag");
+    console.log(tag);
+    console.log($scope.searchTags);
+    if($scope.searchTags.indexOf(tag.name) == -1) {
+      $scope.searchTags.push(tag.name);
+    }
+    console.log($scope.searchTags);
   }
 
   $scope.addTag = function() {
@@ -402,6 +416,19 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
         }
     }
     console.log("remove tag called");
+    console.log(tag);
+  }
+
+  // TODO: refactor to combine removeTag and removeSearchTag to be removeTag(tag, tagList);
+  $scope.removeSearchTag = function(tag) {
+    for (var i =0; i < $scope.searchTags.length; i++)
+    {
+      if ($scope.searchTags[i] === tag) {
+          $scope.searchTags.splice(i,1);
+          break;
+        }
+    }
+    console.log("remove search tag called");
     console.log(tag);
   }
 
