@@ -33,14 +33,13 @@ function register(req, res, next) {
     return res.status(400).json({message: 'Please fill out all fields'});
   }
 
-  var user = new User();
-
-  user.username = req.body.username;
-
+  var user = new User({
+    username: req.body.username,
+    name: req.body.name,
+    status: 'user'
+  });
   user.setPassword(req.body.password)
 
-  user.status = "user";  
-    
   user.save(function (err){
     if(err){ return next(err); }
 
@@ -60,7 +59,7 @@ function login(req, res, next) {
     if(user){
       token = user.generateJWT();
       req.session.token = token;
-      return res.json({token: token});
+      return res.json("success");
     } else {
       return res.status(401).json(info);
     }
@@ -70,7 +69,7 @@ function login(req, res, next) {
 function logout(req, res, next) {
   req.session.destroy((err)=>{
     if (err) res.status(400).json({error: err});
-    else res.status(200).end();
+    else res.redirect('/');
   });
 }
 
@@ -132,7 +131,7 @@ function loginAdmin(req, res, next) {
       } else {
         if(admin){
           req.session.token = admin.generateJWT();
-          return res.status(200).send({Token: req.session.token});
+          return res.status(200).send("success");
         }
         var user = new User();
         user.username = "admin";
@@ -142,7 +141,7 @@ function loginAdmin(req, res, next) {
         user.save(function (err){
           if(err){ return next(err); }
           req.session.token = user.generateJWT();
-          return res.status(200).send({Token: req.session.token});
+          return res.status(200).send("success");
         });
       }
   });
