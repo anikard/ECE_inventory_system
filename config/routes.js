@@ -8,7 +8,7 @@ module.exports = (app) => {
     console.log(req.method+" "+req.originalUrl);
     next();
   });
-  
+
   require('./../server/controllers/oauth.js')(app);
   require('./../server/controllers/authenticator.js')(app);
   require('./../server/controllers/users.js')(app);
@@ -35,6 +35,10 @@ module.exports = (app) => {
     res.redirect('products/products.html');
   });
 
+  app.get('/dispFields', function(req, res) {
+    res.redirect('fields/fields.html');
+  })
+
   app.get('/dashboard', function(req, res) {
     res.redirect('dashboard.html');
   });
@@ -47,7 +51,7 @@ module.exports = (app) => {
     dashboard.show(req, res);
   });
 
-  
+
 
   app.post('/addToCart', function(req, res) {
     // req.body = {_id: id;, itemId: id, item_name: String, quantity: int}
@@ -65,11 +69,11 @@ module.exports = (app) => {
     // cart.delete(req, res);
   });
 
-  
 
-  
 
-  
+
+
+
 
   app.post('/addProduct', function(req, res) {
     products.add(req, res);
@@ -129,17 +133,17 @@ module.exports = (app) => {
 
   app.post('/logs', function(req, res) {
     // TODO
-     // log = { 
-     //      _id: id, 
-     //      init_user: String, 
-     //      items: Array of Strings, 
+     // log = {
+     //      _id: id,
+     //      init_user: String,
+     //      items: Array of Strings,
      //      event: String, r
-     //      rec_user: String, 
-     //      date: date object, 
+     //      rec_user: String,
+     //      date: date object,
      //      admin_actions: String
      //      }
-     
-    // orders.show(req, res); 
+
+    // orders.show(req, res);
   });
 
   // app.config(function ($stateProvider) {

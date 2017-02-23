@@ -6,12 +6,13 @@ var mongoose = require('mongoose');
 
 var ItemSchema = new mongoose.Schema({
   name: {type: String, required: true, index: true, unique: true },
-  quantity: {type: Number, default: 0}, 
+  quantity: {type: Number, default: 0},
   model: {type: String, default: ""},
   description: {type: String, default: ""},
-  fields: {type: {}}, 
+  fields: {type: {}},
   tags: [String],
-  image: {type: String, default: ""}
+  image: {type: String, default: ""},
+  custom_fields: {}
 
 });
 

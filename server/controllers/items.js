@@ -2,8 +2,14 @@ var mongoose = require('mongoose');
 var _ = require('lodash');
 var Item = mongoose.model('Item');
 var Field = mongoose.model('Field');
+var util = require('./util.js');
 
 module.exports = (app) => {
+  app.use('/api/item/show', util.requireLogin);
+  app.use('/api/item/add', util.requirePrivileged);
+  app.use('/api/item/del', util.requirePrivileged);
+  app.use('/api/item/update', util.requirePrivileged);
+
   app.get('/api/item/show', function(req, res, next) {
     Item.find({}, function(err, results) {
         if(err) {

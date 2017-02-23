@@ -4,38 +4,42 @@
 
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
+var util = require('./util.js');
 
 module.exports = (app) => {
+  app.use('/api/user', util.requireLogin);
+  app.use('/api/user/apiKey/get', util.requireLogin);
+  app.use('/api/user/apiKey/revoke', util.requireLogin);
+  app.use('/api/user/:id/info', util.requirePrivileged);
+  app.use('/api/user/show', util.requirePrivileged);
+  app.use('/api/user/add', util.requirePrivileged);
+  app.use('/api/user/update', util.requirePrivileged);
+  app.use('/api/user/del', util.requirePrivileged);
+
   // Get current user info 
   app.get('/api/user', function(req, res, next){
-  	if (req.user) {
-  		res.status(200).json(req.user);
-  	}
+  	res.status(200).json(req.user);
   });
 
   app.get('/api/user/apiKey/get', function(req, res, next){
-    if (req.user) {
-      let key = req.user.generateApiKey();
-      req.user.save((err)=>{
-        if (err) res.status(500).send({ error: err });
-        else res.status(200).json(key);
-      });
-    }
+    let key = req.user.generateApiKey();
+    req.user.save((err)=>{
+      if (err) res.status(500).send({ error: err });
+      else res.status(200).json(key);
+    });
   });
 
   app.get('/api/user/apiKey/revoke', function(req, res, next){
-    if (req.user) {
-      req.user.revokeApiKey();
-      req.user.save((err)=>{
-        if (err) res.status(500).send({ error: err });
-        else res.status(200).json("success");
-      });
-    }
+    req.user.revokeApiKey();
+    req.user.save((err)=>{
+      if (err) res.status(500).send({ error: err });
+      else res.status(200).json("success");
+    });
   });
 
   // Get user info 
-  app.get('/api/user/:id', function(req, res, next){
-  	User.findOne({ '_id': id }, function (err, user) {
+  app.get('/api/user/:id/info', function(req, res, next){
+  	User.findOne({ '_id': req.params.id }, function (err, user) {
   		if(err) {
   			res.status(500).send({ error: err });
   		} else {
