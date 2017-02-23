@@ -154,11 +154,12 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
 
     $scope.products = ProductsFactory.getproducts(function(data) {
       $scope.products = data;
+      $scope.originalProducts = data;
 
 
       $scope.currentTags = [];
       $scope.searchTags = [];
-      $scope.exclude = false;
+      $scope.excludeTags = [];
     });
 
   $scope.tags = ProductsFactory.gettags(function(data) {
@@ -197,10 +198,17 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
         console.log("addProduct success");
         $scope.errorMessage = null;
         $scope.new_product.date = new Date();
-        $scope.products.push($scope.new_product);
+        if(showProduct($scope.new_product)) {
+          $scope.products.push($scope.new_product);
+        }
+        $scope.originalProducts.push($scope.new_product);
         $scope.new_product = {};
       }
     });
+  }
+
+  var showProduct = function(prod) {
+    return !findOne($scope.excludeTags, prod.tags) && containsAll($scope.searchTags, prod.tags);
   }
 
   $scope.addCustomField = function(){
@@ -377,6 +385,15 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
       $scope.searchTags.push(tag.name);
     }
     console.log($scope.searchTags);
+    $scope.filterTags();
+  }
+
+  // TODO: refactor with above
+  $scope.excludeTag = function(tag) {
+    if($scope.excludeTags.indexOf(tag.name) == -1) {
+      $scope.excludeTags.push(tag.name);
+    }
+    $scope.filterTags();
   }
 
   $scope.addTag = function() {
@@ -430,6 +447,83 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
     }
     console.log("remove search tag called");
     console.log(tag);
+    console.log($scope.searchTags);
+    $scope.filterTags();
+  }
+
+  $scope.removeExcludeTag = function(tag) {
+    for (var i =0; i < $scope.excludeTags.length; i++)
+    {
+      if ($scope.excludeTags[i] === tag) {
+          $scope.excludeTags.splice(i,1);
+          break;
+        }
+    }
+    console.log("remove exclude tag called");
+    console.log(tag);
+    console.log($scope.excludeTags);
+    $scope.filterTags();
+  }
+
+  // TODO: Refactor
+  $scope.filterTags = function() {
+    var showIncludeProducts = getIncludeProducts();
+    var showExcludeProducts = getExcludeProducts();
+    $scope.products = intersect(showIncludeProducts, showExcludeProducts);
+  }
+
+  var intersect = function(a, b) {
+    var setA = new Set(a);
+    var setB = new Set(b);
+    var intersection = new Set([...setA].filter(x => setB.has(x)));
+    return Array.from(intersection);
+  }
+
+  var getIncludeProducts = function() {
+    var incProducts = []
+    if($scope.searchTags.length > 0) {
+      for (var i = 0; i < $scope.originalProducts.length; i++) {
+        if (containsAll($scope.searchTags, $scope.originalProducts[i].tags)) {
+          incProducts.push($scope.originalProducts[i]);
+        }
+      }
+      return incProducts
+    }
+    else {
+      return $scope.originalProducts;
+    }
+  }
+
+  var getExcludeProducts = function() {
+    var exProducts = []
+    if($scope.excludeTags.length > 0) {
+      for (var i = 0; i < $scope.originalProducts.length; i++) {
+        if (!findOne($scope.excludeTags, $scope.originalProducts[i].tags)) {
+          exProducts.push($scope.originalProducts[i]);
+        }
+      }
+      return exProducts
+    }
+    else {
+      return $scope.originalProducts;
+    }
+  }
+
+  // True if small is a subset of large
+  var containsAll = function(small, large) {
+    for(var i = 0; i < small.length; i++) {
+      if (large.indexOf(small[i]) == -1) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // True if at least one is in common between haystack and arr
+  var findOne = function (haystack, arr) {
+    return arr.some(function (v) {
+        return haystack.indexOf(v) >= 0;
+    });
   }
 
   $scope.closeItemModal = function() {
