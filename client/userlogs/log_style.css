@@ -113,11 +113,13 @@ body {
 
     .logTable {
       height: 10em;
+      background-color:lightgray;
     }
     /*.createRequestTable td {
       height:3em;
     }*/
  
+
     .customerTable tr:last-child td:last-child {
       -moz-border-radius-bottomright:14px;
       -webkit-border-bottom-right-radius:14px;
