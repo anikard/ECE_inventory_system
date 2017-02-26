@@ -172,66 +172,6 @@
   <script>
     var customers_app = angular.module('customers_app', []);
 
-    // customers_app.factory('CustomerFactory', function($http) {
-    //   var factory = {};
-    //   var customers = [];
-    //   var active;
-      
-    //   factory.getcustomers = function(callback) {
-    //     $http.get('/customers').success(function(output) {
-    //       customers = output;
-    //       callback(customers);
-    //     }) 
-    //   }
-
-
-    //   factory.addCustomer = function(info, callback) {
-    //     $http.post('/add', info).success(function(output) {
-    //         customers = output;
-    //         callback(customers);
-    //     })
-    //   } 
-
-
-    //   factory.removeCustomer = function(customer, callback) {
-    //     $http.post('/delete', customer).success(function(output) {
-    //         customers = output;
-    //         callback(customers);
-    //     })
-    //   }
-
-    //   return factory;
-    // });
-
-
-    // customers_app.controller('customersController', function($scope, CustomerFactory) {
-    //     $scope.customers = CustomerFactory.getcustomers(function(data) {
-    //     $scope.customers = data;
-    //   });
-     
-    //   $scope.addCustomer = function() {
-    //     CustomerFactory.addCustomer($scope.new_customer, function(data) {
-    //       $scope.new_customer.date = new Date();
-    //       $scope.customers.unshift($scope.new_customer);
-    //       $scope.new_customer = {};
-    //     });
-    //   }
-
-     
-    //     $scope.removeCustomer = function(customer) {
-    //       CustomerFactory.removeCustomer(customer, function(data) {
-           
-    //         for (var i =0; i < $scope.customers.length; i++)
-    //            if ($scope.customers[i].name === customer.name) {
-    //               $scope.customers.splice(i,1);
-    //               break;
-    //            }
-    //     });
-
-    //   }
-
-    // })
-
 
     customers_app.factory('auth', ['$http', '$window', function($http, $window){
        var auth = {};
@@ -332,12 +272,7 @@
           return auth.currentUserStatus();
         }
 
-
-  
   });
-
-
-
 
 
   </script>
@@ -345,11 +280,10 @@
 
 <body ng-controller="userController">
 
-  <a ng-if="authorized" href="/dispCustomers">users</a> | <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
+  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> |</span> <a href="" ng-click="logout()">logout {{myName}}</a>
 
  <h1>USERS</h1>
   <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
-
 
 <div class="customerTable" id = "cTable" >
                 <table >

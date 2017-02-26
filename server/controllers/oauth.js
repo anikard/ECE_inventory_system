@@ -1,6 +1,6 @@
-var mongoose = require('mongoose');
-var User = mongoose.model('User');
-var passport = require('passport');
+const mongoose = require('mongoose');
+const User = mongoose.model('User');
+const passport = require('passport');
 const request = require('request');
 
 module.exports = (app) => {
@@ -46,10 +46,8 @@ const requestOptions = (token) => {
 }
 
 function auth (req, res, next) {
-  if(req.session && req.session.token){
-
-    let payload = JSON.parse(Buffer.from(req.session.token.split('.')[1], 'base64'));
-    return res.json(payload);
+  if(req.user){
+    return res.redirect('/dispProducts');
   }
   res.redirect(authorizationUri);
 };
@@ -82,7 +80,8 @@ function code(req, res, next) {
             // Found user
             let token = user.generateJWT();
             req.session.token = token;
-            return res.status(200).json({token: token});
+            return res.redirect('/dispProducts');
+            //return res.status(200).json({token: token});
           } else {
             // Create a new user
             let user = new User({
@@ -94,7 +93,8 @@ function code(req, res, next) {
               if(err){ return next(err); }
               let token = user.generateJWT();
               req.session.token = token;
-              return res.status(200).json({token: token});
+              return res.redirect('/dispProducts');
+              //return res.status(200).json({token: token});
             });
           }
         });
