@@ -42,6 +42,8 @@ function register(req, res, next) {
   });
   user.setPassword(req.body.password)
 
+  user.status = "user";
+
   user.save(function (err){
     if(err){ return next(err); }
 
