@@ -8,6 +8,8 @@ module.exports = (app) => {
   });
 
   app.post('/api/auth/login', function(req, res, next){
+    console.log("got to backend");
+    console.log(req.body);
     login(req, res, next);
   });
 
@@ -49,6 +51,8 @@ function register(req, res, next) {
 }
 
 function login(req, res, next) {
+  console.log("printed the req")
+
   if(!req.body.username || !req.body.password){
     return res.status(400).json({message: 'Please fill out all fields'});
   }
@@ -99,7 +103,9 @@ function createAdmin(req, res, next) {
       }
   });
 }
-
+/**
+Can we just delete hackAdmin at this point? does createAdmin already not cover it?
+**/
 function hackAdmin(req, res, next) {
   User.findOne({username: 'admin'}, function(err, admin) {
       if(err) {
