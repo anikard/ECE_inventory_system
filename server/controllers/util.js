@@ -15,6 +15,14 @@ module.exports = {
     }
   },
 
+  requireLoginGui: function(req, res, next) {
+    if(!req.user) {
+      res.redirect('/');
+    } else {
+      next();
+    }
+  },
+
   requirePrivileged: function(req, res, next) {
     if(!req.user || (req.user.status != "admin" && req.user.status != "manager")) {
       res.status(403);

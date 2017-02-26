@@ -15,7 +15,9 @@
     "request": "^2.67.0",
     "lodash": "latest",
     "compression": "latest",
-    "connect-mongo": "latest"
+    "connect-mongo": "latest",
+    "consolidate": "latest",
+    "mustache": "latest"
 
   }
 }

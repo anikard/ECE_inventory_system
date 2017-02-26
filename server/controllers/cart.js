@@ -46,7 +46,7 @@ function show(req, res) {
         } else {
           cart = new Cart({
             user: req.user,
-            items: {}
+            items: []
           });
           cart.save((err,cart)=>{
             if(err) {
@@ -64,14 +64,14 @@ function add(req, res) {
 	Cart.findOne({user: req.user._id}, function(err, cart) {
         if(err) return res.status(500).send({ error: err });
         if(cart) {
-	        _.assign(cart.items, req.body);
-	        cart.markModified('items');
+	        cart.items.push(_.pick(req.body,['item','quantity']));
 			    cart.save();
         } else {
         	cart = new Cart({
         		user: req.user._id,
-        		items: req.body
+        		items: []
         	})
+          cart.items.push(_.pick(req.body,['item','quantity']));
         	cart.save((err)=>{
         		if(err) {
         		  res.status(500).send({ error: err });
@@ -87,9 +87,18 @@ function add(req, res) {
 function update(req, res) {
 	Cart.findOne({user: req.user._id}, function(err, cart) {
         if(err) return res.status(500).send({ error: err });
+        if(!cart) return res.status(400).send({ error: "Cart does not exist" });
         
-        _.assign(cart.items, req.body);
-        cart.markModified('items');
+        var i = 0;
+        var idx = -1;
+        for(i = 0; i < cart.items.length; i++){
+          if(cart.items[i].item===req.body.item){
+            idx = i;
+          }
+        }
+        if(idx === -1) return res.status(400).send({ error: "No such item" });
+        cart.items[i].quantity = req.body.quantity;
+
 		cart.save((err)=>{
     		if(err) {
     		  res.status(500).send({ error: err });
@@ -103,17 +112,31 @@ function update(req, res) {
 function del(req, res) {
 	Cart.findOne({user: req.user._id}, function(err, cart) {
         if(err) return res.status(500).send({ error: err });
-        if (cart) {
-	        delete cart.items[req.body];
-	        cart.markModified('items');
-			cart.save();
+        if(!cart) return res.status(400).send({ error: "Cart does not exist" });
+        
+        var i = 0;
+        var idx = -1;
+        for(i = 0; i < cart.items.length; i++){
+          if(cart.items[i].item===req.body.item){
+            idx = i;
+          }
         }
+        if(idx === -1) return res.status(400).send({ error: "No such item" });
+        cart.items.splice(idx, 1);
+
+    cart.save((err)=>{
+        if(err) {
+          res.status(500).send({ error: err });
+        } else {
+          res.status(200).send("success");
+        }
+      });
     })
 }
 
 function empty(req, res) {
 	Cart.update({ user: req.user._id }, { 
-		$set: {items: {}}
+		$set: {items: []}
 	}, function(err, field){
       if(err){
         res.status(500).send({ error: err })
