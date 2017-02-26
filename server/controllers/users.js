@@ -5,6 +5,7 @@
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var util = require('./util.js');
+var _ = require('lodash');
 
 module.exports = (app) => {
   app.use('/api/user', util.requireLogin);
@@ -18,7 +19,7 @@ module.exports = (app) => {
 
   // Get current user info 
   app.get('/api/user', function(req, res, next){
-  	res.status(200).json(req.user);
+  	res.status(200).json(_.pick(req.user, ['username','name','netId','email','status','active','apiKey']));
   });
 
   app.get('/api/user/apiKey/get', function(req, res, next){

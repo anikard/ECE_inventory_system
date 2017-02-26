@@ -1,9 +1,10 @@
 /********************************************************/
 /*                       ROUTES                         */
 /********************************************************/
+const util = require('./../server/controllers/util.js');
 
 module.exports = (app) => {
-  app.all('/api/*', [require('./validateRequest')]);
+  app.all('*', [require('./validateRequest')]);
   app.all('*', function(req, res, next) {
     console.log(req.method+" "+req.originalUrl);
     next();
@@ -23,23 +24,23 @@ module.exports = (app) => {
     res.redirect('/');
   });
 
-  app.get('/dispOrders', function(req, res) {
+  app.get('/dispOrders', util.requireLoginGui, function(req, res) {
     res.redirect('orders/orders.html');
   });
 
-  app.get('/dispCustomers', function(req, res) {
+  app.get('/dispCustomers', util.requireLoginGui, function(req, res) {
     res.redirect('customers.html');
   });
 
-  app.get('/dispProducts', function(req, res) {
+  app.get('/dispProducts', util.requireLoginGui, function(req, res) {
     res.redirect('products/products.html');
   });
 
-  app.get('/dispFields', function(req, res) {
+  app.get('/dispFields', util.requireLoginGui, function(req, res) {
     res.redirect('fields/fields.html');
   })
 
-  app.get('/dashboard', function(req, res) {
+  app.get('/dashboard', util.requireLoginGui, function(req, res) {
     res.redirect('dashboard.html');
   });
 
