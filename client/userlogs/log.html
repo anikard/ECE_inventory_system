@@ -18,10 +18,13 @@
 </head>
 
 <body ng-controller="logController">
-  <a ng-if="authorized" href="/dispCustomers">users</a> | <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <a ng-if="authorized" href="/userlogs/log.html">log</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
+  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> |</span> <a href="" ng-click="logout()">logout {{myName}}</a>
   <!-- TO FIX -->
 <h1> {{myName | uppercase}}'S LOGS</h1>
 
+
+<!-- TESTING -->
+  <button class = "blueButton" style = "width: 37%; margin-left: 2em; padding-left: 5px; padding-right: 5px " id="scrollButton" ng-click="scrollIntoView(3)">Testing: Scroll to element</button>
 
 
 <form>
@@ -38,7 +41,7 @@
 </form>
 
 <div id = "cTable" >
-    <table class = "logTable">
+    <table class = "logTable" id = "myLogTable">
       <tr style="font-weight:bold; text-align: center;">
         <td> Initiating User </td>
         <td> Item(s) </td>

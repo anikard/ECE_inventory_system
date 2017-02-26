@@ -14,10 +14,46 @@
 
 <body ng-controller="productsController">
 
-  <a ng-if="authorized" href="/dispCustomers">users</a> | <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispFields">custom fields</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
+  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> |</span> <a href="" ng-click="logout()">logout {{myName}}</a>
 
   <h1>ITEMS</h1>
   <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
+
+  <h3 style = "margin-top: 0px;">Include Tags</h3>
+  <select  style = "margin-bottom: 0px;" id="search-tag" class = "feedback-input" id = "tagList" name="tagOptions"> <!-- ng-model="new_product.tags[new_product.tags.length]">-->
+    <option value="" disabled selected>Search Tags</option>
+    <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="searchTag(tag)"></option>
+  </select>
+
+  <br>
+  <span>
+    &nbsp;
+    <span class="tag-class" ng-repeat="sTag in searchTags">
+      <span ng-bind="sTag"></span>
+      <button ng-click="removeSearchTag(sTag)"><span aria-hidden="true">&times;</span></button>
+    </span>
+    &nbsp;
+  </span>
+  <br>
+
+  <h3 style = "margin-top: 0px;">Exclude Tags</h3>
+  <select id="exclude-tag" class = "feedback-input" id = "tagList" name="tagOptions">
+    <option value="" disabled selected>Exclude Tags</option>
+    <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="excludeTag(tag)"></option>
+  </select>
+
+  <br>
+  <span>
+    &nbsp;
+    <span class="tag-class" ng-repeat="eTag in excludeTags">
+      <span ng-bind="eTag"></span>
+      <button ng-click="removeExcludeTag(eTag)"><span aria-hidden="true">&times;</span></button>
+    </span>
+    &nbsp;
+  </span>
+  <br>
+
+
 
 
   <div class="customerTable" id = "cTable" >
@@ -52,7 +88,7 @@
     <textarea class = "feedback-input" ng-model="new_product.description" placeholder="description"></textarea>
     <input class = "feedback-input" type="text" ng-model="new_product.model" placeholder="model">
     <input class = "feedback-input" type="text" ng-model="new_product.location" placeholder="location">
-
+<!--
     <br>
     <span>
       &nbsp;
@@ -63,17 +99,13 @@
       &nbsp;
     </span>
     <br>
-<!-- TODO: view array of tags
-      1. Make it so that tags can be added form currently available customers
-      2. Make it so that these tags are shown aobve in array of tags
-      3. Give third option to add new tag/customer
-      4. Make adding a new tag/customer add it to current product tag array-->
 
-    <select id="tag_select_modal" class = "feedback-input" ng-controller="productsController" id = "tagList" name="tagOptions"> <!-- ng-model="new_product.tags[new_product.tags.length]">-->
+    <select id="tag_select_modal" class = "feedback-input" ng-controller="productsController" id = "tagList" name="tagOptions"> 
       <option value="" disabled selected>Add a Tag</option>
       <option value="1" ng-click="createNewTag()">Create New Tag</option>
       <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
     </select>
+  -->
 
     <!--<textarea class = "feedback-input" ng-model="new_product.tags" placeholder="tags (comma separated)"></textarea>-->
 
@@ -87,6 +119,7 @@
     </div>
 
     <br>
+
     <span>
       &nbsp;
       <span class="tag-class" ng-repeat="cTag in currentTags">
@@ -96,31 +129,16 @@
       &nbsp;
     </span>
     <br>
-<!-- TODO: view array of tags
-      1. Make it so that tags can be added form currently available customers
-      2. Make it so that these tags are shown aobve in array of tags
-      3. Give third option to add new tag/customer
-      4. Make adding a new tag/customer add it to current product tag array-->
 
-    <select id="tag_select_modal" class = "feedback-input" ng-controller="productsController" id = "tagList" name="tagOptions"> <!-- ng-model="new_product.tags[new_product.tags.length]">-->
+    <select id="tag_select_modal" class = "feedback-input" ng-controller="productsController" id = "tagList" name="tagOptions">
       <option value="" disabled selected>Add a Tag</option>
       <option value="1" ng-click="createNewTag()">Create New Tag</option>
       <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
     </select>
 
+
     <div class="error" ng-if="errorMessage">{{ errorMessage }}</div>
 
-    <!-- LOOP through custom fields display here -->
-    <!--
-    <div ng-repeat="field in customFields">
-      <span>
-        <input class = "half-feedback-input" ng-model="field.name" placeholder="Custom Field Name">
-        <input class = "half-feedback-input" ng-model="field.value" placeholder="Custom Field Value">
-      </span>
-    </div>
-
-    <div><button class="custom-field" ng-click="addCustomField()">New Custom Field</button></div>
-  -->
     <input type="submit" ng-disabled="createItemForm.$invalid" ng-click="addProduct()">
     <br>
   </form>

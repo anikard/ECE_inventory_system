@@ -6,11 +6,32 @@ var log_app = angular.module('log_app', []);
 
       
       factory.getLogs = function(info, callback) {
-        // $http.post('/logs', info).success(function(output) {
-        //   logs = output;
-        //   console.log(logs);
-        //   callback(logs);
-        // })
+        $http.get('/api/log/show', info).success(function(output) {
+          logs = output;
+          // console.log(logs);
+          callback(logs);
+        })
+      }
+
+      factory.getItems = function(callback) {
+        $http.get('/api/item/show').success(function(output) {
+          var items = output;
+          callback(items);
+        })
+      }
+
+      factory.getLogFilter = function(info, callback) {
+        $http.post('/api/log/filter', info).success(function(output) {
+          var filteredOutput = output;
+          callback(filteredOutput);
+        })
+      }
+
+      factory.getLogItem = function(info, callback) {
+        $http.post('/api/log/item', info).success(function(output) {
+          var itemOutput = output;
+          callback(itemOutput);
+        })
       }
 
       return factory;
@@ -21,34 +42,155 @@ var log_app = angular.module('log_app', []);
         console.log("USER ID: " + auth.currentUserID());
         var thisId = {userId: auth.currentUserID()};
         LogFactory.getLogs(thisId, function(data) {
-          $scope.logs = data;
+          console.log("scope getting logs");
+          console.log(data);
+          // $scope.logs = data;
+          color_table_elements();
+        });
+
+        LogFactory.getItems(function(data) {
+          console.log("scope getting items");
+          console.log(data);
+        });
+
+        LogFactory.getLogItem({name: "resistors2"}, function(data) {
+          console.log("scope getting log item");
+          console.log(data);
         });
 
         $scope.logs = [{
             _id: 555,
             init_user: "User A",
-            items: ["resistor"],
+            items: ["resistor2"],
             event: "Disbursement",
             rec_user: "User B",
             date: "2017-02-02T19:06:13.093Z",
             admin_actions: "Approved"
           },
           {
-            _id: 155,
+            _id: 135,
             init_user: "User C",
-            items: ["clock", "resistor"],
+            items: ["clock", "resistor2"],
             event: "Request",
             rec_user: "User B",
             date: "2017-02-05T19:05:13.093Z",
             admin_actions: "Denied"
           },
           {
+            _id: 145,
+            init_user: "User E",
+            items: ["pineapple", "resistor"],
+            event: "Request",
+            rec_user: "User F",
+            date: "2017-02-20T19:05:13.093Z",
+            admin_actions: "Approved"
+          },
+          {
             _id: 155,
             init_user: "User C",
-            items: ["cake", "resistor"],
+            items: ["clock"],
+            event: "Request",
+            rec_user: "User G",
+            date: "2017-02-15T19:05:13.093Z",
+            admin_actions: "Denied"
+          },
+          {
+            _id: 125,
+            init_user: "User C",
+            items: ["cake"],
             event: "Request",
             rec_user: "User A",
-            date: "2017-02-12T19:05:13.093Z",
+            date: "2017-03-12T19:05:13.093Z",
+            admin_actions: "Approved"
+          },
+          {
+            _id: 124,
+            init_user: "User D",
+            items: ["pumpkin"],
+            event: "Request",
+            rec_user: "User A",
+            date: "2017-01-12T19:05:13.093Z",
+            admin_actions: "Approved"
+          },
+          {
+            _id: 123,
+            init_user: "User C",
+            items: ["stem", "leaf", "plant"],
+            event: "Disbursement",
+            rec_user: "User E",
+            date: "2017-05-12T19:05:13.093Z",
+            admin_actions: "Approved"
+          },
+          {
+            _id: 123,
+            init_user: "User C",
+            items: ["stem", "leaf", "plant"],
+            event: "Disbursement",
+            rec_user: "User E",
+            date: "2017-05-12T19:05:13.093Z",
+            admin_actions: "Approved"
+          },
+          {
+            _id: 123,
+            init_user: "User C",
+            items: ["stem", "leaf", "plant"],
+            event: "Disbursement",
+            rec_user: "User E",
+            date: "2017-05-12T19:05:13.093Z",
+            admin_actions: "Approved"
+          },
+          {
+            _id: 123,
+            init_user: "User C",
+            items: ["stem", "leaf", "plant"],
+            event: "Disbursement",
+            rec_user: "User E",
+            date: "2017-05-12T19:05:13.093Z",
+            admin_actions: "Approved"
+          },
+          {
+            _id: 123,
+            init_user: "User C",
+            items: ["stem", "leaf", "plant"],
+            event: "Disbursement",
+            rec_user: "User E",
+            date: "2017-05-12T19:05:13.093Z",
+            admin_actions: "Approved"
+          },
+          {
+            _id: 123,
+            init_user: "User C",
+            items: ["stem", "resistor2", "plant"],
+            event: "Disbursement",
+            rec_user: "User E",
+            date: "2017-05-12T19:05:13.093Z",
+            admin_actions: "Approved"
+          },
+          {
+            _id: 123,
+            init_user: "User C",
+            items: ["stem", "leaf", "plant"],
+            event: "Disbursement",
+            rec_user: "User E",
+            date: "2017-05-12T19:05:13.093Z",
+            admin_actions: "Approved"
+          },
+          {
+            _id: 123,
+            init_user: "User C",
+            items: ["stem", "leaf", "plant"],
+            event: "Disbursement",
+            rec_user: "User E",
+            date: "2017-05-12T19:05:13.093Z",
+            admin_actions: "Approved"
+          },
+          {
+            _id: 123,
+            init_user: "User C",
+            items: ["stem", "leaf", "plant"],
+            event: "Disbursement",
+            rec_user: "User E",
+            date: "2017-05-12T19:05:13.093Z",
             admin_actions: "Approved"
           },
           {
@@ -63,6 +205,33 @@ var log_app = angular.module('log_app', []);
       ];
 
       $scope.originalLogs = $scope.logs;
+
+
+      function color_table_elements() {
+        var rows = document.getElementById('myLogTable').getElementsByTagName('tr');
+
+        for (var i = 0; i < rows.length; i++) {
+          rows[i].style.backgroundColor = "lightgray";
+        }
+      }
+
+      color_table_elements();
+
+
+      // $scope.scrollIntoView = function(element, container) {
+      $scope.scrollIntoView = function(rowNum) {
+        var element = document.getElementById('myLogTable').getElementsByTagName('tr')[rowNum];
+        var container = "window";
+        var containerTop = $(container).scrollTop(); 
+        var containerBottom = containerTop + $(container).height(); 
+        var elemTop = element.offsetTop;
+        var elemBottom = elemTop + $(element).height(); 
+
+        var elemAbsTop = element.getBoundingClientRect().top;
+
+        window.scrollBy(0,elemTop);
+        element.style.backgroundColor = "lightgreen";
+      }
 
       $scope.filterByDate = function() {
         $scope.logs = $scope.originalLogs;

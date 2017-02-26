@@ -2,7 +2,9 @@ var mongoose = require('mongoose');
 var _ = require('lodash');
 var Log = mongoose.model('Log');
 var User = mongoose.model('User');
+var Item = mongoose.model('Item');
 var util = require('./util.js');
+
 
 module.exports = (app) => {
 	//app.use('/api/log/*', util.requireLogin);
@@ -28,6 +30,17 @@ module.exports = (app) => {
 				res.status(200).json(results);
 			}
 		});
+	});
+
+	app.post('/api/log/item', function(req, res, next) {
+		Item.findOne({ 'name': req.body.name }, function (err, item) {
+			if(err) {
+	         	console.log(err);
+	         	return null;
+	       	} else {
+	         	res.json(item);
+	       	}
+		})
 	});
 
 	app.post('/api/log/filter', function(req, res, next) {
