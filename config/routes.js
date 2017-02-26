@@ -28,6 +28,10 @@ module.exports = (app) => {
     res.redirect('orders/orders.html');
   });
 
+  app.get('/dispLog', util.requireLoginGui, function(req, res) {
+    res.redirect('userlogs/log.html');
+  });
+
   app.get('/dispCustomers', util.requireLoginGui, function(req, res) {
     res.redirect('customers.html');
   });
