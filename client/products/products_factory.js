@@ -42,8 +42,8 @@ products_app.factory('ProductsFactory', function($http) {
   }
 
 
-  factory.getorders = function(info, callback) {
-        $http.get('/api/request/show', info).success(function(output) {
+  factory.getorders = function(/*info,*/ callback) {
+        $http.get('/api/request/show'/*, info*/).success(function(output) {
           orders = output;
 
           console.log(orders);
@@ -88,8 +88,8 @@ products_app.factory('ProductsFactory', function($http) {
       })
   }
 
-  factory.viewProduct = function(userID, product, callback) {
-    factory.getorders(userID, function(data) {
+  factory.viewProduct = function(/*userID,*/ product, callback) {
+    factory.getorders(/*userID,*/ function(data) {
       console.log("Factory view called on : " + product.name);
       relevantOrders = [];
       for (var i = 0; i < orders.length; i++) {
@@ -123,7 +123,7 @@ products_app.factory('ProductsFactory', function($http) {
   }
 
   factory.addOrder = function(info, callback) {
-        $http.post('/ap1/v1/request/add', info).success(function(output) {
+        $http.post('/api/request/add', info).success(function(output) {
             orders = output;
             callback(orders);
         })
@@ -133,11 +133,13 @@ products_app.factory('ProductsFactory', function($http) {
 });
 
 
-products_app.controller('productsController', function($scope, auth, ProductsFactory, $document) {
+products_app.controller('productsController', function($scope, /*auth,*/ ProductsFactory, $document) {
+  /*
     $scope.myName = auth.currentUser();
     $scope.myID = {userId: auth.currentUserID()};
     console.log($scope.myName);
     $scope.authorized = (auth.currentUserStatus()=="admin");
+    */
     $scope.customFields = [];
 
     $scope.logout = function() {
@@ -169,6 +171,21 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
   $scope.fields = ProductsFactory.getfields(function(data) {
     $scope.fields = data;
   })
+
+  $scope.user = ProductsFactory.getcustomers(function(data) {
+    $scope.user = data;
+
+    $scope.authorized = data.status == "admin";
+
+    console.log("AUTHORIZED:")
+    console.log($scope.authorized);
+  })
+/*
+  $scope.authorized = $scope.user.status == "admin";
+
+  console.log("AUTHORIZED:")
+  console.log($scope.authorized);
+  */
 
   console.log($scope.tags);
   console.log($scope.fields);
@@ -329,10 +346,13 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
     $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
     console.log($scope.new_order);
     console.log("Current user stuff: ");
+    console.log($scope.user);
+
     console.log($scope.authorized);
     if(!$scope.authorized) {
-      $scope.new_order.userId = $scope.myID.userId;
+      $scope.new_order.userId = $scope.user_id;
     }
+
     ProductsFactory.addOrder($scope.new_order, function(data) {
       $scope.new_order = {};
     })
@@ -345,12 +365,12 @@ products_app.controller('productsController', function($scope, auth, ProductsFac
     console.log(product.name);
     console.log(product._id);
     console.log("Current user id: ");
-    console.log($scope.myID);
+    //console.log($scope.myID);
 
     $scope.currentProduct = angular.copy(product);
     originalProduct = angular.copy(product);
     $scope.currentTags = product.tags;
-    ProductsFactory.viewProduct($scope.myID, product, function(data, orders) {
+    ProductsFactory.viewProduct(/*$scope.myID, */product, function(data, orders) {
       $scope.orders = orders;
       $scope.thisProduct = data;
       $scope.new_order = {};
@@ -543,10 +563,10 @@ products_app.controller('customersController', function($scope, ProductsFactory)
   console.log($scope.customers);
 })
 
-products_app.controller('ordersController', function($scope, auth, ProductsFactory) {
-    var thisId = {userId: auth.currentUserID()};
+products_app.controller('ordersController', function($scope, /*auth,*/ ProductsFactory) {
+    //var thisId = {userId: auth.currentUserID()};
     console.log("thisId: " + thisId);
-    $scope.orders = ProductsFactory.getorders(function(thisId, data) {
+    $scope.orders = ProductsFactory.getorders(function(/*thisId,*/ data) {
       $scope.orders = data;
       console.log("inside prod order");
       console.log($scope.orders);
@@ -577,6 +597,7 @@ products_app.controller('fieldsController', function($scope, ProductsFactory) {
   })
 })
 
+/*
 products_app.factory('auth', ['$http', '$window', function($http, $window){
    var auth = {};
 
@@ -627,6 +648,7 @@ products_app.factory('auth', ['$http', '$window', function($http, $window){
 
   return auth;
 }])
+*/
 
 /*
 products_app.controller('authController', function($scope, auth) {
