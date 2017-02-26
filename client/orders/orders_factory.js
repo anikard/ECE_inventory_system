@@ -26,7 +26,9 @@ var orders_app = angular.module('orders_app', []);
 
           console.log(orders);
           orders.forEach(function(elem) {
-            //elem["customer_name"] = elem["userId"].name;
+            //WHAT I REMOVED WAS ONE LINE OF COMMENTS HERE
+            // elem["customer_name"] = elem["userId"].name;
+            elem.customer_name = "SAMPLE NAME"
           })
           console.log(orders);
 

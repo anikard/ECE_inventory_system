@@ -12,7 +12,7 @@ module.exports = (app) => {
   app.use('/api/user/apiKey/get', util.requireLogin);
   app.use('/api/user/apiKey/revoke', util.requireLogin);
   app.use('/api/user/:id/info', util.requirePrivileged);
-  app.use('/api/user/show', util.requirePrivileged);
+  app.use('/api/user/show', util.requirePrivileged); 
   app.use('/api/user/add', util.requirePrivileged);
   app.use('/api/user/update', util.requirePrivileged);
   app.use('/api/user/del', util.requirePrivileged);
@@ -66,8 +66,7 @@ module.exports = (app) => {
   			res.status(500).send({ error: err });
   		} else {
   			res.status(200).send("Successfully updated a user!");
-  		}
-  	});
+  		}  	});
   });
 
   app.post('/api/user/update', function(req, res, next){

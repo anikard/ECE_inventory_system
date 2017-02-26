@@ -112,7 +112,15 @@
         };
 
         auth.registerUser = function(user, callback){
-          return $http.post('/register', user).success(function(data){
+          return $http.post('/api/auth/reg', user).success(function(data){
+            auth.saveToken(data.token);
+            console.log(data);
+            callback(data.token);
+          });
+        };
+
+        auth.oauthLoginUser = function(user, callback){
+          return $http.post('/api/auth/oauth', user).success(function(data){
             auth.saveToken(data.token);
             console.log(data);
             callback(data.token);
@@ -126,6 +134,7 @@
             callback(data.token);
           });
         };
+
 
         auth.logout = function(callback){
           return $http.get('/api/auth/logout').success(function(data){
@@ -157,16 +166,45 @@
           $scope.error = {message:"Invalid username or password."};
           return;
         }
-        auth.loginUser($scope.new_user, function(data) {
+
+        console.log($scope.new_user);
+        console.log("testing");
+
+        var options = {
+          username: $scope.new_user.username,
+          password: $scope.new_user.password,
+          json: true
+        };
+
+        console.log("printing options");
+        console.log(options);
+        console.log("options printed");
+
+        auth.loginUser(options, function(data) {
             $scope.isLoggedIn = true;
-            $scope.myName = auth.currentUser();
-            $scope.authorized = (auth.currentUserStatus()=="admin");
+            $scope.myName = "test"; //auth.currentUser();
+            $scope.authorized = true; //(auth.currentUserStatus()=="admin");
             document.getElementById("navTop").style.display = "block";
             document.getElementById("loginForm").style.display = "none";
 
 
             // window.location.assign("/customers.html");
         });
+          document.getElementById("unField").value = '';
+          document.getElementById("pdField").value = '';
+      }
+
+      $scope.oauthLoginUser = function() {
+        console.log("trying out duke login")
+
+        auth.oauthLoginUser({username: $scope.new_user.username, password: $scope.new_user.password}, function(data) {
+            $scope.isLoggedIn = true;
+            $scope.myName = "test"; //auth.currentUser();
+            $scope.authorized = true;//(auth.currentUserStatus()=="admin");
+            document.getElementById("navTop").style.display = "block";
+            document.getElementById("loginForm").style.display = "none";
+      });
+
           document.getElementById("unField").value = '';
           document.getElementById("pdField").value = '';
       }
@@ -227,7 +265,8 @@
       <input type="text" id="unField" style = "display:inline-block; width:40%;"
       class="form-control feedback-input"
       placeholder="Username"
-      ng-model="new_user.username" ></input>
+      ng-model="new_user.username" ></input> 
+          <!-- removing the new_user distinction comments -->
     </div>
     <div class="form-group">
       <input type="password" id="pdField" style = "display:inline-block; width:40%;"
@@ -236,7 +275,8 @@
       ng-model="new_user.password" ></input>
     </div>
     <input style = "display:inline; width:15%" type="submit" value = "Login" ng-click="loginUser()">
-    <!-- <input style = "display:inline; width:15%; " type="submit" value = "Register" ng-click="registerUser()" > -->
+    <input style = "display:inline; width:15%" type="submit" value = "Duke Login" ng-click="oauthLoginUser()">
+    <input style = "display:inline; width:15%; " type="submit" value = "Register" ng-click="registerUser()" > 
   </form>
 </body>
 </html>

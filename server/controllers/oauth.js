@@ -45,13 +45,27 @@ const requestOptions = (token) => {
   };
 }
 
+
+/**
+Do we need this method at all?
+
+**/
 function auth (req, res, next) {
+
+  console.log("gets to backend")
+
   if(req.user){
     return res.redirect('/dispProducts');
   }
   res.redirect(authorizationUri);
 };
 
+
+/**
+What does this code do? What parameters does it from front end? Does it need a 
+code, a netid, a displayName? Give us some information on how this is supposed to work
+
+**/
 function code(req, res, next) {
   const code = req.query.code;
   const options = {
@@ -64,12 +78,16 @@ function code(req, res, next) {
     if (error) {
       return res.json('Authentication failed');
     }
+
     const token = oauth2.accessToken.create(result);
     const accessToken = token.token.access_token;
 
     request(requestOptions(accessToken), (error, response, body) => {
       if (!error && response.statusCode == 200) {
         var info = JSON.parse(body);
+
+        console.log(info);
+
         //res.status(200).json(info);
         User.findOne({netId: info.netid}, (err, user)=>{
           if(err){
