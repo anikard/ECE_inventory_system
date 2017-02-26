@@ -13,7 +13,7 @@
 </head>
 
 <body ng-controller="ordersController">
-  <a ng-if="authorized" href="/dispCustomers">users</a> | <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
+  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> |</span> <a href="" ng-click="logout()">logout {{myName}}</a>
 <h1> {{myName | uppercase}}'S CART</h1>
 <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search for item">
 
