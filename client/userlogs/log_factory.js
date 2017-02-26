@@ -6,11 +6,11 @@ var log_app = angular.module('log_app', []);
 
       
       factory.getLogs = function(info, callback) {
-        // $http.post('/logs', info).success(function(output) {
-        //   logs = output;
-        //   console.log(logs);
-        //   callback(logs);
-        // })
+        $http.get('/api/log/show', info).success(function(output) {
+          logs = output;
+          // console.log(logs);
+          callback(logs);
+        })
       }
 
       return factory;
@@ -21,7 +21,9 @@ var log_app = angular.module('log_app', []);
         console.log("USER ID: " + auth.currentUserID());
         var thisId = {userId: auth.currentUserID()};
         LogFactory.getLogs(thisId, function(data) {
-          $scope.logs = data;
+          console.log("scope getting logs");
+          console.log(data);
+          // $scope.logs = data;
           color_table_elements();
         });
 
