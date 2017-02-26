@@ -142,7 +142,26 @@ function add (req, res) {
 	        request.save(function(err){
 	        	if (err) {
 	        		res.status(500).send({ error: err });
+	        		return;
 	        	} else {
+
+	        		//LOG ENTRY HERE
+	        		let log = new Log({
+	 					init_user: user._id,
+	 					item: req.body.itemId,
+		 				event: "borrow request",
+		 				rec_user: user._id,
+	 			});
+
+	        		log.save(function(err){
+
+	        			if(err){
+	        			res.status(500).send({ error: err });
+	        			return;
+	        		}
+	        		});
+
+
 	        		res.status(200).send("Successfully added an order!");
 	        	}
 	        });
