@@ -14,6 +14,7 @@ const passport = require('passport');
 const bodyParser = require("body-parser");
 const MongoStore = require('connect-mongo')(session);
 const mongoose = require('mongoose');
+const engine = require('consolidate');
 
 const numCPUs = require('os').cpus().length;
 
@@ -28,6 +29,9 @@ app.use(bodyParser.json());
 
 // static file server pointing to the "client" directory
 app.use(express.static(path.join(__dirname, './client')));
+// app.set('views', __dirname + '/client');
+// app.engine('html', engine.mustache);
+// app.set('view engine', 'html');
 
 app.set('trust proxy', 1) // trust first proxy
 app.use(session({
