@@ -235,7 +235,7 @@ var log_app = angular.module('log_app', []);
 
       color_table_elements();
 
-
+ 
       // $scope.scrollIntoView = function(element, container) {
       $scope.scrollIntoView = function(rowNum) {
         var element = document.getElementById('myLogTable').getElementsByTagName('tr')[rowNum];

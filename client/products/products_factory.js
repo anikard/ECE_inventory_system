@@ -142,6 +142,8 @@ products_app.controller('productsController', function($scope, $window, $rootSco
   }
   $window.localStorage['itemSelected'] = "";
 
+  // TODO: scrollintoview for products table
+
 
     $scope.myName = auth.currentUser();
     $scope.myID = {userId: auth.currentUserID()};
