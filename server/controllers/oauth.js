@@ -13,7 +13,9 @@ module.exports = (app) => {
   });
 }
 
-const code_endpoint = 'https://localhost:8443/api/auth/code';
+const code_endpoint = 'https://localhost:8443/api/auth/code';//(req) => `${req.protocol}://${req.get('host')}api/auth/code`;
+
+// 
 
 const oauth2 = require('simple-oauth2').create({
   client: {

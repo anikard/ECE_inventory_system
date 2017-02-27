@@ -50,6 +50,7 @@ module.exports = (app) => {
 function show(req, res, next) {
 	Log.find()
 	.sort('-date')
+	.populate('init_user rec_user item')
 	.limit(req.body.limit || req.query.limit || 20)
 	.exec(function(err, results) {
 		if(err) {
