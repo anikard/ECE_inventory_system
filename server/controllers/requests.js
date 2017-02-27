@@ -61,7 +61,7 @@ function show (req, res) {
 	let query = (req.user.status === "admin" || req.user.status === "manager") ? {} : { user : req.user._id };
 	Request.find(query)
 	.limit(req.query.limit || 20)
- 	.populate('item user')
+ 	.populate('item.item user')
  	.sort('-date')
     .lean()
  	.exec(function(err, results) {
