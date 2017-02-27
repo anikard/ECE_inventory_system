@@ -40,6 +40,10 @@ module.exports = (app) => {
     res.redirect('products/products.html');
   });
 
+  app.get('/dispCart', util.requireLoginGui, function(req, res) {
+    res.redirect('cart/cart.html');
+  });
+
   // app.get('/goToProducts', function(req, res) {
   //   console.log("IN ROUTES");
   //   req.session.item_name = 'resistors2';
