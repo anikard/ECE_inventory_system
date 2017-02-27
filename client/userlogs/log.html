@@ -56,7 +56,7 @@
 
       <tr style="text-align: center;" ng-repeat="log in logs | filter: search | orderBy:'-status'">
         <td ng-bind="log.init_user.username"></td>
-        <td> <p ng-repeat="item in log.items"> <a ng-click="getItem(item.name)">{{item.name}}</a> </p> </td>
+        <td> <p ng-repeat="it in log.item"> <a ng-click="getItem(it.name)">{{it.name}}</a> </p> </td>
         <td ng-bind="log.event"></td>
         <td ng-bind="log.rec_user.username"></td>
         <td ng-bind="log.date | date:'short'"></td>

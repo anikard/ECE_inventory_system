@@ -39,7 +39,7 @@ module.exports = (app) => {
             var itemArray = [item._id];
             let log = new Log({
             init_user: req.user._id,
-            items: itemArray,
+            item: itemArray,
             event: "item created",
             rec_user: req.user._id,
              });
