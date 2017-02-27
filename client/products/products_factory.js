@@ -123,7 +123,7 @@ products_app.factory('ProductsFactory', function($http) {
   }
 
   factory.addOrder = function(info, callback) {
-        $http.post('/api/request/add', info).success(function(output) {
+        $http.post('/api/cart/add', info).success(function(output) {
             orders = output;
             callback(orders);
         })
@@ -147,10 +147,10 @@ products_app.controller('productsController', function($scope, $window, $rootSco
       $scope.excludeTags = [];
 
 
-      // using for LOGS 
+      // using for LOGS
       if ($window.localStorage['itemSelected'] && !$scope.selected_item) {
         $scope.selected_item = $window.localStorage['itemSelected'];
-      } 
+      }
       $window.localStorage['itemSelected'] = "";
 
       var thisProductIndex = -1;
@@ -163,7 +163,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
 
     });
 
-    
+
     //$scope.myName = auth.currentUser();
     //$scope.myID = {userId: auth.currentUserID()};
     //console.log($scope.myName);
@@ -183,7 +183,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
       return false;
     }
 
-    
+
 
   $scope.tags = ProductsFactory.gettags(function(data) {
     $scope.tags = data;
@@ -363,16 +363,16 @@ products_app.controller('productsController', function($scope, $window, $rootSco
 
 
   $scope.addOrder = function() {
-    var customerSelected = $document[ 0 ].getElementById('customerList');
-    $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
+    //var customerSelected = $document[ 0 ].getElementById('customerList');
+    //$scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
     console.log($scope.new_order);
-    console.log("Current user stuff: ");
-    console.log($scope.user);
+    //console.log("Current user stuff: ");
+    //console.log($scope.user);
 
-    console.log($scope.authorized);
-    if(!$scope.authorized) {
-      $scope.new_order.userId = $scope.user_id;
-    }
+    //console.log($scope.authorized);
+    //if(!$scope.authorized) {
+    //  $scope.new_order.userId = $scope.user_id;
+    //}
 
     ProductsFactory.addOrder($scope.new_order, function(data) {
       $scope.new_order = {};
@@ -577,13 +577,13 @@ products_app.controller('productsController', function($scope, $window, $rootSco
   $scope.scrollIntoView = function(rowNum) {
       console.log("in scroll into view");
         var element = document.getElementById('myItemTable').getElementsByTagName('tr')[rowNum];
-        
+
         if (element) {
           var container = "window";
-          var containerTop = $(container).scrollTop(); 
-          var containerBottom = containerTop + $(container).height(); 
+          var containerTop = $(container).scrollTop();
+          var containerBottom = containerTop + $(container).height();
           var elemTop = element.offsetTop;
-          var elemBottom = elemTop + $(element).height(); 
+          var elemBottom = elemTop + $(element).height();
 
           var elemAbsTop = element.getBoundingClientRect().top;
 

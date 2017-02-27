@@ -87,6 +87,7 @@ var orders_app = angular.module('cart_app', []);
         //var thisId = {userId: auth.currentUserID()};
         OrderFactory.getorders(/*thisId,*/ function(data) {
           $scope.orders = data;
+          console.log($scope.orders);
 
         });
         //console.log("scope cartItems");
@@ -123,7 +124,7 @@ var orders_app = angular.module('cart_app', []);
           }
 
         $scope.new_order.item_name = ((itemSelected.options[itemSelected.selectedIndex].text).split("|"))[0];
-        $scope.new_order.itemId = itemSelected.value;
+        $scope.new_order.item = itemSelected.value;
 
         console.log($scope.new_order);
 
