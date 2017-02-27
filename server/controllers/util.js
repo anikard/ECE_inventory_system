@@ -35,7 +35,17 @@ module.exports = {
     }
   },
 
-  requireLevel: function(req, res, next, levels) {
-    next();
+  requireLevel: function(levels) {
+    return (req, res, next)=>{
+      if(levels.find(e=>e===req.user.status)){
+        next();
+      } else {
+        res.status(403);
+        res.json({
+          "status": 403,
+          "message": "Not Authorized"
+        });
+      }
+    }
   },
 }

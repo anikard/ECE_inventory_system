@@ -18,16 +18,16 @@ module.exports = (app) => {
   app.get('/api/user/apiKey/revoke', util.requireLogin, revokeApiKey);
 
   // Get user info with id
-  app.get('/api/user/:id/info', util.requirePrivileged, getUser);
+  app.get('/api/user/:id/info', util.requireLevel(['admin']), getUser);
 
   // Show a list of all users
-  app.get('/api/user/show', util.requirePrivileged, show);
+  app.get('/api/user/show', util.requireLevel(['admin']), show);
 
-  app.post('/api/user/add', util.requirePrivileged, add);
+  app.post('/api/user/add', util.requireLevel(['admin']), add);
 
-  app.post('/api/user/update', util.requireLogin, update);
+  app.post('/api/user/update', util.requireLevel(['admin']), update);
 
-  app.post('/api/user/del', util.requirePrivileged, del);
+  app.post('/api/user/del', util.requireLevel(['admin']), del);
 }
 
 function getApiKey(req, res, next){
