@@ -52,11 +52,13 @@
         <!-- <td> Actions </td> -->
       </tr>
 
+
+
       <tr style="text-align: center;" ng-repeat="log in logs | filter: search | orderBy:'-status'">
-        <td ng-bind="log.init_user"></td>
-        <td> <p ng-repeat="item in log.items"> <a ng-click="getItem(item)">{{item}}</a> </p> </td>
+        <td ng-bind="log.init_user.username"></td>
+        <td> <p ng-repeat="item in log.items"> <a ng-click="getItem(item.name)">{{item.name}}</a> </p> </td>
         <td ng-bind="log.event"></td>
-        <td ng-bind="log.rec_user"></td>
+        <td ng-bind="log.rec_user.username"></td>
         <td ng-bind="log.date | date:'short'"></td>
         <td ng-bind="log.admin_actions"></td>
         <!-- <td><button class = "blueButton">View</button></td> -->

@@ -17,9 +17,9 @@ var orders_app = angular.module('cart_app', []);
       }
 
       
-      factory.getorders = function(info, callback) {
+      factory.getorders = function(callback) {
         console.log("getting cartItems in cart");
-        $http.get('/api/cart/show', info).success(function(output) {
+        $http.get('/api/cart/show').success(function(output) {
           orders = output;
 
           console.log(orders);
@@ -70,11 +70,11 @@ var orders_app = angular.module('cart_app', []);
     });
 
 
-    orders_app.controller('ordersController', function($scope, OrderFactory, auth, $document) {
-        console.log("USER ID: " + auth.currentUserID());
+    orders_app.controller('ordersController', function($scope, OrderFactory, /*auth*/, $document) {
+        // console.log("USER ID: " + auth.currentUserID());
         $scope.orders = {};
-        var thisId = {userId: auth.currentUserID()};
-        OrderFactory.getorders(thisId, function(data) {
+        // var thisId = {userId: auth.currentUserID()};
+        OrderFactory.getorders(function(data) {
           $scope.orders = data;
 
         });
@@ -86,13 +86,13 @@ var orders_app = angular.module('cart_app', []);
         
 
         // AUTH
-        $scope.logout = function() {
-          console.log("scope logging out ");
-          auth.logout(function() {
-            $scope.isLoggedIn = false;
-            window.location.assign("/");
-          });
-        }
+        // $scope.logout = function() {
+        //   console.log("scope logging out ");
+        //   auth.logout(function() {
+        //     $scope.isLoggedIn = false;
+        //     window.location.assign("/");
+        //   });
+        // }
 
         $scope.getCurrentStatus = function() {
           return auth.currentUserStatus();
