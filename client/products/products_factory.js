@@ -197,6 +197,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     $scope.user = data;
 
     $scope.authorized = data.status == "admin";
+    $scope.myName = data.username;
 
     console.log("AUTHORIZED:")
     console.log($scope.authorized);
