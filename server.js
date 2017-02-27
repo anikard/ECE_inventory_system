@@ -66,9 +66,9 @@ if (cluster.isMaster) {
 } else {
   // Workers can share any TCP connection
   // In this case it is an HTTP server
-  http.createServer(app).listen(8000, ()=>{
-  	console.log(`Worker ${process.pid} started, listening on port 8000`);
-  });
+  // http.createServer(app).listen(8000, ()=>{
+  // 	console.log(`Worker ${process.pid} started, listening on port 8000`);
+  // });
   https.createServer(credentials, app).listen(8443, ()=>{
   	console.log(`Worker ${process.pid} started, listening on port 8443`);
   }); 
