@@ -79,7 +79,7 @@ var log_app = angular.module('log_app', []);
         $scope.logs = [{
             _id: 555,
             init_user: "User A",
-            items: ["resistor2"],
+            items: ["resistors2"],
             event: "Disbursement",
             rec_user: "User B",
             date: "2017-02-02T19:06:13.093Z",
@@ -88,7 +88,7 @@ var log_app = angular.module('log_app', []);
           {
             _id: 135,
             init_user: "User C",
-            items: ["clock", "resistor2"],
+            items: ["clock", "resistors2"],
             event: "Request",
             rec_user: "User B",
             date: "2017-02-05T19:05:13.093Z",
@@ -178,7 +178,7 @@ var log_app = angular.module('log_app', []);
           {
             _id: 123,
             init_user: "User C",
-            items: ["stem", "resistor2", "plant"],
+            items: ["stem", "resistors2", "plant"],
             event: "Disbursement",
             rec_user: "User E",
             date: "2017-05-12T19:05:13.093Z",
@@ -237,19 +237,19 @@ var log_app = angular.module('log_app', []);
 
  
       // $scope.scrollIntoView = function(element, container) {
-      $scope.scrollIntoView = function(rowNum) {
-        var element = document.getElementById('myLogTable').getElementsByTagName('tr')[rowNum];
-        var container = "window";
-        var containerTop = $(container).scrollTop(); 
-        var containerBottom = containerTop + $(container).height(); 
-        var elemTop = element.offsetTop;
-        var elemBottom = elemTop + $(element).height(); 
+      // $scope.scrollIntoView = function(rowNum) {
+      //   var element = document.getElementById('myLogTable').getElementsByTagName('tr')[rowNum];
+      //   var container = "window";
+      //   var containerTop = $(container).scrollTop(); 
+      //   var containerBottom = containerTop + $(container).height(); 
+      //   var elemTop = element.offsetTop;
+      //   var elemBottom = elemTop + $(element).height(); 
 
-        var elemAbsTop = element.getBoundingClientRect().top;
+      //   var elemAbsTop = element.getBoundingClientRect().top;
 
-        window.scrollBy(0,elemTop);
-        element.style.backgroundColor = "lightgreen";
-      }
+      //   window.scrollBy(0,elemTop);
+      //   element.style.backgroundColor = "lightgreen";
+      // }
 
       $scope.filterByDate = function() {
         $scope.logs = $scope.originalLogs;

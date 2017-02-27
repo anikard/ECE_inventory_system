@@ -137,16 +137,33 @@ products_app.factory('ProductsFactory', function($http) {
 
 products_app.controller('productsController', function($scope, $window, $rootScope, /*auth,*/ ProductsFactory, $document) {
 
-  if ($window.localStorage['itemSelected']) {
-    $scope.selected_item = $window.localStorage['itemSelected'];
-  } else {
-    $scope.selected_item = "";
-  }
-  $window.localStorage['itemSelected'] = "";
-
-  // TODO: scrollintoview for products table
+  $scope.products = ProductsFactory.getproducts(function(data) {
+      $scope.products = data;
+      $scope.originalProducts = data;
 
 
+      $scope.currentTags = [];
+      $scope.searchTags = [];
+      $scope.excludeTags = [];
+
+
+      // using for LOGS 
+      if ($window.localStorage['itemSelected'] && !$scope.selected_item) {
+        $scope.selected_item = $window.localStorage['itemSelected'];
+      } 
+      $window.localStorage['itemSelected'] = "";
+
+      var thisProductIndex = -1;
+      for (var i = 0; i < $scope.products.length; i++) {
+        if ($scope.products[i].name == $scope.selected_item) {
+          thisProductIndex = i;
+        }
+      }
+      $scope.scrollIntoView(thisProductIndex+1);
+
+    });
+
+    
     //$scope.myName = auth.currentUser();
     //$scope.myID = {userId: auth.currentUserID()};
     //console.log($scope.myName);
@@ -166,15 +183,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
       return false;
     }
 
-    $scope.products = ProductsFactory.getproducts(function(data) {
-      $scope.products = data;
-      $scope.originalProducts = data;
-
-
-      $scope.currentTags = [];
-      $scope.searchTags = [];
-      $scope.excludeTags = [];
-    });
+    
 
   $scope.tags = ProductsFactory.gettags(function(data) {
     $scope.tags = data;
@@ -561,6 +570,36 @@ products_app.controller('productsController', function($scope, $window, $rootSco
   $scope.closeItemModal = function() {
     $scope.currentTags = [];
   }
+
+
+  // from logs view
+
+  $scope.scrollIntoView = function(rowNum) {
+      console.log("in scroll into view");
+        var element = document.getElementById('myItemTable').getElementsByTagName('tr')[rowNum];
+        
+        if (element) {
+          var container = "window";
+          var containerTop = $(container).scrollTop(); 
+          var containerBottom = containerTop + $(container).height(); 
+          var elemTop = element.offsetTop;
+          var elemBottom = elemTop + $(element).height(); 
+
+          var elemAbsTop = element.getBoundingClientRect().top;
+
+          $("#myItemTable tr:nth-child("+rowNum+")")[0].scrollIntoView();
+
+          window.scrollBy(0,elemTop-600);
+
+          var cols = element.getElementsByTagName('td');
+
+          for (var x = 0; x < cols.length; x++) {
+            cols[x].style.backgroundColor = "lightgreen";
+          }
+
+        }
+
+      }
 
 })
 
