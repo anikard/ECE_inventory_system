@@ -53,13 +53,13 @@ function add(req, res) {
       let i = 0;
       let idx = -1;
       for(i = 0; i < cart.items.length; i++){
-        if(cart.items[i].item===req.body.item){
+        if(cart.items[i].item == req.body.item){
           cart.items[i].quantity = req.body.quantity;
+          idx = i;
           break;
         }
       }
-      if(idx === -1) cart.items.push(_.pick(req.body,['item','quantity']));
-	    cart.save();
+      if(idx == -1) cart.items.push(_.pick(req.body,['item','quantity']));
     } else {
     	cart = new Cart({
     		user: req.user._id,
@@ -86,8 +86,9 @@ function del(req, res) {
     var i = 0;
     var idx = -1;
     for(i = 0; i < cart.items.length; i++){
-      if(cart.items[i].item===req.body.item){
+      if(cart.items[i].item == req.body.item){
         idx = i;
+        //break;
       }
     }
     if(idx === -1) return res.status(400).send({ error: "No such item" });

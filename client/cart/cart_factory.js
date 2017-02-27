@@ -121,14 +121,18 @@ var orders_app = angular.module('cart_app', []);
             return;
           }
 
-        $scope.new_order.item_name = ((itemSelected.options[itemSelected.selectedIndex].text).split("|"))[0];
+        // TODO: Ugly, refactor to pass backend item._id and item.name
+        $scope.current_item_name = ((itemSelected.options[itemSelected.selectedIndex].text).split("|"))[0];
         $scope.new_order.item = itemSelected.value;
 
         console.log($scope.new_order);
 
         OrderFactory.addToCart($scope.new_order, function(data) {
-          $scope.new_order.date = new Date();
-          $scope.orders.push($scope.new_order);
+          var pushOrder = {};
+          pushOrder.quantity = $scope.new_order.quantity;
+          pushOrder.item = {};
+          pushOrder.item.name = $scope.current_item_name;
+          $scope.orders.push(pushOrder);
           $scope.new_order = {};
         });
       }
