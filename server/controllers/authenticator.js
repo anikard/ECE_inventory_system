@@ -3,10 +3,6 @@ var User = mongoose.model('User');
 var passport = require('passport');
 
 module.exports = (app) => {
-  app.post('/api/auth/reg', function(req, res, next){
-    register(req, res, next);
-  });
-
   app.post('/api/auth/login', function(req, res, next){
     console.log("got to backend");
     console.log(req.body);
@@ -93,6 +89,7 @@ function createAdmin(req, res, next) {
         }
         var user = new User();
         user.username = req.body.username;
+        user.name = req.body.name;
         user.setPassword(req.body.password);
         user.status = "admin";
 

@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var _ = require('lodash');
 var Item = mongoose.model('Item');
 var Field = mongoose.model('Field');
+var Log = mongoose.model('Log');
 var util = require('./util.js');
 
 module.exports = (app) => {
@@ -34,6 +35,25 @@ module.exports = (app) => {
           if(err){
             res.status(500).send({ error: err })
           } else {
+
+            let log = new Log({
+            init_user: req.user._id,
+            item: item._id,
+            event: "item created",
+            rec_user: req.user._id,
+             });
+
+              log.save(function(err){
+
+                if(err){
+                res.status(500).send({ error: err });
+                return;
+              }
+              });
+
+
+
+
             res.status(200).send("success"); //  end the function to return
           }
       });

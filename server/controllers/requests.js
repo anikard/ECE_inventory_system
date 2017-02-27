@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Request = mongoose.model('Request');
 var User = mongoose.model('User');
 var Item = mongoose.model('Item');
+var Log = mongoose.model('Log');
 var util = require('./util.js');
 
 module.exports = (app) => {

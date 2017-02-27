@@ -4,26 +4,11 @@ var _ = require('lodash');
 var util = require('./util.js');
 
 module.exports = (app) => {
-  app.use('/api/customField/show', util.requireLogin);
-  app.use('/api/customField/add', util.requirePrivileged);
-  app.use('/api/customField/del', util.requirePrivileged);
-  app.use('/api/customField/update', util.requirePrivileged);
 
-	app.get('/api/customField/show', function(req, res, next) {
-	  show(req, res, next);
-	});
-
-	app.post('/api/customField/add', function(req, res, next) {
-	  add(req, res, next);
-	});
-
-	app.post('/api/customField/del', function(req, res, next) {
-	  del(req, res, next);
-	});
-
-	app.post('/api/customField/update', function(req, res, next) {
-	  update(req, res, next);
-	});
+	app.get('/api/customField/show', util.requireLogin, show);
+	app.post('/api/customField/add', util.requirePrivileged, add);
+	app.post('/api/customField/del', util.requirePrivileged, del);
+	app.post('/api/customField/update', util.requirePrivileged, update);
 }
 
 function show(req, res) {
