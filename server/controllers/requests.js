@@ -5,32 +5,12 @@ var Item = mongoose.model('Item');
 var util = require('./util.js');
 
 module.exports = (app) => {
-	app.use('/api/request/show', util.requireLogin);
-	app.use('/api/request/add', util.requirePrivileged);
-	app.use('/api/request/close', util.requirePrivileged);
-  	app.use('/api/request/del', util.requirePrivileged);
-  	app.use('/api/request/update', util.requirePrivileged);
 
-	app.get('/api/request/show', function(req, res, next) {
-		console.log("in requests.js app show");
-	  show(req, res, next);
-	});
-
-	app.post('/api/request/add', function(req, res, next) {
-	  add(req, res, next);
-	});
-
-	app.post('/api/request/close', function(req, res, next) {
-	  close(req, res, next);
-	});
-
-	app.post('/api/request/del', function(req, res, next) {
-	  del(req, res, next);
-	});
-
-	app.post('/api/request/update', function(req, res, next) {
-	  update(req, res, next);
-	});
+	app.get('/api/request/show', util.requireLogin, show);
+	app.post('/api/request/add', util.requireLogin, add);
+	app.post('/api/request/close', util.requirePrivileged, close);
+	app.post('/api/request/del', util.requirePrivileged, del);
+	app.post('/api/request/update', util.requirePrivileged, update);
 }
 
 var findRequestsByUser = function(name) {

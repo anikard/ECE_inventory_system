@@ -7,30 +7,9 @@ var util = require('./util.js');
 
 
 module.exports = (app) => {
-	//app.use('/api/log/*', util.requireLogin);
+	app.use('/api/log/*', util.requireLogin);
 
-	app.get('/api/log/show', function(req, res, next) {
-		Log.find({})
-			.exec(function(err, results) {
-				if(err) {
-					res.status(500).send({ error: err});
-				} else {
-					res.status(200).json(results);
-				}
-			});
-	});
-
-	app.get('/api/log/filter', function(req, res, next) {
-		Log.find(_.pick(req.query,['user','item']))
-		.populate('item init_user rec_user')
-		.exec(function(err, results) {
-			if(err) {
-				res.status(500).send({ error: err});
-			} else {
-				res.status(200).json(results);
-			}
-		});
-	});
+	app.get('/api/log/show', show);
 
 	app.post('/api/log/item', function(req, res, next) {
 		Item.findOne({ 'name': req.body.name }, function (err, item) {
@@ -43,47 +22,10 @@ module.exports = (app) => {
 		})
 	});
 
-	app.post('/api/log/filter', function(req, res, next) {
-		let query = {};
-		if (req.body.startDate || req.body.endDate) {
-			query.date = {};
-			if (req.body.startDate) _.assign(query.date, {$gt:req.body.startDate});
-			if (req.body.endDate) _.assign(query.date, {$lt:req.body.endDate});
-		}
-		Log.find(query)
-		.populate({
-			path: 'init_user', 
-			select: 'name username netId email status active',
-			match: req.body.init_user ? { "name": { "$regex": req.body.init_user, "$options": "i" } } : {},
-			options: { sort: { name: 1 }}
-		})
-		.populate({
-			path: 'rec_user', 
-			select: 'name username netId email status active',
-			match: req.body.rec_user ? { "name": { "$regex": req.body.rec_user, "$options": "i" } } : {},
-			options: { sort: { name: 1 }}
-		})
-		.populate({
-			path: 'item', 
-			match: req.body.item ? { "name": { "$regex": req.body.item, "$options": "i" } } : {},
-		})
-		.limit(20)
-		.exec(function(err, results) {
-			if(err) {
-				res.status(500).send({ error: err});
-			} else {
-				res.status(200).json(results.filter(e=>e.init_user && e.item && (!req.body.rec_user || e.rec_user)));
-			}
-		});
-	});
+	app.get('/api/log/filter', filter);
+	app.post('/api/log/filter', filter);
 
 	 //app.post('/api/log/add', function(req, res, next) {
-
-	 	//get current user 
-
-
-
-	// 	console.log("in /api/v1/log/test/add");
 	// 	User.findOne({ 'status': 'admin' }, function (err, admin) {
 	// 		User.findOne({ 'netId': 'ym67' }, function (err, user) {
 	// 			let log = new Log({
@@ -103,4 +45,52 @@ module.exports = (app) => {
 	// 	});
 	 //});
 
+}
+
+function show(req, res, next) {
+	Log.find()
+	.sort('-date')
+	.limit(req.body.limit || req.query.limit || 20)
+	.exec(function(err, results) {
+		if(err) {
+			res.status(500).send({ error: err});
+		} else {
+			res.status(200).json(results);
+		}
+	});
+}
+
+function filter(req, res, next) {
+	req.body = req.body || req.query;
+	let query = {};
+	if (req.body.startDate || req.body.endDate) {
+		query.date = {};
+		if (req.body.startDate) _.assign(query.date, {$gt:req.body.startDate});
+		if (req.body.endDate) _.assign(query.date, {$lt:req.body.endDate});
+	}
+	Log.find(query)
+	.populate({
+		path: 'init_user', 
+		select: 'name username netId email status active',
+		match: req.body.init_user ? { "name": { "$regex": req.body.init_user, "$options": "i" } } : {},
+		options: { sort: { name: 1 }}
+	})
+	.populate({
+		path: 'rec_user', 
+		select: 'name username netId email status active',
+		match: req.body.rec_user ? { "name": { "$regex": req.body.rec_user, "$options": "i" } } : {},
+		options: { sort: { name: 1 }}
+	})
+	.populate({
+		path: 'item', 
+		match: req.body.item ? { "name": { "$regex": req.body.item, "$options": "i" } } : {},
+	})
+	.limit(req.body.limit || 20)
+	.exec(function(err, results) {
+		if(err) {
+			res.status(500).send({ error: err});
+		} else {
+			res.status(200).json(results.filter(e=>e.init_user && e.item && (!req.body.rec_user || e.rec_user)));
+		}
+	});
 }
