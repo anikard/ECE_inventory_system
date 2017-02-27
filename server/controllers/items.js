@@ -35,9 +35,11 @@ module.exports = (app) => {
             res.status(500).send({ error: err })
           } else {
 
+
+            var itemArray = new Array(item._id)
             let log = new Log({
             init_user: req.user._id,
-            item: item._id,
+            item: itemArray,
             event: "item created",
             rec_user: req.user._id,
              });
