@@ -248,7 +248,7 @@
 <body>
 
 <div ng-controller="userController" id = "navTop" style="display:none;">
-  <a ng-if="authorized" href="/dispCustomers">users</a> | <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
+  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> |</span> <a href="" ng-click="logout()">logout {{myName}}</a>
 <!--     <a ng-if="authorized" href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
  -->
 </div>
