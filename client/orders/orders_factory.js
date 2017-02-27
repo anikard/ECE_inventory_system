@@ -20,6 +20,12 @@ var orders_app = angular.module('orders_app', []);
         })
       }
 
+      factory.getuser = function(callback) {
+        $http.get('/api/user').success(function(output) {
+          callback(customers);
+        })
+      }
+
       factory.getorders = function(info, callback) {
         $http.post('/orders', info).success(function(output) {
           orders = output;
@@ -68,15 +74,36 @@ var orders_app = angular.module('orders_app', []);
 
 
     orders_app.controller('ordersController', function($scope, OrderFactory, auth, $document) {
-        console.log("USER ID: " + auth.currentUserID());
-        var thisId = {userId: auth.currentUserID()};
-        $scope.orders = OrderFactory.getorders(thisId, function(data) {
-        $scope.orders = data;
+        //console.log("USER ID: " + auth.currentUserID());
+        //var thisId = {userId: auth.currentUserID()};
+        $scope.orders = OrderFactory.getorders(/*thisId,*/ function(data) {
+          $scope.orders = data;
 
-      });
+        });
 
-        $scope.myName = auth.currentUser();
-        console.log("MY NAME: " + $scope.myName);
+        $scope.user = OrderFactory.getuser($document, function(data) {
+          $scope.user = data;
+
+          $scope.authorized = data.status == "admin";
+          $scope.myName = data.username;
+
+          console.log("AUTHORIZED:")
+          console.log($scope.authorized);
+
+          $scope.authorized = (auth.currentUserStatus()=="admin");
+          if ($scope.authorized) {
+            $document[ 0 ].getElementById('customerList').display = "block";
+            $document[ 0 ].getElementById('thisCustomerInput').display = "none";
+          }
+          else {
+            $document[ 0 ].getElementById('customerList').display = "none";
+            $document[ 0 ].getElementById('thisCustomerInput').display = "block";
+          }
+        })
+
+        //$scope.myName = auth.currentUser();
+        //console.log("MY NAME: " + $scope.myName);
+        /*
         $scope.authorized = (auth.currentUserStatus()=="admin");
         if ($scope.authorized) {
           $document[ 0 ].getElementById('customerList').display = "block";
@@ -86,8 +113,10 @@ var orders_app = angular.module('orders_app', []);
           $document[ 0 ].getElementById('customerList').display = "none";
           $document[ 0 ].getElementById('thisCustomerInput').display = "block";
         }
+        */
 
         // AUTH
+        /*
         $scope.logout = function() {
           console.log("scope logging out ");
           auth.logout(function() {
@@ -99,13 +128,15 @@ var orders_app = angular.module('orders_app', []);
         $scope.getCurrentStatus = function() {
           return auth.currentUserStatus();
         }
+        */
 
-
+//TODO: deprecate, orders not added from request page anymore
+/*
       $scope.addOrder = function() {
 
         console.log("addOrder from order controller scope");
 
-        
+
         if ($scope.authorized) {
           var customerSelected = $document[ 0 ].getElementById('customerList');
 
@@ -149,6 +180,7 @@ var orders_app = angular.module('orders_app', []);
           $scope.new_order = {};
         });
       }
+      */
 
         $scope.removeOrder = function(order) {
           $('#orderModal').modal('hide');
@@ -256,7 +288,7 @@ var orders_app = angular.module('orders_app', []);
           if(auth.isLoggedIn()){
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
-            
+
             return payload.username;
           }
         };
@@ -265,7 +297,7 @@ var orders_app = angular.module('orders_app', []);
           if(auth.isLoggedIn()){
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
-            
+
             return payload._id;
           }
         };
@@ -274,7 +306,7 @@ var orders_app = angular.module('orders_app', []);
           if(auth.isLoggedIn()){
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
-            
+
             return payload.status;
           }
         };

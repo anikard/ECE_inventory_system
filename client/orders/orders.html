@@ -45,6 +45,7 @@
     </table>
   </div>
 
+<!-- TODO: DEPRECATE
   <h1>Create Request</h1>
 
  <form id="createReqForm">
@@ -64,7 +65,7 @@
     <input type="submit" ng-disabled="createReqForm.$invalid" ng-click="addOrder()">
     <br>
  </form>
-
+-->
 
 <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -86,7 +87,7 @@
             <p><b>Reason:  </b>{{thisOrder.reason}}</p>
             <p><b>Current Status:  </b>{{thisOrder.status}}</p>
           </div>
-          
+
 
       <div ng-if="authorized">
         <form id="request_response_form">

@@ -13,10 +13,10 @@ products_app.factory('ProductsFactory', function($http) {
   var relevantOrders = [];
   var originalProduct = {};
 
-  factory.getcustomers = function(callback) {
+  factory.getuser = function(callback) {
       $http.get('/api/user').success(function(output) {
-        customers = output;
-        callback(customers);
+        //customers = output;
+        callback(output);
       })
     }
 
@@ -193,7 +193,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     $scope.fields = data;
   })
 
-  $scope.user = ProductsFactory.getcustomers(function(data) {
+  $scope.user = ProductsFactory.getuser(function(data) {
     $scope.user = data;
 
     $scope.authorized = data.status == "admin";
@@ -607,7 +607,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
 })
 
 products_app.controller('customersController', function($scope, ProductsFactory) {
-    $scope.customers = ProductsFactory.getcustomers(function(data) {
+    $scope.customers = ProductsFactory.getuser(function(data) {
 
       $scope.customers = data;
       console.log("inside prod cust");
