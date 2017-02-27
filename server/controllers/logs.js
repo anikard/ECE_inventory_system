@@ -52,7 +52,7 @@ function show(req, res, next) {
  	.populate('rec_user init_user item')
 	.sort('-date')
 	.populate('init_user rec_user item')
-	.limit(req.body.limit || req.query.limit || 20)
+	.limit(parseInt(req.body.limit) || parseInt(req.query.limit) || 20)
 	.exec(function(err, results) {
 		if(err) {
 			res.status(500).send({ error: err});
@@ -87,7 +87,7 @@ function filter(req, res, next) {
 		path: 'item', 
 		match: req.body.item ? { "name": { "$regex": req.body.item, "$options": "i" } } : {},
 	})
-	.limit(req.body.limit || 20)
+	.limit(parseInt(req.body.limit) || 20)
 	.exec(function(err, results) {
 		if(err) {
 			res.status(500).send({ error: err});

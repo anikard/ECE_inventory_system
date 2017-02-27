@@ -8,7 +8,7 @@ var util = require('./util.js');
 module.exports = (app) => {
   app.get('/api/item/show', util.requireLogin, function(req, res, next) {
     Item.find({})
-    .limit(req.query.limit || 20)
+    .limit(parseInt(req.query.limit) || 20)
     .exec((err, results) => {
       if(err) {
         res.status(500).send({ error: err });
