@@ -16,7 +16,6 @@ var orders_app = angular.module('cart_app', []);
         })
       }
 
-
       factory.getorders = function(callback) {
         console.log("getting cartItems in cart");
         $http.get('/api/cart/show').success(function(output) {
@@ -74,7 +73,6 @@ var orders_app = angular.module('cart_app', []);
 
       return factory;
     });
-
 
     orders_app.controller('ordersController', function($scope, OrderFactory, auth, $document) {
 

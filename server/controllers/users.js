@@ -13,8 +13,6 @@ module.exports = (app) => {
   	res.status(200).json(_.pick(req.user, ['username','name','netId','email','status','active','apiKey']));
   });
 
-  app.post('/api/auth/reg', util.requireLogin, add);
-
   app.get('/api/user/apiKey/get', util.requireLogin, getApiKey);
 
   app.get('/api/user/apiKey/revoke', util.requireLogin, revokeApiKey);
@@ -115,13 +113,18 @@ function add(req, res, next){
   info.date = new Date();
   info.active = info.active || true;
   info.status = info.status || 'user';
-  var user = new User(info);
-  user.setPassword(req.body.password);
-  user.save(function(err){
-    if(err){
-      res.status(500).send({ error: err });
-    } else {
-      res.status(200).send("Successfully added a user!");
-    }   
+  User.findOne({ 'username': info.username }, function (err, user) {
+    if (err) return res.status(500).send({ error: err });
+    if (user) return res.status(400).send({ error: "Username exists" });
+    user = new User(info);
+    user.setPassword(req.body.password);
+    user.save(function(err){
+      if(err){
+        res.status(500).send({ error: err });
+      } else {
+        res.status(200).send("Successfully added a user!");
+      }   
+    });
   });
+  
 }

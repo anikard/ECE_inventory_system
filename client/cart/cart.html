@@ -22,14 +22,14 @@
       <tr>
         <td> Item </td>
         <td> Quantity </td>
-        <td> Date Added </td>
+        <!--<td> Date Added </td>-->
         <td> Actions </td>
       </tr>
 
       <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
-        <td ng-bind="order.item_name"></td>
+        <td ng-bind="order.item.name"></td>
         <td ng-bind="order.quantity"></td>
-        <td ng-bind="order.date | date:'short'"></td>
+        <!--<td ng-bind="order.date | date:'short'"></td>-->
         <td><button class = "remove" ng-click='removeFromCart(order)'>Remove</button></td>
       </tr>
     </table>
@@ -76,7 +76,7 @@
           </tr>
 
           <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
-            <td ng-bind="order.item_name"></td>
+            <td ng-bind="order.item.name"></td>
             <td ng-bind="order.quantity"></td>
           </tr>
         </table>

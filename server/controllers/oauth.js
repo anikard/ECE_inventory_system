@@ -13,7 +13,8 @@ module.exports = (app) => {
   });
 }
 
-const code_endpoint = 'https://localhost:8443/api/auth/code';
+const code_endpoint = (req) => `${req.protocol}://${req.get('host')}/api/auth/code`;
+// 'https://localhost:8443/api/auth/code'
 
 const oauth2 = require('simple-oauth2').create({
   client: {
@@ -27,8 +28,8 @@ const oauth2 = require('simple-oauth2').create({
   },
 });
 
-const authorizationUri = oauth2.authorizationCode.authorizeURL({
-  redirect_uri: code_endpoint,
+const authorizationUri = (req) => oauth2.authorizationCode.authorizeURL({
+  redirect_uri: code_endpoint(req),
   scope: 'basic identity:netid:read',
   state: 'Xg2dAmvMEn8S3ND9GorD3(#0/!~',
 });
@@ -57,7 +58,7 @@ function auth (req, res, next) {
   if(req.user){
     return res.redirect('/dispProducts');
   }
-  res.redirect(authorizationUri);
+  res.redirect(authorizationUri(req));
 };
 
 
@@ -71,7 +72,7 @@ function code(req, res, next) {
   const options = {
     grant_type: "authorization_code",
     code: code,
-    redirect_uri: code_endpoint,
+    redirect_uri: code_endpoint(req),
     client_id: 'ece-inventory-manager'
   };
   oauth2.authorizationCode.getToken(options, (error, result) => {

@@ -58,7 +58,7 @@ var log_app = angular.module('log_app', []);
         LogFactory.getLogs(function(data) {
           console.log("scope getting logs");
           console.log(data);
-          // $scope.logs = data;
+          $scope.logs = data;
           color_table_elements();
         });
 
@@ -95,7 +95,7 @@ var log_app = angular.module('log_app', []);
 
         }
 
-        $scope.logs = [{
+        $scope.logsOld = [{
             _id: 555,
             init_user: "User A",
             items: ["resistors2"],
