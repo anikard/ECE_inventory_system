@@ -34,11 +34,18 @@ var log_app = angular.module('log_app', []);
         })
       }
 
+      // TO FIX
+      factory.goToLogItem = function(info, callback) {
+        $http.get('/dispProducts').success(function(output) {
+          console.log("SUCCESS in dispProducts");
+        })
+      }
+
       return factory;
     });
 
 
-    log_app.controller('logController', function($scope, LogFactory, auth, $document) {
+    log_app.controller('logController', function($scope, $rootScope, $window, LogFactory, auth, $document) {
         console.log("USER ID: " + auth.currentUserID());
         var thisId = {userId: auth.currentUserID()};
         LogFactory.getLogs(thisId, function(data) {
@@ -53,10 +60,21 @@ var log_app = angular.module('log_app', []);
           console.log(data);
         });
 
-        LogFactory.getLogItem({name: "resistors2"}, function(data) {
-          console.log("scope getting log item");
-          console.log(data);
-        });
+        
+        $scope.getItem = function(item_name) {
+          console.log("GETTING ITEM " + item_name);
+          var item_info = {};
+          $rootScope.item_selected = item_name;
+          $window.localStorage['itemSelected'] = item_name;
+
+          $window.location.href = "/products/products.html";
+
+          // TO FIX
+          // LogFactory.goToLogItem({name: item_name}, function(data) {
+          //   item_info = data;
+          // });
+
+        }
 
         $scope.logs = [{
             _id: 555,
@@ -210,14 +228,14 @@ var log_app = angular.module('log_app', []);
       function color_table_elements() {
         var rows = document.getElementById('myLogTable').getElementsByTagName('tr');
 
-        for (var i = 0; i < rows.length; i++) {
-          rows[i].style.backgroundColor = "lightgray";
+        for (var i = 1; i < rows.length; i=i+2) {
+          rows[i].style.backgroundColor = "#b7cece";
         }
       }
 
       color_table_elements();
 
-
+ 
       // $scope.scrollIntoView = function(element, container) {
       $scope.scrollIntoView = function(rowNum) {
         var element = document.getElementById('myLogTable').getElementsByTagName('tr')[rowNum];

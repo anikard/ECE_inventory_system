@@ -77,7 +77,12 @@ module.exports = (app) => {
 		});
 	});
 
-	// app.post('/api/v1/log/test/add', function(req, res, next) {
+	 //app.post('/api/log/add', function(req, res, next) {
+
+	 	//get current user 
+
+
+
 	// 	console.log("in /api/v1/log/test/add");
 	// 	User.findOne({ 'status': 'admin' }, function (err, admin) {
 	// 		User.findOne({ 'netId': 'ym67' }, function (err, user) {
@@ -96,6 +101,6 @@ module.exports = (app) => {
 	// 			});
 	// 		});
 	// 	});
-	// });
+	 //});
 
 }

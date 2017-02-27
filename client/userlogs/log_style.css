@@ -4,6 +4,8 @@ body {
       margin: 20px;
     }
 
+    a { cursor: pointer; }
+
     .feedback-input {
       font-family: Helvetica, Arial, sans-serif;
       font-weight:500;
@@ -111,9 +113,15 @@ body {
       height:3em;
     }
 
+    .logTable td {
+      /*border-bottom:1px solid #6C93B4;*/
+      /*border-width:0px 1px 1px 0px;*/
+      padding-top: 10px;
+    }
+
     .logTable {
       height: 10em;
-      background-color:lightgray;
+      /*background-color:white;*/
     }
     /*.createRequestTable td {
       height:3em;

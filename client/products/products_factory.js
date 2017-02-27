@@ -133,13 +133,25 @@ products_app.factory('ProductsFactory', function($http) {
 });
 
 
-products_app.controller('productsController', function($scope, /*auth,*/ ProductsFactory, $document) {
-  /*
-    $scope.myName = auth.currentUser();
-    $scope.myID = {userId: auth.currentUserID()};
-    console.log($scope.myName);
-    $scope.authorized = (auth.currentUserStatus()=="admin");
-    */
+//products_app.controller('productsController', function($scope, /*auth,*/ ProductsFactory, $document) {
+
+products_app.controller('productsController', function($scope, $window, $rootScope, /*auth,*/ ProductsFactory, $document) {
+
+  if ($window.localStorage['itemSelected']) {
+    $scope.selected_item = $window.localStorage['itemSelected'];
+  } else {
+    $scope.selected_item = "";
+  }
+  $window.localStorage['itemSelected'] = "";
+
+  // TODO: scrollintoview for products table
+
+
+    //$scope.myName = auth.currentUser();
+    //$scope.myID = {userId: auth.currentUserID()};
+    //console.log($scope.myName);
+    //$scope.authorized = (auth.currentUserStatus()=="admin");
+
     $scope.customFields = [];
 
     $scope.logout = function() {
