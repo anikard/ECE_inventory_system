@@ -196,7 +196,9 @@
 
       $scope.oauthLoginUser = function() {
         console.log("trying out duke login")
+        window.location.href = '/api/auth/oauth';
 
+        /*
         auth.oauthLoginUser({username: $scope.new_user.username, password: $scope.new_user.password}, function(data) {
             $scope.isLoggedIn = true;
             $scope.myName = "test"; //auth.currentUser();
@@ -207,6 +209,7 @@
 
           document.getElementById("unField").value = '';
           document.getElementById("pdField").value = '';
+          */
       }
 
       $scope.registerUser = function() {
@@ -265,7 +268,7 @@
       <input type="text" id="unField" style = "display:inline-block; width:40%;"
       class="form-control feedback-input"
       placeholder="Username"
-      ng-model="new_user.username" ></input> 
+      ng-model="new_user.username" ></input>
           <!-- removing the new_user distinction comments -->
     </div>
     <div class="form-group">
@@ -276,7 +279,8 @@
     </div>
     <input style = "display:inline; width:15%" type="submit" value = "Login" ng-click="loginUser()">
     <input style = "display:inline; width:15%" type="submit" value = "Duke Login" ng-click="oauthLoginUser()">
-    <input style = "display:inline; width:15%; " type="submit" value = "Register" ng-click="registerUser()" > 
+    <!--<a href="/api/auth/oauth">Duke Login</a>-->
+    <input style = "display:inline; width:15%; " type="submit" value = "Register" ng-click="registerUser()" >
   </form>
 </body>
 </html>
