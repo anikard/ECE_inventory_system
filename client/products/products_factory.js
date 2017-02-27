@@ -373,11 +373,13 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     //if(!$scope.authorized) {
     //  $scope.new_order.userId = $scope.user_id;
     //}
+    $scope.new_order.item = $scope.new_order.itemId;
 
     ProductsFactory.addOrder($scope.new_order, function(data) {
       $scope.new_order = {};
     })
     $('#requestModal').modal('hide');
+    $('#productModal').modal('hide');
   }
 
 
