@@ -14,7 +14,7 @@
 
 <body ng-controller="productsController">
 
-  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> |</span> <a href="" ng-click="logout()">logout {{myName}}</a>
+  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispFields">custom fields</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> </span> | <a href="" ng-click="logout()">logout {{myName}}</a>
 
   <h1>ITEMS</h1>
   <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
@@ -100,7 +100,7 @@
     </span>
     <br>
 
-    <select id="tag_select_modal" class = "feedback-input" ng-controller="productsController" id = "tagList" name="tagOptions"> 
+    <select id="tag_select_modal" class = "feedback-input" ng-controller="productsController" id = "tagList" name="tagOptions">
       <option value="" disabled selected>Add a Tag</option>
       <option value="1" ng-click="createNewTag()">Create New Tag</option>
       <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
@@ -209,7 +209,7 @@
             <button class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmModal">Delete Product</button>
           </span>
           <button type="button" class="btn btn-secondary" ng-click="closeItemModal()" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Request</button>
+          <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Add to Cart</button>
           <span ng-show="authorized">
             <button type="button" class="btn btn-primary" ng-click="editProduct(currentProduct)">{{editing == true ? 'Save Edits' : 'Edit' }}</button>
           </span>
@@ -272,8 +272,11 @@
      -->
      <input class = "feedback-input" type="text" value="{{thisProduct.name}}" ng-readonly="true" />
 
+
       <input class = "feedback-input" type="number" min="1" ng-model="new_order.quantity" placeholder="quantity">
+      <!--
       <textarea class = "feedback-input" ng-model="new_order.reason" placeholder="Reason"></textarea>
+    -->
       <input type="submit" ng-click="addOrder()">
 
 
