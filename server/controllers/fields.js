@@ -12,6 +12,7 @@ module.exports = (app) => {
 }
 
 function show(req, res) {
+  // We don't limit on fields, since there should not be so many fields that pagination is necessary
 	Field.find({})
  	.exec(function(err, results) {
        	if(err) {
@@ -54,8 +55,8 @@ function del(req, res) {
 
 function update(req, res) {
 	if (! req.body.name) return res.status(400).send({ error: "Missing name" });
-	Field.findByIdAndUpdate(req.body._id, {
-		$set: _.pick(req.body, ['name','type','access','req','default'])
+	Field.findOneAndUpdate({name: req.body.name}, {
+		$set: _.pick(req.body, ['type','access','req','default'])
 	}, function(err, field){
       if(err){
         res.status(500).send({ error: err })
