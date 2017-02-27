@@ -16,10 +16,10 @@ var orders_app = angular.module('cart_app', []);
         })
       }
 
-      
-      factory.getorders = function(info, callback) {
+
+      factory.getorders = function(callback) {
         console.log("getting cartItems in cart");
-        $http.get('/api/cart/show', info).success(function(output) {
+        $http.get('/api/cart/show').success(function(output) {
           orders = output;
 
           console.log(orders);
@@ -32,7 +32,13 @@ var orders_app = angular.module('cart_app', []);
         })
       }
 
-     
+      factory.getuser = function(callback) {
+        $http.get('/api/user').success(function(output) {
+          callback(output);
+        })
+      }
+
+
 
       // factory.addOrder = function(info, callback) {
       //   $http.post('/addOrder', info).success(function(output) {
@@ -71,21 +77,27 @@ var orders_app = angular.module('cart_app', []);
 
 
     orders_app.controller('ordersController', function($scope, OrderFactory, auth, $document) {
-        console.log("USER ID: " + auth.currentUserID());
+
+        $scope.user = OrderFactory.getuser(function(data) {
+          $scope.user = data;
+        })
+
+        //console.log("USER ID: " + auth.currentUserID());
         $scope.orders = {};
-        var thisId = {userId: auth.currentUserID()};
-        OrderFactory.getorders(thisId, function(data) {
+        //var thisId = {userId: auth.currentUserID()};
+        OrderFactory.getorders(/*thisId,*/ function(data) {
           $scope.orders = data;
 
         });
-        console.log("scope cartItems");
+        //console.log("scope cartItems");
         console.log($scope.orders);
-        $scope.myName = auth.currentUser();
-        console.log("MY NAME: " + $scope.myName);
-        $scope.authorized = (auth.currentUserStatus()=="admin");
-        
+        //$scope.myName = auth.currentUser();
+        //console.log("MY NAME: " + $scope.myName);
+        //$scope.authorized = (auth.currentUserStatus()=="admin");
+
 
         // AUTH
+        /*
         $scope.logout = function() {
           console.log("scope logging out ");
           auth.logout(function() {
@@ -97,7 +109,7 @@ var orders_app = angular.module('cart_app', []);
         $scope.getCurrentStatus = function() {
           return auth.currentUserStatus();
         }
-
+        */
 
       $scope.addToCart = function() {
 
@@ -182,7 +194,7 @@ var orders_app = angular.module('cart_app', []);
           if(auth.isLoggedIn()){
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
-            
+
             return payload.username;
           }
         };
@@ -191,7 +203,7 @@ var orders_app = angular.module('cart_app', []);
           if(auth.isLoggedIn()){
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
-            
+
             return payload._id;
           }
         };
@@ -200,7 +212,7 @@ var orders_app = angular.module('cart_app', []);
           if(auth.isLoggedIn()){
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
-            
+
             return payload.status;
           }
         };
