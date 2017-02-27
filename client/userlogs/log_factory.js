@@ -12,8 +12,8 @@ var log_app = angular.module('log_app', []);
         })
       }
       
-      factory.getLogs = function(info, callback) {
-        $http.get('/api/log/show', info).success(function(output) {
+      factory.getLogs = function(callback) {
+        $http.get('/api/log/show').success(function(output) {
           logs = output;
           // console.log(logs);
           callback(logs);
@@ -52,10 +52,10 @@ var log_app = angular.module('log_app', []);
     });
 
 
-    log_app.controller('logController', function($scope, $rootScope, $window, LogFactory, /*auth*/, $document) {
-        console.log("USER ID: " + auth.currentUserID());
-        var thisId = {userId: auth.currentUserID()};
-        LogFactory.getLogs(thisId, function(data) {
+    log_app.controller('logController', function($scope, $rootScope, $window, LogFactory, /*auth,*/ $document) {
+        // console.log("USER ID: " + auth.currentUserID());
+        // var thisId = {userId: auth.currentUserID()};
+        LogFactory.getLogs(function(data) {
           console.log("scope getting logs");
           console.log(data);
           // $scope.logs = data;
@@ -71,9 +71,11 @@ var log_app = angular.module('log_app', []);
          $scope.user = data;
      
          $scope.authorized = data.status == "admin";
+         $scope.myName = data.username;
      
          console.log("AUTHORIZED:")
          console.log($scope.authorized);
+         console.log(data);
        })
 
 
@@ -299,9 +301,9 @@ var log_app = angular.module('log_app', []);
           $scope.logs = $scope.originalLogs;
       }
 
-        $scope.myName = auth.currentUser();
-        console.log("MY NAME: " + $scope.myName);
-        $scope.authorized = (auth.currentUserStatus()=="admin");
+        // $scope.myName = auth.currentUser();
+        // console.log("MY NAME: " + $scope.myName);
+        // $scope.authorized = (auth.currentUserStatus()=="admin");
         
 
         // AUTH
