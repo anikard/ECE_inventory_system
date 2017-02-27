@@ -3,7 +3,14 @@ var log_app = angular.module('log_app', []);
     log_app.factory('LogFactory', function($http) {
       var factory = {};
       var logs = [];
+      var customers = [];
 
+      factory.getcustomers = function(callback) {
+        $http.get('/api/user').success(function(output) {
+          customers = output;
+          callback(customers);
+        })
+      }
       
       factory.getLogs = function(info, callback) {
         $http.get('/api/log/show', info).success(function(output) {
@@ -45,7 +52,7 @@ var log_app = angular.module('log_app', []);
     });
 
 
-    log_app.controller('logController', function($scope, $rootScope, $window, LogFactory, auth, $document) {
+    log_app.controller('logController', function($scope, $rootScope, $window, LogFactory, /*auth*/, $document) {
         console.log("USER ID: " + auth.currentUserID());
         var thisId = {userId: auth.currentUserID()};
         LogFactory.getLogs(thisId, function(data) {
@@ -59,6 +66,16 @@ var log_app = angular.module('log_app', []);
           console.log("scope getting items");
           console.log(data);
         });
+
+        $scope.user = LogFactory.getcustomers(function(data) {
+         $scope.user = data;
+     
+         $scope.authorized = data.status == "admin";
+     
+         console.log("AUTHORIZED:")
+         console.log($scope.authorized);
+       })
+
 
         
         $scope.getItem = function(item_name) {
@@ -302,69 +319,69 @@ var log_app = angular.module('log_app', []);
     })
 
    
-    log_app.factory('auth', ['$http', '$window', function($http, $window){
-       var auth = {};
+    // log_app.factory('auth', ['$http', '$window', function($http, $window){
+    //    var auth = {};
 
-        auth.getToken = function (){
-          return $window.localStorage['inventoryToken'];
-        }
+    //     auth.getToken = function (){
+    //       return $window.localStorage['inventoryToken'];
+    //     }
 
-        auth.isLoggedIn = function(){
-          var token = auth.getToken();
-          if(token){
-            var payload = JSON.parse($window.atob(token.split('.')[1]));
-            return payload.exp > Date.now() / 1000;
-          } else {
-            return false;
-          }
-        };
+    //     auth.isLoggedIn = function(){
+    //       var token = auth.getToken();
+    //       if(token){
+    //         var payload = JSON.parse($window.atob(token.split('.')[1]));
+    //         return payload.exp > Date.now() / 1000;
+    //       } else {
+    //         return false;
+    //       }
+    //     };
 
-        auth.currentUser = function(){
-          if(auth.isLoggedIn()){
-            var token = auth.getToken();
-            var payload = JSON.parse($window.atob(token.split('.')[1]));
+    //     auth.currentUser = function(){
+    //       if(auth.isLoggedIn()){
+    //         var token = auth.getToken();
+    //         var payload = JSON.parse($window.atob(token.split('.')[1]));
             
-            return payload.username;
-          }
-        };
+    //         return payload.username;
+    //       }
+    //     };
 
-        auth.currentUserID = function(){
-          if(auth.isLoggedIn()){
-            var token = auth.getToken();
-            var payload = JSON.parse($window.atob(token.split('.')[1]));
+    //     auth.currentUserID = function(){
+    //       if(auth.isLoggedIn()){
+    //         var token = auth.getToken();
+    //         var payload = JSON.parse($window.atob(token.split('.')[1]));
             
-            return payload._id;
-          }
-        };
+    //         return payload._id;
+    //       }
+    //     };
 
-        auth.currentUserStatus = function(){
-          if(auth.isLoggedIn()){
-            var token = auth.getToken();
-            var payload = JSON.parse($window.atob(token.split('.')[1]));
+    //     auth.currentUserStatus = function(){
+    //       if(auth.isLoggedIn()){
+    //         var token = auth.getToken();
+    //         var payload = JSON.parse($window.atob(token.split('.')[1]));
             
-            return payload.status;
-          }
-        };
+    //         return payload.status;
+    //       }
+    //     };
 
-        auth.getUserStatus = function () {
-          var userId = "";
-          if(auth.isLoggedIn()){
-            var token = auth.getToken();
-            var payload = JSON.parse($window.atob(token.split('.')[1]));
-            userId = payload._id;
-          }
+    //     auth.getUserStatus = function () {
+    //       var userId = "";
+    //       if(auth.isLoggedIn()){
+    //         var token = auth.getToken();
+    //         var payload = JSON.parse($window.atob(token.split('.')[1]));
+    //         userId = payload._id;
+    //       }
 
-          $http.post('/getUser', userId).success(function(output) {
-            console.log(output);
-            callback(output);
-          })
+    //       $http.post('/getUser', userId).success(function(output) {
+    //         console.log(output);
+    //         callback(output);
+    //       })
 
-        }
+    //     }
 
-        auth.logout = function(callback){
-          $window.localStorage.removeItem('inventoryToken');
-          callback();
-        };
+    //     auth.logout = function(callback){
+    //       $window.localStorage.removeItem('inventoryToken');
+    //       callback();
+    //     };
 
-      return auth;
-    }])
+    //   return auth;
+    // }])
