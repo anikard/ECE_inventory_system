@@ -6,7 +6,7 @@ const util = require('./../server/controllers/util.js');
 module.exports = (app) => {
   app.all('*', [require('./validateRequest')]);
   app.all('*', function(req, res, next) {
-    console.log(req.method+" "+req.originalUrl);
+    console.log(`${req.protocol}://${req.get('host')}${req.originalUrl}`);
     next();
   });
 
