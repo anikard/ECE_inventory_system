@@ -36,10 +36,10 @@ module.exports = (app) => {
           } else {
 
 
-            var itemArray = new Array(item._id)
+            var itemArray = [item._id];
             let log = new Log({
             init_user: req.user._id,
-            item: itemArray,
+            items: itemArray,
             event: "item created",
             rec_user: req.user._id,
              });
