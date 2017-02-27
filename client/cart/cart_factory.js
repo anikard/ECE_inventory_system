@@ -16,7 +16,6 @@ var orders_app = angular.module('cart_app', []);
         })
       }
 
-      
       factory.getorders = function(callback) {
         console.log("getting cartItems in cart");
         $http.get('/api/cart/show').success(function(output) {
@@ -32,7 +31,13 @@ var orders_app = angular.module('cart_app', []);
         })
       }
 
-     
+      factory.getuser = function(callback) {
+        $http.get('/api/user').success(function(output) {
+          callback(output);
+        })
+      }
+
+
 
       // factory.addOrder = function(info, callback) {
       //   $http.post('/addOrder', info).success(function(output) {
@@ -69,35 +74,41 @@ var orders_app = angular.module('cart_app', []);
       return factory;
     });
 
+    orders_app.controller('ordersController', function($scope, OrderFactory, auth, $document) {
 
-    orders_app.controller('ordersController', function($scope, OrderFactory, /*auth*/, $document) {
-        // console.log("USER ID: " + auth.currentUserID());
+        $scope.user = OrderFactory.getuser(function(data) {
+          $scope.user = data;
+        })
+
+        //console.log("USER ID: " + auth.currentUserID());
         $scope.orders = {};
-        // var thisId = {userId: auth.currentUserID()};
-        OrderFactory.getorders(function(data) {
+        //var thisId = {userId: auth.currentUserID()};
+        OrderFactory.getorders(/*thisId,*/ function(data) {
           $scope.orders = data;
+          console.log($scope.orders);
 
         });
-        console.log("scope cartItems");
+        //console.log("scope cartItems");
         console.log($scope.orders);
-        $scope.myName = auth.currentUser();
-        console.log("MY NAME: " + $scope.myName);
-        $scope.authorized = (auth.currentUserStatus()=="admin");
-        
+        //$scope.myName = auth.currentUser();
+        //console.log("MY NAME: " + $scope.myName);
+        //$scope.authorized = (auth.currentUserStatus()=="admin");
+
 
         // AUTH
-        // $scope.logout = function() {
-        //   console.log("scope logging out ");
-        //   auth.logout(function() {
-        //     $scope.isLoggedIn = false;
-        //     window.location.assign("/");
-        //   });
-        // }
+        /*
+        $scope.logout = function() {
+          console.log("scope logging out ");
+          auth.logout(function() {
+            $scope.isLoggedIn = false;
+            window.location.assign("/");
+          });
+        }
 
         $scope.getCurrentStatus = function() {
           return auth.currentUserStatus();
         }
-
+        */
 
       $scope.addToCart = function() {
 
@@ -110,14 +121,18 @@ var orders_app = angular.module('cart_app', []);
             return;
           }
 
-        $scope.new_order.item_name = ((itemSelected.options[itemSelected.selectedIndex].text).split("|"))[0];
-        $scope.new_order.itemId = itemSelected.value;
+        // TODO: Ugly, refactor to pass backend item._id and item.name
+        $scope.current_item_name = ((itemSelected.options[itemSelected.selectedIndex].text).split("|"))[0];
+        $scope.new_order.item = itemSelected.value;
 
         console.log($scope.new_order);
 
         OrderFactory.addToCart($scope.new_order, function(data) {
-          $scope.new_order.date = new Date();
-          $scope.orders.push($scope.new_order);
+          var pushOrder = {};
+          pushOrder.quantity = $scope.new_order.quantity;
+          pushOrder.item = {};
+          pushOrder.item.name = $scope.current_item_name;
+          $scope.orders.push(pushOrder);
           $scope.new_order = {};
         });
       }
@@ -182,7 +197,7 @@ var orders_app = angular.module('cart_app', []);
           if(auth.isLoggedIn()){
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
-            
+
             return payload.username;
           }
         };
@@ -191,7 +206,7 @@ var orders_app = angular.module('cart_app', []);
           if(auth.isLoggedIn()){
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
-            
+
             return payload._id;
           }
         };
@@ -200,7 +215,7 @@ var orders_app = angular.module('cart_app', []);
           if(auth.isLoggedIn()){
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
-            
+
             return payload.status;
           }
         };
