@@ -32,6 +32,10 @@ module.exports = (app) => {
     res.redirect('userlogs/log.html');
   });
 
+  app.get('/dispCart', util.requireLoginGui, function(req, res) {
+    res.redirect('cart/cart.html');
+  });
+
   app.get('/dispCustomers', util.requireLoginGui, function(req, res) {
     res.redirect('customers.html');
   });
