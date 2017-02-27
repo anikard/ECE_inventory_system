@@ -58,28 +58,11 @@ var findUserByName = function(name) {
 };
 
 function show (req, res) {
-	if (!req.user || !req.user.status)
-		return res.status(401);
-	if (req.user.status === "admin") {
-		Request.find({})
-	 	.populate('item user')
-        .lean()
-	 	.exec(function(err, results) {
-	       	if(err) {
-	         	res.status(500).send({ error: err});
-	       	} else {
-	       		results.forEach(function(e){
-	       			e.customer_name = e.user?e.user.name:"";
-	       			e.item_name = e.item?e.item.name:"";
-
-	       		});
-	         	res.json(results);
-	       	}
-		});
-		return;
-	}
-	Request.find({user:req.user._id})
+	let query = (req.user.status === "admin" || req.user.status === "manager") ? {} : { user : req.user._id };
+	Request.find(query)
+	.limit(req.query.limit || 20)
  	.populate('item user')
+ 	.sort('-date')
     .lean()
  	.exec(function(err, results) {
        	if(err) {
@@ -96,57 +79,45 @@ function show (req, res) {
 }
 
 function add (req, res) {
-	if(!req.body.quantity) {
-		res.status(500).send({ error: "Missing quantity field" });
-		return;
-	}
-	if(!req.body.userId) {
-		res.status(500).send({ error: "Missing userId field" });
-		return;
-	}
-	if(!req.body.itemId) {
-		res.status(500).send({ error: "Missing itemId field" });
-		return;
-	}
-	User.findOne({ '_id': req.body.userId }, function (err, user) {
-		if(err) {
-         	res.status(500).send({ error: "No such user" });
-       	} else {
-	        var request = new Request({
-	        	user: user._id,
-	        	quantity: req.body.quantity || 0,
-	        	item: req.body.itemId || "",
-	        	reason: req.body.reason || "",
-	        	note: req.body.note || "",
-				status: req.body.status || "open",
-	        });
-	        request.save(function(err){
-	        	if (err) {
-	        		res.status(500).send({ error: err });
-	        		return;
-	        	} else {
-
-	        		//LOG ENTRY HERE
-	        		let log = new Log({
-	 					init_user: user._id,
-	 					item: req.body.itemId,
-		 				event: "borrow request",
-		 				rec_user: user._id,
-	 			});
-
-	        		log.save(function(err){
-
-	        			if(err){
-	        			res.status(500).send({ error: err });
-	        			return;
-	        		}
-	        		});
-
-
-	        		res.status(200).send("Successfully added an order!");
-	        	}
-	        });
-       	}
+	let id = (req.user.status === "admin" || req.user.status === "manager") ? 
+				(req.body.user || req.body.userId || req.body._id) : undefined;
+	id = id || req.user._id;
+	Cart.findOne({user: id}, function(err, cart) {
+		if (err) 
+			return res.status(500).send({ error: err });
+		if (!cart || cart.items.length === 0) 
+			return res.status(400).send({ error: "Empty cart" });
+		let request = new Request({
+        	user: id,
+        	items: cart.items,
+        	reason: req.body.reason || "",
+        	note: req.body.note || "",
+			status: req.body.status || "open",
+        });
+        request.save((err,request) => {
+        	if (err) 
+				return res.status(500).send({ error: err });
+			cart.items = [];
+			cart.save((err)=>{
+				if (err) 
+					return res.status(500).send({ error: err });
+	    		let arr = []
+	    		request.items.forEach(i=>arr.push(i.item));
+	    		let log = new Log({
+					init_user: id,
+					item: arr,
+	 				event: "request",
+	 				rec_user: id,
+				});
+				log.save((err)=>{
+					if (err) 
+						return res.status(500).send({ error: err });
+					return res.status(200).json(request);
+				});
+			});
+    		
+			
+        })
 	});
 }
 
