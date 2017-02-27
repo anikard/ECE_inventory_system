@@ -12,7 +12,7 @@ var _ = require('lodash');
 
 module.exports = (app) => {
   app.all('/api/cart/*', util.requireLogin);
-  
+
   app.get('/api/cart/show', show);
   app.post('/api/cart/add', add);
   app.post('/api/cart/update', add); //update is the same as add
@@ -26,7 +26,7 @@ function show(req, res) {
   .exec(function(err, cart) {
       if(err) {
         res.status(500).send({ error: err });
-      } 
+      }
       if (cart) {
         res.status(200).json(cart.items);
       } else {
@@ -74,7 +74,7 @@ function add(req, res) {
         res.status(200).json(cart.items);
       }
     });
-      
+
   })
 }
 
@@ -82,11 +82,11 @@ function del(req, res) {
 	Cart.findOne({user: req.user._id}, function(err, cart) {
     if(err) return res.status(500).send({ error: err });
     if(!cart) return res.status(400).send({ error: "Cart does not exist" });
-    
+
     var i = 0;
     var idx = -1;
     for(i = 0; i < cart.items.length; i++){
-      if(cart.items[i].item == req.body.item){
+      if(cart.items[i].item == req.body.item._id){
         idx = i;
         //break;
       }
@@ -105,7 +105,7 @@ function del(req, res) {
 }
 
 function empty(req, res) {
-	Cart.update({ user: req.user._id }, { 
+	Cart.update({ user: req.user._id }, {
 		$set: {items: []}
 	}, function(err, cart){
       if(err){

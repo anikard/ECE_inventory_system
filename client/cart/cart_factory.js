@@ -56,16 +56,17 @@ var orders_app = angular.module('cart_app', []);
       }
 
       factory.createRequest = function(info, callback) {
-        $http.post('/createRequest', info).success(function(output) {
+        $http.post('/api/request/add', info).success(function(output) {
             // orders = output;
             // callback(orders);
             console.log("created request in factory of cart")
         })
+        $('#orderModal').modal('hide');
       }
 
 
       factory.removeFromCart = function(order, callback) {
-        $http.post('/deleteFromCart', order).success(function(output) {
+        $http.post('/api/cart/del', order).success(function(output) {
             orders = output;
             callback(orders);
         })
@@ -155,7 +156,7 @@ var orders_app = angular.module('cart_app', []);
 
       $scope.removeFromCart = function(order) {
           $('#orderModal').modal('hide');
-          order.userId = auth.currentUserID();
+          //order.userId = auth.currentUserID();
           OrderFactory.removeFromCart(order, function(data) {
             for (var i =0; i < $scope.orders.length; i++)
             {  if ($scope.orders[i]._id === order._id) {
