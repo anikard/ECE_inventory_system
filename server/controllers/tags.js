@@ -3,24 +3,13 @@ var Tag = mongoose.model('Tag');
 var util = require('./util.js');
 
 module.exports = (app) => {
-	//app.use('/api/tag/show', util.requireLogin);
-	app.use('/api/tag/add', util.requirePrivileged);
-  	app.use('/api/tag/del', util.requirePrivileged);
-
-	app.get('/api/tag/show', function(req, res, next) {
-		show(req, res, next);
-	});
-
-	app.post('/api/tag/add', function(req, res, next) {
-		add(req, res, next);
-	});
-
-	app.post('/api/tag/del', function(req, res, next) {
-		del(req, res, next);
-	});
+	app.get('/api/tag/show', util.requireLogin, show);
+	app.post('/api/tag/add', util.requirePrivileged, add);
+	app.post('/api/tag/del', util.requirePrivileged, del);
 }
 
 function show(req, res, next) {
+	// We don't limit on tags, since there should not be so many tags that pagination is necessary
 	Tag.find({})
 		.exec(function(err, results) {
 			if(err) {

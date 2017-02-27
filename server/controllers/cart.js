@@ -15,62 +15,63 @@ module.exports = (app) => {
   
   app.get('/api/cart/show', show);
   app.post('/api/cart/add', add);
-  app.post('/api/cart/update', add);
+  app.post('/api/cart/update', add); //update is the same as add
   app.post('/api/cart/del', del);
   app.get('/api/cart/empty', empty);
 }
 
 function show(req, res) {
 	Cart.findOne({user: req.user._id}, function(err, cart) {
-        if(err) {
-          res.status(500).send({ error: err });
-        } 
-        if (cart) {
-          res.status(200).json(cart.items);
-        } else {
-          cart = new Cart({
-            user: req.user,
-            items: []
-          });
-          cart.save((err,cart)=>{
-            if(err) {
-              res.status(500).send({ error: err });
-            } else {
-              res.status(200).json(cart.items);
-            }
-          });
-        }
-    })
+      if(err) {
+        res.status(500).send({ error: err });
+      } 
+      if (cart) {
+        res.status(200).json(cart.items);
+      } else {
+        cart = new Cart({
+          user: req.user,
+          items: []
+        });
+        cart.save((err,cart)=>{
+          if(err) {
+            res.status(500).send({ error: err });
+          } else {
+            res.status(200).json(cart.items);
+          }
+        });
+      }
+  })
 }
 
 function add(req, res) {
 	Cart.findOne({user: req.user._id}, function(err, cart) {
-      if(err) return res.status(500).send({ error: err });
-      if(cart) {
-        let i = 0;
-        let idx = -1;
-        for(i = 0; i < cart.items.length; i++){
-          if(cart.items[i].item===req.body.item){
-            cart.items[i].quantity = req.body.quantity;
-            break;
-          }
+    if(err) return res.status(500).send({ error: err });
+    if(cart) {
+      // If the item exist we update it, otherwise we add it to the cart
+      let i = 0;
+      let idx = -1;
+      for(i = 0; i < cart.items.length; i++){
+        if(cart.items[i].item===req.body.item){
+          cart.items[i].quantity = req.body.quantity;
+          break;
         }
-        if(idx === -1) cart.items.push(_.pick(req.body,['item','quantity']));
-  	    cart.save();
-      } else {
-      	cart = new Cart({
-      		user: req.user._id,
-      		items: []
-      	})
-        cart.items.push(_.pick(req.body,['item','quantity']));
       }
-      cart.save((err,cart)=>{
-        if(err) {
-          res.status(500).send({ error: err });
-        } else {
-          res.status(200).json(cart.items);
-        }
-      });
+      if(idx === -1) cart.items.push(_.pick(req.body,['item','quantity']));
+	    cart.save();
+    } else {
+    	cart = new Cart({
+    		user: req.user._id,
+    		items: []
+    	})
+      cart.items.push(_.pick(req.body,['item','quantity']));
+    }
+    cart.save((err,cart)=>{
+      if(err) {
+        res.status(500).send({ error: err });
+      } else {
+        res.status(200).json(cart.items);
+      }
+    });
       
   })
 }

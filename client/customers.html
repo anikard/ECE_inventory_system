@@ -2,9 +2,12 @@
 <head>
   <title>ECE Inventory</title>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
-  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
   <style type="text/css">
-    body { 
+    body {
       font-family: Helvetica, Arial, sans-serif;
       text-align: center;
     }
@@ -69,19 +72,19 @@
       width:100%;
       height: 21em;
       overflow-y:scroll;
-      
+
       -moz-border-radius-bottomleft:14px;
       -webkit-border-bottom-left-radius:14px;
       border-bottom-left-radius:14px;
-      
+
       -moz-border-radius-bottomright:14px;
       -webkit-border-bottom-right-radius:14px;
       border-bottom-right-radius:14px;
-      
+
       -moz-border-radius-topright:14px;
       -webkit-border-top-right-radius:14px;
       border-top-right-radius:14px;
-      
+
       -moz-border-radius-topleft:14px;
       -webkit-border-top-left-radius:14px;
       border-top-left-radius:14px;
@@ -115,12 +118,12 @@
       border-bottom-left-radius:14px;
     }.customerTable tr:hover td{
       background-color:#ffffff;
-        
+
 
     }
     .customerTable td{
       vertical-align:middle;
-      
+
       background-color:#b7cece;
 
       border:1px solid #a8e0e0;
@@ -180,6 +183,7 @@
           return $window.localStorage['inventoryToken'];
         }
 
+/*
         auth.isLoggedIn = function(){
           var token = auth.getToken();
 
@@ -200,6 +204,15 @@
             return payload.username;
           }
         };
+        */
+
+        // TODO: Unused, deprecate
+        auth.currentUser = function(callback) {
+          $http.get('api/user').success(function(output) {
+            var currentUser = output;
+            callback(currentUser);
+          })
+        }
 
         auth.registerUser = function(user, callback){
           return $http.post('/register', user).success(function(data){
@@ -213,11 +226,11 @@
           if(auth.isLoggedIn()){
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
-            
+
             return payload.status;
           }
         };
-        
+
         auth.logout = function(callback){
           $window.localStorage.removeItem('inventoryToken');
           console.log("removed from storage log out");
@@ -225,10 +238,16 @@
         };
 
         auth.getUsers = function(callback) {
-          $http.get('/customers').success(function(output) {
+          $http.get('/api/user/show').success(function(output) {
             customers = output;
             callback(customers);
-          }) 
+          })
+        }
+
+        auth.updateUser = function(info, callback) {
+          $http.post('/api/user/update', info).success(function(output) {
+            callback();
+          })
         }
 
       return auth;
@@ -237,9 +256,12 @@
 
     customers_app.controller('userController', function($scope, auth, $document, $location) {
 
-      $scope.myName = auth.currentUser();
-        console.log("MY NAME: " + $scope.myName);
-        $scope.authorized = (auth.currentUserStatus()=="admin");
+      $scope.currentUser = auth.currentUser(function(data) {
+        $scope.currentUser = data;
+        $scope.authorized = data.status == "admin"
+      });
+        //console.log("MY NAME: " + $scope.myName);
+        //$scope.authorized = (auth.currentUserStatus()=="admin");
 
       $scope.users = auth.getUsers(function(data) {
         $scope.users = data;
@@ -269,8 +291,31 @@
         }
 
       $scope.getCurrentStatus = function() {
-          return auth.currentUserStatus();
+          //return auth.currentUserStatus();
+          return $scope.currentUser.status;
         }
+
+      $scope.changeStatus = function(user) {
+        //$('#changeStatusModal').modal('show');
+        console.log(user);
+        $scope.selectedUser = user
+      }
+
+      $scope.statuses = ["user", "admin", "manager"];
+
+      $scope.confirmChangeStatus = function(user) {
+        var statusSelector = document.getElementById("status_select_modal");
+        var status = statusSelector.options[statusSelector.selectedIndex].text;
+        console.log(status);
+        console.log($scope.selectedUser);
+        var info = {};
+        info.status = status;
+        info._id = $scope.selectedUser._id;
+        auth.updateUser(info, function() {
+          console.log("update status Success");
+        })
+        $('#changeStatusModal').modal('hide');
+      }
 
   });
 
@@ -290,13 +335,16 @@
                     <tr>
                         <td> User Name </td>
                         <td> Created Date </td>
+                        <td> Status </td>
                         <!-- <td> Actions </td> -->
                     </tr>
                     <tr ng-repeat="customer in users | filter: filter_name | orderBy:'-date'">
                         <td ng-bind="customer.username"></td>
                         <td ng-bind="customer.date | date:'medium'"></td>
+                        <!-- <td ng-bind="customer.status">{{customer.status}}</td>-->
+                        <td>{{customer.status}}&nbsp;&nbsp;<button ng-click="changeStatus(customer)" data-toggle="modal" data-target='#changeStatusModal'>Change</button></td>
                         <!-- <td><button class = "remove" ng-click='removeCustomer(customer)' >Remove</button></td> -->
-               
+
                     </tr>
 
                 </table>
@@ -324,6 +372,40 @@
     </div>
     <input style = "display:inline; width:15%; " type="submit" value = "Register" ng-click="registerUser()" >
   </form>
+
+  <!-- CHANGE STATUS MODAL -->
+  <div class="modal fade" id="changeStatusModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h1 class="modal-title" id="exampleModalLabel">Change Satus</h1>
+        </div>
+        <div class="modal-body" align="left">
+          <div class="form-group" >
+            <select id="status_select_modal" class="feedback-input" name="statusOptions">
+              <option ng-repeat="status in statuses" ng-bind"status">{{status}}</option>
+            </select>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmChangeStatus()>Confirm</button>
+            <button type="button" class="btn btn-secondary" aria-hidden="true" data-dismiss="modal">Cancel</button><!--ng-click=cancelEditModal(currentProduct)>Cancel</button>-->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script type="text/javascript">
+    $('#changeStatusModal').on('show.bs.modal', function (event) {
+      console.log("product modal called");
+      var button = $(event.relatedTarget);
+      var modal = $(this);
+    })
+  </script>
 
 </body>
 </html>

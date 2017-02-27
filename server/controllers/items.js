@@ -6,22 +6,21 @@ var Log = mongoose.model('Log');
 var util = require('./util.js');
 
 module.exports = (app) => {
-  app.use('/api/item/show', util.requireLogin);
-  app.use('/api/item/add', util.requirePrivileged);
-  app.use('/api/item/del', util.requirePrivileged);
-  app.use('/api/item/update', util.requirePrivileged);
-
-  app.get('/api/item/show', function(req, res, next) {
-    Item.find({}, function(err, results) {
-        if(err) {
-          res.status(500).send({ error: err });
-        } else {
-          res.status(200).json(results);
-        }
-    });
+  app.get('/api/item/show', util.requireLogin, function(req, res, next) {
+    Item.find({})
+    .limit(req.query.limit || 20)
+    .exec((err, results) => {
+      if(err) {
+        res.status(500).send({ error: err });
+      } else {
+        res.status(200).json(results);
+      }
+    })
   });
 
-  app.post('/api/item/add', function(req, res, next) {
+  app.post('/api/item/add', util.requirePrivileged, function(req, res, next) {
+    if (!req.body.name) 
+      return res.status(400).send({ error: "Missing itme name" });
     Item.findOne({ 'name': req.body.name }, function (err, item) {
       if (err) {
         return res.status(500).send({ error: err });
@@ -60,9 +59,13 @@ module.exports = (app) => {
     });
   });
 
-  app.post('/api/item/del', function(req, res, next) {
-    Item.remove({ _id: req.body._id},
-      function (err, request) {
+  app.post('/api/item/del', util.requirePrivileged, function(req, res, next) {
+    if (! req.body._id && !req.body.item && !req.body.name) 
+      return res.status(400).send({ error: "Missing _id or name" });
+    req.body._id = req.body._id || req.body.item;
+    let query = req.body._id ? {_id: req.body._id} : {name: req.body.name};
+    Item.remove(query,
+      (err, request) => {
         if (err) {
           res.status(500).send({ error: err });
         } else {
@@ -73,8 +76,9 @@ module.exports = (app) => {
     );
   });
 
-  app.post('/api/item/update', function(req, res, next) {
-    if (! req.body._id) return res.status(400).send({ error: "Missing ref id" });
+  app.post('/api/item/update', util.requirePrivileged, function(req, res, next) {
+    if (! req.body._id && !req.body.item) return res.status(400).send({ error: "Missing ref id" });
+    req.body._id = req.body._id || req.body.item;
     props = _.pick(req.body, ['name','quantity','model','description','tags','image','fields']);
     Item.findByIdAndUpdate(
     req.body._id,
