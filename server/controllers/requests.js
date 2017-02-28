@@ -92,9 +92,9 @@ function add (req, res) {
 	Cart.findOne({user: req.user._id})
 	.populate('items.item')
 	.exec( function(err, cart) {
-		if (err) 
+		if (err)
 			return res.status(500).send({ error: err });
-		if (!cart || cart.items.length === 0) 
+		if (!cart || cart.items.length === 0)
 			return res.status(400).send({ error: "Empty cart" });
 		let request = new Request({
         	user: id,
@@ -103,15 +103,15 @@ function add (req, res) {
 			status: "open",
         });
         request.save((err,request) => {
-        	if (err) 
+        	if (err)
 				return res.status(500).send({ error: err });
 			cart.items = [];
 			cart.save((err)=>{
-				if (err) 
+				if (err)
 					return res.status(500).send({ error: err });
 	    		let arr = []
 	    		request.items.forEach(i=>arr.push(i.item));
-			
+
 			let quantity_arr = []
 			request.items.forEach(i=>quantity_arr.push(i.quantity));
 	    		let log = new Log({
@@ -123,7 +123,7 @@ function add (req, res) {
 					quantity: quantity_arr,
 				});
 				log.save((err)=>{
-					if (err) 
+					if (err)
 						return res.status(500).send({ error: err });
 					return res.status(200).json(request);
 				});
@@ -136,9 +136,9 @@ function disburse (id, req, res) {
 	Cart.findOne({user: req.user})
 	.populate('items.item')
 	.exec(function(err, cart) {
-		if (err) 
+		if (err)
 			return res.status(500).send({ error: err });
-		if (!cart || cart.items.length === 0) 
+		if (!cart || cart.items.length === 0)
 			return res.status(400).send({ error: "Empty cart" });
 		for (let i = 0;i<cart.items.length;i++){
 			if (cart.items[i].item.quantity < cart.items[i].quantity)
@@ -155,21 +155,21 @@ function disburse (id, req, res) {
 			cart.items[i].item.quantity -= cart.items[i].quantity;
 		}
         request.save((err,request) => {
-        	if (err) 
+        	if (err)
 				return res.status(500).send({ error: err });
 			for (let i = 0;i<cart.items.length;i++){
 				cart.items[i].item.save();
 			}
 			cart.items = [];
 			cart.save((err)=>{
-				if (err) 
+				if (err)
 					return res.status(500).send({ error: err });
 	    		let arr = []
 	    		request.items.forEach(i=>arr.push(i.item));
-				
+
 			let quantity_arr = []
 			request.items.forEach(i=>quantity_arr.push(i.quantity));
-				
+
 	    		let log = new Log({
 					init_user: req.user,
 					item: arr,
@@ -178,7 +178,7 @@ function disburse (id, req, res) {
 					quantity: quantity_arr,
 				});
 				log.save((err)=>{
-					if (err) 
+					if (err)
 						return res.status(500).send({ error: err });
 					return res.status(200).json(request);
 				});
@@ -193,11 +193,11 @@ function close (req, res)  {
    //                 	{ $pull: { orders: req.body._id} }
    //               );
 	request.findByIdAndUpdate(
-		req.body._id, 
+		req.body._id,
 		{ $set: {
 			status: "closed",
-		}}, 
-		{ new: true }, 
+		}},
+		{ new: true },
 		function (err, request) {
 			if (err) console.log("Error");
 			res.end();
@@ -206,7 +206,7 @@ function close (req, res)  {
 }
 
 function del (req, res) {
-	Request.remove({ _id: req.body._id}, 
+	Request.remove({ _id: req.body._id},
 		function (err, request) {
 			if (err) {
 				res.status(500).send({ error: err });
@@ -226,12 +226,12 @@ function update (req, res) {
 		if (err) return res.status(500).send({ error: err});
 
 		if (request.status === "open" && req.body.status === "approved") {
-			if (req.user.status != "admin" && req.user.status != "manager") 
+			if (req.user.status != "admin" && req.user.status != "manager")
 				return res.status(401).send({ error: "Unauthorized operation"});
 			for (let i = 0;i<request.items.length;i++){
 				if (request.items[i].item.quantity < request.items[i].quantity)
-					return res.status(400).send({ 
-						error: `Request quantity of ${request.items[i].item.name} exceeds stock limit` 
+					return res.status(400).send({
+						error: `Request quantity of ${request.items[i].item.name} exceeds stock limit`
 					});
 			}
 			for (let i = 0;i<request.items.length;i++){
@@ -244,13 +244,13 @@ function update (req, res) {
 				for (let i = 0;i<request.items.length;i++){
 					request.items[i].item.save();
 				}
-				
+
 				let arr = []
 	    		request.items.forEach(i=>arr.push(i.item));
-				
+
 				let quantity_arr = []
 			request.items.forEach(i=>quantity_arr.push(i.quantity));
-				
+
 	    		let log = new Log({
 					init_user: req.user,
 					item: arr,
@@ -272,4 +272,3 @@ function update (req, res) {
 		}
 	});
 }
-

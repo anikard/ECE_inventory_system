@@ -37,6 +37,12 @@ var orders_app = angular.module('cart_app', []);
         })
       }
 
+      factory.getcustomers = function(callback) {
+        $http.get('/api/user/show').success(function(output) {
+          callback(output);
+        })
+      }
+
 
 
       // factory.addOrder = function(info, callback) {
@@ -62,6 +68,7 @@ var orders_app = angular.module('cart_app', []);
             console.log("created request in factory of cart")
         })
         $('#orderModal').modal('hide');
+        $('#disburseModal').modal('hide');
       }
 
 
@@ -98,25 +105,24 @@ var orders_app = angular.module('cart_app', []);
 
 
         // AUTH
+
+        $scope.currentUser = OrderFactory.getuser(function(data) {
+          $scope.currentUser = data;
+          $scope.authorized = data.status == "admin"
+        });
+
         $scope.logout = function() {
           $http.get('/api/auth/logout').success(function(output) {
             $scope.isLoggedIn = false;
             window.location.assign("/");
           });
         }
-        /*
-        $scope.logout = function() {
-          console.log("scope logging out ");
-          auth.logout(function() {
-            $scope.isLoggedIn = false;
-            window.location.assign("/");
-          });
-        }
 
-        $scope.getCurrentStatus = function() {
-          return auth.currentUserStatus();
-        }
-        */
+      $scope.customers = OrderFactory.getcustomers(function(data) {
+        $scope.customers = data;
+        console.log("GETTTING USERS");
+        console.log($scope.customers);
+      })
 
       $scope.addToCart = function() {
 
@@ -151,7 +157,7 @@ var orders_app = angular.module('cart_app', []);
 
         // console.log($scope.this_request.reason);
 
-        $scope.this_request.cartItems = $scope.orders;
+        $scope.this_request.items = $scope.orders;
 
         console.log($scope.this_request);
 
