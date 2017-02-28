@@ -22,19 +22,19 @@ var orders_app = angular.module('orders_app', []);
 
       factory.getuser = function(callback) {
         $http.get('/api/user').success(function(output) {
-          callback(customers);
+          callback(output);
         })
       }
 
-      factory.getorders = function(info, callback) {
-        $http.post('/orders', info).success(function(output) {
+      factory.getorders = function(callback) {
+        $http.get('/api/request/show').success(function(output) {
           orders = output;
 
           console.log(orders);
           orders.forEach(function(elem) {
             //WHAT I REMOVED WAS ONE LINE OF COMMENTS HERE
             // elem["customer_name"] = elem["userId"].name;
-            elem.customer_name = "SAMPLE NAME"
+            //elem.customer_name = "SAMPLE NAME"
           })
           console.log(orders);
 
@@ -73,7 +73,7 @@ var orders_app = angular.module('orders_app', []);
     });
 
 
-    orders_app.controller('ordersController', function($scope, OrderFactory, auth, $document) {
+    orders_app.controller('ordersController', function($scope, OrderFactory, /*auth,*/ $document) {
         //console.log("USER ID: " + auth.currentUserID());
         //var thisId = {userId: auth.currentUserID()};
         $scope.orders = OrderFactory.getorders(/*thisId,*/ function(data) {
@@ -81,7 +81,7 @@ var orders_app = angular.module('orders_app', []);
 
         });
 
-        $scope.user = OrderFactory.getuser($document, function(data) {
+        $scope.user = OrderFactory.getuser(function(data) {
           $scope.user = data;
 
           $scope.authorized = data.status == "admin";
@@ -90,7 +90,8 @@ var orders_app = angular.module('orders_app', []);
           console.log("AUTHORIZED:")
           console.log($scope.authorized);
 
-          $scope.authorized = (auth.currentUserStatus()=="admin");
+          //$scope.authorized = (auth.currentUserStatus()=="admin");
+          /*
           if ($scope.authorized) {
             $document[ 0 ].getElementById('customerList').display = "block";
             $document[ 0 ].getElementById('thisCustomerInput').display = "none";
@@ -99,12 +100,14 @@ var orders_app = angular.module('orders_app', []);
             $document[ 0 ].getElementById('customerList').display = "none";
             $document[ 0 ].getElementById('thisCustomerInput').display = "block";
           }
+          */
         })
 
         //$scope.myName = auth.currentUser();
         //console.log("MY NAME: " + $scope.myName);
+
+        //$scope.authorized = (auth.currentUserStatus()=="admin");
         /*
-        $scope.authorized = (auth.currentUserStatus()=="admin");
         if ($scope.authorized) {
           $document[ 0 ].getElementById('customerList').display = "block";
           $document[ 0 ].getElementById('thisCustomerInput').display = "none";
@@ -114,6 +117,7 @@ var orders_app = angular.module('orders_app', []);
           $document[ 0 ].getElementById('thisCustomerInput').display = "block";
         }
         */
+
 
         // AUTH
         /*
@@ -266,7 +270,7 @@ var orders_app = angular.module('orders_app', []);
       })
     })
 
-
+/*
     orders_app.factory('auth', ['$http', '$window', function($http, $window){
        var auth = {};
 
@@ -334,6 +338,7 @@ var orders_app = angular.module('orders_app', []);
 
       return auth;
     }])
+    */
 
     // orders_app.controller('authController', function($scope, auth) {
     //     $scope.myName = auth.currentUser();
