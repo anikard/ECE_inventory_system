@@ -28,6 +28,7 @@ sudo service mongod start
 
 ###Install Node
 ```
+sudo apt-get install curl
 curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 sudo apt-get update
 sudo apt-get install nodejs
@@ -61,7 +62,7 @@ echo fs.inotify.max_user_watches=582222 | sudo tee -a /etc/sysctl.conf && sudo s
 Finally, clone and deploy the project
 ```
 git clone https://github.com/anikard/ECE_inventory_system
-cd ECE_inventory_system/src && npm install
+cd ECE_inventory_system && npm install
 node server.js
 ```
 ###Then access the site at:
