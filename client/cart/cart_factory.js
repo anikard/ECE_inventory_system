@@ -37,6 +37,12 @@ var orders_app = angular.module('cart_app', []);
         })
       }
 
+      factory.getcustomers = function(callback) {
+        $http.get('/api/user/show').success(function(output) {
+          callback(output);
+        })
+      }
+
 
 
       // factory.addOrder = function(info, callback) {
@@ -97,6 +103,10 @@ var orders_app = angular.module('cart_app', []);
 
 
         // AUTH
+        $scope.currentUser = OrderFactory.getuser(function(data) {
+          $scope.currentUser = data;
+          $scope.authorized = data.status == "admin"
+        });
         /*
         $scope.logout = function() {
           console.log("scope logging out ");
@@ -110,6 +120,12 @@ var orders_app = angular.module('cart_app', []);
           return auth.currentUserStatus();
         }
         */
+
+      $scope.customers = OrderFactory.getcustomers(function(data) {
+        $scope.customers = data;
+        console.log("GETTTING USERS");
+        console.log($scope.customers);
+      })
 
       $scope.addToCart = function() {
 
@@ -144,7 +160,7 @@ var orders_app = angular.module('cart_app', []);
 
         // console.log($scope.this_request.reason);
 
-        $scope.this_request.cartItems = $scope.orders;
+        $scope.this_request.items = $scope.orders;
 
         console.log($scope.this_request);
 
@@ -153,6 +169,24 @@ var orders_app = angular.module('cart_app', []);
           $scope.this_request = {};
         });
       }
+
+/*
+      $scope.createDisburse = function() {
+
+        console.log("createDisburse from cart controller scope");
+
+        // console.log($scope.this_request.reason);
+
+        $scope.this_request.items = $scope.orders;
+
+        console.log($scope.this_request);
+
+        OrderFactory.createRequest($scope.this_request, function(data) {
+          $scope.orders = {};
+          $scope.this_request = {};
+        });
+      }
+*/
 
       $scope.removeFromCart = function(order) {
           $('#orderModal').modal('hide');
