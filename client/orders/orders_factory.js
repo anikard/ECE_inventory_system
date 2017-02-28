@@ -56,9 +56,13 @@ var orders_app = angular.module('orders_app', []);
 */
 
       factory.updateOrder = function(info, callback) {
-        $http.post('/api/request/update', info).success(function(output) {
-            callback(output);
-        })
+        $http.post('/api/request/update', info)
+          .success(function(output) {
+              callback(output);
+          })
+          .error(function(error) {
+            callback(error);
+          })
       }
 
 
@@ -258,7 +262,7 @@ var orders_app = angular.module('orders_app', []);
       }
 
       $scope.respondToOrder = function() {
-        $('#orderModal').modal('hide');
+
         // $scope.orderResponse.dateFulfilled = new Date();
         console.log("RESPONDING TO ORDER");
         var approved = $document[0].getElementsByClassName('approveButton')[0].checked;
@@ -277,9 +281,19 @@ var orders_app = angular.module('orders_app', []);
 
         console.log($scope.responseToOrder);
         OrderFactory.updateOrder($scope.responseToOrder, function(data) {
-          $scope.orderResponse = {};
-          $scope.responseToOrder = {};
+          console.log("in update");
+          console.log(data);
+          if(data.error) {
+            console.log("error")
+            $scope.errorMessage = data.error;
+          }
+          else {
+            $scope.orderResponse = {};
+            $scope.responseToOrder = {};
+            $('#orderModal').modal('hide');
+          }
         });
+
 
 
       }
