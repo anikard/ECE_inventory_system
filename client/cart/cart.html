@@ -13,7 +13,8 @@
 </head>
 
 <body ng-controller="ordersController">
-  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> |</span> <a href="" ng-click="logout()">logout {{user.username}}</a>
+  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispFields">custom fields</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> </span> | <a href="" ng-click="logout()">logout {{myName}}</a>
+  <!--<span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> |</span> <a href="" ng-click="logout()">logout {{user.username}}</a>-->
 <h1> {{user.username | uppercase}}'S CART</h1>
 <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search for item">
 
@@ -37,7 +38,7 @@
 
 
 <button class = "blueButton" data-toggle="modal" data-target="#orderModal">Create Request</button>
-
+<button ng-show="authorized" class="blueButton" data-toggle="modal" data-target="#disburseModal">Direct Disburse</button>
 
   <h1 style="margin-top:3em;">Add an item to your cart</h1>
 
@@ -55,7 +56,7 @@
  </form>
 
 
-
+<!-- MODAL FOR REGULAR REQUEST-->
 <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -87,6 +88,50 @@
       <div class="modal-footer">
         <!-- <button class="btn btn-danger" ng-click='removeOrder(thisOrder)'  id = "cancelOrderButton">Cancel order</button> -->
         <button type="button" class="btn btn-primary" ng-click="createRequest()" id = "respondOrderButton">Create request</button>
+        <!--<button ng-show="authorized" type="button" class="btn btn-primary" ng-->
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FOR DIRECT DISBURSAL-->
+<div class="modal fade" id="disburseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+
+        </button>
+          <h1 class="modal-title" id="exampleModalLabel">Direct Disburse</h1>
+
+      </div>
+      <div class="modal-body" align="left">
+
+        <table class="createRequestTable">
+          <tr>
+            <td> Item </td>
+            <td> Quantity </td>
+          </tr>
+
+          <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
+            <td ng-bind="order.item.name"></td>
+            <td ng-bind="order.quantity"></td>
+          </tr>
+        </table>
+
+        <select class = "feedback-input" id = "customerList" name="customerOptions" ng-model="this_request.user">
+          <option value="" selected disabled>User Name</option>
+          <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.name"></option>
+        </select>
+
+        <textarea style="display:block; width: 80%; margin-left:10%" class = "feedback-input" ng-model="this_request.reason" placeholder="Comment"></textarea>
+
+      </div>
+      <div class="modal-footer">
+        <!-- <button class="btn btn-danger" ng-click='removeOrder(thisOrder)'  id = "cancelOrderButton">Cancel order</button> -->
+        <button type="button" class="btn btn-primary" ng-click="createRequest()" id = "respondOrderButton">Create Disburse</button>
         <!--<button ng-show="authorized" type="button" class="btn btn-primary" ng-->
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
       </div>

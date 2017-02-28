@@ -74,7 +74,7 @@ var orders_app = angular.module('orders_app', []);
     });
 
 
-  orders_app.controller('productsController', function($scope, OrderFactory) {
+  orders_app.controller('productsController', function($scope, $http, OrderFactory) {
         $scope.products = OrderFactory.getproducts(function(data) {
         $scope.products = data;
       })
@@ -150,6 +150,12 @@ var orders_app = angular.module('orders_app', []);
 
 
         // AUTH
+        $scope.logout = function() {
+          $http.get('/api/auth/logout').success(function(output) {
+            $scope.isLoggedIn = false;
+            window.location.assign("/");
+          });
+        }
         /*
         $scope.logout = function() {
           console.log("scope logging out ");
