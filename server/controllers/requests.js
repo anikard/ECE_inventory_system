@@ -111,12 +111,16 @@ function add (req, res) {
 					return res.status(500).send({ error: err });
 	    		let arr = []
 	    		request.items.forEach(i=>arr.push(i.item));
+			
+			let quantity_arr = []
+			request.items.forEach(i=>quantity_arr.push(i.quantity));
 	    		let log = new Log({
 					init_user: id,
 					item: arr,
 	 				event: "Request",
 	 				request: request,
 	 				rec_user: id,
+					quantity: quantity_arr,
 				});
 				log.save((err)=>{
 					if (err) 
@@ -162,11 +166,16 @@ function disburse (id, req, res) {
 					return res.status(500).send({ error: err });
 	    		let arr = []
 	    		request.items.forEach(i=>arr.push(i.item));
+				
+			let quantity_arr = []
+			request.items.forEach(i=>quantity_arr.push(i.quantity));
+				
 	    		let log = new Log({
 					init_user: req.user,
 					item: arr,
 	 				event: "Disbursement",
 	 				rec_user: id,
+					quantity: quantity_arr,
 				});
 				log.save((err)=>{
 					if (err) 
@@ -235,15 +244,21 @@ function update (req, res) {
 				for (let i = 0;i<request.items.length;i++){
 					request.items[i].item.save();
 				}
+				
 				let arr = []
 	    		request.items.forEach(i=>arr.push(i.item));
+				
+				let quantity_arr = []
+			request.items.forEach(i=>quantity_arr.push(i.quantity));
+				
 	    		let log = new Log({
 					init_user: req.user,
 					item: arr,
 	 				event: "Request",
 	 				request: request,
 	 				rec_user: request.user,
-	 				admin_action: "Approve"
+	 				admin_action: "Approve",
+					quantity: quantity_arr
 				});
 				log.save();
 				return res.status(200).json(request);
