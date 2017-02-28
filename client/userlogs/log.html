@@ -18,7 +18,7 @@
 </head>
 
 <body ng-controller="logController">
-  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> |</span> <a href="" ng-click="logout()">logout {{myName}}</a>
+  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispFields">custom fields</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> </span> | <a href="" ng-click="logout()">logout {{myName}}</a>
   <!-- TO FIX -->
 <h1> {{myName | uppercase}}'S LOGS</h1>
 
@@ -28,10 +28,10 @@
 
 
 <form>
-  <input class = "feedback-input searchBox" style = "display:inline-block; width: 15%; margin-bottom: 0px;" type="text" ng-model="search.init_user" placeholder="initiating user"> 
-  <input class = "feedback-input searchBox" style = "display:inline-block; width: 15%; margin-bottom: 0px; margin-left: 2em;" type="text" ng-model="search.rec_user" placeholder="recipient user"> 
+  <input class = "feedback-input searchBox" style = "display:inline-block; width: 15%; margin-bottom: 0px;" type="text" ng-model="search.init_user" placeholder="initiating user">
+  <input class = "feedback-input searchBox" style = "display:inline-block; width: 15%; margin-bottom: 0px; margin-left: 2em;" type="text" ng-model="search.rec_user" placeholder="recipient user">
 
-  <input class = "feedback-input searchBox" style = "display:inline-block; width: 15%; margin-bottom: 0px; margin-left: 2em;" type="text" ng-model="search.items" placeholder="item"> 
+  <input class = "feedback-input searchBox" style = "display:inline-block; width: 15%; margin-bottom: 0px; margin-left: 2em;" type="text" ng-model="search.items" placeholder="item">
   <input ng-model="search.date" class = "feedback-input searchBox" style = "display:inline-block; width: 15% ; margin-bottom: 0px; margin-left: 2em;" type="text" id="datepicker" placeholder="start date">
   <button class = "blueButton searchBox" style = "display:inline-block; width: 12% ; margin-bottom: 0px; margin-right: 0px;" id="submitDate" ng-click="filterByDate()">Filter by date</button>
   <!-- <div></div> -->

@@ -11,7 +11,7 @@ var log_app = angular.module('log_app', []);
           callback(customers);
         })
       }
-      
+
       factory.getLogs = function(callback) {
         $http.get('/api/log/show').success(function(output) {
           logs = output;
@@ -61,10 +61,10 @@ var log_app = angular.module('log_app', []);
     });
 
 
-    log_app.controller('logController', function($scope, $rootScope, $window, LogFactory, /*auth,*/ $document) {
+    log_app.controller('logController', function($scope, $rootScope, $window, $http, LogFactory, /*auth,*/ $document) {
         // console.log("USER ID: " + auth.currentUserID());
         // var thisId = {userId: auth.currentUserID()};
-        
+
         LogFactory.getorders(function(data) {
           console.log("scope getting requests");
           console.log(data);
@@ -100,17 +100,17 @@ var log_app = angular.module('log_app', []);
 
         $scope.user = LogFactory.getcustomers(function(data) {
          $scope.user = data;
-     
+
          $scope.authorized = data.status == "admin";
          $scope.myName = data.username;
-     
+
          console.log("AUTHORIZED:")
          console.log($scope.authorized);
          console.log(data);
        })
 
 
-        
+
         $scope.getItem = function(item_name) {
           console.log("GETTING ITEM " + item_name);
           var item_info = {};
@@ -277,7 +277,7 @@ var log_app = angular.module('log_app', []);
           }
       ];
 
-      
+
 
 
       function color_table_elements() {
@@ -290,15 +290,15 @@ var log_app = angular.module('log_app', []);
 
       color_table_elements();
 
- 
+
       // $scope.scrollIntoView = function(element, container) {
       // $scope.scrollIntoView = function(rowNum) {
       //   var element = document.getElementById('myLogTable').getElementsByTagName('tr')[rowNum];
       //   var container = "window";
-      //   var containerTop = $(container).scrollTop(); 
-      //   var containerBottom = containerTop + $(container).height(); 
+      //   var containerTop = $(container).scrollTop();
+      //   var containerBottom = containerTop + $(container).height();
       //   var elemTop = element.offsetTop;
-      //   var elemBottom = elemTop + $(element).height(); 
+      //   var elemBottom = elemTop + $(element).height();
 
       //   var elemAbsTop = element.getBoundingClientRect().top;
 
@@ -312,17 +312,17 @@ var log_app = angular.module('log_app', []);
 
         console.log("in filter function");
                 var df = $scope.dateSelected;
-                var result = [];        
+                var result = [];
                 for (var i=0; i<$scope.logs.length; i++){
                     if ($scope.logs[i].date >= df)  {
                         result.push($scope.logs[i]);
                     }
-                }    
+                }
                 console.log("filtering logs");
                 console.log(result);
                 $scope.logs = result;
       }
-       
+
       $("#datepicker").datepicker({
         dateFormat: 'yy-mm-dd' ,
           onSelect: function(dateText, inst) {
@@ -342,12 +342,11 @@ var log_app = angular.module('log_app', []);
         // $scope.myName = auth.currentUser();
         // console.log("MY NAME: " + $scope.myName);
         // $scope.authorized = (auth.currentUserStatus()=="admin");
-        
+
 
         // AUTH
         $scope.logout = function() {
-          console.log("scope logging out ");
-          auth.logout(function() {
+          $http.get('/api/auth/logout').success(function(output) {
             $scope.isLoggedIn = false;
             window.location.assign("/");
           });
@@ -358,7 +357,7 @@ var log_app = angular.module('log_app', []);
         }
     })
 
-   
+
     // log_app.factory('auth', ['$http', '$window', function($http, $window){
     //    var auth = {};
 
@@ -380,7 +379,7 @@ var log_app = angular.module('log_app', []);
     //       if(auth.isLoggedIn()){
     //         var token = auth.getToken();
     //         var payload = JSON.parse($window.atob(token.split('.')[1]));
-            
+
     //         return payload.username;
     //       }
     //     };
@@ -389,7 +388,7 @@ var log_app = angular.module('log_app', []);
     //       if(auth.isLoggedIn()){
     //         var token = auth.getToken();
     //         var payload = JSON.parse($window.atob(token.split('.')[1]));
-            
+
     //         return payload._id;
     //       }
     //     };
@@ -398,7 +397,7 @@ var log_app = angular.module('log_app', []);
     //       if(auth.isLoggedIn()){
     //         var token = auth.getToken();
     //         var payload = JSON.parse($window.atob(token.split('.')[1]));
-            
+
     //         return payload.status;
     //       }
     //     };

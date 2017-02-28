@@ -74,6 +74,8 @@
     discussion_app.factory('posts', ['$http', 'auth', function($http, auth){
 
 
+
+
     }])
 
 
@@ -101,6 +103,13 @@
             return false;
           }
         };
+
+        auth.getuser = function(callback) {
+          $http.get('/api/user').success(function(output) {
+            //customers = output;
+            callback(output);
+          })
+        }
 
         auth.currentUser = function(){
           if(auth.isLoggedIn()){
@@ -158,7 +167,7 @@
     }])
 
 
-    discussion_app.controller('userController', function($scope, auth, $document, $location) {
+    discussion_app.controller('userController', function($scope, $http, auth, $document, $location) {
       // $scope.authorized = true; // TO FIX
       $scope.loginUser = function() {
         console.log("scope logging in");
@@ -194,6 +203,23 @@
           document.getElementById("pdField").value = '';
       }
 
+      $scope.user = auth.getuser(function(data) {
+        $scope.user = data;
+
+        $scope.authorized = data.status == "admin";
+        $scope.myName = data.username;
+
+        console.log("AUTHORIZED:")
+        console.log($scope.authorized);
+      })
+
+      $scope.logout = function() {
+        $http.get('/api/auth/logout').success(function(output) {
+          $scope.isLoggedIn = false;
+          window.location.assign("/");
+        });
+      }
+
       $scope.oauthLoginUser = function() {
         console.log("trying out duke login")
         window.location.href = '/api/auth/oauth';
@@ -227,15 +253,6 @@
         document.getElementById("pdField").value = '';
       }
 
-      $scope.logout = function() {
-        console.log("scope logging out ");
-        auth.logout(function() {
-          $scope.isLoggedIn = false;
-          document.getElementById("navTop").style.display = "none";
-          document.getElementById("loginForm").style.display = "block";
-        });
-      }
-
 
   });
 
@@ -248,7 +265,8 @@
 <body>
 
 <div ng-controller="userController" id = "navTop" style="display:none;">
-  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> |</span> <a href="" ng-click="logout()">logout {{myName}}</a>
+
+  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispFields">custom fields</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> </span> | <a href="" ng-click="logout()">logout {{myName}}</a>
 <!--     <a ng-if="authorized" href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
  -->
 </div>

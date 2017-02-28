@@ -75,10 +75,11 @@ var orders_app = angular.module('cart_app', []);
       return factory;
     });
 
-    orders_app.controller('ordersController', function($scope, OrderFactory, auth, $document) {
+    orders_app.controller('ordersController', function($scope, $http, OrderFactory, auth, $document) {
 
         $scope.user = OrderFactory.getuser(function(data) {
           $scope.user = data;
+          $scope.myName = data.username;
         })
 
         //console.log("USER ID: " + auth.currentUserID());
@@ -97,6 +98,12 @@ var orders_app = angular.module('cart_app', []);
 
 
         // AUTH
+        $scope.logout = function() {
+          $http.get('/api/auth/logout').success(function(output) {
+            $scope.isLoggedIn = false;
+            window.location.assign("/");
+          });
+        }
         /*
         $scope.logout = function() {
           console.log("scope logging out ");

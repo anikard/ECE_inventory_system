@@ -74,7 +74,7 @@ var orders_app = angular.module('orders_app', []);
     });
 
 
-    orders_app.controller('ordersController', function($scope, OrderFactory, /*auth,*/ $document) {
+    orders_app.controller('ordersController', function($scope, $http, OrderFactory, /*auth,*/ $document) {
         //console.log("USER ID: " + auth.currentUserID());
         //var thisId = {userId: auth.currentUserID()};
         $scope.orders = OrderFactory.getorders(/*thisId,*/ function(data) {
@@ -110,6 +110,12 @@ var orders_app = angular.module('orders_app', []);
 
 
         // AUTH
+        $scope.logout = function() {
+          $http.get('/api/auth/logout').success(function(output) {
+            $scope.isLoggedIn = false;
+            window.location.assign("/");
+          });
+        }
         /*
         $scope.logout = function() {
           console.log("scope logging out ");
