@@ -275,7 +275,7 @@ function update (req, res) {
 	 				event: "Request",
 	 				request: request,
 	 				rec_user: request.user,
-	 				admin_action: "Approve",
+	 				admin_actions: "Approve",
 					quantity: quantity_arr,
 					name_list: name_arr
 				});
