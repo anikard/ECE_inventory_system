@@ -109,13 +109,13 @@ function add (req, res) {
 			cart.save((err)=>{
 				if (err)
 					return res.status(500).send({ error: err });
-	    		let arr = []
+	    		let arr = [];
 	    		request.items.forEach(i=>arr.push(i.item));
 
-			let quantity_arr = []
+			let quantity_arr = [];
 			request.items.forEach(i=>quantity_arr.push(i.quantity));
 				
-			let name_arr = []
+			let name_arr = [];
 			request.items.forEach(i=>name_arr.push(i.item.name));
 			
 	    		let log = new Log({
