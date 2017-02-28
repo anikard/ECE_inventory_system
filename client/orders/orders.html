@@ -15,14 +15,15 @@
 <body ng-controller="ordersController">
 
 <!-- <div ng-controller="authController"> -->
-  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> |</span> <a href="" ng-click="logout()">logout {{myName}}</a>
+<span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispFields">custom fields</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> </span> | <a href="" ng-click="logout()">logout {{myName}}</a>
+  <!--<span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> |</span> <a href="" ng-click="logout()">logout {{myName}}</a>-->
 <!-- </div> -->
 
 <h1>REQUESTS</h1>
 <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
 
 <div class="customerTable" id = "cTable" >
-    <table >
+    <table id = "myRequestsTable">
       <tr>
         <td> User Name </td>
         <td> # of Items </td>
@@ -34,6 +35,7 @@
       </tr>
 
       <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
+        <td style="display:none;" ng-bind="order._id"></td>
         <td ng-bind="order.customer_name || order.user.username"></td>
         <td ng-bind="order.items.length"></td>
         <!--<td ng-bind="order.quantity"></td>-->
@@ -134,6 +136,7 @@
       var button = $(event.relatedTarget);
       var modal = $(this);
     })
+
   </script>
 
 </body>

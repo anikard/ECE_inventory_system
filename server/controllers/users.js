@@ -21,7 +21,7 @@ module.exports = (app) => {
   app.get('/api/user/:id/info', util.requireLevel(['admin']), getUser);
 
   // Show a list of all users
-  app.get('/api/user/show', util.requireLevel(['admin']), show);
+  app.get('/api/user/show', util.requireLevel(['admin','manager']), show);
 
   app.post('/api/user/add', util.requireLevel(['admin']), add);
 

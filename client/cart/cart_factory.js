@@ -68,6 +68,7 @@ var orders_app = angular.module('cart_app', []);
             console.log("created request in factory of cart")
         })
         $('#orderModal').modal('hide');
+        $('#disburseModal').modal('hide');
       }
 
 
@@ -81,10 +82,11 @@ var orders_app = angular.module('cart_app', []);
       return factory;
     });
 
-    orders_app.controller('ordersController', function($scope, OrderFactory, auth, $document) {
+    orders_app.controller('ordersController', function($scope, $http, OrderFactory, auth, $document) {
 
         $scope.user = OrderFactory.getuser(function(data) {
           $scope.user = data;
+          $scope.myName = data.username;
         })
 
         //console.log("USER ID: " + auth.currentUserID());
@@ -103,23 +105,18 @@ var orders_app = angular.module('cart_app', []);
 
 
         // AUTH
+
         $scope.currentUser = OrderFactory.getuser(function(data) {
           $scope.currentUser = data;
           $scope.authorized = data.status == "admin"
         });
-        /*
+
         $scope.logout = function() {
-          console.log("scope logging out ");
-          auth.logout(function() {
+          $http.get('/api/auth/logout').success(function(output) {
             $scope.isLoggedIn = false;
             window.location.assign("/");
           });
         }
-
-        $scope.getCurrentStatus = function() {
-          return auth.currentUserStatus();
-        }
-        */
 
       $scope.customers = OrderFactory.getcustomers(function(data) {
         $scope.customers = data;
@@ -169,24 +166,6 @@ var orders_app = angular.module('cart_app', []);
           $scope.this_request = {};
         });
       }
-
-/*
-      $scope.createDisburse = function() {
-
-        console.log("createDisburse from cart controller scope");
-
-        // console.log($scope.this_request.reason);
-
-        $scope.this_request.items = $scope.orders;
-
-        console.log($scope.this_request);
-
-        OrderFactory.createRequest($scope.this_request, function(data) {
-          $scope.orders = {};
-          $scope.this_request = {};
-        });
-      }
-*/
 
       $scope.removeFromCart = function(order) {
           $('#orderModal').modal('hide');
