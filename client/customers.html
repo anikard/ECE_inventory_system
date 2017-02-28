@@ -215,7 +215,7 @@
         }
 
         auth.registerUser = function(user, callback){
-          return $http.post('/register', user).success(function(data){
+          return $http.post('/api/user/add', user).success(function(data){
             // auth.saveToken(data.token);
             // console.log(data);
             // callback(data.token);
