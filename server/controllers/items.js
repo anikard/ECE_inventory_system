@@ -31,37 +31,34 @@ module.exports = (app) => {
       props = _.pick(req.body, ['name','quantity','location','model','description','tags','image','fields']);
       item = new Item(props);
       item.save(function(err){
-          if(err){
-            res.status(500).send({ error: err })
-          } else {
-
-
-            var itemArray = [item._id];
-            var itemQuantity = [item.quantity];
-		var name_arr = [item.name];
-            let log = new Log({
+        if(err){
+          res.status(500).send({ error: err })
+        } else {
+          var itemArray = [item._id];
+          var itemQuantity = [item.quantity];
+          var name_arr = [item.name];
+          let log = new Log({
             init_user: req.user._id,
             item: itemArray,
             quantity: itemQuantity,
             event: "item created",
-            rec_user: req.user._id,
             name_list:name_arr
-             });
+          });
 
-              log.save(function(err){
+          log.save(function(err){
 
-                if(err){
-                res.status(500).send({ error: err });
-                return;
-              }
-              });
+            if(err){
+              res.status(500).send({ error: err });
+              return;
+            }
+          });
 
 
 
 
             res.status(200).send("success"); //  end the function to return
           }
-      });
+        });
     });
   });
 
@@ -75,24 +72,23 @@ module.exports = (app) => {
         if (err) {
           res.status(500).send({ error: err });
         } else {
-          
-            var itemArray = [req.body._id];
-		var itemName = [req.body.name];
-            let log = new Log({
+
+          var itemArray = [req.body._id];
+          var itemName = [req.body.name];
+          let log = new Log({
             init_user: req.user._id,
             item: itemArray,
             event: "item deleted",
-            rec_user: req.user._id,
-               name_list:itemName,
-             });
+            name_list:itemName,
+          });
 
-              log.save(function(err){
+          log.save(function(err){
 
-                if(err){
-                res.status(500).send({ error: err });
-                return;
-              }
-              });
+            if(err){
+              res.status(500).send({ error: err });
+              return;
+            }
+          });
           
           
           
@@ -100,7 +96,7 @@ module.exports = (app) => {
         }
         res.end();
       }
-    );
+      );
   });
 
   app.post('/api/item/update', util.requirePrivileged, function(req, res, next) {
@@ -123,68 +119,67 @@ module.exports = (app) => {
       _.assign(item, props);
       
       var message = "updated an item";
-        
-          if(req.user.status === "admin"){
-            if(req.body.quantity < currQuantity){
-            message = "admin decreased quantity";  
-            }
-            if(req.body.quantity > currQuantity){
-            message = "admin increased quantity";
-            }         
-          }
-          else{
-            
-            if(req.body.quantity < currQuantity){
-            message = "manager logged a loss";  
-            }
-            if(req.body.quantity > currQuantity){
-            message = "manager logged an acquisition";
-            }         
-            
-          }
-        
-          var itemArray = [item._id];
-          var itemQuantity = [req.body.quantity];
+
+      if(req.user.status === "admin"){
+        if(req.body.quantity < currQuantity){
+          message = "admin decreased quantity";  
+        }
+        if(req.body.quantity > currQuantity){
+          message = "admin increased quantity";
+        }         
+      }
+      else{
+
+        if(req.body.quantity < currQuantity){
+          message = "manager logged a loss";  
+        }
+        if(req.body.quantity > currQuantity){
+          message = "manager logged an acquisition";
+        }         
+
+      }
+
+      var itemArray = [item._id];
+      var itemQuantity = [req.body.quantity];
       
-	var name_arr = [item.name];
-          
-            let log = new Log({
-            init_user: req.user._id,
-            item: itemArray,
-            quantity: itemQuantity,
-            event: message,
-            rec_user: req.user._id,
-            name_list:name_arr
-             });
+      var name_arr = [item.name];
 
-              log.save(function(err){
+      let log = new Log({
+        init_user: req.user._id,
+        item: itemArray,
+        quantity: itemQuantity,
+        event: message,
+        name_list:name_arr
+      });
 
-                if(err){
-                res.status(500).send({ error: err });
-                return;
-              }
-              });
-          
-        
-        
-        res.status(200).json(item);  
+      log.save(function(err){
+
+        if(err){
+          res.status(500).send({ error: err });
+          return;
+        }
+      });
+
+
+
+      res.status(200).json(item);  
       
     });
     
     
     
     Item.findByIdAndUpdate(
-    req.body._id,
-    {$set: props},
-    { new: true },
-    function (err, item) {
-      if (err) res.status(500).send({ error: err });
-      else {
-        
-          
-    
-      }
-    });
+      req.body._id,
+      {$set: props},
+      { new: true },
+      function (err, item) {
+        if (err) res.status(500).send({ error: err });
+        else {
+
+
+
+        }
+      });
 
 
     // Field.find({}, 'name', function (err, results) {

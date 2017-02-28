@@ -37,7 +37,7 @@ module.exports = {
 
   requireLevel: function(levels) {
     return (req, res, next)=>{
-      if(levels.find(e=>e===req.user.status)){
+      if(req.user && levels.find(e=>e===req.user.status)){
         next();
       } else {
         res.status(403);
