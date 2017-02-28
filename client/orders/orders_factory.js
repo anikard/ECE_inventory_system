@@ -109,18 +109,6 @@ var orders_app = angular.module('orders_app', []);
             }
           }
 
-          console.log("REQUEST SELECTED: ");
-          console.log($scope.selected_request);
-          console.log("REQUEST SELECTED AT INDEX: ");
-          console.log(thisReqIndex);
-
-          $scope.tableTRS = document.getElementById('myRequestsTable').getElementsByTagName('tr');
-          console.log($scope.tableTRS.length);
-          console.log("FROM doc ready: ")
-          console.log(table_trs);
-
-          console.log("one length " + document.getElementById('myRequestsTable').getElementsByTagName('tr').length);
-
           $scope.requestIndex = thisReqIndex+1;
 
           // $scope.scrollIntoView(thisReqIndex+1);
@@ -141,7 +129,6 @@ var orders_app = angular.module('orders_app', []);
 
           
           $scope.tableRows = document.getElementById('myRequestsTable').getElementsByTagName('tr');
-          console.log("five length " + document.getElementById('myRequestsTable').getElementsByTagName('tr').length);
           $scope.scrollIntoView($scope.requestIndex);
         })
 
@@ -240,7 +227,6 @@ var orders_app = angular.module('orders_app', []);
         });
 
       }
-          console.log("two length " + document.getElementById('myRequestsTable').getElementsByTagName('tr').length);
 
 
       $scope.viewOrder = function(order) {
@@ -294,27 +280,14 @@ var orders_app = angular.module('orders_app', []);
 
       }
 
-          console.log("three length " + document.getElementById('myRequestsTable').getElementsByTagName('tr').length);
 
   // from logs view
 
     $scope.scrollIntoView = function(rowNum) {
         console.log("in scroll into view ; row num = " + rowNum);
           var trs = document.getElementById('myRequestsTable').getElementsByTagName('tr');
-          console.log("trs length = " + trs.length);
           var arr = Array.prototype.slice.call( trs )
           var element = trs[rowNum];
-
-          console.log("getting table");
-            console.log(document.getElementById('myRequestsTable'));
-            console.log("getting trs");
-             console.log($scope.tableRows);
-             console.log("getting trs.length");
-             console.log($scope.tableRows.length);
-          console.log("getting 2 elem");
-            console.log(table_trs[2]);
-
-
 
           if (element) {
             var container = "window";
@@ -329,11 +302,6 @@ var orders_app = angular.module('orders_app', []);
 
             window.scrollBy(0,-100);
 
-            console.log("getting element 2");
-            console.log(element);
-
-            // element.style.backgroundColor = "lightgreen";
-
             var cols = element.getElementsByTagName('td');
 
             for (var x = 0; x < cols.length; x++) {
@@ -343,11 +311,6 @@ var orders_app = angular.module('orders_app', []);
           }
 
         }
-
-          console.log("four length " + document.getElementById('myRequestsTable').getElementsByTagName('tr').length);
-
-
-
 
 
     })
