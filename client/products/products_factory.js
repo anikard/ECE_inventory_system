@@ -52,6 +52,12 @@ products_app.factory('ProductsFactory', function($http) {
         })
     }
 
+  factory.logout = function(callback) {
+    $http.get('/api/auth/logout').success(function(output) {
+      callback(output);
+    })
+  }
+
     factory.realgetorders = function(callback) {
           $http.get('/api/request/show').success(function(output) {
             orders = output;
@@ -135,7 +141,7 @@ products_app.factory('ProductsFactory', function($http) {
 
 //products_app.controller('productsController', function($scope, /*auth,*/ ProductsFactory, $document) {
 
-products_app.controller('productsController', function($scope, $window, $rootScope, /*auth,*/ ProductsFactory, $document) {
+products_app.controller('productsController', function($scope, $window, $rootScope, $http, /*auth,*/ ProductsFactory, $document) {
 
   $scope.products = ProductsFactory.getproducts(function(data) {
       $scope.products = data;
@@ -172,8 +178,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     $scope.customFields = [];
 
     $scope.logout = function() {
-      console.log("scope logging out ");
-      auth.logout(function() {
+      $http.get('/api/auth/logout').success(function(output) {
         $scope.isLoggedIn = false;
         window.location.assign("/");
       });
