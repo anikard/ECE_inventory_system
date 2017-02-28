@@ -124,7 +124,7 @@ var orders_app = angular.module('orders_app', []);
           $scope.user = data;
 
           $scope.authorized = data.status == "admin" || data.status =="manager";
-          $scope.myName = data.username;
+          $scope.myName = data.username || data.netId || data.name;
 
           console.log("AUTHORIZED:")
           console.log($scope.authorized);

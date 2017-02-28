@@ -201,8 +201,9 @@ products_app.controller('productsController', function($scope, $window, $rootSco
   $scope.user = ProductsFactory.getuser(function(data) {
     $scope.user = data;
 
-    $scope.authorized = data.status == "admin";
-    $scope.myName = data.username;
+    $scope.authorized = data.status == "admin" || data.status == "manager";
+    $scope.adminOnly = data.status == "admin";
+    $scope.myName = data.username || data.netId || data.name;
 
     console.log("AUTHORIZED:")
     console.log($scope.authorized);
@@ -391,7 +392,8 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     //var customerSelected = $document[ 0 ].getElementById('customerList');
     //$scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
     console.log($scope.new_order);
-    //console.log("Current user stuff: ");
+    console.log("Current user stuff: ");
+    var stopper = $scope.new_order.quantity;
     //console.log($scope.user);
 
     //console.log($scope.authorized);
@@ -400,15 +402,19 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     //}
     $scope.new_order.item = $scope.new_order.itemId;
 
-    ProductsFactory.addOrder($scope.new_order, function(data) {
-      $scope.new_order = {};
-    })
-    /*
-    $scope.currentTags = [];
-    $('#requestModal').modal('hide');
-    $('#productModal').modal('hide');
-    */
-    window.location.assign("/dispProducts");
+    var stopper = $scope.new_order.quantity;
+    if (stopper > 0){
+
+      ProductsFactory.addOrder($scope.new_order, function(data) {
+        $scope.new_order = {};
+      })
+      /*
+      $scope.currentTags = [];
+      $('#requestModal').modal('hide');
+      $('#productModal').modal('hide');
+      */
+      window.location.assign("/dispProducts");
+    }
   }
 
 
