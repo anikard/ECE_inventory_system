@@ -96,6 +96,9 @@ var orders_app = angular.module('orders_app', []);
         $scope.orders = OrderFactory.getorders(/*thisId,*/ function(data) {
           $scope.orders = data;
 
+          console.log("ORDERS");
+          console.log($scope.orders);
+
           // using for LOGS
           if ($window.localStorage['requestSelected'] && !$scope.selected_request) {
             $scope.selected_request = $window.localStorage['requestSelected'];
@@ -111,7 +114,7 @@ var orders_app = angular.module('orders_app', []);
 
           $scope.requestIndex = thisReqIndex+1;
 
-          // $scope.scrollIntoView(thisReqIndex+1);
+          $scope.scrollIntoView(thisReqIndex+1);
 
 
 
@@ -126,8 +129,6 @@ var orders_app = angular.module('orders_app', []);
           console.log("AUTHORIZED:")
           console.log($scope.authorized);
 
-
-          
           $scope.tableRows = document.getElementById('myRequestsTable').getElementsByTagName('tr');
           $scope.scrollIntoView($scope.requestIndex);
         })
@@ -250,7 +251,6 @@ var orders_app = angular.module('orders_app', []);
 
       }
 
-
       $scope.respondToOrder = function() {
         $('#orderModal').modal('hide');
         // $scope.orderResponse.dateFulfilled = new Date();
@@ -276,20 +276,27 @@ var orders_app = angular.module('orders_app', []);
         });
 
 
-
-
       }
 
 
   // from logs view
 
     $scope.scrollIntoView = function(rowNum) {
-        console.log("in scroll into view ; row num = " + rowNum);
+        console.log("in scroll into view ");
           var trs = document.getElementById('myRequestsTable').getElementsByTagName('tr');
           var arr = Array.prototype.slice.call( trs )
-          var element = trs[rowNum];
 
-          if (element) {
+          var element = {};
+          if ($scope.requestIndex) {
+            element = trs[$scope.requestIndex];
+          }
+          else {
+            element = trs[rowNum];
+          }
+
+          // var element = trs[$scope.requestIndex];
+
+          if (rowNum || element) {
             var container = "window";
             var containerTop = $(container).scrollTop();
             var containerBottom = containerTop + $(container).height();
@@ -298,7 +305,7 @@ var orders_app = angular.module('orders_app', []);
 
             var elemAbsTop = element.getBoundingClientRect().top;
 
-            $("#myRequestsTable tr:nth-child("+rowNum+")")[0].scrollIntoView();
+            $("#myRequestsTable tr:nth-child("+$scope.requestIndex+")")[0].scrollIntoView();
 
             window.scrollBy(0,-100);
 
