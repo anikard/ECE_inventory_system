@@ -37,9 +37,11 @@ module.exports = (app) => {
 
 
             var itemArray = [item._id];
+            var itemQuantity = [item.quantity];
             let log = new Log({
             init_user: req.user._id,
             item: itemArray,
+            quantity: itemQuantity,
             event: "item created",
             rec_user: req.user._id,
              });
@@ -71,6 +73,27 @@ module.exports = (app) => {
         if (err) {
           res.status(500).send({ error: err });
         } else {
+          
+            var itemArray = [req.body.item._id];
+            var itemQuantity = [req.body.item.quantity];
+            let log = new Log({
+            init_user: req.user._id,
+            item: itemArray,
+            quantity: itemQuantity,
+            event: "item deleted",
+            rec_user: req.user._id,
+             });
+
+              log.save(function(err){
+
+                if(err){
+                res.status(500).send({ error: err });
+                return;
+              }
+              });
+          
+          
+          
           res.status(200).send("Successfully deleted a item!");
         }
         res.end();
@@ -88,7 +111,30 @@ module.exports = (app) => {
     { new: true },
     function (err, item) {
       if (err) res.status(500).send({ error: err });
-      else res.status(200).json(item);
+      else {
+        
+          var itemArray = [item._id];
+          var itemQuantity = [item.quantity];
+            let log = new Log({
+            init_user: req.user._id,
+            item: itemArray,
+            quantity: itemQuantity,
+            event: "item updated",
+            rec_user: req.user._id,
+             });
+
+              log.save(function(err){
+
+                if(err){
+                res.status(500).send({ error: err });
+                return;
+              }
+              });
+          
+        
+        
+        res.status(200).json(item);
+      }
     });
 
 
