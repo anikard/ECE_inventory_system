@@ -105,6 +105,7 @@
 
 
       <div ng-if="authorized">
+        <div class="error" ng-show="errorMessage">{{ errorMessage }}</div>
         <form id="request_response_form">
           <h3>Respond:</h3>
           <div class="form-group">

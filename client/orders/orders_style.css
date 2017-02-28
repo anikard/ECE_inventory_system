@@ -1,4 +1,4 @@
-body { 
+body {
       font-family: Helvetica, Arial, sans-serif;
       text-align: center;
       margin: 10px;
@@ -42,6 +42,10 @@ body {
     }
     [type="submit"]:hover { background: teal; }
 
+    .error {
+      font-size: 30px;
+      color: red;
+    }
 
     /*remove button*/
     .remove {
@@ -68,19 +72,19 @@ body {
       width:100%;
       height: 21em;
       overflow-y:scroll;
-      
+
       -moz-border-radius-bottomleft:14px;
       -webkit-border-bottom-left-radius:14px;
       border-bottom-left-radius:14px;
-      
+
       -moz-border-radius-bottomright:14px;
       -webkit-border-bottom-right-radius:14px;
       border-bottom-right-radius:14px;
-      
+
       -moz-border-radius-topright:14px;
       -webkit-border-top-right-radius:14px;
       border-top-right-radius:14px;
-      
+
       -moz-border-radius-topleft:14px;
       -webkit-border-top-left-radius:14px;
       border-top-left-radius:14px;
@@ -93,7 +97,7 @@ body {
     .customerTable tr {
       height:3em;
     }
- 
+
     .customerTable tr:last-child td:last-child {
       -moz-border-radius-bottomright:14px;
       -webkit-border-bottom-right-radius:14px;
@@ -114,12 +118,12 @@ body {
       border-bottom-left-radius:14px;
     }.customerTable tr:hover td{
       background-color:#b5e3e3;
-        
+
 
     }
     .customerTable td{
       vertical-align:middle;
-      
+
       background-color:#b7cece;
 
       border:1px solid #ecf8f8;
