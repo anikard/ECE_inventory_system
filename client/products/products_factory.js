@@ -52,6 +52,12 @@ products_app.factory('ProductsFactory', function($http) {
         })
     }
 
+  factory.logout = function(callback) {
+    $http.get('/api/auth/logout').success(function(output) {
+      callback(output);
+    })
+  }
+
     factory.realgetorders = function(callback) {
           $http.get('/api/request/show').success(function(output) {
             orders = output;
@@ -135,7 +141,7 @@ products_app.factory('ProductsFactory', function($http) {
 
 //products_app.controller('productsController', function($scope, /*auth,*/ ProductsFactory, $document) {
 
-products_app.controller('productsController', function($scope, $window, $rootScope, /*auth,*/ ProductsFactory, $document) {
+products_app.controller('productsController', function($scope, $window, $rootScope, $http, /*auth,*/ ProductsFactory, $document) {
 
   $scope.products = ProductsFactory.getproducts(function(data) {
       $scope.products = data;
@@ -172,8 +178,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     $scope.customFields = [];
 
     $scope.logout = function() {
-      console.log("scope logging out ");
-      auth.logout(function() {
+      $http.get('/api/auth/logout').success(function(output) {
         $scope.isLoggedIn = false;
         window.location.assign("/");
       });
@@ -237,11 +242,21 @@ products_app.controller('productsController', function($scope, $window, $rootSco
         console.log("addProduct success");
         $scope.errorMessage = null;
         $scope.new_product.date = new Date();
+        /*
         if(showProduct($scope.new_product)) {
           $scope.products.push($scope.new_product);
         }
         $scope.originalProducts.push($scope.new_product);
         $scope.new_product = {};
+        */
+        $scope.excludeTags = [];
+        $scope.searchTags = []
+        $scope.products = ProductsFactory.getproducts(function(data) {
+          $scope.products = data;
+          $scope.originalProducts = data;
+          $scope.currentTags = [];
+        });
+        window.location.assign("/dispProducts");
       }
     });
   }
@@ -288,6 +303,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
           }
       });
 */
+
     }
 
   $scope.confirmDeleteModal = function(product) {
@@ -295,17 +311,21 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     console.log(product.name);
     ProductsFactory.deleteProduct(product, function(data) {
       for (var i =0; i < $scope.products.length; i++)
-      {  if ($scope.products[i]._id === product._id) {
-            $scope.products.splice(i,1);
-            console.log("remainig products:");
-            console.log($scope.products);
-            break;
-          }
-          console.log("Break doesn't occur");
-      }
-  });
+        {  if ($scope.products[i]._id === product._id) {
+              $scope.products.splice(i,1);
+              console.log("remainig products:");
+              console.log($scope.products);
+              break;
+            }
+            console.log("Break doesn't occur");
+        }
+      });
+    $scope.currentTags = [];
+
     $('#deleteConfirmModal').modal('hide');
     $('#productModal').modal('hide');
+    window.location.assign("/dispProducts");
+    //$('#createItemForm').reset();
   }
 
   $scope.cancelDeleteModal = function() {
@@ -340,6 +360,9 @@ products_app.controller('productsController', function($scope, $window, $rootSco
       console.log("confirm edit calling factory");
     })
 
+    window.location.assign("/dispProducts");
+    /*
+    //$('#createItemForm').reset();
     $('#editConfirmModal').modal('hide');
     $('#productModal').modal('hide');
 
@@ -347,6 +370,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
       $scope.products = data;
       $scope.currentTags = [];
     });
+    */
   }
 
   $scope.cancelEditModal = function(product) {
@@ -379,8 +403,12 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     ProductsFactory.addOrder($scope.new_order, function(data) {
       $scope.new_order = {};
     })
+    /*
+    $scope.currentTags = [];
     $('#requestModal').modal('hide');
     $('#productModal').modal('hide');
+    */
+    window.location.assign("/dispProducts");
   }
 
 
@@ -389,7 +417,6 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     console.log(product.name);
     console.log(product._id);
     console.log("Current user id: ");
-    //console.log($scope.myID);
 
     $scope.currentProduct = angular.copy(product);
     originalProduct = angular.copy(product);

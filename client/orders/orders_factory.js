@@ -74,11 +74,49 @@ var orders_app = angular.module('orders_app', []);
     });
 
 
-    orders_app.controller('ordersController', function($scope, OrderFactory, /*auth,*/ $document) {
+  orders_app.controller('productsController', function($scope, $http, OrderFactory) {
+        $scope.products = OrderFactory.getproducts(function(data) {
+        $scope.products = data;
+      })
+    })
+
+    orders_app.controller('customersController', function($scope, OrderFactory) {
+        $scope.customers = OrderFactory.getcustomers(function(data) {
+        $scope.customers = data;
+
+        //TODO: delete this line and the two below
+        console.log("inside ord cust");
+        console.log($scope.customers);
+      })
+    })
+
+    orders_app.controller('ordersController', function($scope, $http, $window, OrderFactory, /*auth,*/ $document) {
         //console.log("USER ID: " + auth.currentUserID());
         //var thisId = {userId: auth.currentUserID()};
         $scope.orders = OrderFactory.getorders(/*thisId,*/ function(data) {
           $scope.orders = data;
+
+          console.log("ORDERS");
+          console.log($scope.orders);
+
+          // using for LOGS
+          if ($window.localStorage['requestSelected'] && !$scope.selected_request) {
+            $scope.selected_request = $window.localStorage['requestSelected'];
+          }
+          $window.localStorage['requestSelected'] = "";
+
+          var thisReqIndex = -1;
+          for (var i = 0; i < $scope.orders.length; i++) {
+            if ($scope.orders[i]._id == $scope.selected_request) {
+              thisReqIndex = i;
+            }
+          }
+
+          $scope.requestIndex = thisReqIndex+1;
+
+          $scope.scrollIntoView(thisReqIndex+1);
+
+
 
         });
 
@@ -91,6 +129,8 @@ var orders_app = angular.module('orders_app', []);
           console.log("AUTHORIZED:")
           console.log($scope.authorized);
 
+          $scope.tableRows = document.getElementById('myRequestsTable').getElementsByTagName('tr');
+          $scope.scrollIntoView($scope.requestIndex);
         })
 
         //$scope.myName = auth.currentUser();
@@ -110,6 +150,12 @@ var orders_app = angular.module('orders_app', []);
 
 
         // AUTH
+        $scope.logout = function() {
+          $http.get('/api/auth/logout').success(function(output) {
+            $scope.isLoggedIn = false;
+            window.location.assign("/");
+          });
+        }
         /*
         $scope.logout = function() {
           console.log("scope logging out ");
@@ -211,7 +257,6 @@ var orders_app = angular.module('orders_app', []);
 
       }
 
-
       $scope.respondToOrder = function() {
         $('#orderModal').modal('hide');
         // $scope.orderResponse.dateFulfilled = new Date();
@@ -237,28 +282,53 @@ var orders_app = angular.module('orders_app', []);
         });
 
 
-
-
       }
 
 
+  // from logs view
+
+    $scope.scrollIntoView = function(rowNum) {
+        console.log("in scroll into view ");
+          var trs = document.getElementById('myRequestsTable').getElementsByTagName('tr');
+          var arr = Array.prototype.slice.call( trs )
+
+          var element = {};
+          if ($scope.requestIndex) {
+            element = trs[$scope.requestIndex];
+          }
+          else {
+            element = trs[rowNum];
+          }
+
+          // var element = trs[$scope.requestIndex];
+
+          if (rowNum || element) {
+            var container = "window";
+            var containerTop = $(container).scrollTop();
+            var containerBottom = containerTop + $(container).height();
+            var elemTop = element.offsetTop;
+            var elemBottom = elemTop + $(element).height();
+
+            var elemAbsTop = element.getBoundingClientRect().top;
+
+            $("#myRequestsTable tr:nth-child("+$scope.requestIndex+")")[0].scrollIntoView();
+
+            window.scrollBy(0,-100);
+
+            var cols = element.getElementsByTagName('td');
+
+            for (var x = 0; x < cols.length; x++) {
+              cols[x].style.backgroundColor = "lightgreen";
+            }
+
+          }
+
+        }
+
+
     })
 
-    orders_app.controller('productsController', function($scope, OrderFactory) {
-        $scope.products = OrderFactory.getproducts(function(data) {
-        $scope.products = data;
-      })
-    })
 
-    orders_app.controller('customersController', function($scope, OrderFactory) {
-        $scope.customers = OrderFactory.getcustomers(function(data) {
-        $scope.customers = data;
-
-        //TODO: delete this line and the two below
-        console.log("inside ord cust");
-        console.log($scope.customers);
-      })
-    })
 
 /*
     orders_app.factory('auth', ['$http', '$window', function($http, $window){

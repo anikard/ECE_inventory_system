@@ -44,15 +44,14 @@ fields_app.factory('FieldsFactory', function($http) {
   return factory;
 });
 
-fields_app.controller('fieldsController', function($scope, FieldsFactory) {
+fields_app.controller('fieldsController', function($scope, $http, FieldsFactory) {
 
   $scope.fields = FieldsFactory.getfields(function(data) {
     $scope.fields = data;
   })
 
   $scope.logout = function() {
-    console.log("scope logging out ");
-    auth.logout(function() {
+    $http.get('/api/auth/logout').success(function(output) {
       $scope.isLoggedIn = false;
       window.location.assign("/");
     });

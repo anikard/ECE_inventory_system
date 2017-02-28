@@ -62,7 +62,7 @@
       transition: all 0.5s;
       margin-top:3px;
       letter-spacing: 2px;
-      width: 50%;
+      width: 30%;
       color: white;
     }
     .remove:hover { background: rgba(150, 200, 200, 0.6); }
@@ -254,10 +254,11 @@
     }])
 
 
-    customers_app.controller('userController', function($scope, auth, $document, $location) {
+    customers_app.controller('userController', function($scope, $http, auth, $document, $location) {
 
       $scope.currentUser = auth.currentUser(function(data) {
         $scope.currentUser = data;
+        $scope.myName = data.username;
         $scope.authorized = data.status == "admin"
       });
         //console.log("MY NAME: " + $scope.myName);
@@ -283,12 +284,11 @@
       }
 
       $scope.logout = function() {
-          console.log("scope logging out ");
-          auth.logout(function() {
-            $scope.isLoggedIn = false;
-            window.location.assign("/");
-          });
-        }
+        $http.get('/api/auth/logout').success(function(output) {
+          $scope.isLoggedIn = false;
+          window.location.assign("/");
+        });
+      }
 
       $scope.getCurrentStatus = function() {
           //return auth.currentUserStatus();
@@ -325,7 +325,7 @@
 
 <body ng-controller="userController">
 
-  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> |</span> <a href="" ng-click="logout()">logout {{myName}}</a>
+  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <span ng-if="authorized"><a href="/dispFields">custom fields</a> | </span> <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> | </span> <a href="" ng-click="logout()">logout {{myName}}</a>
 
  <h1>USERS</h1>
   <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
@@ -342,7 +342,7 @@
                         <td ng-bind="customer.username"></td>
                         <td ng-bind="customer.date | date:'medium'"></td>
                         <!-- <td ng-bind="customer.status">{{customer.status}}</td>-->
-                        <td>{{customer.status}}&nbsp;&nbsp;<button ng-click="changeStatus(customer)" data-toggle="modal" data-target='#changeStatusModal'>Change</button></td>
+                        <td>{{customer.status}}&nbsp;&nbsp;<button class = "remove" ng-click="changeStatus(customer)" data-toggle="modal" data-target='#changeStatusModal'>Change</button></td>
                         <!-- <td><button class = "remove" ng-click='removeCustomer(customer)' >Remove</button></td> -->
 
                     </tr>
@@ -359,13 +359,13 @@
       <span>{{ error.message }}</span>
     </div>
     <div class="form-group">
-      <input type="text" id="unField" style = "display:inline-block; width:40%;"
+      <input type="text" id="unField" style = "display:inline-block; width:40%; height: 53px;"
       class="form-control feedback-input"
       placeholder="Username"
       ng-model="new_user.username" ></input>
     </div>
     <div class="form-group">
-      <input type="password" id="pdField" style = "display:inline-block; width:40%;"
+      <input type="password" id="pdField" style = "display:inline-block; width:40%; height: 53px;"
       class="form-control feedback-input"
       placeholder="Password"
       ng-model="new_user.password" ></input>
