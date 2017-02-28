@@ -38,12 +38,14 @@ module.exports = (app) => {
 
             var itemArray = [item._id];
             var itemQuantity = [item.quantity];
+		var name_arr = [item.name];
             let log = new Log({
             init_user: req.user._id,
             item: itemArray,
             quantity: itemQuantity,
             event: "item created",
             rec_user: req.user._id,
+            name_list:name_arr
              });
 
               log.save(function(err){
@@ -75,11 +77,13 @@ module.exports = (app) => {
         } else {
           
             var itemArray = [req.body._id];
+		var itemName = [req.body.name];
             let log = new Log({
             init_user: req.user._id,
             item: itemArray,
             event: "item deleted",
             rec_user: req.user._id,
+               name_list:itemName,
              });
 
               log.save(function(err){
@@ -120,7 +124,7 @@ module.exports = (app) => {
       
       var message = "updated an item";
         
-          if(req.user.name === "admin"){
+          if(req.user.status === "admin"){
             if(req.body.quantity < currQuantity){
             message = "admin decreased quantity";  
             }
@@ -142,7 +146,7 @@ module.exports = (app) => {
           var itemArray = [item._id];
           var itemQuantity = [req.body.quantity];
       
-			    var name_arr = [item.name];
+	var name_arr = [item.name];
           
             let log = new Log({
             init_user: req.user._id,
