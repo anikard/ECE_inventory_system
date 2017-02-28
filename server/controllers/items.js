@@ -74,12 +74,10 @@ module.exports = (app) => {
           res.status(500).send({ error: err });
         } else {
           
-            var itemArray = [req.body.item._id];
-            var itemQuantity = [req.body.item.quantity];
+            var itemArray = [req.body._id];
             let log = new Log({
             init_user: req.user._id,
             item: itemArray,
-            quantity: itemQuantity,
             event: "item deleted",
             rec_user: req.user._id,
              });
