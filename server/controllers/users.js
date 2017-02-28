@@ -107,10 +107,11 @@ function del(req, res, next){
 }
 
 function add(req, res, next){
-  if (!req.body.name || !req.body.username || !req.body.password)
-    return res.status(400).send("Missing name, username or password");
+  if (!req.body.username || !req.body.password)
+    return res.status(400).send("Missing username or password");
   let info = _.pick(req.body,['name','username','netId','email','status','active']);
   info.date = new Date();
+  info.name = info.name || info.username;
   info.active = info.active || true;
   info.status = info.status || 'user';
   User.findOne({ 'username': info.username }, function (err, user) {
