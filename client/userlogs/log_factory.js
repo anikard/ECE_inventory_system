@@ -48,6 +48,15 @@ var log_app = angular.module('log_app', []);
         })
       }
 
+      // to remove
+      factory.getorders = function(callback) {
+        $http.get('/api/request/show').success(function(output) {
+          orders = output;
+
+          callback(orders);
+        })
+      }
+
       return factory;
     });
 
@@ -55,6 +64,14 @@ var log_app = angular.module('log_app', []);
     log_app.controller('logController', function($scope, $rootScope, $window, LogFactory, /*auth,*/ $document) {
         // console.log("USER ID: " + auth.currentUserID());
         // var thisId = {userId: auth.currentUserID()};
+        
+        LogFactory.getorders(function(data) {
+          console.log("scope getting requests");
+          console.log(data);
+        });
+
+
+
         LogFactory.getLogs(function(data) {
           console.log("scope getting logs");
           console.log(data);
@@ -107,6 +124,11 @@ var log_app = angular.module('log_app', []);
           //   item_info = data;
           // });
 
+        }
+
+        $scope.viewRequest = function(requestID) {
+          $window.localStorage['requestSelected'] = item_name;
+          $window.location.href = "/orders/orders.html";
         }
 
         $scope.logsOld = [{
