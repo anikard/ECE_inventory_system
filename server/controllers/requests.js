@@ -129,7 +129,7 @@ function add (req, res) {
 }
 
 function disburse (id, req, res) {
-	Cart.findOne({user: id})
+	Cart.findOne({user: req.user})
 	.populate('items.item')
 	.exec(function(err, cart) {
 		if (err) 
@@ -147,12 +147,14 @@ function disburse (id, req, res) {
         	note: req.body.note || "",
 			status: "Disbursement",
         });
+        for (let i = 0;i < cart.items.length;i++){
+			cart.items[i].item.quantity -= cart.items[i].quantity;
+		}
         request.save((err,request) => {
         	if (err) 
 				return res.status(500).send({ error: err });
-			for (let i = 0;i<request.items.length;i++){
-				request.items[i].item.quantity -= request.items[i].quantity;
-				request.items[i].item.save();
+			for (let i = 0;i<cart.items.length;i++){
+				cart.items[i].item.save();
 			}
 			cart.items = [];
 			cart.save((err)=>{
@@ -161,7 +163,7 @@ function disburse (id, req, res) {
 	    		let arr = []
 	    		request.items.forEach(i=>arr.push(i.item));
 	    		let log = new Log({
-					init_user: id,
+					init_user: req.user,
 					item: arr,
 	 				event: "Disbursement",
 	 				rec_user: id,
