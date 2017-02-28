@@ -62,7 +62,7 @@
       transition: all 0.5s;
       margin-top:3px;
       letter-spacing: 2px;
-      width: 50%;
+      width: 30%;
       color: white;
     }
     .remove:hover { background: rgba(150, 200, 200, 0.6); }
@@ -342,7 +342,7 @@
                         <td ng-bind="customer.username"></td>
                         <td ng-bind="customer.date | date:'medium'"></td>
                         <!-- <td ng-bind="customer.status">{{customer.status}}</td>-->
-                        <td>{{customer.status}}&nbsp;&nbsp;<button ng-click="changeStatus(customer)" data-toggle="modal" data-target='#changeStatusModal'>Change</button></td>
+                        <td>{{customer.status}}&nbsp;&nbsp;<button class = "remove" ng-click="changeStatus(customer)" data-toggle="modal" data-target='#changeStatusModal'>Change</button></td>
                         <!-- <td><button class = "remove" ng-click='removeCustomer(customer)' >Remove</button></td> -->
 
                     </tr>
@@ -359,13 +359,13 @@
       <span>{{ error.message }}</span>
     </div>
     <div class="form-group">
-      <input type="text" id="unField" style = "display:inline-block; width:40%;"
+      <input type="text" id="unField" style = "display:inline-block; width:40%; height: 53px;"
       class="form-control feedback-input"
       placeholder="Username"
       ng-model="new_user.username" ></input>
     </div>
     <div class="form-group">
-      <input type="password" id="pdField" style = "display:inline-block; width:40%;"
+      <input type="password" id="pdField" style = "display:inline-block; width:40%; height: 53px;"
       class="form-control feedback-input"
       placeholder="Password"
       ng-model="new_user.password" ></input>
