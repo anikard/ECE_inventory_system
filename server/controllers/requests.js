@@ -113,7 +113,7 @@ function add (req, res) {
 	    		request.items.forEach(i=>arr.push(i.item));
 			
 			let quantity_arr = []
-			request.items.forEach(i=>quantity_arr(i.quantity));
+			request.items.forEach(i=>quantity_arr.push(i.quantity));
 	    		let log = new Log({
 					init_user: id,
 					item: arr,
@@ -166,7 +166,7 @@ function disburse (id, req, res) {
 	    		request.items.forEach(i=>arr.push(i.item));
 				
 			let quantity_arr = []
-			request.items.forEach(i=>quantity_arr(i.quantity));	
+			request.items.forEach(i=>quantity_arr.push(i.quantity));
 				
 	    		let log = new Log({
 					init_user: id,
@@ -247,7 +247,7 @@ function update (req, res) {
 	    		request.items.forEach(i=>arr.push(i.item));
 				
 				let quantity_arr = []
-			request.items.forEach(i=>quantity_arr(i.quantity));
+			request.items.forEach(i=>quantity_arr.push(i.quantity));
 				
 	    		let log = new Log({
 					init_user: req.user,
