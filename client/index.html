@@ -195,6 +195,15 @@
             $scope.authorized = true; //(auth.currentUserStatus()=="admin");
             document.getElementById("navTop").style.display = "block";
             document.getElementById("loginForm").style.display = "none";
+            $scope.user = auth.getuser(function(data) {
+              $scope.user = data;
+
+              $scope.authorized = data.status == "admin";
+              $scope.myName = data.username;
+
+              console.log("AUTHORIZED:")
+              console.log($scope.authorized);
+            })
 
 
             // window.location.assign("/customers.html");
@@ -266,7 +275,7 @@
 
 <div ng-controller="userController" id = "navTop" style="display:none;">
 
-  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispFields">custom fields</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> </span> | <a href="" ng-click="logout()">logout {{myName}}</a>
+  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <span ng-if="authorized"><a href="/dispFields">custom fields</a> | </span> <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> | </span> <a href="" ng-click="logout()">logout {{myName}}</a>
 <!--     <a ng-if="authorized" href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
  -->
 </div>
