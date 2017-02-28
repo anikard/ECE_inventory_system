@@ -22,7 +22,7 @@
 <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
 
 <div class="customerTable" id = "cTable" >
-    <table >
+    <table id = "myRequestsTable">
       <tr>
         <td> User Name </td>
         <td> # of Items </td>
@@ -135,6 +135,14 @@
       var button = $(event.relatedTarget);
       var modal = $(this);
     })
+
+    var table_trs = [];
+    $( document ).ready(function() {
+      table_trs = document.getElementById('myRequestsTable').getElementsByTagName('tr');
+      console.log("in doc ready length " + table_trs.length);
+    });
+
+
   </script>
 
 </body>

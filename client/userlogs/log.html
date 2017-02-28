@@ -57,8 +57,8 @@
       <tr style="text-align: center;" ng-repeat="log in logs | filter: search | orderBy:'-status'">
         <td ng-bind="log.init_user.username"></td>
         <td> <p ng-repeat="it in log.items"> <a ng-click="getItem(it)">{{it}}</a> </p> </td>
-        <td ng-if="log.event=='request'"><a ng-click="viewRequest('58b4cffd7e0dce0c2a2bb031')">{{log.event}}</a></td>
-        <td ng-if="log.event!='request'"><span>{{log.event}}</span></td>
+        <td ng-if="log.event=='request' || log.event=='Request'"><a ng-click="viewRequest(log.request)">{{log.event}}</a></td>
+        <td ng-if="log.event!='request' && log.event!='Request'"><span>{{log.event}}</span></td>
         <td ng-bind="log.rec_user.username"></td>
         <td ng-bind="log.date | date:'short'"></td>
         <td ng-bind="log.admin_actions"></td>

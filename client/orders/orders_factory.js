@@ -74,11 +74,58 @@ var orders_app = angular.module('orders_app', []);
     });
 
 
-    orders_app.controller('ordersController', function($scope, OrderFactory, /*auth,*/ $document) {
+  orders_app.controller('productsController', function($scope, OrderFactory) {
+        $scope.products = OrderFactory.getproducts(function(data) {
+        $scope.products = data;
+      })
+    })
+
+    orders_app.controller('customersController', function($scope, OrderFactory) {
+        $scope.customers = OrderFactory.getcustomers(function(data) {
+        $scope.customers = data;
+
+        //TODO: delete this line and the two below
+        console.log("inside ord cust");
+        console.log($scope.customers);
+      })
+    })
+
+    orders_app.controller('ordersController', function($scope, $window, OrderFactory, /*auth,*/ $document) {
         //console.log("USER ID: " + auth.currentUserID());
         //var thisId = {userId: auth.currentUserID()};
         $scope.orders = OrderFactory.getorders(/*thisId,*/ function(data) {
           $scope.orders = data;
+
+          // using for LOGS
+          if ($window.localStorage['requestSelected'] && !$scope.selected_request) {
+            $scope.selected_request = $window.localStorage['requestSelected'];
+          }
+          $window.localStorage['requestSelected'] = "";
+
+          var thisReqIndex = -1;
+          for (var i = 0; i < $scope.orders.length; i++) {
+            if ($scope.orders[i]._id == $scope.selected_request) {
+              thisReqIndex = i;
+            }
+          }
+
+          console.log("REQUEST SELECTED: ");
+          console.log($scope.selected_request);
+          console.log("REQUEST SELECTED AT INDEX: ");
+          console.log(thisReqIndex);
+
+          $scope.tableTRS = document.getElementById('myRequestsTable').getElementsByTagName('tr');
+          console.log($scope.tableTRS.length);
+          console.log("FROM doc ready: ")
+          console.log(table_trs);
+
+          console.log("one length " + document.getElementById('myRequestsTable').getElementsByTagName('tr').length);
+
+          $scope.requestIndex = thisReqIndex+1;
+
+          // $scope.scrollIntoView(thisReqIndex+1);
+
+
 
         });
 
@@ -91,6 +138,11 @@ var orders_app = angular.module('orders_app', []);
           console.log("AUTHORIZED:")
           console.log($scope.authorized);
 
+
+          
+          $scope.tableRows = document.getElementById('myRequestsTable').getElementsByTagName('tr');
+          console.log("five length " + document.getElementById('myRequestsTable').getElementsByTagName('tr').length);
+          $scope.scrollIntoView($scope.requestIndex);
         })
 
         //$scope.myName = auth.currentUser();
@@ -188,6 +240,7 @@ var orders_app = angular.module('orders_app', []);
         });
 
       }
+          console.log("two length " + document.getElementById('myRequestsTable').getElementsByTagName('tr').length);
 
 
       $scope.viewOrder = function(order) {
@@ -241,24 +294,65 @@ var orders_app = angular.module('orders_app', []);
 
       }
 
+          console.log("three length " + document.getElementById('myRequestsTable').getElementsByTagName('tr').length);
+
+  // from logs view
+
+    $scope.scrollIntoView = function(rowNum) {
+        console.log("in scroll into view ; row num = " + rowNum);
+          var trs = document.getElementById('myRequestsTable').getElementsByTagName('tr');
+          console.log("trs length = " + trs.length);
+          var arr = Array.prototype.slice.call( trs )
+          var element = trs[rowNum];
+
+          console.log("getting table");
+            console.log(document.getElementById('myRequestsTable'));
+            console.log("getting trs");
+             console.log($scope.tableRows);
+             console.log("getting trs.length");
+             console.log($scope.tableRows.length);
+          console.log("getting 2 elem");
+            console.log(table_trs[2]);
+
+
+
+          if (element) {
+            var container = "window";
+            var containerTop = $(container).scrollTop();
+            var containerBottom = containerTop + $(container).height();
+            var elemTop = element.offsetTop;
+            var elemBottom = elemTop + $(element).height();
+
+            var elemAbsTop = element.getBoundingClientRect().top;
+
+            $("#myRequestsTable tr:nth-child("+rowNum+")")[0].scrollIntoView();
+
+            window.scrollBy(0,-100);
+
+            console.log("getting element 2");
+            console.log(element);
+
+            // element.style.backgroundColor = "lightgreen";
+
+            var cols = element.getElementsByTagName('td');
+
+            for (var x = 0; x < cols.length; x++) {
+              cols[x].style.backgroundColor = "lightgreen";
+            }
+
+          }
+
+        }
+
+          console.log("four length " + document.getElementById('myRequestsTable').getElementsByTagName('tr').length);
+
+
+
+
 
     })
 
-    orders_app.controller('productsController', function($scope, OrderFactory) {
-        $scope.products = OrderFactory.getproducts(function(data) {
-        $scope.products = data;
-      })
-    })
-
-    orders_app.controller('customersController', function($scope, OrderFactory) {
-        $scope.customers = OrderFactory.getcustomers(function(data) {
-        $scope.customers = data;
-
-        //TODO: delete this line and the two below
-        console.log("inside ord cust");
-        console.log($scope.customers);
-      })
-    })
+  
 
 /*
     orders_app.factory('auth', ['$http', '$window', function($http, $window){

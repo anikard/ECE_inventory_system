@@ -127,7 +127,7 @@ var log_app = angular.module('log_app', []);
         }
 
         $scope.viewRequest = function(requestID) {
-          $window.localStorage['requestSelected'] = item_name;
+          $window.localStorage['requestSelected'] = requestID;
           $window.location.href = "/orders/orders.html";
         }
 
