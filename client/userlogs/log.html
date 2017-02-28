@@ -18,7 +18,7 @@
 </head>
 
 <body ng-controller="logController">
-  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispFields">custom fields</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> </span> | <a href="" ng-click="logout()">logout {{myName}}</a>
+  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <span ng-if="authorized"><a href="/dispFields">custom fields</a> | </span> <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> | </span> <a href="" ng-click="logout()">logout {{myName}}</a>
   <!-- TO FIX -->
 <h1> {{myName | uppercase}}'S LOGS</h1>
 

@@ -90,7 +90,7 @@ var orders_app = angular.module('orders_app', []);
       })
     })
 
-    orders_app.controller('ordersController', function($scope, $window, OrderFactory, /*auth,*/ $document) {
+    orders_app.controller('ordersController', function($scope, $http, $window, OrderFactory, /*auth,*/ $document) {
         //console.log("USER ID: " + auth.currentUserID());
         //var thisId = {userId: auth.currentUserID()};
         $scope.orders = OrderFactory.getorders(/*thisId,*/ function(data) {
@@ -328,7 +328,7 @@ var orders_app = angular.module('orders_app', []);
 
     })
 
-  
+
 
 /*
     orders_app.factory('auth', ['$http', '$window', function($http, $window){

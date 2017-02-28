@@ -13,7 +13,7 @@
 </head>
 
 <body ng-controller="ordersController">
-  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispFields">custom fields</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> </span> | <a href="" ng-click="logout()">logout {{myName}}</a>
+  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <span ng-if="authorized"><a href="/dispFields">custom fields</a> | </span> <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> | </span> <a href="" ng-click="logout()">logout {{myName}}</a>
   <!--<span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> |</span> <a href="" ng-click="logout()">logout {{user.username}}</a>-->
 <h1> {{user.username | uppercase}}'S CART</h1>
 <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search for item">
@@ -123,7 +123,7 @@
 
         <select class = "feedback-input" id = "customerList" name="customerOptions" ng-model="this_request.user">
           <option value="" selected disabled>User Name</option>
-          <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.name"></option>
+          <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.username || customer.netId || customer.name"></option>
         </select>
 
         <textarea style="display:block; width: 80%; margin-left:10%" class = "feedback-input" ng-model="this_request.reason" placeholder="Comment"></textarea>
