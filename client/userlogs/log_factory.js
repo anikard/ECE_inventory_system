@@ -58,6 +58,19 @@ var log_app = angular.module('log_app', []);
         LogFactory.getLogs(function(data) {
           console.log("scope getting logs");
           console.log(data);
+
+
+          for (var m = 0; m < data.length; m++) {
+
+            var items_array = [];
+
+            for (var a = 0; a < data[m].item.length; a++) {
+              items_array.push(data[m].item[a].name);
+            }
+
+            data[m].items = items_array;
+          }
+
           $scope.logs = data;
           $scope.originalLogs = $scope.logs;
           color_table_elements();
