@@ -105,7 +105,13 @@ function add (req, res) {
         request.save((err,request) => {
         	if (err)
 				return res.status(500).send({ error: err });
+			
+			let name_arr = []
+			cart.items.forEach(i=>name_arr.push(i.name));
+			
 			cart.items = [];
+			
+		
 			cart.save((err)=>{
 				if (err)
 					return res.status(500).send({ error: err });
@@ -165,6 +171,11 @@ function disburse (id, req, res) {
 			for (let i = 0;i<cart.items.length;i++){
 				cart.items[i].item.save();
 			}
+		
+			let name_arr = []
+			cart.items.forEach(i=>name_arr.push(i.name));	
+			
+		
 			cart.items = [];
 			cart.save((err)=>{
 				if (err)
@@ -175,9 +186,6 @@ function disburse (id, req, res) {
 			let quantity_arr = []
 			request.items.forEach(i=>quantity_arr.push(i.quantity));
 
-			let name_arr = []
-			request.items.forEach(i=>name_arr.push(i.item.name));	
-				
 	    		let log = new Log({
 					init_user: req.user,
 					item: arr,
@@ -269,7 +277,7 @@ function update (req, res) {
 	 				event: "Request",
 	 				request: request,
 	 				rec_user: request.user,
-	 				admin_action: "Approve",
+	 				admin_actions: "Approve",
 					quantity: quantity_arr,
 					name_list: name_arr
 				});
