@@ -103,22 +103,54 @@ module.exports = (app) => {
     if (! req.body._id && !req.body.item) return res.status(400).send({ error: "Missing ref id" });
     req.body._id = req.body._id || req.body.item;
     props = _.pick(req.body, ['name','quantity','location','model','description','tags','image','fields']);
-    Item.findByIdAndUpdate(
-    req.body._id,
-    {$set: props},
-    { new: true },
-    function (err, item) {
-      if (err) res.status(500).send({ error: err });
-      else {
+    
+    var currQuantity = 0;
+    
+    Item.findOne({ '_id': req.body._id }, function (err, item) {
+      if (err) {
+        return res.status(500).send({ error: err });
+      }
+      if (!item) {
+        return res.status(405).send({ error: "Missing item? Check the ID" });
+      }
+
+      currQuantity = item.quantity;
+      
+      _.assign(item, props);
+      
+      var message = "updated an item";
+        
+          if(req.user.name === "admin"){
+            if(req.body.quantity < currQuantity){
+            message = "admin decreased quantity";  
+            }
+            if(req.body.quantity > currQuantity){
+            message = "admin increased quantity";
+            }         
+          }
+          else{
+            
+            if(req.body.quantity < currQuantity){
+            message = "manager logged a loss";  
+            }
+            if(req.body.quantity > currQuantity){
+            message = "manager logged an acquisition";
+            }         
+            
+          }
         
           var itemArray = [item._id];
-          var itemQuantity = [item.quantity];
+          var itemQuantity = [req.body.quantity];
+      
+			    var name_arr = [item.name];
+          
             let log = new Log({
             init_user: req.user._id,
             item: itemArray,
             quantity: itemQuantity,
             event: "item updated",
             rec_user: req.user._id,
+            name_list:name_arr
              });
 
               log.save(function(err){
@@ -131,7 +163,22 @@ module.exports = (app) => {
           
         
         
-        res.status(200).json(item);
+        res.status(200).json(item);  
+      
+    });
+    
+    
+    
+    Item.findByIdAndUpdate(
+    req.body._id,
+    {$set: props},
+    { new: true },
+    function (err, item) {
+      if (err) res.status(500).send({ error: err });
+      else {
+        
+          
+    
       }
     });
 
