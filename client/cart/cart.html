@@ -123,7 +123,7 @@
 
         <select class = "feedback-input" id = "customerList" name="customerOptions" ng-model="this_request.user">
           <option value="" selected disabled>User Name</option>
-          <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.name"></option>
+          <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.username || customer.netId || customer.name"></option>
         </select>
 
         <textarea style="display:block; width: 80%; margin-left:10%" class = "feedback-input" ng-model="this_request.reason" placeholder="Comment"></textarea>
