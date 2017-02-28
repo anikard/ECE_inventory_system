@@ -20,15 +20,21 @@ var orders_app = angular.module('orders_app', []);
         })
       }
 
-      factory.getorders = function(info, callback) {
-        $http.post('/orders', info).success(function(output) {
+      factory.getuser = function(callback) {
+        $http.get('/api/user').success(function(output) {
+          callback(output);
+        })
+      }
+
+      factory.getorders = function(callback) {
+        $http.get('/api/request/show').success(function(output) {
           orders = output;
 
           console.log(orders);
           orders.forEach(function(elem) {
             //WHAT I REMOVED WAS ONE LINE OF COMMENTS HERE
             // elem["customer_name"] = elem["userId"].name;
-            elem.customer_name = "SAMPLE NAME"
+            //elem.customer_name = "SAMPLE NAME"
           })
           console.log(orders);
 
@@ -40,23 +46,24 @@ var orders_app = angular.module('orders_app', []);
         callback(order);
 
       }
-
+/* TODO: DEPRECATE functionality moved to cart
       factory.addOrder = function(info, callback) {
         $http.post('/addOrder', info).success(function(output) {
             orders = output;
             callback(orders);
         })
       }
+*/
 
       factory.updateOrder = function(info, callback) {
-        $http.post('/updateOrder', info).success(function(output) {
+        $http.post('/api/request/update', info).success(function(output) {
             callback(output);
         })
       }
 
 
       factory.removeOrder = function(order, callback) {
-        $http.post('/deleteOrder', order).success(function(output) {
+        $http.post('/api/request/del', order).success(function(output) {
             console.log(output.length);
             orders = output;
             callback(orders);
@@ -67,17 +74,30 @@ var orders_app = angular.module('orders_app', []);
     });
 
 
-    orders_app.controller('ordersController', function($scope, OrderFactory, auth, $document) {
-        console.log("USER ID: " + auth.currentUserID());
-        var thisId = {userId: auth.currentUserID()};
-        $scope.orders = OrderFactory.getorders(thisId, function(data) {
-        $scope.orders = data;
+    orders_app.controller('ordersController', function($scope, OrderFactory, /*auth,*/ $document) {
+        //console.log("USER ID: " + auth.currentUserID());
+        //var thisId = {userId: auth.currentUserID()};
+        $scope.orders = OrderFactory.getorders(/*thisId,*/ function(data) {
+          $scope.orders = data;
 
-      });
+        });
 
-        $scope.myName = auth.currentUser();
-        console.log("MY NAME: " + $scope.myName);
-        $scope.authorized = (auth.currentUserStatus()=="admin");
+        $scope.user = OrderFactory.getuser(function(data) {
+          $scope.user = data;
+
+          $scope.authorized = data.status == "admin" || data.status =="manager";
+          $scope.myName = data.username;
+
+          console.log("AUTHORIZED:")
+          console.log($scope.authorized);
+
+        })
+
+        //$scope.myName = auth.currentUser();
+        //console.log("MY NAME: " + $scope.myName);
+
+        //$scope.authorized = (auth.currentUserStatus()=="admin");
+        /*
         if ($scope.authorized) {
           $document[ 0 ].getElementById('customerList').display = "block";
           $document[ 0 ].getElementById('thisCustomerInput').display = "none";
@@ -86,8 +106,11 @@ var orders_app = angular.module('orders_app', []);
           $document[ 0 ].getElementById('customerList').display = "none";
           $document[ 0 ].getElementById('thisCustomerInput').display = "block";
         }
+        */
+
 
         // AUTH
+        /*
         $scope.logout = function() {
           console.log("scope logging out ");
           auth.logout(function() {
@@ -99,13 +122,15 @@ var orders_app = angular.module('orders_app', []);
         $scope.getCurrentStatus = function() {
           return auth.currentUserStatus();
         }
+        */
 
-
+//TODO: deprecate, orders not added from request page anymore
+/*
       $scope.addOrder = function() {
 
         console.log("addOrder from order controller scope");
 
-        
+
         if ($scope.authorized) {
           var customerSelected = $document[ 0 ].getElementById('customerList');
 
@@ -149,6 +174,7 @@ var orders_app = angular.module('orders_app', []);
           $scope.new_order = {};
         });
       }
+      */
 
         $scope.removeOrder = function(order) {
           $('#orderModal').modal('hide');
@@ -234,7 +260,7 @@ var orders_app = angular.module('orders_app', []);
       })
     })
 
-
+/*
     orders_app.factory('auth', ['$http', '$window', function($http, $window){
        var auth = {};
 
@@ -256,7 +282,7 @@ var orders_app = angular.module('orders_app', []);
           if(auth.isLoggedIn()){
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
-            
+
             return payload.username;
           }
         };
@@ -265,7 +291,7 @@ var orders_app = angular.module('orders_app', []);
           if(auth.isLoggedIn()){
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
-            
+
             return payload._id;
           }
         };
@@ -274,7 +300,7 @@ var orders_app = angular.module('orders_app', []);
           if(auth.isLoggedIn()){
             var token = auth.getToken();
             var payload = JSON.parse($window.atob(token.split('.')[1]));
-            
+
             return payload.status;
           }
         };
@@ -302,6 +328,7 @@ var orders_app = angular.module('orders_app', []);
 
       return auth;
     }])
+    */
 
     // orders_app.controller('authController', function($scope, auth) {
     //     $scope.myName = auth.currentUser();

@@ -25,8 +25,8 @@
     <table >
       <tr>
         <td> User Name </td>
-        <td> Item </td>
-        <td> Quantity </td>
+        <td> # of Items </td>
+        <!--<td> Quantity </td>-->
         <td> Date Issued </td>
         <!-- <td> Date Fulfilled </td> -->
         <td> Status </td>
@@ -35,8 +35,8 @@
 
       <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
         <td ng-bind="order.customer_name || order.user.username"></td>
-        <td ng-bind="order.item_name"></td>
-        <td ng-bind="order.quantity"></td>
+        <td ng-bind="order.items.length"></td>
+        <!--<td ng-bind="order.quantity"></td>-->
         <td ng-bind="order.date | date:'short'"></td>
         <!-- <td ng-bind="order.dateDone | date:'short'"></td> -->
         <td ng-bind="order.status"></td>
@@ -45,6 +45,7 @@
     </table>
   </div>
 
+<!-- TODO: DEPRECATE
   <h1>Create Request</h1>
 
  <form id="createReqForm">
@@ -64,7 +65,7 @@
     <input type="submit" ng-disabled="createReqForm.$invalid" ng-click="addOrder()">
     <br>
  </form>
-
+-->
 
 <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -81,12 +82,25 @@
 
         <div class="form-group" >
             <p> <b> User: </b> {{thisOrder.customer_name}}</p>
+            <p>
+              <table>
+                <tr>
+                  <td><b>Item</b></td>
+                  <td><b>Quantity</b></td>
+                </tr>
+                <tr ng-repeat="item in thisOrder.items">
+                  <td ng-bind="item.item.name"></td>
+                  <td ng-bind="item.quantity"></td>
+                </tr>
+              </table>
+            </p>
+
             <p><b>Item:  </b>{{thisOrder.item_name}}</p>
             <p><b>Quantity:  </b>{{thisOrder.quantity}}</p>
             <p><b>Reason:  </b>{{thisOrder.reason}}</p>
             <p><b>Current Status:  </b>{{thisOrder.status}}</p>
           </div>
-          
+
 
       <div ng-if="authorized">
         <form id="request_response_form">
