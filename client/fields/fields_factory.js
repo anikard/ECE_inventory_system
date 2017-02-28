@@ -12,6 +12,12 @@ fields_app.factory('FieldsFactory', function($http) {
     })
   }
 
+  factory.getuser = function(callback) {
+      $http.get('/api/user').success(function(output) {
+        callback(output);
+      })
+    }
+
   factory.addField = function(info, callback) {
     console.log("inside factory addField");
     console.log(info);
@@ -56,6 +62,17 @@ fields_app.controller('fieldsController', function($scope, $http, FieldsFactory)
       window.location.assign("/");
     });
   }
+
+  $scope.user = FieldsFactory.getuser(function(data) {
+    $scope.user = data;
+
+    $scope.authorized = data.status == "admin" || data.status == "manager";
+    $scope.adminOnly = data.status == "admin";
+    $scope.myName = data.username || data.netId || data.name;
+
+    console.log("AUTHORIZED:")
+    console.log($scope.authorized);
+  })
 
   $scope.addField = function() {
     console.log($scope.new_field);

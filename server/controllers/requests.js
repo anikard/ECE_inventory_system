@@ -147,7 +147,7 @@ function disburse (id, req, res) {
 			return res.status(400).send({ error: "Empty cart" });
 		for (let i = 0;i<cart.items.length;i++){
 			if (cart.items[i].item.quantity < cart.items[i].quantity)
-				return res.status(400).send({ error: `Request quantity of ${cart.items[i].item.name} exceeds stock limit` });
+				return res.status(405).send({ error: `Request quantity of ${cart.items[i].item.name} exceeds stock limit` });
 		}
 		let request = new Request({
         	user: id,
@@ -239,7 +239,7 @@ function update (req, res) {
 				return res.status(401).send({ error: "Unauthorized operation"});
 			for (let i = 0;i<request.items.length;i++){
 				if (request.items[i].item.quantity < request.items[i].quantity)
-					return res.status(400).send({
+					return res.status(405).send({
 						error: `Request quantity of ${request.items[i].item.name} exceeds stock limit`
 					});
 			}
