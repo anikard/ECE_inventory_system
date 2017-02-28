@@ -114,7 +114,8 @@ function add (req, res) {
 	    		let log = new Log({
 					init_user: id,
 					item: arr,
-	 				event: "request",
+	 				event: "Request",
+	 				request: request,
 	 				rec_user: id,
 				});
 				log.save((err)=>{
@@ -237,8 +238,10 @@ function update (req, res) {
 	    		let log = new Log({
 					init_user: req.user,
 					item: arr,
-	 				event: "Approve request",
+	 				event: "Request",
+	 				request: request,
 	 				rec_user: request.user,
+	 				admin_action: "Approve"
 				});
 				log.save();
 				return res.status(200).json(request);
