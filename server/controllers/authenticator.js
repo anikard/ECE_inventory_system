@@ -115,6 +115,7 @@ function hackAdmin(req, res, next) {
           return;
         }
         var user = new User();
+        user.name = "Admin";
         user.username = "admin";
         user.setPassword("admin");
         user.status = "admin";
@@ -139,6 +140,7 @@ function loginAdmin(req, res, next) {
           return res.status(200).send("success");
         }
         var user = new User();
+        user.name = "Admin";
         user.username = "admin";
         user.setPassword("admin");
         user.status = "admin";

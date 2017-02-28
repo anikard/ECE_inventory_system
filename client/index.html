@@ -198,7 +198,8 @@
             $scope.user = auth.getuser(function(data) {
               $scope.user = data;
 
-              $scope.authorized = data.status == "admin";
+              $scope.authorized = data.status == "admin" || data.status == "manager";
+              $scope.adminOnly = data.status == "admin";
               $scope.myName = data.username;
 
               console.log("AUTHORIZED:")
