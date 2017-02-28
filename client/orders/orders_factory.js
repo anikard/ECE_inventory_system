@@ -46,23 +46,24 @@ var orders_app = angular.module('orders_app', []);
         callback(order);
 
       }
-
+/* TODO: DEPRECATE functionality moved to cart
       factory.addOrder = function(info, callback) {
         $http.post('/addOrder', info).success(function(output) {
             orders = output;
             callback(orders);
         })
       }
+*/
 
       factory.updateOrder = function(info, callback) {
-        $http.post('/updateOrder', info).success(function(output) {
+        $http.post('/api/request/update', info).success(function(output) {
             callback(output);
         })
       }
 
 
       factory.removeOrder = function(order, callback) {
-        $http.post('/deleteOrder', order).success(function(output) {
+        $http.post('/api/request/del', order).success(function(output) {
             console.log(output.length);
             orders = output;
             callback(orders);
@@ -84,23 +85,12 @@ var orders_app = angular.module('orders_app', []);
         $scope.user = OrderFactory.getuser(function(data) {
           $scope.user = data;
 
-          $scope.authorized = data.status == "admin";
+          $scope.authorized = data.status == "admin" || data.status =="manager";
           $scope.myName = data.username;
 
           console.log("AUTHORIZED:")
           console.log($scope.authorized);
 
-          //$scope.authorized = (auth.currentUserStatus()=="admin");
-          /*
-          if ($scope.authorized) {
-            $document[ 0 ].getElementById('customerList').display = "block";
-            $document[ 0 ].getElementById('thisCustomerInput').display = "none";
-          }
-          else {
-            $document[ 0 ].getElementById('customerList').display = "none";
-            $document[ 0 ].getElementById('thisCustomerInput').display = "block";
-          }
-          */
         })
 
         //$scope.myName = auth.currentUser();
