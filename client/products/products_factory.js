@@ -592,7 +592,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
 
           $("#myItemTable tr:nth-child("+rowNum+")")[0].scrollIntoView();
 
-          window.scrollBy(0,elemTop-600);
+          window.scrollBy(0,-100);
 
           var cols = element.getElementsByTagName('td');
 

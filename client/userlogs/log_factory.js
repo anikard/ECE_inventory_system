@@ -59,6 +59,7 @@ var log_app = angular.module('log_app', []);
           console.log("scope getting logs");
           console.log(data);
           $scope.logs = data;
+          $scope.originalLogs = $scope.logs;
           color_table_elements();
         });
 
@@ -241,7 +242,7 @@ var log_app = angular.module('log_app', []);
           }
       ];
 
-      $scope.originalLogs = $scope.logs;
+      
 
 
       function color_table_elements() {
@@ -282,6 +283,8 @@ var log_app = angular.module('log_app', []);
                         result.push($scope.logs[i]);
                     }
                 }    
+                console.log("filtering logs");
+                console.log(result);
                 $scope.logs = result;
       }
        
