@@ -148,7 +148,7 @@ module.exports = (app) => {
             init_user: req.user._id,
             item: itemArray,
             quantity: itemQuantity,
-            event: "item updated",
+            event: message,
             rec_user: req.user._id,
             name_list:name_arr
              });
