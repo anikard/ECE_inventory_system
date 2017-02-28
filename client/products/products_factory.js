@@ -201,8 +201,9 @@ products_app.controller('productsController', function($scope, $window, $rootSco
   $scope.user = ProductsFactory.getuser(function(data) {
     $scope.user = data;
 
-    $scope.authorized = data.status == "admin";
-    $scope.myName = data.username;
+    $scope.authorized = data.status == "admin" || data.status == "manager";
+    $scope.adminOnly = data.status == "admin";
+    $scope.myName = data.username || data.netId || data.name;
 
     console.log("AUTHORIZED:")
     console.log($scope.authorized);

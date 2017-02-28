@@ -86,7 +86,7 @@ var orders_app = angular.module('cart_app', []);
 
         $scope.user = OrderFactory.getuser(function(data) {
           $scope.user = data;
-          $scope.myName = data.username;
+          $scope.myName = data.username || data.netId || data.name;
         })
 
         //console.log("USER ID: " + auth.currentUserID());
