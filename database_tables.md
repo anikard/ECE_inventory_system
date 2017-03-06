@@ -18,7 +18,9 @@ Quantity | Integer | Required
 Model # | String
 Description | String
 Location | String
+Fields | {}
 Tags | String []
+Custom Fields | {}
 
 ## REQUESTS
 Item | Type 
@@ -30,4 +32,35 @@ User_id | Integer
 Reason | String
 Admin_note | String
 Status | String
+
+## CART
+Item | Type | Required?
+--- | --- 
+user | User.id | Required
+item | [(Item.id, Integer)]
+
+## FIELD
+Item | Type | Required?
+--- | --- | ---
+name | String | Required
+type | String
+access | String
+req | Boolean
+default | 
+date | Date
+
+## LOG
+Item | Type | Required?
+--- | --- | ---
+init_user | User.id | Required
+item | Item.id
+quantity | Integer [],
+request | Request.id 
+event | String 
+rec_user | User.id
+date | Date
+admin_actions | String   
+name_list | String []
+
+
 

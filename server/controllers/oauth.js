@@ -104,6 +104,7 @@ function code(req, res, next) {
           } else {
             // Create a new user
             let user = new User({
+              username: info.netid,
               netId: info.netid,
               name: info.displayName,
               status: "user"

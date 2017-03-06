@@ -10,8 +10,8 @@ var secret = 'D6MDhL3A3FQyaCwEY0JH';
 var Schema = mongoose.Schema;
 var UserSchema = new mongoose.Schema({
   username: {type: String, default: "", index: true, unique: true},
-  name: {type: String, default: "", index: true},
-  netId: {type: String, default: "", index: true},
+  name: {type: String, default: ""},
+  netId: {type: String, default: ""},
   date: { type : Date, default: Date.now },
   salt: {type: String, default: ""},
   email: {type: String, default: ""},
