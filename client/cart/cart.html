@@ -1,151 +1,143 @@
 <html ng-app="cart_app">
-<head>
-  <title>Cart</title>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+  <head>
+    <title>Cart</title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
 
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-<link rel="stylesheet" type="text/css" href="cart_style.css">
-  <script src="cart_factory.js"></script>
+  <link rel="stylesheet" type="text/css" href="cart_style.css">
+    <script src="cart_factory.js"></script>
 
-</head>
+  </head>
 
-<body ng-controller="ordersController">
-  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <span ng-if="authorized"><a href="/dispFields">custom fields</a> | </span> <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> | </span> <a href="" ng-click="logout()">logout {{myName}}</a>
-  <!--<span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> |</span> <a href="" ng-click="logout()">logout {{user.username}}</a>-->
-<h1> {{user.username | uppercase}}'S CART</h1>
-<input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search for item">
+  <body ng-controller="ordersController">
+    <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <span ng-if="authorized"><a href="/dispFields">custom fields</a> | </span> <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> | </span> <a href="" ng-click="logout()">logout {{myName}}</a>
 
-<div class="customerTable" id = "cTable" >
-    <table>
-      <tr>
-        <td> Item </td>
-        <td> Quantity </td>
-        <!--<td> Date Added </td>-->
-        <td> Actions </td>
-      </tr>
+    <h1> {{user.username | uppercase}}'S CART</h1>
+    <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search for item">
 
-      <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
-        <td ng-bind="order.item.name"></td>
-        <td ng-bind="order.quantity"></td>
-        <!--<td ng-bind="order.date | date:'short'"></td>-->
-        <td><button class = "remove" ng-click='removeFromCart(order)'>Remove</button></td>
-      </tr>
-    </table>
-  </div>
+    <div class="customerTable" id = "cTable" >
+      <table>
+        <tr>
+          <td> Item </td>
+          <td> Quantity </td>
+          <!--<td> Date Added </td>-->
+          <td> Actions </td>
+        </tr>
 
-
-<button class = "blueButton" data-toggle="modal" data-target="#orderModal">Create Request</button>
-<button ng-show="authorized" class="blueButton" data-toggle="modal" data-target="#disburseModal">Direct Disburse</button>
-
-  <h1 style="margin-top:3em;">Add an item to your cart</h1>
-
- <form id="createReqForm">
-
-    <!-- <input style = "display:none;" id="thisCustomerInput" class = "feedback-input" type="text" value="{{myName}}" ng-readonly="true" /> -->
-
-    <select class = "feedback-input" ng-controller="productsController" id = "productList" name="productsOptions" ng-model="new_order.product" required>
-      <option value="" selected disabled>Item</option>
-      <option ng-repeat="product in products" value="{{product._id}}">{{product.name}} || {{product.description}}</option>
-    </select>
-    <input class = "feedback-input" type="number" ng-model="new_order.quantity" placeholder="quantity" required>
-    <input type="submit" ng-disabled="createReqForm.$invalid" ng-click="addToCart()">
-    <br>
- </form>
+        <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
+          <td ng-bind="order.item.name"></td>
+          <td ng-bind="order.quantity"></td>
+          <!--<td ng-bind="order.date | date:'short'"></td>-->
+          <td><button class = "remove" ng-click='removeFromCart(order)'>Remove</button></td>
+        </tr>
+      </table>
+    </div>
 
 
-<!-- MODAL FOR REGULAR REQUEST-->
-<div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+    <button class = "blueButton" data-toggle="modal" data-target="#orderModal">Create Request</button>
+    <button ng-show="authorized" class="blueButton" data-toggle="modal" data-target="#disburseModal">Direct Disburse</button>
 
-        </button>
-          <h1 class="modal-title" id="exampleModalLabel">Create Request</h1>
+    <h1 style="margin-top:3em;">Add an item to your cart</h1>
 
-      </div>
-      <div class="modal-body" align="left">
+    <form id="createReqForm">
+      <select class = "feedback-input" ng-controller="productsController" id = "productList" name="productsOptions" ng-model="new_order.product" required>
+        <option value="" selected disabled>Item</option>
+        <option ng-repeat="product in products" value="{{product._id}}">{{product.name}} || {{product.description}}</option>
+      </select>
+      <input class = "feedback-input" type="number" ng-model="new_order.quantity" placeholder="quantity" required>
+      <input type="submit" ng-disabled="createReqForm.$invalid" ng-click="addToCart()">
+      <br>
+    </form>
 
-        <table class="createRequestTable">
-          <tr>
-            <td> Item </td>
-            <td> Quantity </td>
-          </tr>
 
-          <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
-            <td ng-bind="order.item.name"></td>
-            <td ng-bind="order.quantity"></td>
-          </tr>
-        </table>
+  <!-- MODAL FOR REGULAR REQUEST-->
+    <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h1 class="modal-title" id="exampleModalLabel">Create Request</h1>
 
-        <textarea style="display:block; width: 80%; margin-left:10%" class = "feedback-input" ng-model="this_request.reason" placeholder="Reason for Request" required></textarea>
+          </div>
+          <div class="modal-body" align="left">
 
-      </div>
-      <div class="modal-footer">
-        <!-- <button class="btn btn-danger" ng-click='removeOrder(thisOrder)'  id = "cancelOrderButton">Cancel order</button> -->
-        <button type="button" class="btn btn-primary" ng-click="createRequest()" id = "respondOrderButton">Create request</button>
-        <!--<button ng-show="authorized" type="button" class="btn btn-primary" ng-->
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <table class="createRequestTable">
+              <tr>
+                <td> Item </td>
+                <td> Quantity </td>
+              </tr>
+
+              <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
+                <td ng-bind="order.item.name"></td>
+                <td ng-bind="order.quantity"></td>
+              </tr>
+            </table>
+
+            <textarea style="display:block; width: 80%; margin-left:10%" class = "feedback-input" ng-model="this_request.reason" placeholder="Reason for Request" required></textarea>
+
+          </div>
+          <div class="modal-footer">
+          <!-- <button class="btn btn-danger" ng-click='removeOrder(thisOrder)'  id = "cancelOrderButton">Cancel order</button> -->
+            <button type="button" class="btn btn-primary" ng-click="createRequest()" id = "respondOrderButton">Create request</button>
+          <!--<button ng-show="authorized" type="button" class="btn btn-primary" ng-->
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- MODAL FOR DIRECT DISBURSAL-->
-<div class="modal fade" id="disburseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+    <!-- MODAL FOR DIRECT DISBURSAL-->
+    <div class="modal fade" id="disburseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h1 class="modal-title" id="exampleModalLabel">Direct Disburse</h1>
+          </div>
+          <div class="modal-body" align="left">
+            <table class="createRequestTable">
+              <tr>
+                <td> Item </td>
+                <td> Quantity </td>
+              </tr>
+              <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
+                <td ng-bind="order.item.name"></td>
+                <td ng-bind="order.quantity"></td>
+              </tr>
+            </table>
 
-        </button>
-          <h1 class="modal-title" id="exampleModalLabel">Direct Disburse</h1>
+            <select class = "feedback-input" id = "customerList" name="customerOptions" ng-model="this_request.user">
+              <option value="" selected disabled>User Name</option>
+              <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.username || customer.netId || customer.name"></option>
+            </select>
 
-      </div>
-      <div class="modal-body" align="left">
+            <textarea style="display:block; width: 80%; margin-left:10%" class = "feedback-input" ng-model="this_request.reason" placeholder="Comment"></textarea>
 
-        <table class="createRequestTable">
-          <tr>
-            <td> Item </td>
-            <td> Quantity </td>
-          </tr>
-
-          <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
-            <td ng-bind="order.item.name"></td>
-            <td ng-bind="order.quantity"></td>
-          </tr>
-        </table>
-
-        <select class = "feedback-input" id = "customerList" name="customerOptions" ng-model="this_request.user">
-          <option value="" selected disabled>User Name</option>
-          <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.username || customer.netId || customer.name"></option>
-        </select>
-
-        <textarea style="display:block; width: 80%; margin-left:10%" class = "feedback-input" ng-model="this_request.reason" placeholder="Comment"></textarea>
-
-      </div>
-      <div class="modal-footer">
-        <!-- <button class="btn btn-danger" ng-click='removeOrder(thisOrder)'  id = "cancelOrderButton">Cancel order</button> -->
-        <button type="button" class="btn btn-primary" ng-click="createRequest()" id = "respondOrderButton">Create Disburse</button>
-        <!--<button ng-show="authorized" type="button" class="btn btn-primary" ng-->
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+          <div class="modal-footer">
+            <!-- <button class="btn btn-danger" ng-click='removeOrder(thisOrder)'  id = "cancelOrderButton">Cancel order</button> -->
+            <button type="button" class="btn btn-primary" ng-click="createRequest()" id = "respondOrderButton">Create Disburse</button>
+            <!--<button ng-show="authorized" type="button" class="btn btn-primary" ng-->
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-  <script type="text/javascript">
-    $('#orderModal').on('show.bs.modal', function (event) {
-      var button = $(event.relatedTarget);
-      var modal = $(this);
-    })
-  </script>
+    <script type="text/javascript">
+      $('#orderModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var modal = $(this);
+      })
+    </script>
 
 
-</body>
+  </body>
 </html>
