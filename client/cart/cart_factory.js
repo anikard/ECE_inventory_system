@@ -62,7 +62,7 @@ var orders_app = angular.module('cart_app', []);
       return factory;
     });
 
-    orders_app.controller('ordersController', function($scope, $http, OrderFactory, auth, $document) {
+    orders_app.controller('ordersController', function($scope, $http, OrderFactory, $document) {
 
       // AUTH
       $scope.user = OrderFactory.getuser(function(data) {
