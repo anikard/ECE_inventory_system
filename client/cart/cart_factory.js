@@ -68,7 +68,6 @@ var orders_app = angular.module('cart_app', []);
       $scope.user = OrderFactory.getuser(function(data) {
         $scope.user = data;
         $scope.myName = data.username || data.netId || data.name;
-        console.log($scope.myName)
         $scope.authorized = data.status == "admin" || data.status == "manager";
         $scope.adminOnly = data.status == "admin";
       })
