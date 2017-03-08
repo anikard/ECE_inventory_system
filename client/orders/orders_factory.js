@@ -29,15 +29,6 @@ var orders_app = angular.module('orders_app', []);
       factory.getorders = function(callback) {
         $http.get('/api/request/show').success(function(output) {
           orders = output;
-
-          console.log(orders);
-          orders.forEach(function(elem) {
-            //WHAT I REMOVED WAS ONE LINE OF COMMENTS HERE
-            // elem["customer_name"] = elem["userId"].name;
-            //elem.customer_name = "SAMPLE NAME"
-          })
-          console.log(orders);
-
           callback(orders);
         })
       }
@@ -46,14 +37,6 @@ var orders_app = angular.module('orders_app', []);
         callback(order);
 
       }
-/* TODO: DEPRECATE functionality moved to cart
-      factory.addOrder = function(info, callback) {
-        $http.post('/addOrder', info).success(function(output) {
-            orders = output;
-            callback(orders);
-        })
-      }
-*/
 
       factory.updateOrder = function(info, callback) {
         $http.post('/api/request/update', info)
@@ -64,7 +47,6 @@ var orders_app = angular.module('orders_app', []);
             callback(error);
           })
       }
-
 
       factory.removeOrder = function(order, callback) {
         $http.post('/api/request/del', order).success(function(output) {
@@ -94,7 +76,7 @@ var orders_app = angular.module('orders_app', []);
       })
     })
 
-    orders_app.controller('ordersController', function($scope, $http, $window, OrderFactory, /*auth,*/ $document) {
+    orders_app.controller('ordersController', function($scope, $http, $window, OrderFactory,  $document) {
         //console.log("USER ID: " + auth.currentUserID());
         //var thisId = {userId: auth.currentUserID()};
         $scope.orders = OrderFactory.getorders(/*thisId,*/ function(data) {
@@ -137,22 +119,6 @@ var orders_app = angular.module('orders_app', []);
           $scope.scrollIntoView($scope.requestIndex);
         })
 
-        //$scope.myName = auth.currentUser();
-        //console.log("MY NAME: " + $scope.myName);
-
-        //$scope.authorized = (auth.currentUserStatus()=="admin");
-        /*
-        if ($scope.authorized) {
-          $document[ 0 ].getElementById('customerList').display = "block";
-          $document[ 0 ].getElementById('thisCustomerInput').display = "none";
-        }
-        else {
-          $document[ 0 ].getElementById('customerList').display = "none";
-          $document[ 0 ].getElementById('thisCustomerInput').display = "block";
-        }
-        */
-
-
         // AUTH
         $scope.logout = function() {
           $http.get('/api/auth/logout').success(function(output) {
@@ -160,71 +126,6 @@ var orders_app = angular.module('orders_app', []);
             window.location.assign("/");
           });
         }
-        /*
-        $scope.logout = function() {
-          console.log("scope logging out ");
-          auth.logout(function() {
-            $scope.isLoggedIn = false;
-            window.location.assign("/");
-          });
-        }
-
-        $scope.getCurrentStatus = function() {
-          return auth.currentUserStatus();
-        }
-        */
-
-//TODO: deprecate, orders not added from request page anymore
-/*
-      $scope.addOrder = function() {
-
-        console.log("addOrder from order controller scope");
-
-
-        if ($scope.authorized) {
-          var customerSelected = $document[ 0 ].getElementById('customerList');
-
-          var itemSelected = $document[ 0 ].getElementById('productList');
-
-          if (!customerSelected.value || !itemSelected.value || !$scope.new_order || !$scope.new_order.quantity || !$scope.new_order.reason) {
-            console.log('Form incomplete');
-            return;
-          }
-
-          $scope.new_order.userId = customerSelected.value; // id
-          $scope.new_order.customer_name = customerSelected.options[customerSelected.selectedIndex].text;
-          $scope.new_order.item_name = ((itemSelected.options[itemSelected.selectedIndex].text).split("|"))[0];
-          $scope.new_order.itemId = itemSelected.value; // id
-          $scope.new_order.status = "open";
-        }
-        else {
-
-          var itemSelected = $document[ 0 ].getElementById('productList');
-
-          if (!itemSelected.value || !$scope.new_order || !$scope.new_order.quantity || !$scope.new_order.reason) {
-            console.log('Form incomplete');
-            return;
-          }
-
-          $scope.new_order.userId = auth.currentUserID(); // id
-          console.log("GOT ID = " + $scope.new_order.userId);
-          $scope.new_order.customer_name = $scope.myName;
-          $scope.new_order.item_name = ((itemSelected.options[itemSelected.selectedIndex].text).split("|"))[0];
-          $scope.new_order.itemId = itemSelected.value; // id
-          $scope.new_order.status = "open";
-        }
-
-
-        console.log($scope.new_order);
-
-       // $scope.new_order.status = "pending";
-        OrderFactory.addOrder($scope.new_order, function(data) {
-          $scope.new_order.date = new Date();
-          $scope.orders.push($scope.new_order);
-          $scope.new_order = {};
-        });
-      }
-      */
 
         $scope.removeOrder = function(order) {
           $('#orderModal').modal('hide');
@@ -293,14 +194,9 @@ var orders_app = angular.module('orders_app', []);
             $('#orderModal').modal('hide');
           }
         });
-
-
-
       }
 
-
   // from logs view
-
     $scope.scrollIntoView = function(rowNum) {
         console.log("in scroll into view ");
           var trs = document.getElementById('myRequestsTable').getElementsByTagName('tr');
@@ -334,99 +230,6 @@ var orders_app = angular.module('orders_app', []);
             for (var x = 0; x < cols.length; x++) {
               cols[x].style.backgroundColor = "lightgreen";
             }
-
           }
-
         }
-
-
     })
-
-
-
-/*
-    orders_app.factory('auth', ['$http', '$window', function($http, $window){
-       var auth = {};
-
-        auth.getToken = function (){
-          return $window.localStorage['inventoryToken'];
-        }
-
-        auth.isLoggedIn = function(){
-          var token = auth.getToken();
-          if(token){
-            var payload = JSON.parse($window.atob(token.split('.')[1]));
-            return payload.exp > Date.now() / 1000;
-          } else {
-            return false;
-          }
-        };
-
-        auth.currentUser = function(){
-          if(auth.isLoggedIn()){
-            var token = auth.getToken();
-            var payload = JSON.parse($window.atob(token.split('.')[1]));
-
-            return payload.username;
-          }
-        };
-
-        auth.currentUserID = function(){
-          if(auth.isLoggedIn()){
-            var token = auth.getToken();
-            var payload = JSON.parse($window.atob(token.split('.')[1]));
-
-            return payload._id;
-          }
-        };
-
-        auth.currentUserStatus = function(){
-          if(auth.isLoggedIn()){
-            var token = auth.getToken();
-            var payload = JSON.parse($window.atob(token.split('.')[1]));
-
-            return payload.status;
-          }
-        };
-
-        auth.getUserStatus = function () {
-          var userId = "";
-          if(auth.isLoggedIn()){
-            var token = auth.getToken();
-            var payload = JSON.parse($window.atob(token.split('.')[1]));
-            userId = payload._id;
-          }
-
-          $http.post('/getUser', userId).success(function(output) {
-            console.log(output);
-            callback(output);
-          })
-
-        }
-
-
-        auth.logout = function(callback){
-          $window.localStorage.removeItem('inventoryToken');
-          callback();
-        };
-
-      return auth;
-    }])
-    */
-
-    // orders_app.controller('authController', function($scope, auth) {
-    //     $scope.myName = auth.currentUser();
-    //     console.log($scope.myName);
-
-    //     $scope.logout = function() {
-    //       console.log("scope logging out ");
-    //       auth.logout(function() {
-    //         $scope.isLoggedIn = false;
-    //         window.location.assign("/");
-    //       });
-    //     }
-
-    //     $scope.isAuthorized = function() {
-    //       return true;
-    //     }
-    // })

@@ -208,12 +208,6 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     console.log("AUTHORIZED:")
     console.log($scope.authorized);
   })
-/*
-  $scope.authorized = $scope.user.status == "admin";
-
-  console.log("AUTHORIZED:")
-  console.log($scope.authorized);
-  */
 
   console.log($scope.tags);
   console.log($scope.fields);
@@ -274,39 +268,6 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     $scope.customFields.push(newField);
   }
 
-  $scope.deleteProduct = function(event, product) {
-        //TODO: Confirm Deletion popup
-        /*
-        var confirm = $mdDialog.confirm()
-          .title('Confirm Deltion')
-          .textContent('Delete this item.')
-          .targetEvent(event)
-          .ok('Confirm')
-          .cancel('Cancel');
-
-        $mdDialog.show(confirm).then(function() {
-          console.log("confirm deletion chosen");
-          $('#productModal').modal('hide');
-        }, function() {
-          console.log("cancel deletion chosen");
-          $('#productModal').modal('hide');
-        });
-        */
-
-        //TODO: Remove the product form the view
-/*
-        ProductsFactory.deleteProduct(product, function(data) {
-          for (var i =0; i < $scope.products.length; i++)
-          {  if ($scope.products[i]._id === product._id) {
-                $scope.products.splice(i,1);
-                break;
-              }
-          }
-      });
-*/
-
-    }
-
   $scope.confirmDeleteModal = function(product) {
     console.log("confirm delete");
     console.log(product.name);
@@ -362,16 +323,6 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     })
 
     window.location.assign("/dispProducts");
-    /*
-    //$('#createItemForm').reset();
-    $('#editConfirmModal').modal('hide');
-    $('#productModal').modal('hide');
-
-    $scope.products = ProductsFactory.getproducts(function(data) {
-      $scope.products = data;
-      $scope.currentTags = [];
-    });
-    */
   }
 
   $scope.cancelEditModal = function(product) {
@@ -683,75 +634,3 @@ products_app.controller('fieldsController', function($scope, ProductsFactory) {
     $scope.fields = data;
   })
 })
-
-/*
-products_app.factory('auth', ['$http', '$window', function($http, $window){
-   var auth = {};
-
-    auth.getToken = function (){
-      return $window.localStorage['inventoryToken'];
-    }
-
-    auth.isLoggedIn = function(){
-      var token = auth.getToken();
-      if(token){
-        var payload = JSON.parse($window.atob(token.split('.')[1]));
-        return payload.exp > Date.now() / 1000;
-      } else {
-        return false;
-      }
-    };
-
-    auth.currentUser = function(){
-      if(auth.isLoggedIn()){
-        var token = auth.getToken();
-        var payload = JSON.parse($window.atob(token.split('.')[1]));
-        return payload.username;
-      }
-    };
-
-    auth.currentUserID = function(){
-      if(auth.isLoggedIn()){
-        var token = auth.getToken();
-        var payload = JSON.parse($window.atob(token.split('.')[1]));
-
-        return payload._id;
-      }
-    };
-
-    auth.currentUserStatus = function(){
-          if(auth.isLoggedIn()){
-            var token = auth.getToken();
-            var payload = JSON.parse($window.atob(token.split('.')[1]));
-
-            return payload.status;
-          }
-        };
-
-    auth.logout = function(callback){
-      $window.localStorage.removeItem('inventoryToken');
-      callback();
-    };
-
-  return auth;
-}])
-*/
-
-/*
-products_app.controller('authController', function($scope, auth) {
-    $scope.myName = auth.currentUser();
-    console.log($scope.myName);
-
-    $scope.logout = function() {
-      console.log("scope logging out ");
-      auth.logout(function() {
-        $scope.isLoggedIn = false;
-        window.location.assign("/");
-      });
-    }
-
-    $scope.isAuthorized = function() {
-      return true;
-    }
-})
-*/

@@ -15,7 +15,6 @@ var log_app = angular.module('log_app', []);
       factory.getLogs = function(callback) {
         $http.get('/api/log/show').success(function(output) {
           logs = output;
-          // console.log(logs);
           callback(logs);
         })
       }
@@ -291,22 +290,6 @@ var log_app = angular.module('log_app', []);
 
       color_table_elements();
 
-
-      // $scope.scrollIntoView = function(element, container) {
-      // $scope.scrollIntoView = function(rowNum) {
-      //   var element = document.getElementById('myLogTable').getElementsByTagName('tr')[rowNum];
-      //   var container = "window";
-      //   var containerTop = $(container).scrollTop();
-      //   var containerBottom = containerTop + $(container).height();
-      //   var elemTop = element.offsetTop;
-      //   var elemBottom = elemTop + $(element).height();
-
-      //   var elemAbsTop = element.getBoundingClientRect().top;
-
-      //   window.scrollBy(0,elemTop);
-      //   element.style.backgroundColor = "lightgreen";
-      // }
-
       $scope.filterByDate = function() {
         $scope.logs = $scope.originalLogs;
         console.log($scope.logs);
@@ -340,11 +323,6 @@ var log_app = angular.module('log_app', []);
           $scope.logs = $scope.originalLogs;
       }
 
-        // $scope.myName = auth.currentUser();
-        // console.log("MY NAME: " + $scope.myName);
-        // $scope.authorized = (auth.currentUserStatus()=="admin");
-
-
         // AUTH
         $scope.logout = function() {
           $http.get('/api/auth/logout').success(function(output) {
@@ -357,71 +335,3 @@ var log_app = angular.module('log_app', []);
           return auth.currentUserStatus();
         }
     })
-
-
-    // log_app.factory('auth', ['$http', '$window', function($http, $window){
-    //    var auth = {};
-
-    //     auth.getToken = function (){
-    //       return $window.localStorage['inventoryToken'];
-    //     }
-
-    //     auth.isLoggedIn = function(){
-    //       var token = auth.getToken();
-    //       if(token){
-    //         var payload = JSON.parse($window.atob(token.split('.')[1]));
-    //         return payload.exp > Date.now() / 1000;
-    //       } else {
-    //         return false;
-    //       }
-    //     };
-
-    //     auth.currentUser = function(){
-    //       if(auth.isLoggedIn()){
-    //         var token = auth.getToken();
-    //         var payload = JSON.parse($window.atob(token.split('.')[1]));
-
-    //         return payload.username;
-    //       }
-    //     };
-
-    //     auth.currentUserID = function(){
-    //       if(auth.isLoggedIn()){
-    //         var token = auth.getToken();
-    //         var payload = JSON.parse($window.atob(token.split('.')[1]));
-
-    //         return payload._id;
-    //       }
-    //     };
-
-    //     auth.currentUserStatus = function(){
-    //       if(auth.isLoggedIn()){
-    //         var token = auth.getToken();
-    //         var payload = JSON.parse($window.atob(token.split('.')[1]));
-
-    //         return payload.status;
-    //       }
-    //     };
-
-    //     auth.getUserStatus = function () {
-    //       var userId = "";
-    //       if(auth.isLoggedIn()){
-    //         var token = auth.getToken();
-    //         var payload = JSON.parse($window.atob(token.split('.')[1]));
-    //         userId = payload._id;
-    //       }
-
-    //       $http.post('/getUser', userId).success(function(output) {
-    //         console.log(output);
-    //         callback(output);
-    //       })
-
-    //     }
-
-    //     auth.logout = function(callback){
-    //       $window.localStorage.removeItem('inventoryToken');
-    //       callback();
-    //     };
-
-    //   return auth;
-    // }])
