@@ -5,6 +5,7 @@ var User = mongoose.model('User');
 var Item = mongoose.model('Item');
 var Log = mongoose.model('Log');
 var util = require('./util.js');
+var _ = require('lodash');
 
 module.exports = (app) => {
 
