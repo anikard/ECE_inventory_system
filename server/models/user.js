@@ -19,6 +19,7 @@ var UserSchema = new mongoose.Schema({
   hash: {type: String, default: ""},
   active: {type: Boolean, default: true},
   apiKey: {type: String, default: ""},
+  subscribed: {type: String, default: ""},
   //orders: [{type: Schema.Types.ObjectId, ref:'Order'}],
   //active: String
 }); 

@@ -24,7 +24,7 @@ body {
     .feedback-input:focus { border:2px solid #28A1B4; }
 
 
-    [type="submit"] {
+    [type="submit"], .blueButton {
       font-family: 'Montserrat', Arial, Helvetica, sans-serif;
       width: 100%;
       background: #6C93B4;
@@ -41,6 +41,10 @@ body {
       color: white;
     }
     [type="submit"]:hover { background: teal; }
+    .blueButton:hover { background: teal; }
+    .blueButton {
+      margin-top: 1em;
+    }
 
     .error {
       font-size: 30px;

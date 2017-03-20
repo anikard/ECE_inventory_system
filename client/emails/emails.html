@@ -1,6 +1,6 @@
 <html ng-app="orders_app">
 <head>
-  <title>Emails</title>
+  <title>Email Support</title>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
 
  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -12,62 +12,35 @@
 
 </head>
 
-<body ng-controller="ordersController">
+<body ng-controller="emailsController">
 
-<!-- <div ng-controller="authController"> -->
-<span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <span ng-if="authorized"><a href="/dispFields">custom fields</a> | </span> <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> | </span> <a href="" ng-click="logout()">logout {{myName}}</a>
-  <!--<span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> |</span> <a href="" ng-click="logout()">logout {{myName}}</a>-->
-<!-- </div> -->
+<span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <span ng-if="authorized"><a href="/dispFields">custom fields</a> | </span> <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> | <span ng-if="authorized"><a href="/dispEmails">emails</a> | </span> <a href="" ng-click="logout()">logout {{myName}}</a>
 
-<h1>REQUESTS</h1>
-<input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
+<h1>EMAIL SUPPORT</h1>
+<!-- <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter"> -->
 
-<div class="customerTable" id = "cTable" >
+
+<h2>Subscribed Managers</h2>
+<div class="customerTable" id = "cTable" style="margin-left: 10%; width: 80%;">
     <table id = "myRequestsTable">
       <tr>
-        <td> User Name </td>
-        <td> # of Items </td>
-        <!--<td> Quantity </td>-->
-        <td> Date Issued </td>
-        <!-- <td> Date Fulfilled </td> -->
-        <td> Status </td>
-        <td> View Request </td>
+        <td> Manager Username </td>
+        <td> Email </td>
+        <td> Change Subscription Status </td>
+        <!-- <td> View Request </td> -->
       </tr>
 
-      <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
-        <td style="display:none;" ng-bind="order._id"></td>
-        <td ng-bind="order.customer_name || order.user.username"></td>
-        <td ng-bind="order.items.length"></td>
-        <!--<td ng-bind="order.quantity"></td>-->
-        <td ng-bind="order.date | date:'short'"></td>
-        <!-- <td ng-bind="order.dateDone | date:'short'"></td> -->
-        <td ng-bind="order.status"></td>
-        <td><button class = "remove" ng-click='viewOrder(order)' data-toggle="modal" data-target="#orderModal">View</button></td>
+      <tr ng-repeat="user in sub_managers | filter: filter_name | orderBy:'-status'">
+        <td style="display:none;" ng-bind="user._id"></td>
+        <td ng-bind="user.username"></td>
+        <td ng-bind="user.email"></td>
+        <td><button class = "remove" ng-click='unsubscribeUser(user._id)'>Unsubscribe</button></td>
       </tr>
     </table>
   </div>
 
-<!-- TODO: DEPRECATE
-  <h1>Create Request</h1>
+  <button ng-show="authorized" class="blueButton" ng-click="subscribeMyself()">Subscribe myself</button>
 
- <form id="createReqForm">
-   <select style = "display:none;" class = "feedback-input" ng-controller="customersController" id = "customerList" name="customerOptions" ng-model="new_order.customer_name" required>
-      <option value="" selected disabled>User Name</option>
-      <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.name"></option>
-    </select>
-
-    <input style = "display:none;" id="thisCustomerInput" class = "feedback-input" type="text" value="{{myName}}" ng-readonly="true" />
-
-    <select class = "feedback-input" ng-controller="productsController" id = "productList" name="productsOptions" ng-model="new_order.product" required>
-      <option value="" selected disabled>Item</option>
-      <option ng-repeat="product in products" value="{{product._id}}">{{product.name}} || {{product.description}}</option>
-    </select>
-    <input class = "feedback-input" type="number" ng-model="new_order.quantity" placeholder="quantity" required>
-    <textarea class = "feedback-input" ng-model="new_order.reason" placeholder="Reason" required></textarea>
-    <input type="submit" ng-disabled="createReqForm.$invalid" ng-click="addOrder()">
-    <br>
- </form>
--->
 
 <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">

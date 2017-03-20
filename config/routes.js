@@ -48,6 +48,11 @@ module.exports = (app) => {
     res.redirect('cart/cart.html');
   });
 
+ app.get('/dispEmails', util.requireLoginGui, function(req, res) {
+    res.redirect('emails/emails.html');
+  });
+
+
   // app.get('/goToProducts', function(req, res) {
   //   console.log("IN ROUTES");
   //   req.session.item_name = 'resistors2';
