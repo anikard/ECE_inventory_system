@@ -1,10 +1,9 @@
-var orders_app = angular.module('orders_app', []);
+var emails_app = angular.module('emails_app', []);
 
-    orders_app.factory('EmailFactory', function($http) {
+    emails_app.factory('EmailFactory', function($http) {
       var factory = {};
       var orders = [];
       var customers = [];
-      var products = [];
 
       factory.getUsers = function(callback) {
           $http.get('/api/user/show').success(function(output) {
@@ -20,15 +19,6 @@ var orders_app = angular.module('orders_app', []);
         }
 
 
-
-
-
-      factory.getproducts = function(callback) {
-        $http.get('/products').success(function(output) {
-          products = output;
-          callback(products);
-        })
-      }
 
       factory.getcustomers = function(callback) {
         $http.get('/customers').success(function(output) {
@@ -59,22 +49,16 @@ var orders_app = angular.module('orders_app', []);
         })
       }
 
-     
-
       return factory;
     });
 
 
-  orders_app.controller('productsController', function($scope, $http, EmailFactory) {
-        $scope.products = EmailFactory.getproducts(function(data) {
-        $scope.products = data;
-      })
-    })
-
-
-    orders_app.controller('emailsController', function($scope, $http, $window, EmailFactory, /*auth,*/ $document) {
+    emails_app.controller('emailsController', function($scope, $http, $window, EmailFactory, /*auth,*/ $document) {
         //console.log("USER ID: " + auth.currentUserID());
         //var thisId = {userId: auth.currentUserID()};
+        
+        console.log("IN CONROLLER");
+
         
         $scope.users = EmailFactory.getUsers(function(data) {
           $scope.users = data;
@@ -90,6 +74,21 @@ var orders_app = angular.module('orders_app', []);
             }
           }
 
+          // TABS 
+          jQuery('.tabs .tab-links a').on('click', function(e)  {
+            console.log("HEREERERE");
+              var currentAttrValue = jQuery(this).attr('href');
+       
+              // Show/Hide Tabs
+              jQuery('.tabs ' + currentAttrValue).show().siblings().hide();
+       
+              // Change/remove current tab to active
+              jQuery(this).parent('li').addClass('active').siblings().removeClass('active');
+       
+              e.preventDefault();
+          });
+       
+
 
         });
 
@@ -103,11 +102,10 @@ var orders_app = angular.module('orders_app', []);
           console.log("AUTHORIZED:")
           console.log($scope.authorized);
 
-          $scope.tableRows = document.getElementById('myRequestsTable').getElementsByTagName('tr');
-          $scope.scrollIntoView($scope.requestIndex);
         })
 
-     
+
+
         $scope.subscribeMyself = function() {
           var info = {};
           info.subscribed = "subscribed";
@@ -126,6 +124,12 @@ var orders_app = angular.module('orders_app', []);
               console.log("unsubscribed Success");
               if(!alert('Successfully unsubscribed')){window.location.reload();}
             })
+        }
+
+
+         $scope.saveEmail = function() {
+          var info = {};
+          // TODO
         }
 
 

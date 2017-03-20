@@ -1,4 +1,4 @@
-<html ng-app="orders_app">
+<html ng-app="emails_app">
 <head>
   <title>Email Support</title>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
@@ -42,76 +42,39 @@
   <button ng-show="authorized" class="blueButton" ng-click="subscribeMyself()">Subscribe myself</button>
 
 
-<div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
 
-        </button>
-          <h1 class="modal-title" id="exampleModalLabel">View Request</h1>
+<h2 style="margin-top:2em;">Loan Reminder Emails</h2>
 
-      </div>
-      <div class="modal-body" align="left">
+<div class="tabs">
+    <ul class="tab-links">
+        <li class="active"><a href="#tab1">Edit</a></li>
+        <li><a href="#tab2">Preview</a></li>
+    </ul>
+ 
+    <div class="tab-content">
+        <div id="tab1" class="tab active" style="text-align:left">
 
-        <div class="form-group" >
-            <p> <b> User: </b> {{thisOrder.customer_name}}</p>
-            <p>
-              <table>
-                <tr>
-                  <td><b>Item</b></td>
-                  <td><b>Quantity</b></td>
-                </tr>
-                <tr ng-repeat="item in thisOrder.items">
-                  <td ng-bind="item.item.name"></td>
-                  <td ng-bind="item.quantity"></td>
-                </tr>
-              </table>
-            </p>
-
-            <p><b>Item:  </b>{{thisOrder.item_name}}</p>
-            <p><b>Quantity:  </b>{{thisOrder.quantity}}</p>
-            <p><b>Reason:  </b>{{thisOrder.reason}}</p>
-            <p><b>Current Status:  </b>{{thisOrder.status}}</p>
-          </div>
+            <form id="createEmailForm">
+                 <input class = "feedback-input" type="text" ng-model="email.subject_tag" placeholder="subject tag">
+                  <input class = "feedback-input" type="text" ng-model="email.subject" placeholder="subject">
+                  <textarea class = "feedback-input" ng-model="email.body" placeholder="body" cols="40" rows="5"></textarea>
+                  <input type="submit" value="Save" ng-click="saveEmail()">
+            </form>
 
 
-      <div ng-if="authorized">
-        <div class="error" ng-show="errorMessage">{{ errorMessage }}</div>
-        <form id="request_response_form">
-          <h3>Respond:</h3>
-          <div class="form-group">
-                <div class="radio">
-                  <label><input type="radio" name="optionResponse" class="approveButton" ng-model="orderResponse.yesOrNo" value = "approve">Approve</label>
-                </div>
-                <div class="radio">
-                  <label><input type="radio" name="optionResponse" class="denyButton" ng-model="orderResponse.yesOrNo" value = "deny">Deny</label>
-                </div>
-            <label for="message-text" class="form-control-label">Comment:</label>
-            <textarea class="form-control" id="message-text" ng-model="orderResponse.comment"></textarea>
-          </div>
-          <button type="button" class="btn btn-primary" ng-click="respondToOrder()" id = "respondOrderButton">Respond</button>
-        </form>
-      </div>
-
-      </div>
-      <div class="modal-footer">
-
-        <button class="btn btn-danger" ng-click='removeOrder(thisOrder)'  id = "cancelOrderButton">Cancel order</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
+        </div>
+ 
+      <!-- TO DO -->
+        <div id="tab2" class="tab" style="text-align:left">
+            <p>From:</p>
+            <p>To: </p>
+            <p>Subject: </p>
+            <hr style="color:black; height: 4px;">
+            <p>text</p>
+        </div>
+ 
     </div>
-  </div>
-</div>
 
-  <script type="text/javascript">
-    $('#orderModal').on('show.bs.modal', function (event) {
-      var button = $(event.relatedTarget);
-      var modal = $(this);
-    })
-
-  </script>
 
 </body>
 </html>
