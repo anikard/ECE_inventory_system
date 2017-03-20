@@ -85,7 +85,7 @@ var orders_app = angular.module('orders_app', []);
           $scope.sub_managers = [];
 
           for (var i = 0; i < $scope.users.length; i++) {
-            if ($scope.users[i].status == "manager" && $scope.users[i].subscribed == "subscribed") {
+            if ($scope.users[i].subscribed == "subscribed") {
               $scope.sub_managers.push($scope.users[i]);
             }
           }
@@ -114,6 +114,7 @@ var orders_app = angular.module('orders_app', []);
           info._id = $scope.user._id;
             EmailFactory.updateUser(info, function() {
               console.log("subscribed myself Success");
+              if(!alert('Successfully subscribed')){window.location.reload();}
             })
         }
 
@@ -123,6 +124,7 @@ var orders_app = angular.module('orders_app', []);
           info._id = userId;
             EmailFactory.updateUser(info, function() {
               console.log("unsubscribed Success");
+              if(!alert('Successfully unsubscribed')){window.location.reload();}
             })
         }
 
