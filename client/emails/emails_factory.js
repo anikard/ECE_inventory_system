@@ -59,7 +59,21 @@ var emails_app = angular.module('emails_app', []);
         
         console.log("IN CONROLLER");
 
-        
+
+        // $(window).load(function(){  
+        //  $( "#datepicker" ).datepicker();
+        // });
+        // $("#datepicker").datepicker({
+        //       dateFormat: 'yy-mm-dd' ,
+        //         onSelect: function(dateText, inst) {
+        //             $scope.dateSelected = $(this).val();
+        //             // if (!$scope.search) {
+        //             //   $scope.search = {};
+        //             // }
+        //         }
+        //     });
+
+
         $scope.users = EmailFactory.getUsers(function(data) {
           $scope.users = data;
           console.log("GETTTING USERS");
@@ -73,6 +87,17 @@ var emails_app = angular.module('emails_app', []);
               $scope.sub_managers.push($scope.users[i]);
             }
           }
+          console.log("hhh");
+          // $("#datepicker").datepicker({
+          //     dateFormat: 'yy-mm-dd' ,
+          //       onSelect: function(dateText, inst) {
+          //           $scope.dateSelected = $(this).val();
+          //           // if (!$scope.search) {
+          //           //   $scope.search = {};
+          //           // }
+          //       }
+          //   });
+        
 
 
           // if (!$scope.emailSaved) {
@@ -86,19 +111,25 @@ var emails_app = angular.module('emails_app', []);
 
 
           // TABS 
-          jQuery('.tabs .tab-links a').on('click', function(e)  {
-            console.log("HEREERERE");
-              var currentAttrValue = jQuery(this).attr('href');
+          // jQuery('.tabs .tab-links a').on('click', function(e)  {
+          //   console.log("HEREERERE");
+          //     var currentAttrValue = jQuery(this).attr('href');
        
-              // Show/Hide Tabs
-              jQuery('.tabs ' + currentAttrValue).show().siblings().hide();
+          //     // Show/Hide Tabs
+          //     jQuery('.tabs ' + currentAttrValue).show().siblings().hide();
        
-              // Change/remove current tab to active
-              jQuery(this).parent('li').addClass('active').siblings().removeClass('active');
+          //     // Change/remove current tab to active
+          //     jQuery(this).parent('li').addClass('active').siblings().removeClass('active');
        
-              e.preventDefault();
-          });
+          //     e.preventDefault();
+          // });
        
+
+          
+
+          // $(document).ready(function(){
+          //     $('#datePick').multiDatesPicker();
+          // });
 
 
         });
@@ -138,12 +169,18 @@ var emails_app = angular.module('emails_app', []);
         }
 
 
+
+
          $scope.saveEmail = function(email) {
           var savedEmail = email;
           var text = $document[0].getElementById('emailBody').value;
           text1 = text.replace(/\n\r?/g, '<br />');
           var text2 = text.replace(/\n\r?/g, "\\r\\n")
           savedEmail.body = text2;
+
+          var dates = email.date ? email.date.split(',') : [];
+          savedEmail.date = dates;
+
           // $scope.emailSaved = email;
           console.log(savedEmail);
 
@@ -168,6 +205,19 @@ var emails_app = angular.module('emails_app', []);
             window.location.assign("/");
           });
         }
+        console.log("hhh2");
+        //  $(window).load(function(){  
+        //  $( "#datepicker" ).datepicker();
+        // });
+        // $("#datepicker").datepicker({
+        //       dateFormat: 'yy-mm-dd' ,
+        //         onSelect: function(dateText, inst) {
+        //             $scope.dateSelected = $(this).val();
+        //             // if (!$scope.search) {
+        //             //   $scope.search = {};
+        //             // }
+        //         }
+        //     });
         
 
     })
