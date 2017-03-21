@@ -31,6 +31,7 @@
         <td> Date Issued </td>
         <!-- <td> Date Fulfilled </td> -->
         <td> Status </td>
+        <td> Type </td>
         <td> View Request </td>
       </tr>
 
@@ -42,6 +43,7 @@
         <td ng-bind="order.date | date:'short'"></td>
         <!-- <td ng-bind="order.dateDone | date:'short'"></td> -->
         <td ng-bind="order.status"></td>
+        <td ng-bind="order.type"></td>
         <td><button class = "remove" ng-click='viewOrder(order)' data-toggle="modal" data-target="#orderModal">View</button></td>
       </tr>
     </table>
