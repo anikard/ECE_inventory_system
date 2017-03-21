@@ -1,80 +1,77 @@
 <html ng-app="emails_app">
 <head>
-  <title>Email Support</title>
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+      <title>Email Support</title>
+      <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
 
- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-<link rel="stylesheet" type="text/css" href="emails_style.css">
-  <script src="emails_factory.js"></script>
+    <link rel="stylesheet" type="text/css" href="emails_style.css">
+      <script src="emails_factory.js"></script>
 
 </head>
 
 <body ng-controller="emailsController">
 
-<span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <span ng-if="authorized"><a href="/dispFields">custom fields</a> | </span> <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> | <span ng-if="authorized"><a href="/dispEmails">emails</a> | </span> <a href="" ng-click="logout()">logout {{myName}}</a>
+    <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <span ng-if="authorized"><a href="/dispFields">custom fields</a> | </span> <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> | <span ng-if="authorized"><a href="/dispEmails">emails</a> | </span> <a href="" ng-click="logout()">logout {{myName}}</a>
 
-<h1>EMAIL SUPPORT</h1>
-<!-- <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter"> -->
-
-
-<h2>Subscribed Managers</h2>
-<div class="customerTable" id = "cTable" style="margin-left: 10%; width: 80%;">
-    <table id = "myRequestsTable">
-      <tr>
-        <td> Manager Username </td>
-        <td> Email </td>
-        <td> Change Subscription Status </td>
-        <!-- <td> View Request </td> -->
-      </tr>
-
-      <tr ng-repeat="user in sub_managers | filter: filter_name | orderBy:'-status'">
-        <td style="display:none;" ng-bind="user._id"></td>
-        <td ng-bind="user.username"></td>
-        <td ng-bind="user.email"></td>
-        <td><button class = "remove" ng-click='unsubscribeUser(user._id)'>Unsubscribe</button></td>
-      </tr>
-    </table>
-  </div>
-
-  <button ng-show="authorized" class="blueButton" ng-click="subscribeMyself()">Subscribe myself</button>
+    <h1>EMAIL SUPPORT</h1>
+    <!-- <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter"> -->
 
 
+    <h2>Subscribed Managers</h2>
+    <div class="customerTable" id = "cTable" style="margin-left: 10%; width: 80%;">
+        <table id = "myRequestsTable">
+          <tr>
+            <td> Manager Username </td>
+            <td> Email </td>
+            <td> Change Subscription Status </td>
+            <!-- <td> View Request </td> -->
+          </tr>
 
-<h2 style="margin-top:2em;">Loan Reminder Emails</h2>
+          <tr ng-repeat="user in sub_managers | filter: filter_name | orderBy:'-status'">
+            <td style="display:none;" ng-bind="user._id"></td>
+            <td ng-bind="user.username"></td>
+            <td ng-bind="user.email"></td>
+            <td><button class = "remove" ng-click='unsubscribeUser(user._id)'>Unsubscribe</button></td>
+          </tr>
+        </table>
+      </div>
 
-<div class="tabs">
+      <button ng-show="authorized" class="blueButton" ng-click="subscribeMyself()">Subscribe myself</button>
+
+
+    <h2 style="margin-top:2em;">Loan Reminder Emails</h2>
+
     <ul class="tab-links">
-        <li class="active"><a href="#tab1">Edit</a></li>
-        <li><a href="#tab2">Preview</a></li>
+       <li class="active"><a>Edit</a></li>
+       <li style="margin-left:45%;"><a>Preview</a></li>
     </ul>
- 
-    <div class="tab-content">
-        <div id="tab1" class="tab active" style="text-align:left">
 
-            <form id="createEmailForm">
-                 <input class = "feedback-input" type="text" ng-model="email.subject_tag" placeholder="subject tag">
-                  <input class = "feedback-input" type="text" ng-model="email.subject" placeholder="subject">
-                  <textarea class = "feedback-input" ng-model="email.body" placeholder="body" cols="40" rows="5"></textarea>
-                  <input type="submit" value="Save" ng-click="saveEmail()">
-            </form>
+     <table class="emailTable" style="width:100%">
+      <tr>
+        <td style="width:50%">
+           <form id="createEmailForm" style="margin: 1em;">
+              <input class = "feedback-input" type="text" ng-model="email.subject_tag" placeholder="subject tag">
+              <input class = "feedback-input" type="text" ng-model="email.subject" placeholder="subject">
+              <textarea id = "emailBody" class = "feedback-input" ng-model="email.body" placeholder="body" cols="40" rows="5"></textarea>
+              <input type="submit" value="Save" style="margin-left:50%;" ng-click="saveEmail(email)">
+          </form>
+        </td>
+        <td style="width:50%; vertical-align:top">
+          <div style="margin: 1em;">
+            <p>From: <span style = "font-weight:bold" id = "email_from"></span></p>
+            <p>To: <span style = "font-weight:bold" id = "email_to"></span></p>
+            <p style = "font-weight:bold">Subject: <span id = "email_subj_tag"></span> <span id = "email_subj"></span></p>
 
+            <hr>
 
-        </div>
- 
-      <!-- TO DO -->
-        <div id="tab2" class="tab" style="text-align:left">
-            <p>From:</p>
-            <p>To: </p>
-            <p>Subject: </p>
-            <hr style="color:black; height: 4px;">
-            <p>text</p>
-        </div>
- 
-    </div>
-
+            <p><span id = "email_body"></span></p>
+          </div>
+        </td>
+      </tr>
+    </table> 
 
 </body>
 </html>

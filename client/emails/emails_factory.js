@@ -74,6 +74,17 @@ var emails_app = angular.module('emails_app', []);
             }
           }
 
+
+          // if (!$scope.emailSaved) {
+          //   $scope.emailSaved = {};
+          // }
+          // else {
+          //   $scope.email.subject_tag = $scope.emailSaved.subject_tag;
+          //   $scope.email.subject = $scope.emailSaved.subject;
+          //   $scope.email.body = $scope.emailSaved.body;
+          // }
+
+
           // TABS 
           jQuery('.tabs .tab-links a').on('click', function(e)  {
             console.log("HEREERERE");
@@ -127,9 +138,26 @@ var emails_app = angular.module('emails_app', []);
         }
 
 
-         $scope.saveEmail = function() {
-          var info = {};
-          // TODO
+         $scope.saveEmail = function(email) {
+          var savedEmail = email;
+          var text = $document[0].getElementById('emailBody').value;
+          text1 = text.replace(/\n\r?/g, '<br />');
+          var text2 = text.replace(/\n\r?/g, "\\r\\n")
+          savedEmail.body = text2;
+          // $scope.emailSaved = email;
+          console.log(savedEmail);
+
+          var efrom = $document[0].getElementById('email_from');
+          var eto = $document[0].getElementById('email_to');
+          var esubjTag = $document[0].getElementById('email_subj_tag');
+          var esubj = $document[0].getElementById('email_subj');
+          var eBody = $document[0].getElementById('email_body');
+          efrom.innerHTML = "eceInventory@duke.edu";
+          eto.innerHTML = " - - - ";
+          esubjTag.innerHTML = email.subject_tag + ":";
+          esubj.innerHTML = email.subject;
+          eBody.innerHTML = text1;
+
         }
 
 
