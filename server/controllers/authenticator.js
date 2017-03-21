@@ -4,8 +4,6 @@ var passport = require('passport');
 
 module.exports = (app) => {
   app.post('/api/auth/login', function(req, res, next){
-    console.log("got to backend");
-    console.log(req.body);
     login(req, res, next);
   });
 

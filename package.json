@@ -17,7 +17,8 @@
     "compression": "latest",
     "connect-mongo": "latest",
     "consolidate": "latest",
-    "mustache": "latest"
+    "nodemailer": "latest",
+    "async": "latest"
 
   }
 }

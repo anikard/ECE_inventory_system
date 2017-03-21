@@ -4,6 +4,7 @@ var Item = mongoose.model('Item');
 var Field = mongoose.model('Field');
 var Log = mongoose.model('Log');
 var util = require('./util.js');
+var async = require("async");
 
 module.exports = (app) => {
   app.get('/api/item/show', util.requireLogin, function(req, res, next) {
@@ -46,7 +47,6 @@ module.exports = (app) => {
           });
 
           log.save(function(err){
-
             if(err){
               res.status(500).send({ error: err });
               return;
@@ -81,17 +81,9 @@ module.exports = (app) => {
             event: "item deleted",
             name_list:itemName,
           });
-
           log.save(function(err){
-
-            if(err){
-              res.status(500).send({ error: err });
-              return;
-            }
+            if(err) return res.status(500).send({ error: err });
           });
-          
-          
-          
           res.status(200).send("Successfully deleted a item!");
         }
         res.end();
@@ -141,7 +133,6 @@ module.exports = (app) => {
 
       var itemArray = [item._id];
       var itemQuantity = [req.body.quantity];
-      
       var name_arr = [item.name];
 
       let log = new Log({
@@ -151,23 +142,15 @@ module.exports = (app) => {
         event: message,
         name_list:name_arr
       });
-
       log.save(function(err){
-
         if(err){
           res.status(500).send({ error: err });
           return;
         }
       });
-
-
-
-      res.status(200).json(item);  
-      
+      res.status(200).json(item);       
     });
-    
-    
-    
+
     Item.findByIdAndUpdate(
       req.body._id,
       {$set: props},
@@ -180,16 +163,37 @@ module.exports = (app) => {
 
         }
       });
-
-
-    // Field.find({}, 'name', function (err, results) {
-    //   if (err) return res.status(500).send({ error: err });
-    //   var fields = new Array;
-    //   results.forEach(e => {fields.push(e.name)});
-
-    //   props.fields = _.pick(req.body, fields);
-
-
-    // });
   });
+
+  app.post('/api/item/addAll', util.requirePrivileged, function(req, res, next) {
+    if (!req.body)
+      return res.status(400).send({ error: "Empty body" });
+    imports = JSON.parse(req.body.imports);
+    let set = new Set();
+    imports.forEach(e => set.add(e.name));
+    let names = _.map(imports, e => e.name);
+    if (set.size !== imports.length) 
+      return res.status(400).send({ error: "Import contains duplicate" });
+    Item.find({'name':{$in: names}}, (err, result) => {
+      if (err) return next(err);
+      if (result.length > 0) 
+        return res.status(405).send({ error: "Item(s) already exist!" });
+      let items = imports.map(e=>
+        new Item(_.pick(e, ['name','quantity','location','model','description','tags','image','fields']))
+      );
+      async.each(items,(item, cb) => item.save(cb),
+        function (err) {
+          if (err) {
+            async.each(items, (doc,cb)=>doc.remove(cb), function () {
+              console.log('Rollback done.');
+              return next("DB error");
+            });
+          } else {
+            return res.status(200).send("success");
+          }
+      });
+    });
+
+  });
+
 }
