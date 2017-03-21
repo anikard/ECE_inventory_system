@@ -87,6 +87,11 @@ var emails_app = angular.module('emails_app', []);
               $scope.sub_managers.push($scope.users[i]);
             }
           }
+
+
+
+
+
           console.log("hhh");
           // $("#datepicker").datepicker({
           //     dateFormat: 'yy-mm-dd' ,
@@ -125,8 +130,6 @@ var emails_app = angular.module('emails_app', []);
           // });
        
 
-          
-
           // $(document).ready(function(){
           //     $('#datePick').multiDatesPicker();
           // });
@@ -137,20 +140,17 @@ var emails_app = angular.module('emails_app', []);
 
         $scope.user = EmailFactory.getuser(function(data) {
           $scope.user = data;
-
           $scope.authorized = data.status == "admin" || data.status =="manager";
           $scope.myName = data.username || data.netId || data.name;
 
           console.log("AUTHORIZED:")
           console.log($scope.authorized);
-
         })
 
-
-
-        $scope.subscribeMyself = function() {
+        $scope.subscribeMyself = function(me) {
           var info = {};
           info.subscribed = "subscribed";
+          info.email = me.myEmail;
           info._id = $scope.user._id;
             EmailFactory.updateUser(info, function() {
               console.log("subscribed myself Success");
