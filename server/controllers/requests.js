@@ -100,18 +100,19 @@ function add (req, res) {
         	user: id,
         	items: cart.items,
         	reason: req.body.reason || "",
-			status: "open",
+					status: "open",
+					type: req.body.type || "disburse"
         });
         request.save((err,request) => {
         	if (err)
 				return res.status(500).send({ error: err });
-			
+
 			let name_arr = []
 			cart.items.forEach(i=>name_arr.push(i.name));
-			
+
 			cart.items = [];
-			
-		
+
+
 			cart.save((err)=>{
 				if (err)
 					return res.status(500).send({ error: err });
@@ -120,8 +121,8 @@ function add (req, res) {
 
 			let quantity_arr = []
 			request.items.forEach(i=>quantity_arr.push(i.quantity));
-				
-			
+
+
 	    		let log = new Log({
 					init_user: id,
 					item: arr,
@@ -158,7 +159,8 @@ function disburse (id, req, res) {
         	items: cart.items,
         	reason: req.body.reason || "",
         	note: req.body.note || "",
-			status: "Disbursement",
+					status: "Disbursement",
+					type: "disburse",
         });
         for (let i = 0;i < cart.items.length;i++){
 			cart.items[i].item.quantity -= cart.items[i].quantity;
@@ -169,11 +171,11 @@ function disburse (id, req, res) {
 			for (let i = 0;i<cart.items.length;i++){
 				cart.items[i].item.save();
 			}
-		
+
 			let name_arr = []
-			cart.items.forEach(i=>name_arr.push(i.name));	
-			
-		
+			cart.items.forEach(i=>name_arr.push(i.name));
+
+
 			cart.items = [];
 			cart.save((err)=>{
 				if (err)
@@ -267,8 +269,8 @@ function update (req, res) {
 			request.items.forEach(i=>quantity_arr.push(i.quantity));
 
 				let name_arr = []
-			request.items.forEach(i=>name_arr.push(i.item.name));				
-				
+			request.items.forEach(i=>name_arr.push(i.item.name));
+
 	    		let log = new Log({
 					init_user: req.user,
 					item: arr,
@@ -283,7 +285,7 @@ function update (req, res) {
 				return res.status(200).json(request);
 			});
 		} else {
-			_.assign(request,_.pick(req.body,['note','status','reason','user']));
+			_.assign(request,_.pick(req.body,['note','status','type','reason','user']));
 			request.save(function (err, request) {
 				if (err) return res.status(500).send({ error: err});
 				return res.status(200).json(request);
