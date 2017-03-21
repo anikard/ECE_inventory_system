@@ -27,6 +27,8 @@ module.exports = (app) => {
 
   app.post('/api/user/update', util.requireLevel(['admin']), update);
 
+  app.post('/api/user/subscribe', util.requireLevel(['admin','manager']), subscribe);
+
   app.post('/api/user/del', util.requireLevel(['admin']), del);
 }
 
@@ -59,7 +61,7 @@ function getUser(req, res, next){
 }
 
 function show(req, res, next){
-  let fields = 'name username netId email status active date';
+  let fields = 'name username netId email status active date subscribed';
   if (req.user.status === "admin") fields = `${fields} apiKey`;
   User.find({}, fields, function(err, results) {
     if(err) {
@@ -74,7 +76,29 @@ function update(req, res, next){
   req.body._id = req.body._id || req.body.user || req.user._id;
   if (req.body._id != req.user._id && req.user.status!="admin" && req.user.status!="manager")
     return res.status(403).send("Unauthorized");
-  info = _.pick(req.body,['name','username','netId','email','active']);
+  info = _.pick(req.body,['name','username','netId','email','active', 'subscribed']);
+  if ((req.user.status==="admin" || req.user.status==="manager") && req.body.status)
+    info.status = req.body.status;
+  User.findOne({ '_id': req.body._id }, function (err, user) {
+    if (err) return res.status(500).send({ error: err });
+    _.assign(user, info);
+    if (req.body.password) user.setPassword(req.body.password);
+    user.save(function(err){
+      if(err){
+        res.status(500).send({ error: err });
+      } else {
+        res.status(200).send("Successfully updated a user!");
+      }
+    });
+  });
+  
+}
+
+function subscribe(req, res, next){
+  req.body._id = req.body._id || req.body.user || req.user._id;
+  if (req.body._id != req.user._id && req.user.status!="admin" && req.user.status!="manager")
+    return res.status(403).send("Unauthorized");
+  info = _.pick(req.body,['name','username','netId','email','active', 'subscribed']);
   if ((req.user.status==="admin" || req.user.status==="manager") && req.body.status)
     info.status = req.body.status;
   User.findOne({ '_id': req.body._id }, function (err, user) {
@@ -114,6 +138,7 @@ function add(req, res, next){
   info.name = info.name || info.username;
   info.active = info.active || true;
   info.status = info.status || 'user';
+  info.subscribed = info.subscribed || "unsubscribed";
   User.findOne({ 'username': info.username }, function (err, user) {
     if (err) return res.status(500).send({ error: err });
     if (user) return res.status(400).send({ error: "Username exists" });

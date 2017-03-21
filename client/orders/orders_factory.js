@@ -102,9 +102,24 @@ var orders_app = angular.module('orders_app', []);
 
           $scope.scrollIntoView(thisReqIndex+1);
 
-
-
         });
+
+        // TABS for loans vs disbursements
+        // --> changed design decision: single table view for requests 3/20
+        $('.tabs .tab-links a').on('click', function(e)  {
+            var currentAttrValue = jQuery(this).attr('href');
+     
+            // Show/Hide Tabs
+            jQuery('.tabs ' + currentAttrValue).show().siblings().hide();
+     
+            // Change/remove current tab to active
+            jQuery(this).parent('li').addClass('active').siblings().removeClass('active');
+     
+            e.preventDefault();
+        });
+
+
+
 
         $scope.user = OrderFactory.getuser(function(data) {
           $scope.user = data;

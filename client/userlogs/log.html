@@ -45,6 +45,7 @@
       <tr style="font-weight:bold; text-align: center;">
         <td> Initiating User </td>
         <td> Item(s) </td>
+        <td> Quantity </td>
         <td> Event </td>
         <td> Recipient User </td>
         <td> Date </td>
@@ -54,9 +55,10 @@
 
 
 
-      <tr style="text-align: center;" ng-repeat="log in logs | filter: search | orderBy:'-status'">
+      <tr style="text-align: center;" ng-repeat="log in logs | filter: search ">
         <td ng-bind="log.init_user.username"></td>
         <td> <p ng-repeat="it in log.items"> <a ng-click="getItem(it)">{{it}}</a> </p> </td>
+        <td> <p ng-repeat="qu in log.quantity">{{qu}}</p> </td>
         <td ng-if="log.event=='request' || log.event=='Request'"><a ng-click="viewRequest(log.request)">{{log.event}}</a></td>
         <td ng-if="log.event!='request' && log.event!='Request'"><span>{{log.event}}</span></td>
         <td ng-bind="log.rec_user.username"></td>
