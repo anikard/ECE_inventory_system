@@ -82,6 +82,10 @@ function show (req, res) {
 
 function add (req, res) {
 	let id = req.body.user || req.body.userId || req.body._id;
+	if(req.body.convert) {
+		// From Converted Request
+		return convert(id, req, res);
+	}
 	if (id) {
 		// Direct disbursal
 		if (req.user.status != "admin" && req.user.status != "manager")
@@ -139,7 +143,54 @@ function add (req, res) {
 					return res.status(200).json(request);
 				});
 			});
-        })
+		});
+	});
+}
+
+function convert(id, req, res) {
+	console.log("convert items");
+	let request = new Request({
+				user: id,
+				items: req.body.items,
+				reason: req.body.reason || "",
+				status: req.body.status || "open",
+				type: req.body.type || "disburse"
+	});
+	request.save((err,request) => {
+		if (err) {
+			return res.status(500).send({ error: err });
+		}
+
+		let name_arr = []
+		req.body.items.forEach(i=>name_arr.push(i.name));
+
+		//cart.items = [];
+
+
+		//cart.save((err)=>{
+			//if (err)
+				//return res.status(500).send({ error: err });
+		let arr = []
+		request.items.forEach(i=>arr.push(i.item));
+
+		let quantity_arr = []
+		request.items.forEach(i=>quantity_arr.push(i.quantity));
+
+		let log = new Log({
+				init_user: id,
+				item: arr,
+				event: "Request",
+				request: request,
+				rec_user: id,
+				quantity: quantity_arr,
+				name_list: name_arr
+		});
+		log.save((err)=>{
+			if (err)	{
+				return res.status(500).send({ error: err });
+			}
+			return res.status(200).json(request);
+		});
 	});
 }
 
@@ -150,7 +201,7 @@ function disburse (id, req, res) {
 		if (err)
 			return res.status(500).send({ error: err });
 		if (!cart || cart.items.length === 0)
-			return res.status(400).send({ error: "Empty cart" });
+				return res.status(400).send({ error: "Empty Cart" });
 		for (let i = 0;i<cart.items.length;i++){
 			if (cart.items[i].item.quantity < cart.items[i].quantity)
 				return res.status(405).send({ error: `Request quantity of ${cart.items[i].item.name} exceeds stock limit` });
@@ -201,7 +252,7 @@ function disburse (id, req, res) {
 					return res.status(200).json(request);
 				});
 			});
-        })
+		});
 	});
 }
 

@@ -56,6 +56,13 @@ var orders_app = angular.module('orders_app', []);
         })
       }
 
+      factory.addOrder = function(info, callback) {
+        $http.post('/api/request/add', info).success(function(output) {
+            console.log("add order success");
+            console.log(output);
+        })
+      }
+
       return factory;
     });
 
@@ -227,6 +234,7 @@ var orders_app = angular.module('orders_app', []);
             $scope.responseToOrder.type = "loan";
           }
           else {
+            $scope.convertResponse();
             console.log("Converted Condition");
           }
         }
@@ -253,6 +261,120 @@ var orders_app = angular.module('orders_app', []);
           console.log("Converted Condition");
         }
       }
+    }
+
+    $scope.convertResponse = function() {
+      console.log("Convert Response");
+      console.log($scope.thisOrder);
+      var disburseItems = [];
+      var loanItems = [];
+      var denyItems = [];
+      var returnItems = [];
+      var convertedOrders = [];
+      //TODO: populate various items;
+      for (var i = 0; i < $scope.thisOrder.items.length; i++) {
+        var item = $scope.thisOrder.items[i];
+        if(item.quantity_to_disburse > 0) {
+          console.log("in disb");
+          var currentItem = {};
+          currentItem.item = item.item;
+          currentItem.quantity = item.quantity_to_disburse
+          disburseItems.push(currentItem);
+        }
+        if(item.quantity_to_loan > 0) {
+          console.log("in loan");
+          var currentItem = {};
+          currentItem.item = item.item;
+          currentItem.quantity = item.quantity_to_loan
+          loanItems.push(currentItem);
+        }
+        if(item.quantity_to_deny > 0) {
+          console.log("in deny");
+          var currentItem = {};
+          currentItem.item = item.item;
+          currentItem.quantity = item.quantity_to_deny
+          denyItems.push(currentItem);
+        }
+        if(item.quantity_to_return > 0) {
+          console.log("in return");
+          var currentItem = {}
+          currentItem.item = item.item;
+          currentItem.quantity = item.quantity_to_return
+          returnItems.push(currentItem);
+        }
+      }
+      // TODO: addOrder for each item type
+      if(loanItems.length > 0) {
+        $scope.addLoanOrder(loanItems);
+      }
+      if(disburseItems.length > 0) {
+        $scope.addDisburserOrder(disburseItems);
+      }
+      if(denyItems.length > 0) {
+        $scope.addDenyOrder(denyItems);
+      }
+      if(returnItems.length > 0) {
+        $scope.addReturnOrder(returnItems);
+      }
+
+      // TODO: deprecate this order by transitioning it to converted state
+      $scope.responseToOrder.status = "converted";
+
+    }
+
+    $scope.addLoanOrder = function(loanItems) {
+      var loanOrder = {};
+      loanOrder.items = loanItems;
+      loanOrder.convert = "true";
+      loanOrder.user = $scope.thisOrder.user;
+      loanOrder.reason = $scope.thisOrder.reason;
+      loanOrder.note = $scope.thisOrder.note;
+      loanOrder.status = "onLoan";
+      loanOrder.type = "loan"
+      $scope.addOrder(loanOrder);
+    }
+
+    $scope.addDisburserOrder = function(disburseItems) {
+      var disburseOrder = {};
+      disburseOrder.items = disburseItems;
+      disburseOrder.convert = "true";
+      disburseOrder.user = $scope.thisOrder.user;
+      disburseOrder.reason = $scope.thisOrder.reason;
+      disburseOrder.note = $scope.thisOrder.note;
+      disburseOrder.status = "disbursed";
+      disburseOrder.type = "disburse"
+      $scope.addOrder(disburseOrder);
+    }
+
+    $scope.addDenyOrder = function(denyItems) {
+      var denyOrder = {};
+      denyOrder.items = denyItems;
+      denyOrder.convert = "true";
+      denyOrder.user = $scope.thisOrder.user;
+      denyOrder.reason = $scope.thisOrder.reason;
+      denyOrder.note = $scope.thisOrder.note;
+      denyOrder.status = "denied";
+      denyOrder.type = $scope.thisOrder.type;
+      $scope.addOrder(denyOrder);
+    }
+
+    $scope.addReturnOrder = function(returnItems) {
+      var returnOrder = {};
+      returnOrder.items = returnItems;
+      returnOrder.convert = "true";
+      returnOrder.user = $scope.thisOrder.user;
+      returnOrder.reason = $scope.thisOrder.reason;
+      returnOrder.note = $scope.thisOrder.note;
+      returnOrder.status = "returned";
+      returnOrder.type = "laon";
+      $scope.addOrder(returnOrder);
+    }
+
+
+    $scope.addOrder = function(order) {
+      OrderFactory.addOrder(order, function(data) {
+        console.log("adding order");
+      });
     }
 
   // from logs view
