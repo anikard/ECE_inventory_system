@@ -68,3 +68,7 @@ node server.js
 ### Then access the site at:
 https://localhost:8443
 
+Sample import string:
+```
+{"imports":"[{\"name\":\"a4\",\"quantity\":10},{\"name\":\"b3\",\"quantity\":20},{\"name\":\"c3\",\"quantity\":30}]"}
+```
