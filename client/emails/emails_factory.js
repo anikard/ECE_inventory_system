@@ -18,7 +18,17 @@ var emails_app = angular.module('emails_app', []);
           })
         }
 
+        factory.getEmail = function(callback) {
+          $http.get('/api/email/show').success(function(output) {
+            callback(output);
+          })
+        }
 
+        factory.addEmail = function(info, callback) {
+          $http.post('/api/email/add', info).success(function(output) {
+            callback(output);
+          })
+        }
 
       factory.getcustomers = function(callback) {
         $http.get('/customers').success(function(output) {
@@ -42,8 +52,11 @@ var emails_app = angular.module('emails_app', []);
             //WHAT I REMOVED WAS ONE LINE OF COMMENTS HERE
             // elem["customer_name"] = elem["userId"].name;
             //elem.customer_name = "SAMPLE NAME"
+        factory.updateEmail = function(info, callback) {
+          $http.post('/api/email/update', info).success(function(output) {
+            callback();
           })
-          console.log(orders);
+        }
 
           callback(orders);
         })
