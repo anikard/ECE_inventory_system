@@ -172,6 +172,7 @@ var orders_app = angular.module('orders_app', []);
 
         // $scope.orderResponse.dateFulfilled = new Date();
         console.log("RESPONDING TO ORDER");
+        $scope.responseToOrder = {};
         //var approved = $document[0].getElementsByClassName('approveButton')[0].checked;
         //var denied = $document[0].getElementsByClassName('denyButton')[0].checked;
 
@@ -191,22 +192,23 @@ var orders_app = angular.module('orders_app', []);
             console.log(item.quantity);
           }
           else if (item.quantity_to_deny == item.quantity) {
-            approved = false;
-            denied = true;
+            $scope.responseToOrder.status = "denied";
+          }
+          else if (item.quantity_to_disburse == item.quantity) {
+            $scope.responseToOrder.status = "disbursed";
+            $scope.responseToOrder.type = "disburse";
           }
           else {
             console.log("Do Nothing Condition");
           }
         }
-        //var denied = $scope.
 
         //console.log(approved);
         //console.log(denied);
 
-        $scope.responseToOrder = {};
 
-        if (approved) { $scope.responseToOrder.status = "approved"; }
-        else if (denied) { $scope.responseToOrder.status = "denied"; }
+        //if (approved) { $scope.responseToOrder.status = "approved"; }
+        //else if (denied) { $scope.responseToOrder.status = "denied"; }
         $scope.responseToOrder.note = $document[0].getElementById('message-text').value;;
         $scope.responseToOrder._id = $scope.thisOrder._id;
 
