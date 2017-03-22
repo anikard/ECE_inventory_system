@@ -103,7 +103,10 @@
                 </table>
               </span>
 
-              <span ng-show="thisOrder.status == 'denied'">
+              <span ng-show="thisOrder.status == 'denied'
+              || thisOrder.status == 'returned'
+              || thisOrder.status == 'disbursed'
+              || thisOrder.status == 'converted'">
                 <table id = "openRequestTable">
                   <tr>
                     <td> Item </td>
