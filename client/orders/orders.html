@@ -78,12 +78,26 @@
                     <td ng-bind="item.item.name"></td>
                     <td ng-bind="item.quantity"></td>
                     <!-- TODO: Correct min-max (0-item.quantity)-->
-                    <td><input type="number" ng-model="item.quantity_to_disburse"></td>
-                    <td><input type="number" ng-model="item.quantity_to_loan"></td>
-                    <td><input type="number" ng-model="item.quantity_to_deny"></td>
+                    <td><input type="number" ng-model="item.quantity_to_disburse" value="0"></td>
+                    <td><input type="number" ng-model="item.quantity_to_loan" value="0"></td>
+                    <td><input type="number" ng-model="item.quantity_to_deny" value="0"></td>
                   </tr>
                 </table>
               </span>
+
+              <span ng-show="thisOrder.status == 'denied'">
+                <table id = "openRequestTable">
+                  <tr>
+                    <td> Item </td>
+                    <td> Quantity Requested </td>
+                  </tr>
+                  <tr ng-repeat="item in thisOrder.items">
+                    <td ng-bind="item.item.name"></td>
+                    <td ng-bind="item.quantity"></td>
+                  </tr>
+                </table>
+              </span>
+
             </p>
 
 
@@ -105,6 +119,8 @@
           -->
             <p><b>Reason:  </b>{{thisOrder.reason}}</p>
             <p><b>Current Status:  </b>{{thisOrder.status}}</p>
+            <p><b>Suggested Type: </b>{{thisOrder.type}}</p>
+            <p ng-show="thisOrder.note"><b>Comment: </b>{{thisOrder.note}}</p>
           </div>
 
 
@@ -120,6 +136,7 @@
                 <div class="radio">
                   <label><input type="radio" name="optionResponse" class="denyButton" ng-model="orderResponse.yesOrNo" value = "deny">Deny</label>
                 </div>
+          </div>
               -->
           <label for="message-text" class="form-control-label">Comment:</label>
           <textarea class="form-control" id="message-text" ng-model="orderResponse.comment"></textarea>

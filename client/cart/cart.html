@@ -37,7 +37,7 @@
     </div>
 
 
-    <button class = "blueButton" data-toggle="modal" data-target="#orderModal">Create Request</button>
+    <button class = "blueButton" data-toggle="modal" data-target="#orderModal" ng-click="showOrderModal()">Create Request</button>
     <button ng-show="authorized" class="blueButton" data-toggle="modal" data-target="#disburseModal">Direct Disburse</button>
 
     <h1 style="margin-top:3em;">Add an item to your cart</h1>
@@ -77,6 +77,15 @@
                 <td ng-bind="order.quantity"></td>
               </tr>
             </table>
+
+            <div class="form-group">
+              <div class="radio">
+                <label><input type="radio" name="optionResponse" class="disburseButton" ng-model="this_request.type" value = "disburse">Disburse</label>
+              </div>
+              <div class="radio">
+                <label><input type="radio" name="optionResponse" class="loanButton" ng-model="this_request.type" value = "loan">Loan</label>
+              </div>
+            </div>
 
             <textarea style="display:block; width: 80%; margin-left:10%" class = "feedback-input" ng-model="this_request.reason" placeholder="Reason for Request" required></textarea>
 

@@ -148,6 +148,12 @@ var orders_app = angular.module('orders_app', []);
             $scope.thisOrder.customer_name = data.user.username;
             console.log("THIS ORDER");
             console.log($scope.thisOrder);
+            for (var i = 0; i < $scope.thisOrder.items.length; i++) {
+              var item = $scope.thisOrder.items[i];
+              item.quantity_to_loan = 0;
+              item.quantity_to_deny = 0;
+              item.quantity_to_disburse = 0;
+            }
             if ($scope.thisOrder.status != "open") {
               ($document[0].getElementById('cancelOrderButton')).style.display = "none";
               ($document[0].getElementById('request_response_form')).style.display = "none";
@@ -166,11 +172,36 @@ var orders_app = angular.module('orders_app', []);
 
         // $scope.orderResponse.dateFulfilled = new Date();
         console.log("RESPONDING TO ORDER");
-        var approved = $document[0].getElementsByClassName('approveButton')[0].checked;
-        var denied = $document[0].getElementsByClassName('denyButton')[0].checked;
+        //var approved = $document[0].getElementsByClassName('approveButton')[0].checked;
+        //var denied = $document[0].getElementsByClassName('denyButton')[0].checked;
 
-        console.log(approved);
-        console.log(denied);
+        console.log($scope.thisOrder);
+        var quantityMismatch = null;
+        for (var i = 0; i < $scope.thisOrder.items.length; i++) {
+          var item = $scope.thisOrder.items[i];
+          console.log($scope.thisOrder.items);
+          console.log(item);
+          // var currentRequested = item.quantity;
+          // item.quantity is the total requested;
+          var totalActedOn = item.quantity_to_disburse + item.quantity_to_loan +
+            item.quantity_to_deny;
+          if (totalActedOn != item.quantity) {
+            console.log("Quantity Mismatch")
+            console.log(totalActedOn);
+            console.log(item.quantity);
+          }
+          else if (item.quantity_to_deny == item.quantity) {
+            approved = false;
+            denied = true;
+          }
+          else {
+            console.log("Do Nothing Condition");
+          }
+        }
+        //var denied = $scope.
+
+        //console.log(approved);
+        //console.log(denied);
 
         $scope.responseToOrder = {};
 
