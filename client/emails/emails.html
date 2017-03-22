@@ -69,8 +69,8 @@
       <tr>
         <td style="width:50%">
            <form id="createEmailForm" style="margin: 1em;">
-              <input class = "feedback-input" type="text" ng-model="email.subject_tag" placeholder="subject tag">
-              <input class = "feedback-input" type="text" ng-model="email.subject" placeholder="subject">
+              <input id = "emailInput1" class = "feedback-input" type="text" ng-model="email.subject_tag" placeholder="subject tag">
+              <input id = "emailInput2" class = "feedback-input" type="text" ng-model="email.subject" placeholder="subject">
               <textarea id = "emailBody" class = "feedback-input" ng-model="email.body" placeholder="body" cols="40" rows="5"></textarea>
               
               <input ng-model="email.date" class = "feedback-input" type="text" id="datepicker" placeholder="Dates (ex: 2017-03-20, 2017-03-21)">
@@ -82,7 +82,9 @@
           <div style="margin: 1em;">
             <p>From: <span style = "font-weight:bold" id = "email_from"></span></p>
             <p>To: <span style = "font-weight:bold" id = "email_to"></span></p>
-            <p style = "font-weight:bold">Subject: <span id = "email_subj_tag"></span> <span id = "email_subj"></span></p>
+            <!-- <p style = "font-weight:bold">Subject: <span id = "email_subj_tag"></span> <span id = "email_subj"></span></p> -->
+            <p>Subject: <span style = "font-weight:bold" id = "email_subj"></span></p>
+
 
             <hr>
 

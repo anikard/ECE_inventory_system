@@ -30,41 +30,21 @@ var emails_app = angular.module('emails_app', []);
           })
         }
 
-      factory.getcustomers = function(callback) {
-        $http.get('/customers').success(function(output) {
-          customers = output;
-          callback(customers);
-        })
-      }
-
-      factory.getuser = function(callback) {
-        $http.get('/api/user').success(function(output) {
-          callback(output);
-        })
-      }
-
-      factory.getorders = function(callback) {
-        $http.get('/api/request/show').success(function(output) {
-          orders = output;
-
-          console.log(orders);
-          orders.forEach(function(elem) {
-            //WHAT I REMOVED WAS ONE LINE OF COMMENTS HERE
-            // elem["customer_name"] = elem["userId"].name;
-            //elem.customer_name = "SAMPLE NAME"
         factory.updateEmail = function(info, callback) {
           $http.post('/api/email/update', info).success(function(output) {
             callback();
           })
         }
 
-          callback(orders);
-        })
+        factory.getuser = function(callback) {
+          $http.get('/api/user').success(function(output) {
+            callback(output);
+          })
       }
+
 
       return factory;
     });
-
 
     emails_app.controller('emailsController', function($scope, $http, $window, EmailFactory, /*auth,*/ $document) {
         //console.log("USER ID: " + auth.currentUserID());
@@ -101,11 +81,20 @@ var emails_app = angular.module('emails_app', []);
             }
           }
 
+          var default_email = {
+            _id: "58d1c285a756ee64682ef8ad",
+            subject: "hello",
+            body: "I say hello, you say goodbye.",
+            send_dates: "some date"
+          };
+
+          EmailFactory.addEmail(default_email, function(data) {
+            console.log("ADDED EMAIL");
+            console.log(data);
+          })
+       
 
 
-
-
-          console.log("hhh");
           // $("#datepicker").datepicker({
           //     dateFormat: 'yy-mm-dd' ,
           //       onSelect: function(dateText, inst) {
@@ -147,8 +136,24 @@ var emails_app = angular.module('emails_app', []);
           //     $('#datePick').multiDatesPicker();
           // });
 
+          $scope.savedEmailInfo = EmailFactory.getEmail(function(data) {
+            $scope.savedEmailInfo = data[0];
+            var txt = $scope.savedEmailInfo.body;
+            // console.log(JSON.stringify($scope.savedEmailInfo.body));
+            var text1 = txt.split("\n").join("<br />");
+            var efrom = $document[0].getElementById('email_from');
+            var eto = $document[0].getElementById('email_to');
+            var esubjTag = $document[0].getElementById('email_subj_tag');
+            var esubj = $document[0].getElementById('email_subj');
+            var eBody = $document[0].getElementById('email_body');
+            efrom.innerHTML = "noreply@duke.edu";
+            eto.innerHTML = " - - - ";
+            esubj.innerHTML = $scope.savedEmailInfo.subject;
+            eBody.innerHTML = text1;
+          });
 
         });
+
 
 
         $scope.user = EmailFactory.getuser(function(data) {
@@ -181,33 +186,45 @@ var emails_app = angular.module('emails_app', []);
             })
         }
 
-
-
-
          $scope.saveEmail = function(email) {
-          var savedEmail = email;
-          var text = $document[0].getElementById('emailBody').value;
-          text1 = text.replace(/\n\r?/g, '<br />');
-          var text2 = text.replace(/\n\r?/g, "\\r\\n")
-          savedEmail.body = text2;
+         
+          var splitSubject = $scope.savedEmailInfo.subject.split(": ");
 
-          var dates = email.date ? email.date.split(',') : [];
-          savedEmail.date = dates;
+          if (email.body) {
+            $scope.savedEmailInfo.body = email.body;
+          }
+          if (email.subject_tag) {
+            splitSubject[0] = email.subject_tag;
+            $scope.savedEmailInfo.subject = splitSubject.join(": ");
+          }
+          if (email.subject) {
+            splitSubject[1] = email.subject;
+            $scope.savedEmailInfo.subject = splitSubject.join(": ");
+          }
+          if (email.date) {
+            $scope.savedEmailInfo.dates = email.date.split(",");
+          }
 
-          // $scope.emailSaved = email;
-          console.log(savedEmail);
 
           var efrom = $document[0].getElementById('email_from');
           var eto = $document[0].getElementById('email_to');
           var esubjTag = $document[0].getElementById('email_subj_tag');
           var esubj = $document[0].getElementById('email_subj');
           var eBody = $document[0].getElementById('email_body');
-          efrom.innerHTML = "eceInventory@duke.edu";
+          efrom.innerHTML = "noreply@duke.edu";
           eto.innerHTML = " - - - ";
-          esubjTag.innerHTML = email.subject_tag + ":";
-          esubj.innerHTML = email.subject;
-          eBody.innerHTML = text1;
+          esubj.innerHTML = $scope.savedEmailInfo.subject;
+          eBody.innerHTML = $scope.savedEmailInfo.body.replace(/\n\r?/g, '<br />');
 
+          EmailFactory.updateEmail($scope.savedEmailInfo, function(data) {
+            console.log("updated EMAIL");
+            console.log(data);
+            $scope.email = {};
+            $document[0].getElementById('emailInput1').value = "";
+            $document[0].getElementById('emailInput2').value = "";
+            $document[0].getElementById('emailBody').value = "";
+            $document[0].getElementById('datepicker').value = "";
+          })
         }
 
 
