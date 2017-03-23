@@ -147,7 +147,6 @@ products_app.controller('productsController', function($scope, $window, $rootSco
       $scope.products = data;
       $scope.originalProducts = data;
 
-
       $scope.currentTags = [];
       $scope.searchTags = [];
       $scope.excludeTags = [];

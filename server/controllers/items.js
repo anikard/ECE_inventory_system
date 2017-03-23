@@ -166,6 +166,9 @@ module.exports = (app) => {
   });
 
   app.post('/api/item/addAll', util.requirePrivileged, function(req, res, next) {
+    // console.log("IN ADD ALL ITEMS");
+    // console.log(req.body);
+
     if (!req.body)
       return res.status(400).send({ error: "Empty body" });
     imports = JSON.parse(req.body.imports);

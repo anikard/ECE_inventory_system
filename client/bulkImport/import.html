@@ -1,0 +1,45 @@
+<html ng-app="import_app">
+<head>
+      <title>Bulk Import</title>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+
+    <link rel="stylesheet" type="text/css" href="import_style.css">
+      <script src="import_factory.js"></script>
+
+</head>
+
+<body ng-controller="importController">
+
+    <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <span ng-if="authorized"><a href="/dispFields">custom fields</a> | </span> <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> | <span ng-if="authorized"><a href="/dispEmails">emails</a> | <span ng-if="authorized"><a href="/dispImport">bulk import</a> | </span> <a href="" ng-click="logout()">logout {{myName}}</a>
+
+    <h1>BULK IMPORT</h1>
+
+    <form id="createEmailForm" style="margin: 1em;">
+              <textarea id = "itemList" class = "feedback-input" ng-model="items.list" style = "width: 70%; " placeholder='List of items. Example: [{"name":"resistors","quantity":10},{"name":"transistors","quantity":20}]' cols="40" rows="7"></textarea>
+
+              <input type="submit" value="Import Items" style="margin-left:40%; width: 30%;" ng-click="importItems(items)">
+    </form>
+
+    <div>
+      <p id="successDiv" style="display:none;">Successfully imported items. View items <a href="/dispProducts">here</a>.</p>
+    </div>
+
+</body>
+
+</html>

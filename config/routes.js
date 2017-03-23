@@ -54,6 +54,10 @@ module.exports = (app) => {
     res.redirect('emails/emails.html');
   });
 
+  app.get('/dispImport', util.requireLoginGui, function(req, res) {
+    res.redirect('bulkImport/import.html');
+  });
+
 
   // app.get('/goToProducts', function(req, res) {
   //   console.log("IN ROUTES");
