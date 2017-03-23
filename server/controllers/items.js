@@ -180,7 +180,7 @@ module.exports = (app) => {
     Item.find({'name':{$in: names}}, (err, result) => {
       if (err) return next(err);
       if (result.length > 0) 
-        return res.status(405).send({ error: "Item(s) already exist!" });
+        return res.status(405).send({ error: "Item(s) already exist!" , items: result.map(e=>e.name)});
       let items = imports.map(e=>
         new Item(_.pick(e, ['name','quantity','location','model','description','tags','image','fields']))
       );
