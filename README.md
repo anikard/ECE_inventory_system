@@ -70,5 +70,5 @@ https://localhost:8443
 
 Sample import string:
 ```
-{"imports":"[{\"name\":\"a4\",\"quantity\":10},{\"name\":\"b3\",\"quantity\":20},{\"name\":\"c3\",\"quantity\":30}]"}
+[{"name":"resistors","quantity":10},{"name":"transistors","quantity":20}]
 ```
