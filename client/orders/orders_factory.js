@@ -85,6 +85,7 @@ var orders_app = angular.module('orders_app', []);
           console.log("ORDERS");
           console.log($scope.orders);
 
+
           // using for LOGS
           if ($window.localStorage['requestSelected'] && !$scope.selected_request) {
             $scope.selected_request = $window.localStorage['requestSelected'];
@@ -129,6 +130,17 @@ var orders_app = angular.module('orders_app', []);
 
           console.log("AUTHORIZED:")
           console.log($scope.authorized);
+
+          if ($scope.authorized) {
+              jQuery.get('../navBar_auth.html', function(data) {
+                    document.getElementById("navBar").innerHTML = data;
+              });
+          } 
+          else {
+              jQuery.get('../navBar_unAuth.html', function(data) {
+                    document.getElementById("navBar").innerHTML = data;
+              });
+          }
 
           $scope.tableRows = document.getElementById('myRequestsTable').getElementsByTagName('tr');
           $scope.scrollIntoView($scope.requestIndex);

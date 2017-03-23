@@ -147,6 +147,8 @@ products_app.controller('productsController', function($scope, $window, $rootSco
       $scope.products = data;
       $scope.originalProducts = data;
 
+
+
       $scope.currentTags = [];
       $scope.searchTags = [];
       $scope.excludeTags = [];
@@ -206,6 +208,19 @@ products_app.controller('productsController', function($scope, $window, $rootSco
 
     console.log("AUTHORIZED:")
     console.log($scope.authorized);
+
+    // setting nav bar
+    if ($scope.authorized) {
+        jQuery.get('../navBar_auth.html', function(data) {
+              document.getElementById("navBar").innerHTML = data;
+        });
+    } 
+    else {
+        jQuery.get('../navBar_unAuth.html', function(data) {
+              document.getElementById("navBar").innerHTML = data;
+        });
+    }
+
   })
 
   console.log($scope.tags);

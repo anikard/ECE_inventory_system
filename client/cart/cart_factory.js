@@ -70,6 +70,17 @@ var orders_app = angular.module('cart_app', []);
         $scope.myName = data.username || data.netId || data.name;
         $scope.authorized = data.status == "admin" || data.status == "manager";
         $scope.adminOnly = data.status == "admin";
+
+        if ($scope.authorized) {
+            jQuery.get('../navBar_auth.html', function(data) {
+                  document.getElementById("navBar").innerHTML = data;
+            });
+        } 
+        else {
+            jQuery.get('../navBar_unAuth.html', function(data) {
+                  document.getElementById("navBar").innerHTML = data;
+            });
+        }
       })
 
       $scope.logout = function() {

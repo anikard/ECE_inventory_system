@@ -262,6 +262,18 @@
 
         $scope.authorized = data.status == "admin" || data.status == "manager";
         $scope.adminOnly = data.status == "admin";
+
+        // setting nav bar
+          if ($scope.authorized) {
+            jQuery.get('navBar_auth.html', function(data) {
+                  document.getElementById("navBar").innerHTML = data;
+            });
+        } 
+        else {
+            jQuery.get('navBar_unAuth.html', function(data) {
+                  document.getElementById("navBar").innerHTML = data;
+            });
+        }
       });
         //console.log("MY NAME: " + $scope.myName);
         //$scope.authorized = (auth.currentUserStatus()=="admin");
@@ -327,8 +339,10 @@
 
 <body ng-controller="userController">
 
-  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <span ng-if="authorized"><a href="/dispFields">custom fields</a> | </span> <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> | </span> <a href="" ng-click="logout()">logout {{myName}}</a>
+<div><span id="navBar"></span><a href="" ng-click="logout()">logout {{myName}}</a></div>
 
+<!--   <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <span ng-if="authorized"><a href="/dispFields">custom fields</a> | </span> <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> | </span> <a href="" ng-click="logout()">logout {{myName}}</a>
+ -->
  <h1>USERS</h1>
   <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
 

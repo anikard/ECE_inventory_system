@@ -103,6 +103,16 @@ var log_app = angular.module('log_app', []);
          $scope.authorized = data.status == "admin";
          $scope.myName = data.username || data.netId || data.name;
 
+         if ($scope.authorized) {
+            jQuery.get('../navBar_auth.html', function(data) {
+                  document.getElementById("navBar").innerHTML = data;
+            });
+        } 
+        else {
+            jQuery.get('../navBar_unAuth.html', function(data) {
+                  document.getElementById("navBar").innerHTML = data;
+            });
+        }
 
          console.log("AUTHORIZED:")
          console.log($scope.authorized);

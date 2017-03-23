@@ -72,7 +72,6 @@ var emails_app = angular.module('emails_app', []);
           console.log("GETTTING USERS");
           console.log($scope.users);
 
-
           $scope.sub_managers = [];
 
           for (var i = 0; i < $scope.users.length; i++) {
@@ -160,6 +159,18 @@ var emails_app = angular.module('emails_app', []);
           $scope.user = data;
           $scope.authorized = data.status == "admin" || data.status =="manager";
           $scope.myName = data.username || data.netId || data.name;
+
+          if ($scope.authorized) {
+              jQuery.get('../navBar_auth.html', function(data) {
+                    document.getElementById("navBar").innerHTML = data;
+              });
+          } 
+          else {
+              jQuery.get('../navBar_unAuth.html', function(data) {
+                    document.getElementById("navBar").innerHTML = data;
+              });
+          }
+
 
           console.log("AUTHORIZED:")
           console.log($scope.authorized);

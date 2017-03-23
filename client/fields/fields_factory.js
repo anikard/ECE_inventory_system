@@ -56,6 +56,18 @@ fields_app.controller('fieldsController', function($scope, $http, FieldsFactory)
     $scope.authorized = data.status == "admin" || data.status == "manager";
     $scope.adminOnly = data.status == "admin";
     $scope.myName = data.username || data.netId || data.name;
+
+    // setting nav bar
+     if ($scope.authorized) {
+        jQuery.get('../navBar_auth.html', function(data) {
+              document.getElementById("navBar").innerHTML = data;
+        });
+    } 
+    else {
+        jQuery.get('../navBar_unAuth.html', function(data) {
+              document.getElementById("navBar").innerHTML = data;
+        });
+    }
   })
 
   $scope.logout = function() {

@@ -22,25 +22,21 @@ var emails_app = angular.module('import_app', []);
         
         console.log("IMPORT CONROLLER");
 
-        // document.getElementById("navBar").innerHTML='<object type="text/html" data="import.html" ></object>';
-        // document.getElementById("navBar").innerHTML='<span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <span ng-if="authorized"><a href="/dispFields">custom fields</a> | </span> <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> | <span ng-if="authorized"><a href="/dispEmails">emails</a> | <span ng-if="authorized"><a href="/dispImport">bulk import</a> | </span> <a href="" ng-click="logout()">logout {{myName}}</a>';
-
         $scope.user = ImportFactory.getuser(function(data) {
           $scope.user = data;
           $scope.authorized = data.status == "admin" || data.status =="manager";
           $scope.myName = data.username || data.netId || data.name;
           
-          // setting nav bar
-          // document.getElementById("navBar").innerHTML='<span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <span ng-if="authorized"><a href="/dispFields">custom fields</a> | </span> <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> | <span ng-if="authorized"><a href="/dispEmails">emails</a> | <span ng-if="authorized"><a href="/dispImport">bulk import</a> | </span> <a href="" ng-click="logout()">logout ' + $scope.myName + '</a>';
-           
-
-          jQuery.get('../navBar.html', function(data) {
-              // alert(data);
-              document.getElementById("navBar").innerHTML = data;
-          });
-
-           // $("#navBar").load("../navBar.html");
-           // document.getElementById("navBar").innerHTML += '<a href="" ng-click="logout()">logout ' + $scope.myName + '</a>';
+          if ($scope.authorized) {
+              jQuery.get('../navBar_auth.html', function(data) {
+                    document.getElementById("navBar").innerHTML = data;
+              });
+          } 
+          else {
+              jQuery.get('../navBar_unAuth.html', function(data) {
+                    document.getElementById("navBar").innerHTML = data;
+              });
+          }
 
           console.log("AUTHORIZED:")
           console.log($scope.authorized);
