@@ -127,6 +127,15 @@
               <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.username || customer.netId || customer.name"></option>
             </select>
 
+            <div class="form-group">
+              <div class="radio">
+                <label><input type="radio" name="optionResponse" class="disburseButton" ng-model="this_request.type" value = "disburse">Disburse</label>
+              </div>
+              <div class="radio">
+                <label><input type="radio" name="optionResponse" class="loanButton" ng-model="this_request.type" value = "loan">Loan</label>
+              </div>
+            </div>
+
             <textarea style="display:block; width: 80%; margin-left:10%" class = "feedback-input" ng-model="this_request.reason" placeholder="Comment"></textarea>
 
           </div>

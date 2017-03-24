@@ -92,7 +92,7 @@ function add (req, res) {
 		// Direct disbursal
 		if (req.user.status != "admin" && req.user.status != "manager")
 			return res.status(403).send({ error: "Unauthorized" });
-		return disburse(id, req, res);
+		return direct(id, req, res);
 	}
 	// User request
 	id = req.user._id;
@@ -191,7 +191,7 @@ function convert(id, req, res) {
 					//console.log(request.items[i].item.quantity);
 				}
 			}
-/*
+
 			if (request.status === "onLoan") {
 				for (let i = 0;i<request.items.length;i++){
 					request.items[i].item.quantity_available -= req.body.items[i].quantity;
@@ -205,7 +205,7 @@ function convert(id, req, res) {
 					request.items[i].item.save();
 				}
 			}
-			*/
+
 
 			let name_arr = []
 			req.body.items.forEach(i=>name_arr.push(i.name));
@@ -241,7 +241,7 @@ function convert(id, req, res) {
 	});
 }
 
-function disburse (id, req, res) {
+function direct (id, req, res) {
 	Cart.findOne({user: req.user})
 	.populate('items.item')
 	.exec(function(err, cart) {
@@ -253,18 +253,30 @@ function disburse (id, req, res) {
 			if (cart.items[i].item.quantity < cart.items[i].quantity)
 				return res.status(405).send({ error: `Request quantity of ${cart.items[i].item.name} exceeds stock limit` });
 		}
+		let currentStatus = {};
+		if (req.body.type === "loan") {
+			currentStatus = "onLoan";
+		}
+		else if (req.body.type === "disburse") {
+			currentStatus = "disbursed";
+		}
 		let request = new Request({
         	user: id,
         	items: cart.items,
         	reason: req.body.reason || "",
         	note: req.body.note || "",
-					status: "Disbursement",
-					type: "disburse",
+					status: currentStatus,
+					type: req.body.type,
         });
         for (let i = 0;i < cart.items.length;i++){
-			cart.items[i].item.quantity -= cart.items[i].quantity;
-			cart.items[i].item.quantity_available -= cart.items[i].quantity;
-		}
+					if (req.body.type === "disburse") {
+						cart.items[i].item.quantity -= cart.items[i].quantity;
+						cart.items[i].item.quantity_available -= cart.items[i].quantity;
+					}
+					else if (req.body.type === "loan") {
+						cart.items[i].item.quantity_available -= cart.items[i].quantity;
+					}
+				}
         request.save((err,request) => {
         	if (err)
 				return res.status(500).send({ error: err });
@@ -385,7 +397,88 @@ function update (req, res) {
 				log.save();
 				return res.status(200).json(request);
 			});
-		} else {
+		}
+
+		else if (req.body.status === "onLoan") {
+			if (req.user.status != "admin" && req.user.status != "manager") {
+				return res.status(401).send({ error: "Unauthorized operation"});
+			}
+			for (let i = 0;i<request.items.length;i++){
+				request.items[i].item.quantity_available -= request.items[i].quantity;
+			}
+			request.note = req.body.note || request.note;
+			request.status = req.body.status;
+			request.type = "loan";
+			request.save(function (err, request) {
+				if (err) return res.status(500).send({ error: err});
+				for (let i = 0;i<request.items.length;i++){
+					request.items[i].item.save();
+				}
+
+				let arr = []
+					request.items.forEach(i=>arr.push(i.item));
+
+				let quantity_arr = []
+			request.items.forEach(i=>quantity_arr.push(i.quantity));
+
+				let name_arr = []
+			request.items.forEach(i=>name_arr.push(i.item.name));
+
+					let log = new Log({
+					init_user: req.user,
+					item: arr,
+					event: "Request",
+					request: request,
+					rec_user: request.user,
+					admin_actions: "Loan",
+					quantity: quantity_arr,
+					name_list: name_arr
+				});
+				log.save();
+				return res.status(200).json(request);
+			});
+		}
+
+		else if (req.body.status === "returned") {
+			if (req.user.status != "admin" && req.user.status != "manager") {
+				return res.status(401).send({ error: "Unauthorized operation"});
+			}
+			for (let i = 0;i<request.items.length;i++){
+				request.items[i].item.quantity_available += request.items[i].quantity;
+			}
+			request.note = req.body.note || request.note;
+			request.status = req.body.status;
+			request.save(function (err, request) {
+				if (err) return res.status(500).send({ error: err});
+				for (let i = 0;i<request.items.length;i++){
+					request.items[i].item.save();
+				}
+
+				let arr = []
+					request.items.forEach(i=>arr.push(i.item));
+
+				let quantity_arr = []
+			request.items.forEach(i=>quantity_arr.push(i.quantity));
+
+				let name_arr = []
+			request.items.forEach(i=>name_arr.push(i.item.name));
+
+					let log = new Log({
+					init_user: req.user,
+					item: arr,
+					event: "Request",
+					request: request,
+					rec_user: request.user,
+					admin_actions: "Return",
+					quantity: quantity_arr,
+					name_list: name_arr
+				});
+				log.save();
+				return res.status(200).json(request);
+			});
+		}
+
+		else {
 			_.assign(request,_.pick(req.body,['note','status','type','reason','user']));
 			request.save(function (err, request) {
 				if (err) return res.status(500).send({ error: err});
