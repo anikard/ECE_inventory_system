@@ -38,7 +38,7 @@
 
 
     <button class = "blueButton" data-toggle="modal" data-target="#orderModal" ng-click="showOrderModal()">Create Request</button>
-    <button ng-show="authorized" class="blueButton" data-toggle="modal" data-target="#disburseModal">Direct Disburse</button>
+    <button ng-show="authorized" class="blueButton" data-toggle="modal" data-target="#disburseModal">Direct Disburse or Loan</button>
 
     <h1 style="margin-top:3em;">Add an item to your cart</h1>
 
@@ -92,7 +92,7 @@
           </div>
           <div class="modal-footer">
           <!-- <button class="btn btn-danger" ng-click='removeOrder(thisOrder)'  id = "cancelOrderButton">Cancel order</button> -->
-            <button type="button" class="btn btn-primary" ng-click="createRequest()" id = "respondOrderButton">Create request</button>
+            <button type="button" class="btn btn-primary" ng-click="createRequest()" id = "respondOrderButton">Create</button>
           <!--<button ng-show="authorized" type="button" class="btn btn-primary" ng-->
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           </div>

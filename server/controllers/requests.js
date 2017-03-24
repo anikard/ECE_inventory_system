@@ -184,9 +184,16 @@ function convert(id, req, res) {
 					console.log("quantity check");
 					console.log(request.items[i].item.quantity);
 					*/
-
-					request.items[i].item.quantity -= req.body.items[i].quantity;
-					request.items[i].item.quantity_available -= req.body.items[i].quantity;
+					if (req.body.previousStatus === "open") {
+						request.items[i].item.quantity -= req.body.items[i].quantity;
+						request.items[i].item.quantity_available -= req.body.items[i].quantity;
+					}
+					else if (req.body.previousStatus === "onLoan") {
+						request.items[i].item.quantity -= req.body.items[i].quantity;
+					}
+					else {
+						console.log("Error in converted disbursment");
+					}
 					request.items[i].item.save();
 					//console.log(request.items[i].item.quantity);
 				}
@@ -354,6 +361,7 @@ function update (req, res) {
 	.exec( function (err, request) {
 		if (err) return res.status(500).send({ error: err});
 
+		// TODO: refactor the following if tree into one clause
 		if (request.status === "open" && req.body.status === "disbursed") {
 			if (req.user.status != "admin" && req.user.status != "manager")
 				return res.status(401).send({ error: "Unauthorized operation"});
@@ -391,6 +399,51 @@ function update (req, res) {
 	 				request: request,
 	 				rec_user: request.user,
 	 				admin_actions: "Approve",
+					quantity: quantity_arr,
+					name_list: name_arr
+				});
+				log.save();
+				return res.status(200).json(request);
+			});
+		}
+
+		else if (req.body.previous_status === "onLoan" && req.body.status === "disbursed") {
+			if (req.user.status != "admin" && req.user.status != "manager")
+				return res.status(401).send({ error: "Unauthorized operation"});
+			for (let i = 0;i<request.items.length;i++){
+				if (request.items[i].item.quantity < request.items[i].quantity)
+					return res.status(405).send({
+						error: `Request quantity of ${request.items[i].item.name} exceeds stock limit`
+					});
+			}
+			for (let i = 0;i<request.items.length;i++){
+				request.items[i].item.quantity -= request.items[i].quantity;
+				//request.items[i].item.quantity_available -= request.items[i].quantity;
+			}
+			request.note = req.body.note || request.note;
+			request.status = "disbursed";
+			request.save(function (err, request) {
+				if (err) return res.status(500).send({ error: err});
+				for (let i = 0;i<request.items.length;i++){
+					request.items[i].item.save();
+				}
+
+				let arr = []
+					request.items.forEach(i=>arr.push(i.item));
+
+				let quantity_arr = []
+			request.items.forEach(i=>quantity_arr.push(i.quantity));
+
+				let name_arr = []
+			request.items.forEach(i=>name_arr.push(i.item.name));
+
+					let log = new Log({
+					init_user: req.user,
+					item: arr,
+					event: "Request",
+					request: request,
+					rec_user: request.user,
+					admin_actions: "onLoan to disburse",
 					quantity: quantity_arr,
 					name_list: name_arr
 				});

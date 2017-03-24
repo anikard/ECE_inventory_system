@@ -186,29 +186,31 @@ var orders_app = angular.module('orders_app', []);
         else if ($scope.thisOrder.status == "onLoan") {
           $scope.onLoanResponse();
         }
+        if (!$scope.errorMessage){
 
-        $scope.responseToOrder.note = $document[0].getElementById('message-text').value;;
-        $scope.responseToOrder._id = $scope.thisOrder._id;
+          $scope.responseToOrder.note = $document[0].getElementById('message-text').value;;
+          $scope.responseToOrder._id = $scope.thisOrder._id;
 
-        console.log($scope.responseToOrder);
-        OrderFactory.updateOrder($scope.responseToOrder, function(data) {
-          console.log("in update");
-          console.log(data);
-          if(data.error) {
-            console.log("error")
-            $scope.errorMessage = data.error;
-          }
-          else {
-            $scope.orderResponse = {};
-            $scope.responseToOrder = {};
-            $('#orderModal').modal('hide');
-          }
-        });
+          console.log($scope.responseToOrder);
+          OrderFactory.updateOrder($scope.responseToOrder, function(data) {
+            console.log("in update");
+            console.log(data);
+            if(data.error) {
+              console.log("error")
+              $scope.errorMessage = data.error;
+            }
+            else {
+              $scope.orderResponse = {};
+              $scope.responseToOrder = {};
+              $('#orderModal').modal('hide');
+            }
+          });
+        }
       }
 
       $scope.openResponse = function() {
         console.log($scope.thisOrder);
-        var quantityMismatch = null;
+        $scope.errorMessage = null;
         for (var i = 0; i < $scope.thisOrder.items.length; i++) {
           var item = $scope.thisOrder.items[i];
           console.log($scope.thisOrder.items);
@@ -218,6 +220,7 @@ var orders_app = angular.module('orders_app', []);
           var totalActedOn = item.quantity_to_disburse + item.quantity_to_loan +
             item.quantity_to_deny;
           if (totalActedOn != item.quantity) {
+            $scope.errorMessage = "Quantity Mismatch!";
             console.log("Quantity Mismatch")
             console.log(totalActedOn);
             console.log(item.quantity);
@@ -249,16 +252,19 @@ var orders_app = angular.module('orders_app', []);
         console.log(item);
         var totalActedOn = item.quantity_to_disburse + item.quantity_to_return;
         if (totalActedOn != item.quantity) {
-          console.log("Quantity Mismatch")
-          console.log(totalActedOn);
-          console.log(item.quantity);
+          $scope.quantityMismatch = "Quantity Mismatch";
         }
         else if (item.quantity_to_return == item.quantity) {
           $scope.responseToOrder.status = "returned";
           //TODO: update available pool
         }
+        else if (item.quantity_to_disburse == item.quantity) {
+          $scope.responseToOrder.status = "disbursed";
+          $scope.responseToOrder.previous_status = "onLoan";
+        }
         else {
           console.log("Converted Condition");
+          $scope.convertedLoan()
         }
       }
     }
@@ -308,13 +314,51 @@ var orders_app = angular.module('orders_app', []);
         $scope.addLoanOrder(loanItems);
       }
       if(disburseItems.length > 0) {
-        $scope.addDisburserOrder(disburseItems);
+        $scope.addDisburserOrder(disburseItems, "open");
       }
       if(denyItems.length > 0) {
         $scope.addDenyOrder(denyItems);
       }
       if(returnItems.length > 0) {
         $scope.addReturnOrder(returnItems);
+      }
+
+      // TODO: deprecate this order by transitioning it to converted state
+      $scope.responseToOrder.status = "converted";
+
+    }
+
+    $scope.convertedLoan = function() {
+      console.log("Converted Loan Response");
+      console.log($scope.thisOrder);
+      var disburseItems = [];
+      var returnItems = [];
+      var convertedOrders = [];
+      //TODO: populate various items;
+      for (var i = 0; i < $scope.thisOrder.items.length; i++) {
+        var item = $scope.thisOrder.items[i];
+        if(item.quantity_to_disburse > 0) {
+          console.log("in disb");
+          var currentItem = {};
+          currentItem.item = item.item;
+          currentItem.quantity = item.quantity_to_disburse
+          disburseItems.push(currentItem);
+        }
+        if(item.quantity_to_return > 0) {
+          console.log("in return");
+          var currentItem = {}
+          currentItem.item = item.item;
+          currentItem.quantity = item.quantity_to_return
+          returnItems.push(currentItem);
+        }
+      }
+      // TODO: addOrder for each item type
+
+      if(disburseItems.length > 0) {
+        $scope.addDisburserOrder(disburseItems, "onLoan");
+      }
+      if(returnItems.length > 0) {
+        $scope.addReturnOrder(returnItems, "onLoan");
       }
 
       // TODO: deprecate this order by transitioning it to converted state
@@ -334,7 +378,7 @@ var orders_app = angular.module('orders_app', []);
       $scope.addOrder(loanOrder);
     }
 
-    $scope.addDisburserOrder = function(disburseItems) {
+    $scope.addDisburserOrder = function(disburseItems, previousStatus) {
       var disburseOrder = {};
       disburseOrder.items = disburseItems;
       disburseOrder.convert = "true";
@@ -342,7 +386,8 @@ var orders_app = angular.module('orders_app', []);
       disburseOrder.reason = $scope.thisOrder.reason;
       disburseOrder.note = $scope.thisOrder.note;
       disburseOrder.status = "disbursed";
-      disburseOrder.type = "disburse"
+      disburseOrder.previousStatus = previousStatus;
+      disburseOrder.type = "disburse";
       $scope.addOrder(disburseOrder);
     }
 
@@ -366,7 +411,7 @@ var orders_app = angular.module('orders_app', []);
       returnOrder.reason = $scope.thisOrder.reason;
       returnOrder.note = $scope.thisOrder.note;
       returnOrder.status = "returned";
-      returnOrder.type = "laon";
+      returnOrder.type = "loan";
       $scope.addOrder(returnOrder);
     }
 
@@ -374,6 +419,7 @@ var orders_app = angular.module('orders_app', []);
     $scope.addOrder = function(order) {
       OrderFactory.addOrder(order, function(data) {
         console.log("adding order");
+        $scope.errorMessage = null;
       });
     }
 
