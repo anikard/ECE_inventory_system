@@ -225,6 +225,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     }
     // Uncomment after back end integration: $scope.new_product.custom_fields = cleanCustomFields;
     console.log($scope.new_product);
+    $scope.new_product.quantity_available = $scope.new_product.quantity;
     console.log(cleanCustomFields);
     $scope.currentTags = [];
     $scope.customFields = [];

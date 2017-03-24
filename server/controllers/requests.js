@@ -81,6 +81,8 @@ function show (req, res) {
 }
 
 function add (req, res) {
+	console.log("add");
+	console.log(req.body.items);
 	let id = req.body.user || req.body.userId || req.body._id;
 	if(req.body.convert) {
 		// From Converted Request
@@ -149,6 +151,7 @@ function add (req, res) {
 
 function convert(id, req, res) {
 	console.log("convert items");
+	console.log(req.body.items);
 	let request = new Request({
 				user: id,
 				items: req.body.items,
@@ -160,36 +163,80 @@ function convert(id, req, res) {
 		if (err) {
 			return res.status(500).send({ error: err });
 		}
+		request.populate('items.item', function(err, request) {
+/*
+			console.log("conv status");
+			console.log(request.status);
+			console.log("@@@@@@@@@@@@@@@");
+			console.log(req.body.items);
+			console.log("&&&&&&&&&&&&&&&");
+			console.log(request.items);
+			console.log("***************");
+			*/
+			if (request.status === "disbursed") {
+				//console.log("in disbursed status of convert");
+				for (let i = 0;i<request.items.length;i++){
 
-		let name_arr = []
-		req.body.items.forEach(i=>name_arr.push(i.name));
+					/*
+					console.log(request.items[i])
+					console.log(req.body.items[i])
+					console.log(request.items[i].item.quantity);
+					console.log("quantity check");
+					console.log(request.items[i].item.quantity);
+					*/
 
-		//cart.items = [];
-
-
-		//cart.save((err)=>{
-			//if (err)
-				//return res.status(500).send({ error: err });
-		let arr = []
-		request.items.forEach(i=>arr.push(i.item));
-
-		let quantity_arr = []
-		request.items.forEach(i=>quantity_arr.push(i.quantity));
-
-		let log = new Log({
-				init_user: id,
-				item: arr,
-				event: "Request",
-				request: request,
-				rec_user: id,
-				quantity: quantity_arr,
-				name_list: name_arr
-		});
-		log.save((err)=>{
-			if (err)	{
-				return res.status(500).send({ error: err });
+					request.items[i].item.quantity -= req.body.items[i].quantity;
+					request.items[i].item.quantity_available -= req.body.items[i].quantity;
+					request.items[i].item.save();
+					//console.log(request.items[i].item.quantity);
+				}
 			}
-			return res.status(200).json(request);
+/*
+			if (request.status === "onLoan") {
+				for (let i = 0;i<request.items.length;i++){
+					request.items[i].item.quantity_available -= req.body.items[i].quantity;
+					request.items[i].item.save();
+				}
+			}
+
+			if (request.status === "returned") {
+				for (let i = 0;i<request.items.length;i++){
+					request.items[i].item.quantity_available += req.body.items[i].quantity;
+					request.items[i].item.save();
+				}
+			}
+			*/
+
+			let name_arr = []
+			req.body.items.forEach(i=>name_arr.push(i.name));
+
+			//cart.items = [];
+
+
+			//cart.save((err)=>{
+				//if (err)
+					//return res.status(500).send({ error: err });
+			let arr = []
+			request.items.forEach(i=>arr.push(i.item));
+
+			let quantity_arr = []
+			request.items.forEach(i=>quantity_arr.push(i.quantity));
+
+			let log = new Log({
+					init_user: id,
+					item: arr,
+					event: "Request",
+					request: request,
+					rec_user: id,
+					quantity: quantity_arr,
+					name_list: name_arr
+			});
+			log.save((err)=>{
+				if (err)	{
+					return res.status(500).send({ error: err });
+				}
+				return res.status(200).json(request);
+			});
 		});
 	});
 }
@@ -216,6 +263,7 @@ function disburse (id, req, res) {
         });
         for (let i = 0;i < cart.items.length;i++){
 			cart.items[i].item.quantity -= cart.items[i].quantity;
+			cart.items[i].item.quantity_available -= cart.items[i].quantity;
 		}
         request.save((err,request) => {
         	if (err)
@@ -294,7 +342,7 @@ function update (req, res) {
 	.exec( function (err, request) {
 		if (err) return res.status(500).send({ error: err});
 
-		if (request.status === "open" && req.body.status === "approved") {
+		if (request.status === "open" && req.body.status === "disbursed") {
 			if (req.user.status != "admin" && req.user.status != "manager")
 				return res.status(401).send({ error: "Unauthorized operation"});
 			for (let i = 0;i<request.items.length;i++){
@@ -305,6 +353,7 @@ function update (req, res) {
 			}
 			for (let i = 0;i<request.items.length;i++){
 				request.items[i].item.quantity -= request.items[i].quantity;
+				request.items[i].item.quantity_available -= request.items[i].quantity;
 			}
 			request.note = req.body.note || request.note;
 			request.status = "approved";
