@@ -61,9 +61,10 @@
       <tr>
         <td> Name </td>
         <td> Model </td>
-        <td> Quantity </td>
-        <td> Quantity Available </td>
-        <td> Quantity on Loan </td>
+        <td> Total </td>
+        <td> Available </td>
+        <td> On Loan </td>
+        <td> On Loan to Me </td>
         <td> Tags </td>
         <td> Action </td>
       </tr>
@@ -74,6 +75,7 @@
         <td ng-bind="product.quantity"></td>
         <td ng-bind="product.quantity_available"></td>
         <td ng-bind="product.quantity - product.quantity_available"></td>
+        <td ng-bind="calculateMyLoans(product)"></td>
         <td ng-bind="product.tags"></td>
         <!--<td><button class="remove" ng-click="viewProduct(product)" data-toogle="modal" data-target"#productModal">View</button></td>-->
         <td><button class = "remove" ng-click='viewProduct(product)' data-toggle="modal" data-target="#productModal">View</button></td>

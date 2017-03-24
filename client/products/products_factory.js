@@ -152,6 +152,10 @@ products_app.controller('productsController', function($scope, $window, $rootSco
       $scope.searchTags = [];
       $scope.excludeTags = [];
 
+      $scope.myOrders = ProductsFactory.getorders(function(data) {
+        $scope.myOrders = data;
+      });
+
 
       // using for LOGS
       if ($window.localStorage['itemSelected'] && !$scope.selected_item) {
@@ -312,6 +316,23 @@ products_app.controller('productsController', function($scope, $window, $rootSco
       console.log(originalProduct);
       $scope.editing = true;
     }
+  }
+
+  $scope.calculateMyLoans = function(product) {
+    console.log("Calculate My Loans");
+    console.log(product);
+    console.log($scope.myOrders);
+    let myLoanTotal = 0;
+    for (var i = 0; i < $scope.myOrders.length; i++) {
+      if ($scope.myOrders[i].items) {
+        for (var j = 0; j < $scope.myOrders[i].items.length; j++) {
+          if ($scope.myOrders[i].items[j].item.name === product.name) {
+            myLoanTotal += $scope.myOrders[i].items[j].quantity;
+          }
+        }
+      }
+    }
+    return myLoanTotal;
   }
 
   $scope.confirmEditModal = function(product) {
