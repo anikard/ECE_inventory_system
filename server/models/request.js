@@ -2,7 +2,7 @@
 /*							MODEL						*/
 /********************************************************/
 
-var mongoose = require('mongoose'); 
+var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var RequestSchema = new mongoose.Schema({
   user: {type:Schema.ObjectId, ref:'User', required: true, index: true},
@@ -13,6 +13,7 @@ var RequestSchema = new mongoose.Schema({
   reason: {type: String, default: ""},
   note: {type: String, default:""},
   status: {type: String, default:"open"},
+  type: {type: String, default:"disburse"},
   date: { type : Date, default: Date.now },
   dateFulfilled: { type : Date, default: null},
 

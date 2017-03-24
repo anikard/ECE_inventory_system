@@ -169,6 +169,10 @@ body {
       border-width:0px 0px 1px 1px;
     }
 
+    .smallTable {
+      font-size: 11px;
+      text-align: center;
+    }
 
 /*----- Tabs -----*/
 /*--> changed design decision: single table view for requests 3/20*/
@@ -176,7 +180,7 @@ body {
     width:100%;
     display:inline-block;
 }
- 
+
     /*----- Tab Links -----*/
     /* Clearfix */
     .tab-links:after {
@@ -184,13 +188,13 @@ body {
         clear:both;
         content:'';
     }
- 
+
     .tab-links li {
         margin:0px 5px;
         float:left;
         list-style:none;
     }
- 
+
         .tab-links a {
             padding:9px 15px;
             display:inline-block;
@@ -201,17 +205,17 @@ body {
             color:#4c4c4c;
             transition:all linear 0.35s;
         }
- 
+
         .tab-links a:hover {
             background:#a7cce5;
             text-decoration:none;
         }
- 
+
     li.active a, li.active a:hover {
         background:#91b6d4;
         color:#4c4c4c;
     }
- 
+
     /*----- Content of Tabs -----*/
     .tab-content {
         padding:15px;
@@ -224,16 +228,11 @@ body {
         background: -moz-linear-gradient(white, #d5f1f6); /* For Firefox 3.6 to 15 */
         background: linear-gradient(white, #d5f1f6); /* Standard syntax */
     }
- 
+
         .tab {
             display:none;
         }
- 
+
         .tab.active {
             display:block;
         }
-
-
-
-
-

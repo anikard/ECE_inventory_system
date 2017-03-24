@@ -42,6 +42,9 @@
 <h1>REQUESTS</h1>
 <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
 
+
+
+
 <div class="customerTable" id = "cTable" >
     <table id = "myRequestsTable">
       <tr>
@@ -51,6 +54,7 @@
         <td> Date Issued </td>
         <!-- <td> Date Fulfilled </td> -->
         <td> Status </td>
+        <td> Type </td>
         <td> View Request </td>
       </tr>
 
@@ -62,6 +66,7 @@
         <td ng-bind="order.date | date:'short'"></td>
         <!-- <td ng-bind="order.dateDone | date:'short'"></td> -->
         <td ng-bind="order.status"></td>
+        <td ng-bind="order.type"></td>
         <td><button class = "remove" ng-click='viewOrder(order)' data-toggle="modal" data-target="#orderModal">View</button></td>
       </tr>
     </table>
@@ -83,6 +88,65 @@
         <div class="form-group" >
             <p> <b> User: </b> {{thisOrder.customer_name}}</p>
             <p>
+              <span ng-show="thisOrder.status == 'open'">
+                <table id = "openRequestTable" class="smallTable">
+                  <tr>
+                    <td> Item </td>
+                    <td> Quantity Requested </td>
+                    <td> Quantity to Disburse </td>
+                    <td> Quantity to Loan </td>
+                    <td> Quantity Denied </td>
+                  </tr>
+                  <tr ng-repeat="item in thisOrder.items">
+                    <td ng-bind="item.item.name"></td>
+                    <td ng-bind="item.quantity"></td>
+                    <!-- TODO: Correct min-max (0-item.quantity)-->
+                    <td><input type="number" ng-model="item.quantity_to_disburse"></td>
+                    <td><input type="number" ng-model="item.quantity_to_loan"></td>
+                    <td><input type="number" ng-model="item.quantity_to_deny"></td>
+                  </tr>
+                </table>
+              </span>
+
+              <span ng-show="thisOrder.status == 'onLoan'">
+                <table id = "openRequestTable">
+                  <tr>
+                    <td> Item </td>
+                    <td> Quantity on Loan </td>
+                    <td> Quantity to Disburse </td>
+                    <td> Quantity to Return </td>
+                  </tr>
+                  <tr ng-repeat="item in thisOrder.items">
+                    <td ng-bind="item.item.name"></td>
+                    <td ng-bind="item.quantity"></td>
+                    <!-- TODO: Correct min-max (0-item.quantity)-->
+                    <td><input type="number" ng-model="item.quantity_to_disburse"></td>
+                    <td><input type="number" ng-model="item.quantity_to_return"></td>
+                  </tr>
+                </table>
+              </span>
+
+              <span ng-show="thisOrder.status == 'denied'
+              || thisOrder.status == 'returned'
+              || thisOrder.status == 'disbursed'
+              || thisOrder.status == 'approved'
+              || thisOrder.status == 'converted'">
+                <table id = "openRequestTable">
+                  <tr>
+                    <td> Item </td>
+                    <td> Quantity Requested </td>
+                  </tr>
+                  <tr ng-repeat="item in thisOrder.items">
+                    <td ng-bind="item.item.name"></td>
+                    <td ng-bind="item.quantity"></td>
+                  </tr>
+                </table>
+              </span>
+
+            </p>
+
+
+<!--
               <table>
                 <tr>
                   <td><b>Item</b></td>
@@ -97,30 +161,23 @@
 
             <p><b>Item:  </b>{{thisOrder.item_name}}</p>
             <p><b>Quantity:  </b>{{thisOrder.quantity}}</p>
+          -->
             <p><b>Reason:  </b>{{thisOrder.reason}}</p>
             <p><b>Current Status:  </b>{{thisOrder.status}}</p>
+            <p><b>Suggested Type: </b>{{thisOrder.type}}</p>
+            <p ng-show="thisOrder.note"><b>Comment: </b>{{thisOrder.note}}</p>
           </div>
 
 
       <div ng-if="authorized">
         <div class="error" ng-show="errorMessage">{{ errorMessage }}</div>
         <form id="request_response_form">
-          <h3>Respond:</h3>
-          <div class="form-group">
-                <div class="radio">
-                  <label><input type="radio" name="optionResponse" class="approveButton" ng-model="orderResponse.yesOrNo" value = "approve">Approve</label>
-                </div>
-                <div class="radio">
-                  <label><input type="radio" name="optionResponse" class="denyButton" ng-model="orderResponse.yesOrNo" value = "deny">Deny</label>
-                </div>
-            <label for="message-text" class="form-control-label">Comment:</label>
-            <textarea class="form-control" id="message-text" ng-model="orderResponse.comment"></textarea>
-          </div>
+          <label for="message-text" class="form-control-label">Comment:</label>
+          <textarea class="form-control" id="message-text" ng-model="orderResponse.comment"></textarea>
           <button type="button" class="btn btn-primary" ng-click="respondToOrder()" id = "respondOrderButton">Respond</button>
         </form>
       </div>
 
-      </div>
       <div class="modal-footer">
 
         <button class="btn btn-danger" ng-click='removeOrder(thisOrder)'  id = "cancelOrderButton">Cancel order</button>

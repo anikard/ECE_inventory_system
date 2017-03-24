@@ -125,6 +125,12 @@ var orders_app = angular.module('cart_app', []);
         });
       }
 
+      $scope.showOrderModal = function() {
+        $scope.this_request = {};
+        console.log("in show order modal");
+        $scope.this_request.type = "disburse";
+      }
+
       $scope.createRequest = function() {
         console.log("createRequest from cart controller scope");
         $scope.this_request.items = $scope.orders;
