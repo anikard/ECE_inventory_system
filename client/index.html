@@ -2,6 +2,8 @@
 <head>
   <title>Welcome</title>
   <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
 
 <style type="text/css">
 
@@ -190,6 +192,8 @@
         console.log("options printed");
 
         auth.loginUser(options, function(data) {
+
+            
             $scope.isLoggedIn = true;
             $scope.myName = "test"; //auth.currentUser();
             $scope.authorized = true; //(auth.currentUserStatus()=="admin");
@@ -204,7 +208,23 @@
 
               console.log("AUTHORIZED:")
               console.log($scope.authorized);
+
+               if ($scope.authorized) {
+                    jQuery.get('navBar_auth.html', function(data) {
+                          document.getElementById("navBar").innerHTML = data;
+                          document.getElementById("logoutNavOption").innerHTML = 'logout ' + $scope.myName;
+                    });
+                } 
+                else {
+                    jQuery.get('navBar_unAuth.html', function(data) {
+                          document.getElementById("navBar").innerHTML = data;
+                          document.getElementById("logoutNavOption").innerHTML = 'logout ' + $scope.myName;
+                    });
+                }
             })
+
+
+           
 
 
             // window.location.assign("/customers.html");
@@ -276,9 +296,8 @@
 
 <div ng-controller="userController" id = "navTop" style="display:none;">
 
-  <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <span ng-if="authorized"><a href="/dispFields">custom fields</a> | </span> <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> | </span> <a href="" ng-click="logout()">logout {{myName}}</a>
-<!--     <a ng-if="authorized" href="/dispCustomers">customers</a> | <a href="/dispOrders">orders</a> | <a href="/dispProducts">products</a> | <a href="/dashboard">dashboard</a> | <a href="" ng-click="logout()">logout {{myName}}</a>
- -->
+<div><span id="navBar"></span><a href="" id="logoutNavOption" ng-click="logout()">logout {{myName}}</a></div>
+
 </div>
 
 

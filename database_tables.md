@@ -39,7 +39,6 @@ Item | Type | Required?
 user | User.id | Required
 item | [(Item.id, Integer)]
 
-
 ## FIELD
 Item | Type | Required?
 --- | --- | ---

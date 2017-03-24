@@ -61,7 +61,10 @@ if (cluster.isMaster) {
   }
 
   cluster.on('exit', (worker, code, signal) => {
-    console.log(`worker ${worker.process.pid} died`);
+    console.log(`worker ${worker.process.pid} died with code ${code}.`);
+    if (code != 0) {
+      cluster.fork();
+    }
   });
 } else {
   // Workers can share any TCP connection
@@ -72,4 +75,8 @@ if (cluster.isMaster) {
   https.createServer(credentials, app).listen(8443, ()=>{
   	console.log(`Worker ${process.pid} started, listening on port 8443`);
   }); 
-} 
+  process.on('uncaughtException', function() { 
+    console.log('Handled the exception here'); 
+    process.exit(1); 
+  });
+}

@@ -19,6 +19,8 @@ module.exports = (app) => {
   require('./../server/controllers/items.js')(app);
   require('./../server/controllers/fields.js')(app);
   require('./../server/controllers/logs.js')(app);
+  require('./../server/controllers/email.js')(app);
+  require('./../server/controllers/mailer.js').routes(app);
 
   app.get('/home', function(req, res) {
     res.redirect('/');
@@ -47,6 +49,15 @@ module.exports = (app) => {
   app.get('/dispCart', util.requireLoginGui, function(req, res) {
     res.redirect('cart/cart.html');
   });
+
+ app.get('/dispEmails', util.requireLoginGui, function(req, res) {
+    res.redirect('emails/emails.html');
+  });
+
+  app.get('/dispImport', util.requireLoginGui, function(req, res) {
+    res.redirect('bulkImport/import.html');
+  });
+
 
   // app.get('/goToProducts', function(req, res) {
   //   console.log("IN ROUTES");

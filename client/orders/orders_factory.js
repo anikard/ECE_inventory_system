@@ -92,6 +92,7 @@ var orders_app = angular.module('orders_app', []);
           console.log("ORDERS");
           console.log($scope.orders);
 
+
           // using for LOGS
           if ($window.localStorage['requestSelected'] && !$scope.selected_request) {
             $scope.selected_request = $window.localStorage['requestSelected'];
@@ -109,9 +110,24 @@ var orders_app = angular.module('orders_app', []);
 
           $scope.scrollIntoView(thisReqIndex+1);
 
-
-
         });
+
+        // TABS for loans vs disbursements
+        // --> changed design decision: single table view for requests 3/20
+        $('.tabs .tab-links a').on('click', function(e)  {
+            var currentAttrValue = jQuery(this).attr('href');
+     
+            // Show/Hide Tabs
+            jQuery('.tabs ' + currentAttrValue).show().siblings().hide();
+     
+            // Change/remove current tab to active
+            jQuery(this).parent('li').addClass('active').siblings().removeClass('active');
+     
+            e.preventDefault();
+        });
+
+
+
 
         $scope.user = OrderFactory.getuser(function(data) {
           $scope.user = data;
@@ -121,6 +137,17 @@ var orders_app = angular.module('orders_app', []);
 
           console.log("AUTHORIZED:")
           console.log($scope.authorized);
+
+          if ($scope.authorized) {
+              jQuery.get('../navBar_auth.html', function(data) {
+                    document.getElementById("navBar").innerHTML = data;
+              });
+          } 
+          else {
+              jQuery.get('../navBar_unAuth.html', function(data) {
+                    document.getElementById("navBar").innerHTML = data;
+              });
+          }
 
           $scope.tableRows = document.getElementById('myRequestsTable').getElementsByTagName('tr');
           $scope.scrollIntoView($scope.requestIndex);

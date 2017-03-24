@@ -6,6 +6,8 @@ var User = mongoose.model('User');
 var Item = mongoose.model('Item');
 var Log = mongoose.model('Log');
 var util = require('./util.js');
+var mailer = require('./mailer.js');
+var _ = require('lodash');
 
 module.exports = (app) => {
 
@@ -123,12 +125,34 @@ function add (req, res) {
 			cart.save((err)=>{
 				if (err)
 					return res.status(500).send({ error: err });
-	    		let arr = []
+	    		let arr = [];
 	    		request.items.forEach(i=>arr.push(i.item));
 
-			let quantity_arr = []
-			request.items.forEach(i=>quantity_arr.push(i.quantity));
+	    		mailer.send({
+	    			to: req.user.email,
+	    			subject: `${req.user.username} added a new request`,
+	    			text: JSON.stringify(request),
+	    		});
 
+    			User.find({ 'subscribed': 'subscribed' }, function (err, users) {
+    				if(err) return next(err);
+    				if(!users.length) return;
+    				let addresses = users[0].email;
+    				for (var i = 1; i < users.length; i++) {
+    					addresses = `${addresses},${users[i].email}`;
+    				}
+    				mailer.send({
+    					to: addresses,
+    					subject: `${req.user.username} added a new request`,
+    					text: JSON.stringify(request),
+    				});
+    			})
+
+				let quantity_arr = [];
+				request.items.forEach(i=>quantity_arr.push(i.quantity));
+
+				let name_arr = [];
+				request.items.forEach(i=>name_arr.push(i.item.name));
 
 	    		let log = new Log({
 					init_user: id,
@@ -299,11 +323,23 @@ function direct (id, req, res) {
 			cart.save((err)=>{
 				if (err)
 					return res.status(500).send({ error: err });
+
+				User.findOne({_id:id}, (err, user)=>{
+					if (err) return next(err);
+					let options = {
+		    			to: user.email,
+		    			subject: `${req.user.username} received a new disbursement`,
+		    			text: JSON.stringify(request),
+		    		};
+		    		console.log(options);
+					mailer.send(options);
+				});
+
 	    		let arr = []
 	    		request.items.forEach(i=>arr.push(i.item));
 
-			let quantity_arr = []
-			request.items.forEach(i=>quantity_arr.push(i.quantity));
+				let quantity_arr = []
+				request.items.forEach(i=>quantity_arr.push(i.quantity));
 
 	    		let log = new Log({
 					init_user: req.user,
@@ -336,6 +372,11 @@ function close (req, res)  {
 		{ new: true },
 		function (err, request) {
 			if (err) console.log("Error");
+			mailer.send({
+    			to: req.user.email,
+    			subject: `Your request has been closed`,
+    			text: JSON.stringify(request),
+    		});
 			res.end();
 		}
 	);
@@ -347,7 +388,12 @@ function del (req, res) {
 			if (err) {
 				res.status(500).send({ error: err });
 			} else {
-    			res.status(200).send("Successfully deleted an order!");
+    			res.status(200).send("Successfully deleted a request!");
+    			mailer.send({
+	    			to: req.user.email,
+	    			subject: `Your request has been deleted`,
+	    			text: JSON.stringify(request),
+	    		});
 			}
 
 			res.end();
@@ -387,10 +433,17 @@ function update (req, res) {
 	    		request.items.forEach(i=>arr.push(i.item));
 
 				let quantity_arr = []
-			request.items.forEach(i=>quantity_arr.push(i.quantity));
+				request.items.forEach(i=>quantity_arr.push(i.quantity));
 
 				let name_arr = []
-			request.items.forEach(i=>name_arr.push(i.item.name));
+
+				request.items.forEach(i=>name_arr.push(i.item.name));
+
+				mailer.send({
+	    			to: req.user.email,
+	    			subject: `Your request has been approved`,
+	    			text: JSON.stringify(request),
+	    		});
 
 	    		let log = new Log({
 					init_user: req.user,
@@ -535,6 +588,11 @@ function update (req, res) {
 			_.assign(request,_.pick(req.body,['note','status','type','reason','user']));
 			request.save(function (err, request) {
 				if (err) return res.status(500).send({ error: err});
+				mailer.send({
+	    			to: req.user.email,
+	    			subject: `Your request has been updated`,
+	    			text: JSON.stringify(request),
+	    		});
 				return res.status(200).json(request);
 			});
 		}

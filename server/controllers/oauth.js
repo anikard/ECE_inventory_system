@@ -53,8 +53,6 @@ Do we need this method at all?
 **/
 function auth (req, res, next) {
 
-  console.log("gets to backend")
-
   if(req.user){
     return res.redirect('/dispProducts');
   }
@@ -86,10 +84,6 @@ function code(req, res, next) {
     request(requestOptions(accessToken), (error, response, body) => {
       if (!error && response.statusCode == 200) {
         var info = JSON.parse(body);
-
-        console.log(info);
-
-        //res.status(200).json(info);
         User.findOne({netId: info.netid}, (err, user)=>{
           if(err){
             res.status(500).json({error: err});
@@ -107,6 +101,7 @@ function code(req, res, next) {
               username: info.netid,
               netId: info.netid,
               name: info.displayName,
+              email: info.mail,
               status: "user"
             });
             user.save(function (err){
