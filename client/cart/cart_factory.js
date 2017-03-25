@@ -47,9 +47,10 @@ var orders_app = angular.module('cart_app', []);
       factory.createRequest = function(info, callback) {
         $http.post('/api/request/add', info).success(function(output) {
             console.log("created request in factory of cart")
+            $('#orderModal').modal('hide');
+            $('#disburseModal').modal('hide');
+            callback(output);
         })
-        $('#orderModal').modal('hide');
-        $('#disburseModal').modal('hide');
       }
 
       factory.removeFromCart = function(order, callback) {
@@ -75,7 +76,7 @@ var orders_app = angular.module('cart_app', []);
             jQuery.get('../navBar_auth.html', function(data) {
                   document.getElementById("navBar").innerHTML = data;
             });
-        } 
+        }
         else {
             jQuery.get('../navBar_unAuth.html', function(data) {
                   document.getElementById("navBar").innerHTML = data;
@@ -120,15 +121,47 @@ var orders_app = angular.module('cart_app', []);
           pushOrder.quantity = $scope.new_order.quantity;
           pushOrder.item = {};
           pushOrder.item.name = $scope.current_item_name;
-          $scope.orders.push(pushOrder);
+          // Refresh $scope.orders;
+          $scope.refreshOrders();
+          //$scope.orders.push(pushOrder);
           $scope.new_order = {};
+          $scope.errorMessage = null;
         });
       }
 
+      $scope.refreshOrders = function () {
+        $scope.orders = OrderFactory.getorders(function(data) {
+          $scope.orders = data;
+          console.log("refreshing orders");
+          console.log($scope.orders);
+        });
+      }
+/*
       $scope.showOrderModal = function() {
-        $scope.this_request = {};
-        console.log("in show order modal");
-        $scope.this_request.type = "disburse";
+        if($scope.orders.length > 0) {
+          $scope.errorMessage = null;
+          $scope.this_request = {};
+          //console.log("in show order modal");
+          $scope.this_request.type = "disburse";
+          $('#orderModal').modal('show');
+        }
+        else {
+          $scope.errorMessage = "Empty Cart!";
+        }
+      }
+      */
+
+      $scope.showDisburseModal = function (modalType) {
+        $scope.modalType = modalType;
+        if($scope.orders.length > 0) {
+          $scope.errorMessage = null;
+          $scope.this_request = {};
+          $scope.this_request.type = "disburse";
+          $('#disburseModal').modal('show');
+        }
+        else {
+          $scope.errorMessage = "Empty Cart!";
+        }
       }
 
       $scope.createRequest = function() {
@@ -136,20 +169,19 @@ var orders_app = angular.module('cart_app', []);
         $scope.this_request.items = $scope.orders;
         console.log($scope.this_request);
         OrderFactory.createRequest($scope.this_request, function(data) {
-          $scope.orders = {};
+          //$scope.orders = {};
+          console.log("back from create");
+          $scope.refreshOrders();
           $scope.this_request = {};
         });
       }
 
       $scope.removeFromCart = function(order) {
+        console.log("rmving")
+        console.log(order);
           $('#orderModal').modal('hide');
           OrderFactory.removeFromCart(order, function(data) {
-            for (var i =0; i < $scope.orders.length; i++)
-            {  if ($scope.orders[i]._id === order._id) {
-                  $scope.orders.splice(i,1);
-                  break;
-                }
-            }
+            $scope.refreshOrders();
         });
       }
     })
