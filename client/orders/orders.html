@@ -23,18 +23,18 @@
         <li class="active"><a href="#tab1">Loans</a></li>
         <li><a href="#tab2">Disbursements</a></li>
     </ul>
- 
+
     <div class="tab-content">
         <div id="tab1" class="tab active">
             <p>Tab #1 content goes here!</p>
             <p>Donec pulvs.</p>
         </div>
- 
+
         <div id="tab2" class="tab">
             <p>Tab #2 content goes here!</p>
             <p>Donec p ut adipiscing nisi. Etiam rutrum sodales gravida! Aliquam tellus orci, iaculis vel.</p>
         </div>
- 
+
     </div>
 </div> -->
 
@@ -50,21 +50,17 @@
       <tr>
         <td> User Name </td>
         <td> # of Items </td>
-        <!--<td> Quantity </td>-->
         <td> Date Issued </td>
-        <!-- <td> Date Fulfilled </td> -->
         <td> Status </td>
         <td> Type </td>
         <td> View Request </td>
       </tr>
 
-      <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
+      <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-date'">
         <td style="display:none;" ng-bind="order._id"></td>
         <td ng-bind="order.customer_name || order.user.username"></td>
         <td ng-bind="order.items.length"></td>
-        <!--<td ng-bind="order.quantity"></td>-->
         <td ng-bind="order.date | date:'short'"></td>
-        <!-- <td ng-bind="order.dateDone | date:'short'"></td> -->
         <td ng-bind="order.status"></td>
         <td ng-bind="order.type"></td>
         <td><button class = "remove" ng-click='viewOrder(order)' data-toggle="modal" data-target="#orderModal">View</button></td>

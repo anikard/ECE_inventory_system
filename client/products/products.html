@@ -229,12 +229,22 @@
           <table>
             <tr>
               <td> User Name </td>
-              <td> Item </td>
-              <td> Quantity </td>
+              <td> # of Items </td>
               <td> Date Issued </td>
-              <td> Date Fulfilled </td>
               <td> Status </td>
+              <td> Type </td>
+              <td> View Request </td>
             </tr>
+            <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-date'">
+              <td style="display:none;" ng-bind="order._id"></td>
+              <td ng-bind="order.customer_name || order.user.username"></td>
+              <td ng-bind="order.items.length"></td>
+              <td ng-bind="order.date | date:'short'"></td>
+              <td ng-bind="order.status"></td>
+              <td ng-bind="order.type"></td>
+              <td><button class = "remove" ng-click='viewOrder(order)' data-toggle="modal" data-target="#orderModal">View</button></td>
+            </tr>
+            <!--
             <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
               <td ng-bind="order.customer_name || order.user.username"></td>
               <td ng-bind="order.item_name"></td>
@@ -243,6 +253,7 @@
               <td ng-bind="order.dateDone | date:'short'"></td>
               <td ng-bind="order.status"></td>
             </tr>
+          -->
           </table>
         </div>
       </div>
@@ -282,7 +293,7 @@
        </select>
      -->
      <form id="addOrderForm">
-       <input class = "feedback-input" type="text" value="{{thisProduct.name}}" ng-readonly="true" />
+       <input class = "feedback-input" type="text" value="{{currentProduct.name}}" ng-readonly="true" />
 
 
         <input class = "feedback-input" type="number" min="1" ng-model="new_order.quantity" placeholder="quantity">
