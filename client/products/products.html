@@ -94,7 +94,6 @@
     <!--<input class = "feedback-input" type="url" ng-model="new_product.image_url" placeholder="image url">-->
     <textarea class = "feedback-input" ng-model="new_product.description" placeholder="description"></textarea>
     <input class = "feedback-input" type="text" ng-model="new_product.model" placeholder="model">
-    <input class = "feedback-input" type="text" ng-model="new_product.location" placeholder="location">
 <!--
     <br>
     <span>
@@ -179,17 +178,13 @@
             <label><b>Description:  </b></label>
             <textarea ng-readonly="!editing" ng-model="currentProduct.description"></textarea>
           </p>
-          <p>
-            <label><b>Location:  </b></label>
-            <input type="text" ng-readonly="!editing" ng-model="currentProduct.location"/>
-          </p>
           <p ng-repeat="field in fields">
             <span ng-show="authorized || field.access=='public'">
               <label><b>{{ field.name }}: </b></label>
               <input ng-show="field.type=='short-form'" type="text" ng-readonly="!editing" ng-model="currentProduct.fields[field.name]">
               <textarea ng-show="field.type=='long-form'"type="text" ng-readonly="!editing" ng-model="currentProduct.fields[field.name]"></textarea>
               <input ng-show="field.type=='integer'" type="number" ng-readonly="!editing" ng-model="currentProduct.fields[field.name]">
-              <input ng-show="field.type=='floating-point'" type="number" step="0.01" ng-readonly="!editing" ng-model="new_product.fields[field.name]">
+              <input ng-show="field.type=='floating-point'" type="number" step="0.01" ng-readonly="!editing" ng-model="currentProduct.fields[field.name]">
             </span>
           </p>
           <p>

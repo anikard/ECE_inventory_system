@@ -29,7 +29,7 @@
         <td> Access </td>
         <!-- TODO-if time: <td> Default Value </td> -->
         <td> Action </td>
-        <td> Delete </td>
+        <!--<td> Delete </td>-->
       </tr>
 
       <tr ng-repeat="field in fields | filter: filtner_name: orderBy:'-date'">
@@ -38,12 +38,12 @@
         <td ng-bind="field.access"></td>
         <!-- <td ng-bind="field.default_value"></td> -->
         <td><button class="remove" ng-click="viewField(field)" data-toggle="modal" data-target="#fieldModal">View</button></td>
-        <td><button class="remove" ng-click="deleteField(field)">Delete</button></td>
+        <!--<td><button class="remove" ng-click="deleteField(field)">Delete</button></td>-->
       </tr>
     </table>
   </div>
 
-  <span ng-show="adminOnly">
+  <span ng-show="authorized">
     <h1>Add a Custom Field</h1>
 
     <form id="createFieldForm">

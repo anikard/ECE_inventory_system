@@ -18,7 +18,7 @@ module.exports = (app) => {
   });
 
   app.post('/api/email/add', util.requirePrivileged, function(req, res, next) {
-    
+
     Email.findOne({ '_id': req.body._id }, function (err, email) {
       if (err) {
         return res.status(500).send({ error: err });
@@ -68,9 +68,9 @@ module.exports = (app) => {
   //             return;
   //           }
   //         });
-          
-          
-          
+
+
+
   //         res.status(200).send("Successfully deleted a item!");
   //       }
   //       res.end();
@@ -81,13 +81,12 @@ module.exports = (app) => {
   app.post('/api/email/update', util.requirePrivileged, function(req, res, next) {
     // if (! req.body._id && !req.body.item) return res.status(400).send({ error: "Missing ref id" });
     // req.body._id = req.body._id || req.body.item;
-    
+
 
     props = _.pick(req.body, ['subject','body','send_dates']);
-    // props = _.pick(req.body, ['name','quantity','location','model','description','tags','image','fields']);
     
     // var currQuantity = 0;
-    
+
     Email.findOne({ '_id': req.body._id }, function (err, email) {
       if (err) {
         return res.status(500).send({ error: err });
@@ -99,17 +98,17 @@ module.exports = (app) => {
       console.log("IN update for email");
       console.log(req.body);
 
-      
-      _.assign(email, props);
-      
-      var message = "updated an email";
-      
 
-      res.status(200).json(email);  
-      
+      _.assign(email, props);
+
+      var message = "updated an email";
+
+
+      res.status(200).json(email);
+
     });
-    
-    
+
+
     Email.findByIdAndUpdate(
       req.body._id,
       {$set: props},
@@ -121,6 +120,6 @@ module.exports = (app) => {
         }
       });
 
-  
+
   });
 }
