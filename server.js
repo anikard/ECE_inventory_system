@@ -66,6 +66,11 @@ if (cluster.isMaster) {
       cluster.fork();
     }
   });
+  cluster.fork({isScheduler: true});
+  
+} else if (process.env.isScheduler) {
+  console.log(`Scheduler ${process.pid} started`);
+  require('./server/controllers/schedules.js');
 } else {
   // Workers can share any TCP connection
   // In this case it is an HTTP server
