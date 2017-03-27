@@ -310,7 +310,8 @@ products_app.controller('productsController', function($scope, $window, $rootSco
 
     $('#deleteConfirmModal').modal('hide');
     $('#productModal').modal('hide');
-    window.location.assign("/dispProducts");
+    $scope.refreshProducts();
+    //window.location.assign("/dispProducts");
     //$('#createItemForm').reset();
   }
 
@@ -362,8 +363,9 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     ProductsFactory.updateProduct(product, function (data) {
       console.log("confirm edit calling factory");
     })
-
+    $scope.refreshProducts();
     window.location.assign("/dispProducts");
+
   }
 
   $scope.cancelEditModal = function(product) {
@@ -405,6 +407,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
       $('#requestModal').modal('hide');
       $('#productModal').modal('hide');
       */
+      $scope.refreshProducts();
       window.location.assign("/dispProducts");
     }
   }
@@ -608,13 +611,46 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     $scope.currentTags = [];
   }
 
+  $scope.refreshProducts = function() {
+    $scope.products = ProductsFactory.getproducts(function(data) {
+        $scope.products = data;
+        $scope.originalProducts = data;
+
+
+
+        $scope.currentTags = [];
+        $scope.searchTags = [];
+        $scope.excludeTags = [];
+      });
+  }
+
   $scope.deltaQuantity = function(product) {
     $scope.deltaQuantity = 0;
     $('#deltaQuantityModal').modal('show');
   }
 
   $scope.confirmDeltaQuantity = function(product) {
-    if($scope.deltaQuantity
+    if($scope.deltaQuantity + product.quantity_available < 0) {
+      $scope.errorMessage = "Invalid Quantity";
+    }
+    else {
+      $scope.errorMessage = null;
+      var updatedProduct = {};
+      updatedProduct.name = product.name;
+      updatedProduct._id = product._id;
+      updatedProduct.quantity = product.quantity + $scope.deltaQuantity;
+      updatedProduct.quantity_available = product.quantity_available = product.quantity_available + $scope.deltaQuantity;
+      ProductsFactory.updateProduct(updatedProduct, function(data) {
+
+      });
+      $('#deltaQuantityModal').modal('hide');
+      $('#productModal').modal('hide');
+      $scope.refreshProducts();
+    }
+  }
+
+  $scope.cancelDeltaQuantity = function(product){
+    $('#deltaQuantityModal').modal('hide');
   }
 
 

@@ -175,6 +175,10 @@
             <input type="number" min="1" ng-readonly="!editing" ng-model="currentProduct.quantity"required/>
           </p>
           <p>
+            <label><b>Quantity Available:  </b></label>
+            <input type="number" min="1" ng-readonly="!editing" ng-model="currentProduct.quantity_available"required/>
+          </p>
+          <p>
             <label><b>Description:  </b></label>
             <textarea ng-readonly="!editing" ng-model="currentProduct.description"></textarea>
           </p>
@@ -381,7 +385,8 @@
       </div>
       <div class="modal-body" align="left">
         <div class="form-group" >
-          <input class = "feedback-input" type="number" ng-model="deltaQuantity" placeholder="change in item quantity" required>
+          <label><b>Change in item quantity:  </b></label>
+          <input class = "feedback-input" type="number" ng-model="deltaQuantity" required>
         </div>
         <div class="error" ng-show="errorMessage">{{ errorMessage }}</div>
         <div class="modal-footer">
