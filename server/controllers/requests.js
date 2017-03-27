@@ -109,7 +109,7 @@ function add (req, res) {
         	user: id,
         	items: cart.items,
         	reason: req.body.reason || "",
-					status: "open",
+					status: "outstanding",
 					type: req.body.type || "disburse"
         });
         request.save((err,request) => {
@@ -180,7 +180,7 @@ function convert(id, req, res) {
 				user: id,
 				items: req.body.items,
 				reason: req.body.reason || "",
-				status: req.body.status || "open",
+				status: req.body.status || "outstanding",
 				type: req.body.type || "disburse"
 	});
 	request.save((err,request) => {
@@ -208,7 +208,7 @@ function convert(id, req, res) {
 					console.log("quantity check");
 					console.log(request.items[i].item.quantity);
 					*/
-					if (req.body.previousStatus === "open") {
+					if (req.body.previousStatus === "outstanding") {
 						request.items[i].item.quantity -= req.body.items[i].quantity;
 						request.items[i].item.quantity_available -= req.body.items[i].quantity;
 					}
@@ -408,7 +408,7 @@ function update (req, res) {
 		if (err) return res.status(500).send({ error: err});
 
 		// TODO: refactor the following if tree into one clause
-		if (request.status === "open" && req.body.status === "disbursed") {
+		if (request.status === "outstanding" && req.body.status === "disbursed") {
 			if (req.user.status != "admin" && req.user.status != "manager")
 				return res.status(401).send({ error: "Unauthorized operation"});
 			for (let i = 0;i<request.items.length;i++){
