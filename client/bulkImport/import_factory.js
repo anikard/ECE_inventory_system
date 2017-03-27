@@ -81,7 +81,7 @@ var emails_app = angular.module('import_app', []);
                 }
                 
               }
-              else {
+              else if (data.error) {
                 errorStr += data.error + ".";
               }
 
