@@ -136,10 +136,10 @@
     </span>
     <br>
 
-    <select id="tag_select_modal" class = "feedback-input" ng-controller="productsController" id = "tagList" name="tagOptions">
-      <option value="" disabled selected="selected">Add a Tag</option>
-      <option value="1" ng-click="createNewTag()">Create New Tag</option>
-      <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
+    <select id="tag_select_modal" class="feedback-input" id="tagList" name="tagOptions" ng-change="tagClicked()" ng-model="tagSelected">
+      <option value="">Add a Tag</option>
+      <option value="createNewTag">Create New Tag</option>
+      <option ng-repeat="tag in tags" ng-bind="tag.name" value="{{tag.name}}"></option>
     </select>
 
 
@@ -200,10 +200,10 @@
             <br>
           </p>
           <p>
-            <select id="tag_select_main" class = "feedback-input" ng-if="editing" ng-controller="productsController" id = "tagList" name="tagOptions" ng-model="new_order.tags[new_order.tags.length]">
-              <option value="" disabled selected="selected">Add a Tag</option>
-              <option value="1" ng-click="createNewTag()">Create New Tag</option>
-              <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
+            <select id="tag_select_main" class="feedback-input" id="tagList" name="tagOptions" ng-change="tagClicked()" ng-model="tagSelected">
+              <option value="">Add a Tag</option>
+              <option value="createNewTag">Create New Tag</option>
+              <option ng-repeat="tag in tags" ng-bind="tag.name" value="{{tag.name}}"></option>
             </select>
           </p>
         </div>

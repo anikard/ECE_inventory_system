@@ -435,14 +435,23 @@ products_app.controller('productsController', function($scope, $window, $rootSco
   }
 
   // TODO: Remove parent mess (due to ng-controller="productsController" in select tag probably)
-  $scope.tagClicked = function(customer) {
+  $scope.tagClicked = function() {
+
+
     console.log("tagClicked");
-    console.log(customer);
-    console.log($scope.$parent.currentTags);
-    if($scope.$parent.currentTags.indexOf(customer.name) == -1) {
-      $scope.$parent.currentTags.push(customer.name);
+    console.log($scope.currentTags);
+    if($scope.tagSelected === "createNewTag") {
+      $scope.createNewTag();
     }
-    console.log($scope.$parent.currentTags);
+    else if($scope.tagSelected === "") {
+
+    }
+    else {
+      if($scope.currentTags.indexOf($scope.tagSelected) == -1) {
+        $scope.currentTags.push($scope.tagSelected);
+      }
+    }
+    console.log($scope.currentTags);
   }
 
   // TODO: refactor to combine tagClicked and searchTag to be tagClicked(tag, tagList);
