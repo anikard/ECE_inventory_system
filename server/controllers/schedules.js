@@ -21,14 +21,14 @@ var s = schedule.scheduleJob('*/5 * * * * *', function(){
       if(r.user && r.user.email)
         emails.push(r.user.email);
     });
-    Email.find({})
+    Email.find({ dates: { $exists: true, $not: {$size: 0} } })
     .exec((err, results) => {
       if (err) return console.log(err);
       results.forEach(e => {
-        dates = e.send_dates;
+        dates = e.dates;
         var new_dates = [];
         for(let i = 0; i < dates.length; i++){
-          if(dates[i] < date_now){
+          if(dates[i] < date_now) {
             new_dates.push(dates[i]);
           } else {
           	emails.forEach(address=>{
@@ -40,7 +40,7 @@ var s = schedule.scheduleJob('*/5 * * * * *', function(){
           	})
           }
         }
-        e.send_dates = new_dates;
+        e.dates = new_dates;
         e.save();
       });
     });

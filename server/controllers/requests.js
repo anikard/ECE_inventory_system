@@ -281,7 +281,7 @@ function direct (id, req, res) {
 		if (!cart || cart.items.length === 0)
 				return res.status(400).send({ error: "Empty Cart" });
 		for (let i = 0;i<cart.items.length;i++){
-			if (cart.items[i].item.quantity < cart.items[i].quantity)
+			if (cart.items[i].item.quantity_available < cart.items[i].quantity)
 				return res.status(405).send({ error: `Request quantity of ${cart.items[i].item.name} exceeds stock limit` });
 		}
 		let currentStatus = {};
