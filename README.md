@@ -63,12 +63,22 @@ Finally, clone and deploy the project
 ```
 git clone https://github.com/anikard/ECE_inventory_system
 cd ECE_inventory_system && npm install
-node server.js
+node server.js >/dev/null 2>&1 &
 ```
 ### Then access the site at:
 https://localhost:8443
 
-###Sample import string:
+### Sample import string:
 ```
-[{"name":"resistors","quantity":10},{"name":"transistors","quantity":20}]
+[{"name":"resistors","quantity":10, "quantity_available":10},{"name":"transistors","quantity":20, "quantity_available":20}]
 ```
+
+### import system from api:
+{ imports: '[{"name":"resistors","quantity":10, "quantity_available":10},{"name":"transistors","quantity":20, "quantity_available":20}]' }
+
+Put `nodeapp.service` in /etc/systemd/system. Then type
+```
+# sudo systemctl daemon-reload
+# sudo systemctl start nodeapp
+```
+Watch the logs at `sudo journalctl --follow -u nodeapp`

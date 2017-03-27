@@ -1,4 +1,7 @@
 var nodemailer = require('nodemailer');
+var mongoose = require('mongoose');
+var _ = require('lodash');
+var Email = mongoose.model('Email');
 const util = require('./util.js');
 
 const transporter = nodemailer.createTransport({
@@ -10,13 +13,18 @@ const transporter = nodemailer.createTransport({
 })
 
 function send({from, to, subject, text, html}, cb) {
-    const mailOptions = {
-        from: from || 'ECE Inventory Manager <noreply@duke.edu>',
-        to: to,
-        subject: subject,
-        text: text,
-    }
-    transporter.sendMail(mailOptions, cb);
+    Email.findOne({ subjectTag: { $exists: true} }, (err, email) => {
+        if (err) return cb(err);
+        const tag = (email && email.subjectTag) ? `[${email.subjectTag}] `:'';
+        const mailOptions = {
+            from: from || 'ECE Inventory Manager <noreply@duke.edu>',
+            to: to,
+            subject: `${tag}${subject}`,
+            text: text,
+        };
+        console.log(`Email "${subject}" sent to "${to}"`);
+        transporter.sendMail(mailOptions, cb);
+    });
 }
 
 module.exports = {

@@ -18,49 +18,6 @@ module.exports = (app) => {
 	app.post('/api/request/update', util.requirePrivileged, update);
 }
 
-var findRequestsByUser = function(name) {
-	Request.find({})
- 	.populate('item user')
- 	.exec(function(err, results) {
-       	if(err) {
-         	console.log(err);
-         	return null;
-       	} else {
-       		results.forEach(function(e){
-       			e.customer_name = e.user.name;
-       		});
-         	return results;
-       	}
-		});
-};
-
-var findRequestsByItem = function(item) {
-	Request.find({})
- 	.populate('item user')
-     	.exec(function(err, results) {
-       	if(err) {
-         	console.log(err);
-         	return null;
-       	} else {
-       		results.forEach(function(e){
-       			e.customer_name = e.user.name;
-       		});
-         	return results;
-       	}
-		});
-};
-
-var findUserByName = function(name) {
-	User.findOne({ 'name': name }, function (err, user) {
-		if(err) {
-         	console.log(err);
-         	return null;
-       	} else {
-         	return user;
-       	}
-	})
-};
-
 function show (req, res) {
 	let query = (req.user.status === "admin" || req.user.status === "manager") ? {} : { user : req.user._id };
 	Request.find(query)
@@ -83,8 +40,6 @@ function show (req, res) {
 }
 
 function add (req, res) {
-	console.log("add");
-	console.log(req.body.items);
 	let id = req.body.user || req.body.userId || req.body._id;
 	if(req.body.convert) {
 		// From Converted Request
@@ -113,8 +68,8 @@ function add (req, res) {
         	user: id,
         	items: cart.items,
         	reason: req.body.reason || "",
-					status: "outstanding",
-					type: req.body.type || "disburse"
+			status: "outstanding",
+			type: req.body.type || "disburse"
         });
         request.save((err,request) => {
         	if (err)
@@ -150,7 +105,7 @@ function add (req, res) {
     					subject: `${req.user.username} added a new request`,
     					text: JSON.stringify(request),
     				});
-    			})
+    			});
 
 				let quantity_arr = [];
 				request.items.forEach(i=>quantity_arr.push(i.quantity));
@@ -178,40 +133,21 @@ function add (req, res) {
 }
 
 function convert(id, req, res) {
-	console.log("convert items");
-	console.log(req.body.items);
 	let request = new Request({
-				user: id,
-				items: req.body.items,
-				reason: req.body.reason || "",
-				status: req.body.status || "outstanding",
-				type: req.body.type || "disburse"
+		user: id,
+		items: req.body.items,
+		reason: req.body.reason || "",
+		status: req.body.status || "outstanding",
+		type: req.body.type || "disburse"
 	});
 	request.save((err,request) => {
 		if (err) {
 			return res.status(500).send({ error: err });
 		}
 		request.populate('items.item', function(err, request) {
-/*
-			console.log("conv status");
-			console.log(request.status);
-			console.log("@@@@@@@@@@@@@@@");
-			console.log(req.body.items);
-			console.log("&&&&&&&&&&&&&&&");
-			console.log(request.items);
-			console.log("***************");
-			*/
 			if (request.status === "disbursed") {
-				//console.log("in disbursed status of convert");
 				for (let i = 0;i<request.items.length;i++){
 
-					/*
-					console.log(request.items[i])
-					console.log(req.body.items[i])
-					console.log(request.items[i].item.quantity);
-					console.log("quantity check");
-					console.log(request.items[i].item.quantity);
-					*/
 					if (req.body.previousStatus === "outstanding") {
 						request.items[i].item.quantity -= req.body.items[i].quantity;
 						request.items[i].item.quantity_available -= req.body.items[i].quantity;
@@ -223,7 +159,6 @@ function convert(id, req, res) {
 						console.log("Error in converted disbursment");
 					}
 					request.items[i].item.save();
-					//console.log(request.items[i].item.quantity);
 				}
 			}
 
@@ -241,19 +176,20 @@ function convert(id, req, res) {
 				}
 			}
 
+			User.findOne({ _id: id}, (err, user)=>{
+				if (err) return next(err);
+				let options = {
+	    			to: user.email,
+	    			subject: `Request update for ${req.user.name}`,
+	    			text: JSON.stringify(request),
+	    		};
+				mailer.send(options);
+			});
 
 			let name_arr = []
 			req.body.items.forEach(i=>name_arr.push(i.name));
-
-			//cart.items = [];
-
-
-			//cart.save((err)=>{
-				//if (err)
-					//return res.status(500).send({ error: err });
 			let arr = []
 			request.items.forEach(i=>arr.push(i.item));
-
 			let quantity_arr = []
 			request.items.forEach(i=>quantity_arr.push(i.quantity));
 
@@ -304,14 +240,14 @@ function direct (id, req, res) {
 					type: req.body.type,
         });
         for (let i = 0;i < cart.items.length;i++){
-					if (req.body.type === "disburse") {
-						cart.items[i].item.quantity -= cart.items[i].quantity;
-						cart.items[i].item.quantity_available -= cart.items[i].quantity;
-					}
-					else if (req.body.type === "loan") {
-						cart.items[i].item.quantity_available -= cart.items[i].quantity;
-					}
-				}
+			if (req.body.type === "disburse") {
+				cart.items[i].item.quantity -= cart.items[i].quantity;
+				cart.items[i].item.quantity_available -= cart.items[i].quantity;
+			}
+			else if (req.body.type === "loan") {
+				cart.items[i].item.quantity_available -= cart.items[i].quantity;
+			}
+		}
         request.save((err,request) => {
         	if (err)
 				return res.status(500).send({ error: err });
@@ -335,7 +271,6 @@ function direct (id, req, res) {
 		    			subject: `${req.user.username} received a new disbursement`,
 		    			text: JSON.stringify(request),
 		    		};
-		    		console.log(options);
 					mailer.send(options);
 				});
 
@@ -364,10 +299,6 @@ function direct (id, req, res) {
 }
 
 function close (req, res)  {
-	// Customer.update(
-			// 		{_id: req.body._customer},
-   //                 	{ $pull: { orders: req.body._id} }
-   //               );
 	Request.findByIdAndUpdate(
 		req.body._id,
 		{ $set: {
@@ -375,34 +306,37 @@ function close (req, res)  {
 		}},
 		{ new: true },
 		function (err, request) {
-			if (err) console.log("Error");
-			mailer.send({
-    			to: req.user.email,
-    			subject: `Your request has been closed`,
-    			text: JSON.stringify(request),
-    		});
-			res.end();
+			request.populate('user', (err, request) => {
+				if (err) return next(err);
+				if (request.user && request.user.email)
+					mailer.send({
+		    			to: request.user.email,
+		    			subject: `Your request has been closed`,
+		    			text: JSON.stringify(request),
+		    		});
+				res.status(200).send("Successfully closed a request!");
+			});
 		}
 	);
 }
 
 function del (req, res) {
-	Request.remove({ _id: req.body._id},
-		function (err, request) {
-			if (err) {
-				res.status(500).send({ error: err });
-			} else {
-    			res.status(200).send("Successfully deleted a request!");
-    			mailer.send({
-	    			to: req.user.email,
+	Request.findOne({ _id: req.body._id})
+	.populate('user')
+	.exec(function (err, request) {
+		if (err) return next(err);
+		request.remove((err)=>{
+			if(err) return next(err);
+			if(request.user && request.user.email)
+				mailer.send({
+	    			to: request.user.email,
 	    			subject: `Your request has been deleted`,
 	    			text: JSON.stringify(request),
 	    		});
-			}
+			res.status(200).send("Successfully deleted a request!");
+		});
 
-			res.end();
-		}
-	);
+	});
 }
 
 function update (req, res) {
@@ -443,11 +377,15 @@ function update (req, res) {
 
 				request.items.forEach(i=>name_arr.push(i.item.name));
 
-				mailer.send({
-	    			to: req.user.email,
-	    			subject: `Your request has been approved`,
-	    			text: JSON.stringify(request),
-	    		});
+				User.findOne({_id: request.user}, (err, user) =>{
+				if (err) return next(err);
+				if (user && user.email)
+					mailer.send({
+		    			to: request.user.email,
+		    			subject: `Your request has been approved`,
+		    			text: JSON.stringify(request),
+		    		});
+				});
 
 	    		let log = new Log({
 					init_user: req.user,
@@ -487,16 +425,26 @@ function update (req, res) {
 					request.items[i].item.save();
 				}
 
+				User.findOne({_id: request.user}, (err, user) =>{
+				if (err) return next(err);
+				if (user && user.email)
+					mailer.send({
+		    			to: request.user.email,
+		    			subject: `Your request onLoan -> disbursed`,
+		    			text: JSON.stringify(request),
+		    		});
+				});
+
 				let arr = []
-					request.items.forEach(i=>arr.push(i.item));
+				request.items.forEach(i=>arr.push(i.item));
 
 				let quantity_arr = []
-			request.items.forEach(i=>quantity_arr.push(i.quantity));
+				request.items.forEach(i=>quantity_arr.push(i.quantity));
 
 				let name_arr = []
-			request.items.forEach(i=>name_arr.push(i.item.name));
+				request.items.forEach(i=>name_arr.push(i.item.name));
 
-					let log = new Log({
+				let log = new Log({
 					init_user: req.user,
 					item: arr,
 					event: "Request",
@@ -533,16 +481,26 @@ function update (req, res) {
 					request.items[i].item.save();
 				}
 
+				User.findOne({_id: request.user}, (err, user) =>{
+				if (err) return next(err);
+				if (user && user.email)
+					mailer.send({
+		    			to: request.user.email,
+		    			subject: `Loan request`,
+		    			text: JSON.stringify(request),
+		    		});
+				});
+
 				let arr = []
-					request.items.forEach(i=>arr.push(i.item));
+				request.items.forEach(i=>arr.push(i.item));
 
 				let quantity_arr = []
-			request.items.forEach(i=>quantity_arr.push(i.quantity));
+				request.items.forEach(i=>quantity_arr.push(i.quantity));
 
 				let name_arr = []
-			request.items.forEach(i=>name_arr.push(i.item.name));
+				request.items.forEach(i=>name_arr.push(i.item.name));
 
-					let log = new Log({
+				let log = new Log({
 					init_user: req.user,
 					item: arr,
 					event: "Request",
@@ -572,16 +530,26 @@ function update (req, res) {
 					request.items[i].item.save();
 				}
 
+				User.findOne({_id: request.user}, (err, user) =>{
+				if (err) return next(err);
+				if (user && user.email)
+					mailer.send({
+		    			to: request.user.email,
+		    			subject: `Your request has been returned`,
+		    			text: JSON.stringify(request),
+		    		});
+				});
+
 				let arr = []
-					request.items.forEach(i=>arr.push(i.item));
+				request.items.forEach(i=>arr.push(i.item));
 
 				let quantity_arr = []
-			request.items.forEach(i=>quantity_arr.push(i.quantity));
+				request.items.forEach(i=>quantity_arr.push(i.quantity));
 
 				let name_arr = []
-			request.items.forEach(i=>name_arr.push(i.item.name));
+				request.items.forEach(i=>name_arr.push(i.item.name));
 
-					let log = new Log({
+				let log = new Log({
 					init_user: req.user,
 					item: arr,
 					event: "Request",
@@ -600,11 +568,15 @@ function update (req, res) {
 			_.assign(request,_.pick(req.body,['note','status','type','reason','user']));
 			request.save(function (err, request) {
 				if (err) return res.status(500).send({ error: err});
-				mailer.send({
-	    			to: req.user.email,
-	    			subject: `Your request has been updated`,
-	    			text: JSON.stringify(request),
-	    		});
+				User.findOne({_id: request.user}, (err, user) =>{
+				if (err) return next(err);
+				if (user && user.email)
+					mailer.send({
+		    			to: request.user.email,
+		    			subject: `Your request has been updated`,
+		    			text: JSON.stringify(request),
+		    		});
+				});
 				return res.status(200).json(request);
 			});
 		}

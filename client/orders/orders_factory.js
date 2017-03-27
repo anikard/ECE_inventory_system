@@ -238,6 +238,7 @@ var orders_app = angular.module('orders_app', []);
               $scope.responseToOrder = {};
               $('#orderModal').modal('hide');
               $scope.refreshOrders();
+              alert("Successfully " + data.status + " request.");
             }
           });
 
@@ -311,7 +312,7 @@ var orders_app = angular.module('orders_app', []);
             // TODO: LOG this
           }
           else if (item.quantity_to_loan == item.quantity) {
-            $scope.responseToOrder.status = "onLoan";
+            $scope.responseToOrder.status = "on Loan";
             $scope.responseToOrder.type = "loan";
             // TODO: LOG this
           }

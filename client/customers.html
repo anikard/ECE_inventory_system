@@ -358,14 +358,16 @@
                     <tr>
                         <td> User Name </td>
                         <td> Created Date </td>
+                        <td> Email </td>
                         <td> Status </td>
                         <!-- <td> Actions </td> -->
                     </tr>
                     <tr ng-repeat="customer in users | filter: filter_name | orderBy:'-date'">
                         <td ng-bind="customer.username || customer.netId || customer.name"></td>
                         <td ng-bind="customer.date | date:'medium'"></td>
+                        <td ng-bind="customer.email"></td>
                         <!-- <td ng-bind="customer.status">{{customer.status}}</td>-->
-                        <td>{{customer.status}}<span ng-show="adminOnly">&nbsp;&nbsp;<button class = "remove" ng-click="changeStatus(customer)" data-toggle="modal" data-target='#changeStatusModal'>Change</button></span></td>
+                        <td>{{customer.status}}<span ng-show="adminOnly">&nbsp;&nbsp;<button class = "remove" ng-click="changeStatus(customer)" data-toggle="modal" data-target='#changeStatusModal'>Edit</button></span></td>
                         <!-- <td><button class = "remove" ng-click='removeCustomer(customer)' >Remove</button></td> -->
 
                     </tr>
