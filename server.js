@@ -81,8 +81,8 @@ if (cluster.isMaster) {
   https.createServer(credentials, app).listen(8443, ()=>{
   	console.log(`Worker ${process.pid} started, listening on port 8443`);
   }); 
-  process.on('uncaughtException', function() { 
-    console.log('Handled the exception here'); 
-    process.exit(1); 
-  });
+  // process.on('uncaughtException', function() { 
+  //   console.log('Handled the exception here'); 
+  //   process.exit(1); 
+  // });
 }

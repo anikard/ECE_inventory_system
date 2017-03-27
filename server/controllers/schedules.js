@@ -32,7 +32,7 @@ var s = schedule.scheduleJob('*/5 * * * * *', function(){
             new_dates.push(dates[i]);
           } else {
           	emails.forEach(address=>{
-          		console.log({
+          		mailer.send({
           			to: address,
           			subject: e.subjectTag && `${e.subjectTag} ${e.subject}` || e.subject,
           			text: e.body,
