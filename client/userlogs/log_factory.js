@@ -86,7 +86,10 @@ var log_app = angular.module('log_app', []);
 
             data[m].items = items_array;
 
-            if (items_array.length == 0) {
+            if (items_array.length == 0 && data[m].name_list[0]==null) {
+              data[m].items.push("[Deleted item]");
+            }
+            else if (items_array.length == 0) {
               data[m].items.push(data[m].name_list[0]);
             }
 
