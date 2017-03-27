@@ -152,6 +152,7 @@ var log_app = angular.module('log_app', []);
           var item_info = {};
           $rootScope.item_selected = item_name;
           $window.localStorage['itemSelected'] = item_name;
+          //$window.localStorage['itemDeleted'] = item_name;
 
           $window.location.href = "/products/products.html";
 
