@@ -169,10 +169,15 @@ body {
       border-width:0px 0px 1px 1px;
     }
 
-    .smallTable {
+    .small {
       font-size: 11px;
       text-align: center;
     }
+
+    .table {
+      text-align: center;
+    }
+    
 
 /*----- Tabs -----*/
 /*--> changed design decision: single table view for requests 3/20*/

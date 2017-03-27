@@ -46,7 +46,7 @@
 
 
 <div class="customerTable" id = "cTable" >
-    <table id = "myRequestsTable">
+    <table id = "myRequestsTable" class="table">
       <tr>
         <td> User Name </td>
         <td> # of Items </td>
@@ -85,7 +85,7 @@
             <p> <b> User: </b> {{thisOrder.customer_name}}</p>
             <p>
               <span ng-show="thisOrder.status == 'outstanding'">
-                <table id = "openRequestTable" class="smallTable">
+                <table id = "openRequestTable" class="small table">
                   <tr>
                     <td> Item </td>
                     <td> Quantity Requested </td>
@@ -105,7 +105,7 @@
               </span>
 
               <span ng-show="thisOrder.status == 'onLoan'">
-                <table id = "openRequestTable">
+                <table id = "openRequestTable" class="table">
                   <tr>
                     <td> Item </td>
                     <td> Quantity on Loan </td>
@@ -127,7 +127,7 @@
               || thisOrder.status == 'disbursed'
               || thisOrder.status == 'approved'
               || thisOrder.status == 'converted'">
-                <table id = "openRequestTable">
+                <table id = "openRequestTable" class="table">
                   <tr>
                     <td> Item </td>
                     <td> Quantity Requested </td>
