@@ -608,6 +608,15 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     $scope.currentTags = [];
   }
 
+  $scope.deltaQuantity = function(product) {
+    $scope.deltaQuantity = 0;
+    $('#deltaQuantityModal').modal('show');
+  }
+
+  $scope.confirmDeltaQuantity = function(product) {
+    if($scope.deltaQuantity
+  }
+
 
   // from logs view
 

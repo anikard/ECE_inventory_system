@@ -261,14 +261,17 @@ var orders_app = angular.module('orders_app', []);
           }
           else if (item.quantity_to_deny == item.quantity) {
             $scope.responseToOrder.status = "denied";
+            // TODO: LOG this
           }
           else if (item.quantity_to_disburse == item.quantity) {
             $scope.responseToOrder.status = "disbursed";
             $scope.responseToOrder.type = "disburse";
+            // TODO: LOG this
           }
           else if (item.quantity_to_loan == item.quantity) {
             $scope.responseToOrder.status = "onLoan";
             $scope.responseToOrder.type = "loan";
+            // TODO: LOG this
           }
           else {
             $scope.convertResponse();
