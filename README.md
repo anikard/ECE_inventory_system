@@ -68,7 +68,7 @@ node server.js
 ### Then access the site at:
 https://localhost:8443
 
-Sample import string:
+###Sample import string:
 ```
 [{"name":"resistors","quantity":10},{"name":"transistors","quantity":20}]
 ```
