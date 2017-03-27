@@ -105,6 +105,10 @@ function add (req, res) {
 			return res.status(500).send({ error: err });
 		if (!cart || cart.items.length === 0)
 			return res.status(400).send({ error: "Empty cart" });
+		for (let i = 0;i<cart.items.length;i++){
+			if (cart.items[i].item.quantity_available < cart.items[i].quantity)
+				return res.status(405).send({ error: `Request quantity of ${cart.items[i].item.name} exceeds stock limit` });
+		}
 		let request = new Request({
         	user: id,
         	items: cart.items,
