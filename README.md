@@ -72,3 +72,11 @@ https://localhost:8443
 ```
 [{"name":"resistors","quantity":10},{"name":"transistors","quantity":20}]
 ```
+
+Put `nodeapp.service` in /etc/systemd/system. Then type
+```
+# sudo systemctl daemon-reload
+# sudo systemctl start nodeapp
+```
+Watch the logs at `sudo journalctl --follow -u nodeapp`
+
