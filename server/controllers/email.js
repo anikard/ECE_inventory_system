@@ -44,7 +44,7 @@ module.exports = (app) => {
 
   app.post('/api/email/update', util.requirePrivileged, function(req, res, next) {
 
-    props = _.pick(req.body, ['subject','body','dates']);
+    props = _.pick(req.body, ['subject', 'subjectTag', 'body','dates']);
 
     Email.findOne({ '_id': req.body._id }, function (err, email) {
       if (err) {
