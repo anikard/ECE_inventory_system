@@ -342,6 +342,11 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     }
   }
 
+  $scope.viewOrder = function(order) {
+    $window.localStorage['requestSelected'] = order._id;
+    $window.location.href = "/orders/orders.html";
+  }
+
   $scope.calculateMyLoans = function(product) {
     //console.log("Calculate My Loans");
     //console.log(product);
