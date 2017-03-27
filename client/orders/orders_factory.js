@@ -194,7 +194,7 @@ var orders_app = angular.module('orders_app', []);
               item.quantity_to_disburse = 0;
               item.quantity_to_return = 0;
             }
-            if($scope.thisOrder.status == "open" || $scope.thisOrder.status == "onLoan") {
+            if($scope.thisOrder.status == "outstanding" || $scope.thisOrder.status == "onLoan") {
               ($document[0].getElementById('cancelOrderButton')).style.display = "inline";
               ($document[0].getElementById('request_response_form')).style.display = "block";
               ($document[0].getElementById('respondOrderButton')).style.display = "inline";
@@ -212,7 +212,7 @@ var orders_app = angular.module('orders_app', []);
         console.log("RESPONDING TO ORDER");
         $scope.responseToOrder = {};
 
-        if ($scope.thisOrder.status == "open") {
+        if ($scope.thisOrder.status == "outstanding") {
           $scope.openResponse();
         }
         else if ($scope.thisOrder.status == "onLoan") {
@@ -235,10 +235,11 @@ var orders_app = angular.module('orders_app', []);
               $scope.orderResponse = {};
               $scope.responseToOrder = {};
               $('#orderModal').modal('hide');
+              $scope.refreshOrders();
             }
           });
 
-          $scope.refreshOrders();
+          //$scope.refreshOrders();
         }
       }
 
@@ -351,7 +352,7 @@ var orders_app = angular.module('orders_app', []);
         $scope.addLoanOrder(loanItems);
       }
       if(disburseItems.length > 0) {
-        $scope.addDisburserOrder(disburseItems, "open");
+        $scope.addDisburserOrder(disburseItems, "outstanding");
       }
       if(denyItems.length > 0) {
         $scope.addDenyOrder(denyItems);

@@ -12,7 +12,7 @@ var RequestSchema = new mongoose.Schema({
   }],
   reason: {type: String, default: ""},
   note: {type: String, default:""},
-  status: {type: String, default:"open"},
+  status: {type: String, default:"outstanding"},
   type: {type: String, default:"disburse"},
   date: { type : Date, default: Date.now },
   dateFulfilled: { type : Date, default: null},
