@@ -26,7 +26,7 @@ Local email utility needs to be configured for email notification to work. Using
 
 ## How to restore from the backup
 
-Go to /backup/mongo/ dir on the backup server. Locate the desired backup (daily/weekly/monthly) directory. The actual file is located in ./daily.0/rapid-320/backup/mongo/mongo.tar.gz.aes.
+Go to `/backup/mongo/` dir on the backup server. Locate the desired backup (daily/weekly/monthly) directory. The actual file is located in `./daily.0/rapid-320/backup/mongo/mongo.tar.gz.aes`.
 
 Follow these steps to perform a restore:
 
