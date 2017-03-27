@@ -53,6 +53,8 @@ const privateKey  = fs.readFileSync('./sslcert/domain.key', 'utf8');
 const certificate = fs.readFileSync('./sslcert/domain.crt', 'utf8');
 const credentials = {key: privateKey, cert: certificate};
 
+require('./server/controllers/preprocess.js');
+
 if (cluster.isMaster) {
   console.log(`Master ${process.pid} is running`);
 

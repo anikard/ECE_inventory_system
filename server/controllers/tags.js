@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 var Tag = mongoose.model('Tag');
 var util = require('./util.js');
 

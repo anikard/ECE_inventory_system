@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 var schedule = require('node-schedule');
 var mailer = require('./mailer.js');
 var User = mongoose.model('User');

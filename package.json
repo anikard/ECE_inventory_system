@@ -20,7 +20,8 @@
     "nodemailer": "latest",
     "async": "latest",
     "node-schedule": "latest",
-    "dateformat": "latest"
+    "dateformat": "latest",
+    "bluebird": "latest"
 
   }
 }
