@@ -170,12 +170,14 @@ products_app.controller('productsController', function($scope, $window, $rootSco
       $window.localStorage['itemSelected'] = "";
 
       var thisProductIndex = -1;
+      var product = {};
       for (var i = 0; i < $scope.products.length; i++) {
         if ($scope.products[i].name == $scope.selected_item) {
           thisProductIndex = i;
+          product = $scope.products[i];
         }
       }
-      $scope.scrollIntoView(thisProductIndex+1);
+      $scope.scrollIntoView(thisProductIndex+1, product);
 
     });
 
@@ -343,11 +345,15 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     //console.log(product);
     //console.log($scope.myOrders);
     let myLoanTotal = 0;
-    for (var i = 0; i < $scope.myOrders.length; i++) {
-      if ($scope.myOrders[i].items) {
-        for (var j = 0; j < $scope.myOrders[i].items.length; j++) {
-          if ($scope.myOrders[i].items[j].item.name === product.name) {
-            myLoanTotal += $scope.myOrders[i].items[j].quantity;
+    if($scope.myOrders){
+      for (var i = 0; i < $scope.myOrders.length; i++) {
+        if ($scope.myOrders[i].items) {
+          for (var j = 0; j < $scope.myOrders[i].items.length; j++) {
+            if($scope.myOrders[i].items[j].item) {
+              if ($scope.myOrders[i].items[j].item.name === product.name) {
+                myLoanTotal += $scope.myOrders[i].items[j].quantity;
+              }
+            }
           }
         }
       }
@@ -656,29 +662,12 @@ products_app.controller('productsController', function($scope, $window, $rootSco
 
   // from logs view
 
-  $scope.scrollIntoView = function(rowNum) {
-      console.log("in scroll into view");
-        var element = document.getElementById('myItemTable').getElementsByTagName('tr')[rowNum];
+  $scope.scrollIntoView = function(rowNum, product) {
+      console.log("in scroll into view + row num = " + rowNum);
 
-        if (element) {
-          var container = "window";
-          var containerTop = $(container).scrollTop();
-          var containerBottom = containerTop + $(container).height();
-          var elemTop = element.offsetTop;
-          var elemBottom = elemTop + $(element).height();
-
-          var elemAbsTop = element.getBoundingClientRect().top;
-
-          $("#myItemTable tr:nth-child("+rowNum+")")[0].scrollIntoView();
-
-          window.scrollBy(0,-100);
-
-          var cols = element.getElementsByTagName('td');
-
-          for (var x = 0; x < cols.length; x++) {
-            cols[x].style.backgroundColor = "lightgreen";
-          }
-
+        if (product && rowNum > 0) {
+          $scope.viewProduct(product);
+          $("#productModal").modal();
         }
 
       }

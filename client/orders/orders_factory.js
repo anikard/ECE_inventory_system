@@ -100,15 +100,17 @@ var orders_app = angular.module('orders_app', []);
           $window.localStorage['requestSelected'] = "";
 
           var thisReqIndex = -1;
+          var thisReq = {};
           for (var i = 0; i < $scope.orders.length; i++) {
             if ($scope.orders[i]._id == $scope.selected_request) {
               thisReqIndex = i;
+              thisReq = $scope.orders[i];
             }
           }
 
           $scope.requestIndex = thisReqIndex+1;
 
-          $scope.scrollIntoView(thisReqIndex+1);
+          $scope.scrollIntoView(thisReqIndex+1, thisReq);
 
         });
 
@@ -147,7 +149,7 @@ var orders_app = angular.module('orders_app', []);
           }
 
           $scope.tableRows = document.getElementById('myRequestsTable').getElementsByTagName('tr');
-          $scope.scrollIntoView($scope.requestIndex);
+          // $scope.scrollIntoView($scope.requestIndex);
         })
 
         // AUTH
@@ -462,39 +464,13 @@ var orders_app = angular.module('orders_app', []);
     }
 
   // from logs view
-    $scope.scrollIntoView = function(rowNum) {
+    $scope.scrollIntoView = function(rowNum, req) {
         console.log("in scroll into view ");
-          var trs = document.getElementById('myRequestsTable').getElementsByTagName('tr');
-          var arr = Array.prototype.slice.call( trs )
 
-          var element = {};
-          if ($scope.requestIndex) {
-            element = trs[$scope.requestIndex];
-          }
-          else {
-            element = trs[rowNum];
+          if (req && rowNum > 0) {
+            $scope.viewOrder(req);
+            $("#orderModal").modal();
           }
 
-          // var element = trs[$scope.requestIndex];
-
-          if (rowNum || element) {
-            var container = "window";
-            var containerTop = $(container).scrollTop();
-            var containerBottom = containerTop + $(container).height();
-            var elemTop = element.offsetTop;
-            var elemBottom = elemTop + $(element).height();
-
-            var elemAbsTop = element.getBoundingClientRect().top;
-
-            $("#myRequestsTable tr:nth-child("+$scope.requestIndex+")")[0].scrollIntoView();
-
-            window.scrollBy(0,-100);
-
-            var cols = element.getElementsByTagName('td');
-
-            for (var x = 0; x < cols.length; x++) {
-              cols[x].style.backgroundColor = "lightgreen";
-            }
-          }
         }
     })
