@@ -122,7 +122,7 @@ var log_app = angular.module('log_app', []);
 
 
         $scope.getItem = function(item_name) {
-          console.log("GETTING ITEM " + item_name);
+          // console.log("GETTING ITEM " + item_name);
           var item_info = {};
           $rootScope.item_selected = item_name;
           $window.localStorage['itemSelected'] = item_name;

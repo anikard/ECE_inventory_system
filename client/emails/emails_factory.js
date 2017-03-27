@@ -80,11 +80,15 @@ var emails_app = angular.module('emails_app', []);
             }
           }
 
+          // var default_email = {
+          //   _id: "58d1c285a756ee64682ef8ad",
+          //   subject: "hello",
+          //   body: "I say hello, you say goodbye.",
+          //   send_dates: "some date"
+          // };
+
           var default_email = {
-            _id: "58d1c285a756ee64682ef8ad",
-            subject: "hello",
-            body: "I say hello, you say goodbye.",
-            send_dates: "some date"
+            _id: "58d1c285a756ee64682ef8ad"
           };
 
           EmailFactory.addEmail(default_email, function(data) {
