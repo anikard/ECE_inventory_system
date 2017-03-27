@@ -43,9 +43,7 @@
 <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search requests">
 
 
-
-
-<div class="customerTable" id = "cTable" >
+<div class="customerTable" id = "cTable" style="height:25em;">
     <table id = "myRequestsTable" class="table">
       <tr>
         <td> User Name </td>
@@ -56,7 +54,7 @@
         <td> View Request </td>
       </tr>
 
-      <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-date'">
+      <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-date' | limitTo: paginationLimit()">
         <td style="display:none;" ng-bind="order._id"></td>
         <td ng-bind="order.customer_name || order.user.username"></td>
         <td ng-bind="order.items.length"></td>
@@ -67,6 +65,10 @@
       </tr>
     </table>
   </div>
+
+  <button class = "remove" style="margin-top:1em; width: 20%; color: black;" ng-show="hasMoreItemsToShow()" ng-click="showMoreItems()">
+      Show more
+ </button>
 
 <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">

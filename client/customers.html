@@ -283,6 +283,27 @@
         $scope.users = data;
         console.log("GETTTING USERS");
         console.log($scope.users);
+
+        /** PAGINATION **/
+
+          var pagesShown = 1;
+          var pageSize = 5;
+
+          $scope.paginationLimit = function(data) {
+           return pageSize * pagesShown;
+          };
+
+          $scope.hasMoreItemsToShow = function() {
+           return pagesShown < ($scope.users.length / pageSize);
+          };
+
+          $scope.showMoreItems = function() {
+           pagesShown = pagesShown + 1;       
+          }; 
+
+      /** END OF PAGINATION **/
+
+
       });
 
       $scope.refreshUsers = function () {
@@ -353,7 +374,7 @@
  <h1>USERS</h1>
   <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="Find user by name.">
 
-<div class="customerTable" id = "cTable" >
+<div class="customerTable" id = "cTable" style="height:25em;">
                 <table >
                     <tr>
                         <td> User Name </td>
@@ -362,18 +383,23 @@
                         <td> Status </td>
                         <!-- <td> Actions </td> -->
                     </tr>
-                    <tr ng-repeat="customer in users | filter: filter_name | orderBy:'-date'">
+                    <tr ng-repeat="customer in users | filter: filter_name | orderBy:'-date' | limitTo: paginationLimit()">
                         <td ng-bind="customer.username || customer.netId || customer.name"></td>
                         <td ng-bind="customer.date | date:'medium'"></td>
                         <td ng-bind="customer.email"></td>
                         <!-- <td ng-bind="customer.status">{{customer.status}}</td>-->
-                        <td>{{customer.status}}<span ng-show="adminOnly">&nbsp;&nbsp;<button class = "remove" ng-click="changeStatus(customer)" data-toggle="modal" data-target='#changeStatusModal'>Edit</button></span></td>
+                        <td>{{customer.status}}<span ng-show="adminOnly">&nbsp;&nbsp;<button class = "remove" style = "float: right;" ng-click="changeStatus(customer)" data-toggle="modal" data-target='#changeStatusModal'>Edit</button></span></td>
                         <!-- <td><button class = "remove" ng-click='removeCustomer(customer)' >Remove</button></td> -->
 
                     </tr>
 
                 </table>
             </div>
+
+
+    <button class = "remove" style="margin-top:1em; width: 20%; color: black;" ng-show="hasMoreItemsToShow()" ng-click="showMoreItems()">
+      Show more
+ </button>
 
   <div ng-show="adminOnly" style="margin-top: 4em;">
     <h1>Add a User</h1>

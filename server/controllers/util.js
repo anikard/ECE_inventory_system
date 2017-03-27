@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 var User = mongoose.model('User');
 var _ = require('lodash');
 

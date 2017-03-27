@@ -1,5 +1,6 @@
 var nodemailer = require('nodemailer');
 var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 var _ = require('lodash');
 var Email = mongoose.model('Email');
 const util = require('./util.js');

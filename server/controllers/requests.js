@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 var _ = require('lodash');
 var Request = mongoose.model('Request');
 var Cart = mongoose.model('Cart');
