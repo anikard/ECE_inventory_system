@@ -68,8 +68,9 @@
     .remove:hover { background: rgba(150, 200, 200, 0.6); }
 
     .customerTable {
-      margin:0px;padding:0px;
-      width:100%;
+      margin:0px 5%;
+      padding:0px;
+      width:90%;
       height: 21em;
       overflow-y:scroll;
 
@@ -350,7 +351,7 @@
 <div><span id="navBar"></span><a href="" ng-click="logout()">logout {{myName}}</a></div>
 
  <h1>USERS</h1>
-  <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
+  <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="Find user by name.">
 
 <div class="customerTable" id = "cTable" >
                 <table >
@@ -372,12 +373,10 @@
                 </table>
             </div>
 
-  <span ng-show="adminOnly">
+  <div ng-show="adminOnly" style="margin-top: 4em;">
     <h1>Add a User</h1>
 
     <form ng-controller="userController" id="loginForm">
-      <h2>Login</h2>
-
       <div ng-show="error" style="color:#C7254E;" >
         <span>{{ error.message }}</span>
       </div>
@@ -395,7 +394,7 @@
       </div>
       <input style = "display:inline; width:15%; " type="submit" value = "Register" ng-click="registerUser()" >
     </form>
-  </span>
+  </div>
 
   <!-- CHANGE STATUS MODAL -->
   <div class="modal fade" id="changeStatusModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

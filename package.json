@@ -18,7 +18,9 @@
     "connect-mongo": "latest",
     "consolidate": "latest",
     "nodemailer": "latest",
-    "async": "latest"
+    "async": "latest",
+    "node-schedule": "latest",
+    "dateformat": "latest"
 
   }
 }
