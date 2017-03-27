@@ -412,7 +412,7 @@ function update (req, res) {
 			if (req.user.status != "admin" && req.user.status != "manager")
 				return res.status(401).send({ error: "Unauthorized operation"});
 			for (let i = 0;i<request.items.length;i++){
-				if (request.items[i].item.quantity < request.items[i].quantity)
+				if (request.items[i].item.quantity_available < request.items[i].quantity)
 					return res.status(405).send({
 						error: `Request quantity of ${request.items[i].item.name} exceeds stock limit`
 					});
@@ -463,12 +463,14 @@ function update (req, res) {
 		else if (req.body.previous_status === "onLoan" && req.body.status === "disbursed") {
 			if (req.user.status != "admin" && req.user.status != "manager")
 				return res.status(401).send({ error: "Unauthorized operation"});
+				/*
 			for (let i = 0;i<request.items.length;i++){
 				if (request.items[i].item.quantity < request.items[i].quantity)
 					return res.status(405).send({
 						error: `Request quantity of ${request.items[i].item.name} exceeds stock limit`
 					});
 			}
+			*/
 			for (let i = 0;i<request.items.length;i++){
 				request.items[i].item.quantity -= request.items[i].quantity;
 				//request.items[i].item.quantity_available -= request.items[i].quantity;
@@ -508,6 +510,12 @@ function update (req, res) {
 		else if (req.body.status === "onLoan") {
 			if (req.user.status != "admin" && req.user.status != "manager") {
 				return res.status(401).send({ error: "Unauthorized operation"});
+			}
+			for (let i = 0;i<request.items.length;i++){
+				if (request.items[i].item.quantity_available < request.items[i].quantity)
+					return res.status(405).send({
+						error: `Request quantity of ${request.items[i].item.name} exceeds stock limit`
+					});
 			}
 			for (let i = 0;i<request.items.length;i++){
 				request.items[i].item.quantity_available -= request.items[i].quantity;

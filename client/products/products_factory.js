@@ -101,8 +101,10 @@ products_app.factory('ProductsFactory', function($http) {
       for (var i = 0; i < data.length; i++) {
         if (data[i].items) {
           for (var j = 0; j < data[i].items.length; j++) {
-            if (data[i].items[j].item.name === product.name) {
-              relevantOrders.push(orders[i]);
+            if(data[i].items[j].item) {
+              if (data[i].items[j].item.name === product.name) {
+                relevantOrders.push(orders[i]);
+              }
             }
           }
         }
