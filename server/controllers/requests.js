@@ -201,7 +201,8 @@ function convert(id, req, res) {
 					request: request,
 					rec_user: id,
 					quantity: quantity_arr,
-					name_list: name_arr
+					name_list: name_arr,
+					admin_actions: request.status
 			});
 			log.save((err)=>{
 				if (err)	{
@@ -284,10 +285,12 @@ function direct (id, req, res) {
 	    		let log = new Log({
 					init_user: req.user,
 					item: arr,
-	 				event: "Disbursement",
+	 				event: "Request",
 	 				rec_user: id,
+	 				request: request,
 					quantity: quantity_arr,
-					name_list: name_arr
+					name_list: name_arr,
+					admin_actions: "disbursement"
 				});
 				log.save((err)=>{
 					if (err)
@@ -394,7 +397,7 @@ function update (req, res) {
 	 				event: "Request",
 	 				request: request,
 	 				rec_user: request.user,
-	 				admin_actions: "Approve",
+	 				admin_actions: "Approved",
 					quantity: quantity_arr,
 					name_list: name_arr
 				});
@@ -451,7 +454,7 @@ function update (req, res) {
 					event: "Request",
 					request: request,
 					rec_user: request.user,
-					admin_actions: "onLoan to disburse",
+					admin_actions: "on loan to disburse",
 					quantity: quantity_arr,
 					name_list: name_arr
 				});
