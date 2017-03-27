@@ -51,8 +51,11 @@ var emails_app = angular.module('import_app', []);
         $scope.importItems = function(items) {
           console.log("in import items");
           console.log(items);
+          // console.log("LIST");
+          // var replacement = (items.list).replace("quantity", "quantity_available");
           var info = {};
           info.imports = items.list;
+
           ImportFactory.importItems(info, function(data) {
               console.log("import success");
               $document[0].getElementById('successDiv').style.display = "block";

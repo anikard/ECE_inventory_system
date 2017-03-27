@@ -151,7 +151,7 @@ var emails_app = angular.module('emails_app', []);
             var eBody = $document[0].getElementById('email_body');
             efrom.innerHTML = "noreply@duke.edu";
             eto.innerHTML = " - - - ";
-            esubj.innerHTML = $scope.savedEmailInfo.subject;
+            esubj.innerHTML = $scope.savedEmailInfo.subjectTag + ": " + $scope.savedEmailInfo.subject;
             eBody.innerHTML = text1;
           });
 
@@ -203,23 +203,22 @@ var emails_app = angular.module('emails_app', []);
 
          $scope.saveEmail = function(email) {
          
-          var splitSubject = $scope.savedEmailInfo.subject.split(": ");
+          // var splitSubject = $scope.savedEmailInfo.subject.split(": ");
 
           if (email.body) {
             $scope.savedEmailInfo.body = email.body;
           }
           if (email.subject_tag) {
-            splitSubject[0] = email.subject_tag;
-            $scope.savedEmailInfo.subject = splitSubject.join(": ");
+            // splitSubject[0] = email.subject_tag;
+            $scope.savedEmailInfo.subjectTag = email.subject_tag;
           }
           if (email.subject) {
-            splitSubject[1] = email.subject;
-            $scope.savedEmailInfo.subject = splitSubject.join(": ");
+            // splitSubject[1] = email.subject;
+            $scope.savedEmailInfo.subject = email.subject;
           }
           if (email.date) {
             $scope.savedEmailInfo.dates = email.date.split(",");
           }
-
 
           var efrom = $document[0].getElementById('email_from');
           var eto = $document[0].getElementById('email_to');
@@ -228,7 +227,7 @@ var emails_app = angular.module('emails_app', []);
           var eBody = $document[0].getElementById('email_body');
           efrom.innerHTML = "noreply@duke.edu";
           eto.innerHTML = " - - - ";
-          esubj.innerHTML = $scope.savedEmailInfo.subject;
+          esubj.innerHTML = $scope.savedEmailInfo.subjectTag + ": " + $scope.savedEmailInfo.subject;
           eBody.innerHTML = $scope.savedEmailInfo.body.replace(/\n\r?/g, '<br />');
 
           EmailFactory.updateEmail($scope.savedEmailInfo, function(data) {

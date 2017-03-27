@@ -1,6 +1,6 @@
-#Backup Guide
+# Backup Guide
 
-##How Backup Works
+## How Backup Works
 Backup is deployed on a separate system, which utilized RSnapshot. Follow these steps to set up a new backup system:
 
 1. Download RSnapshot
@@ -24,8 +24,9 @@ Change backup frequency on line 99 to 101.
 Note:
 Local email utility needs to be configured for email notification to work. Using SSMTP or POSTFIX is recommended for sending emails.
 
-##How to restore from the backup
-Go to /backup/mongo/ dir on the backup server. Locate the desired backup (daily/weekly/monthly) directory. The actual file is located in ./daily.0/rapid-320/backup/mongo/mongo.tar.gz.aes.
+## How to restore from the backup
+
+Go to `/backup/mongo/` dir on the backup server. Locate the desired backup (daily/weekly/monthly) directory. The actual file is located in `./daily.0/rapid-320/backup/mongo/mongo.tar.gz.aes`.
 
 Follow these steps to perform a restore:
 
