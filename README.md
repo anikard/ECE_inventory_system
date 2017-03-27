@@ -68,7 +68,9 @@ node server.js >/dev/null 2>&1 &
 ### Then access the site at:
 https://localhost:8443
 
-###Sample import string:
+### Sample import string:
 ```
-[{"name":"resistors","quantity":10},{"name":"transistors","quantity":20}]
+[{"name":"resistors","quantity":10, "quantity_available":10},{"name":"transistors","quantity":20, "quantity_available":20}]
 ```
+### import system from api:
+{ imports: '[{"name":"resistors","quantity":10, "quantity_available":10},{"name":"transistors","quantity":20, "quantity_available":20}]' }
