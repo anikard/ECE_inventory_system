@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 const User = mongoose.model('User');
 const passport = require('passport');
 const request = require('request');

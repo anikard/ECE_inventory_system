@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 var _ = require('lodash');
 var Email = mongoose.model('Email');
 var util = require('./util.js');
@@ -26,8 +27,6 @@ module.exports = (app) => {
       if (email) {
         return res.status(405).send({ error: "Email already exist!" });
       }
-      console.log("IN ADD for email");
-      console.log(req.body);
 
       props = _.pick(req.body, ['subject','body','send_dates']);
       email = new Email(props);
@@ -53,15 +52,7 @@ module.exports = (app) => {
       if (!email) {
         return res.status(405).send({ error: "Missing email? Check the ID" });
       }
-
-      console.log("IN update for email");
-      console.log(req.body);
-
-
       _.assign(email, props);
-
-      var message = "updated an email";
-
 
       res.status(200).json(email);
 

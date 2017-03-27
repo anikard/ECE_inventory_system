@@ -53,6 +53,8 @@ const privateKey  = fs.readFileSync('./sslcert/domain.key', 'utf8');
 const certificate = fs.readFileSync('./sslcert/domain.crt', 'utf8');
 const credentials = {key: privateKey, cert: certificate};
 
+require('./server/controllers/preprocess.js');
+
 if (cluster.isMaster) {
   console.log(`Master ${process.pid} is running`);
 
@@ -81,8 +83,8 @@ if (cluster.isMaster) {
   https.createServer(credentials, app).listen(8443, ()=>{
   	console.log(`Worker ${process.pid} started, listening on port 8443`);
   }); 
-  process.on('uncaughtException', function() { 
-    console.log('Handled the exception here'); 
-    process.exit(1); 
-  });
+  // process.on('uncaughtException', function() { 
+  //   console.log('Handled the exception here'); 
+  //   process.exit(1); 
+  // });
 }

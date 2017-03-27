@@ -342,6 +342,11 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     }
   }
 
+  $scope.viewOrder = function(order) {
+    $window.localStorage['requestSelected'] = order._id;
+    $window.location.href = "/orders/orders.html";
+  }
+
   $scope.calculateMyLoans = function(product) {
     //console.log("Calculate My Loans");
     //console.log(product);
@@ -353,7 +358,9 @@ products_app.controller('productsController', function($scope, $window, $rootSco
           for (var j = 0; j < $scope.myOrders[i].items.length; j++) {
             if($scope.myOrders[i].items[j].item) {
               if ($scope.myOrders[i].items[j].item.name === product.name) {
-                myLoanTotal += $scope.myOrders[i].items[j].quantity;
+                if ($scope.myOrders[i].status === "onLoan") {
+                  myLoanTotal += $scope.myOrders[i].items[j].quantity;
+                }
               }
             }
           }

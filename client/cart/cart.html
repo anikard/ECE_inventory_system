@@ -130,8 +130,10 @@
               </tr>
             </table>
 
+            <div class="error" ng-if="modalErrorMessage">{{ modalErrorMessage }}</div>
+
             <span ng-show="modalType === 'Direct'">
-              <select class = "feedback-input" id = "customerList" name="customerOptions" ng-model="this_request.user">
+              <select class = "feedback-input" id = "customerList" name="customerOptions" ng-model="this_request.user" required>
                 <option value="" selected disabled>User Name</option>
                 <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.username || customer.netId || customer.name"></option>
               </select>

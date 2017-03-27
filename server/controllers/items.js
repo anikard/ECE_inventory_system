@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 var _ = require('lodash');
 var Item = mongoose.model('Item');
 var Field = mongoose.model('Field');

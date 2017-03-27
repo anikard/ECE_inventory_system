@@ -1,8 +1,5 @@
-/********************************************************/
-/*            CONTROLLER            */
-/********************************************************/
-
 var mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 var User = mongoose.model('User');
 var util = require('./util.js');
 var _ = require('lodash');

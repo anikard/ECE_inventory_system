@@ -45,11 +45,15 @@ var orders_app = angular.module('cart_app', []);
       }
 
       factory.createRequest = function(info, callback) {
-        $http.post('/api/request/add', info).success(function(output) {
+        $http.post('/api/request/add', info)
+        .success(function(output) {
             console.log("created request in factory of cart")
             $('#orderModal').modal('hide');
             $('#disburseModal').modal('hide');
             callback(output);
+        })
+        .error(function(error) {
+          callback(error);
         })
       }
 
@@ -165,15 +169,26 @@ var orders_app = angular.module('cart_app', []);
       }
 
       $scope.createRequest = function() {
-        console.log("createRequest from cart controller scope");
-        $scope.this_request.items = $scope.orders;
-        console.log($scope.this_request);
-        OrderFactory.createRequest($scope.this_request, function(data) {
-          //$scope.orders = {};
-          console.log("back from create");
-          $scope.refreshOrders();
-          $scope.this_request = {};
-        });
+        if($scope.modalType === "Direct" && !$scope.this_request.user) {
+          $scope.modalErrorMessage = "User required for direct action";
+        }
+        else {
+          console.log("createRequest from cart controller scope");
+          $scope.this_request.items = $scope.orders;
+          console.log($scope.this_request);
+          OrderFactory.createRequest($scope.this_request, function(data) {
+            //$scope.orders = {};
+            if (data.error) {
+              $scope.modalErrorMessage = data.error;
+            }
+            else {
+              console.log("back from create");
+              $scope.modalErrorMessage = null;
+              $scope.refreshOrders();
+              $scope.this_request = {};
+            }
+          });
+        }
       }
 
       $scope.removeFromCart = function(order) {

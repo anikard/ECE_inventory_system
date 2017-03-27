@@ -49,7 +49,7 @@ var orders_app = angular.module('orders_app', []);
       }
 
       factory.removeOrder = function(order, callback) {
-        $http.post('/api/request/del', order).success(function(output) {
+        $http.post('/api/request/close', order).success(function(output) {
             console.log(output.length);
             orders = output;
             callback(orders);
@@ -131,13 +131,13 @@ var orders_app = angular.module('orders_app', []);
         $scope.user = OrderFactory.getuser(function(data) {
           $scope.user = data;
 
-          $scope.authorized = data.status == "admin" || data.status =="manager";
+          $scope.isAuthorized = data.status == "admin" || data.status =="manager";
           $scope.myName = data.username || data.netId || data.name;
 
           console.log("AUTHORIZED:")
-          console.log($scope.authorized);
+          console.log($scope.isAuthorized);
 
-          if ($scope.authorized) {
+          if ($scope.isAuthorized) {
               jQuery.get('../navBar_auth.html', function(data) {
                     document.getElementById("navBar").innerHTML = data;
               });
@@ -249,6 +249,45 @@ var orders_app = angular.module('orders_app', []);
       $scope.openResponse = function() {
         console.log($scope.thisOrder);
         $scope.errorMessage = null;
+        var grandTotalActedOn = 0;
+        //var totalQuantity = 0;
+        var totalDisbursed = 0;
+        var totalLoaned = 0;
+        var totalDenied = 0;
+
+        for (var i = 0; i < $scope.thisOrder.items.length; i++) {
+          var item = $scope.thisOrder.items[i];
+          //totalQuantity += item.quantity;
+          totalDisbursed += item.quantity_to_disburse;
+          totalLoaned += item.quantity_to_loan;
+          totalDenied += item.quantity_to_deny;
+          var totalActedOn = item.quantity_to_disburse + item.quantity_to_loan +
+            item.quantity_to_deny;
+          grandTotalActedOn += totalActedOn;
+          if (totalActedOn != item.quantity) {
+            $scope.errorMessage = "The quantity acted on for an item does not" +
+            "align with the quantity requested for that item.";
+          }
+        }
+        if (!$scope.errorMessage) {
+          if (grandTotalActedOn == totalDenied) {
+            $scope.responseToOrder.status = "denied";
+          }
+          else if (grandTotalActedOn == totalDisbursed) {
+            $scope.responseToOrder.status = "disbursed";
+            $scope.responseToOrder.type = "disburse";
+          }
+          else if (grandTotalActedOn == totalLoaned) {
+            $scope.responseToOrder.status = "onLoan";
+            $scope.responseToOrder.type = "loan";
+          }
+          else {
+            $scope.convertResponse();
+            console.log("Converted Condition");
+          }
+        }
+
+/*
         for (var i = 0; i < $scope.thisOrder.items.length; i++) {
           var item = $scope.thisOrder.items[i];
           console.log($scope.thisOrder.items);
@@ -282,16 +321,50 @@ var orders_app = angular.module('orders_app', []);
             console.log("Converted Condition");
           }
         }
+        */
       }
 
     $scope.onLoanResponse = function() {
       console.log($scope.thisOrder);
+      $scope.errorMessage = null;
+      var loanTotalActedOn = 0;
+      //var loanTotalQuantity = 0;
+      var loanTotalDisbursed = 0;
+      var loanTotalReturned = 0;
+      for (var i = 0; i < $scope.thisOrder.items.length; i++) {
+        var item = $scope.thisOrder.items[i];
+        //loanTotalQuantity += item.quantity;
+        loanTotalDisbursed += item.quantity_to_disburse;
+        loanTotalReturned += item.quantity_to_return;
+        var totalActedOn = item.quantity_to_disburse + item.quantity_to_return;
+        loanTotalActedOn += totalActedOn;
+        if (totalActedOn != item.quantity) {
+          $scope.errorMessage = "The quantity acted on for an item does not" +
+          "align with the quantity requested for that item.";
+        }
+      }
+      if (!$scope.errorMessage) {
+        if (loanTotalActedOn == loanTotalReturned) {
+          $scope.responseToOrder.status = "returned";
+        }
+        else if (loanTotalActedOn == loanTotalDisbursed) {
+          $scope.responseToOrder.status = "disbursed";
+          $scope.responseToOrder.previous_status = "onLoan";
+        }
+        else {
+          console.log("Converted Condition");
+          $scope.convertedLoan();
+        }
+      }
+
+/*
       var quantityMismatch = null;
+      var totalActedOn = 0;
       for (var i = 0; i < $scope.thisOrder.items.length; i++) {
         var item = $scope.thisOrder.items[i];
         console.log($scope.thisOrder.items);
         console.log(item);
-        var totalActedOn = item.quantity_to_disburse + item.quantity_to_return;
+        totalActedOn = item.quantity_to_disburse + item.quantity_to_return;
         if (totalActedOn != item.quantity) {
           $scope.quantityMismatch = "Quantity Mismatch";
         }
@@ -308,6 +381,7 @@ var orders_app = angular.module('orders_app', []);
           $scope.convertedLoan()
         }
       }
+      */
     }
 
     $scope.convertResponse = function() {
