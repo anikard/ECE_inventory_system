@@ -368,7 +368,7 @@ function close (req, res)  {
 			// 		{_id: req.body._customer},
    //                 	{ $pull: { orders: req.body._id} }
    //               );
-	request.findByIdAndUpdate(
+	Request.findByIdAndUpdate(
 		req.body._id,
 		{ $set: {
 			status: "closed",
