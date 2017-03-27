@@ -107,8 +107,8 @@ var orders_app = angular.module('orders_app', []);
           };
 
           $scope.showMoreItems = function() {
-           pagesShown = pagesShown + 1;       
-          }; 
+           pagesShown = pagesShown + 1;
+          };
 
           /** END OF PAGINATION **/
 
@@ -557,6 +557,22 @@ var orders_app = angular.module('orders_app', []);
       OrderFactory.addOrder(order, function(data) {
         console.log("adding order");
         $scope.errorMessage = null;
+      });
+    }
+
+    $scope.typeChanged = function() {
+      $scope.orders = OrderFactory.getorders( function (data) {
+        if($scope.showRequestType === "all") {
+          $scope.orders = data;
+        }
+        else {
+          $scope.orders = [];
+          for (var i = 0; i < data.length; i++) {
+            if (data[i].type === $scope.showRequestType) {
+              $scope.orders.push(data[i]);
+            }
+          }
+        }
       });
     }
 

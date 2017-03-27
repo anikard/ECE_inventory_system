@@ -21,9 +21,9 @@
   <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search items">
 
   <h3 style = "margin-top: 0px;">Include Tags</h3>
-  <select  style = "margin-bottom: 0px;" id="search-tag" class = "feedback-input" id = "tagList" name="tagOptions"> <!-- ng-model="new_product.tags[new_product.tags.length]">-->
-    <option value="" disabled selected>Search Tags</option>
-    <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="searchTag(tag)"></option>
+  <select  style = "margin-bottom: 0px;" id="search-tag" class = "feedback-input" id = "tagList" name="tagOptions" ng-change="searchTag()" ng-model="searchTagSelected"> <!-- ng-model="new_product.tags[new_product.tags.length]">-->
+    <option value="">Search Tags</option>
+    <option ng-repeat="tag in tags" ng-bind="tag.name" value="{{tag.name}}"></option>
   </select>
 
   <br>
@@ -38,9 +38,9 @@
   <br>
 
   <h3 style = "margin-top: 0px;">Exclude Tags</h3>
-  <select id="exclude-tag" class = "feedback-input" id = "tagList" name="tagOptions">
+  <select id="exclude-tag" class = "feedback-input" id = "tagList" name="tagOptions" ng-change="excludeTag()" ng-model="excludeTagSelected">
     <option value="" disabled selected>Exclude Tags</option>
-    <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="excludeTag(tag)"></option>
+    <option ng-repeat="tag in tags" ng-bind="tag.name" value="{{tag.name}}"></option>
   </select>
 
   <br>
@@ -201,10 +201,10 @@
             <label><b>Tags:  </b><label>
             <span>
               &nbsp;
-              <span class="tag-class" ng-repeat="cTag in currentTags">
+              <div class="tag-class hack-inline" ng-repeat="cTag in currentTags">
                 <span ng-bind="cTag"></span>
-                <button ng-if="editing" ng-click="removeTag(cTag)"><span aria-hidden="true">&times;</span></button>
-              </span>
+                <button ng-show="editing" ng-click="currentTags.splice($index, 1)"><span aria-hidden="true">&times;</span></button>
+              </div>
               &nbsp;
             </span>
             <br>
