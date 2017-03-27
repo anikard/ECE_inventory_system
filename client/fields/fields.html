@@ -19,7 +19,7 @@
 
 
   <h1>CUSTOM FIELDS</h1>
-  <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search fields">
+  <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
 
   <div class="fieldTable" id = "fTable">
     <table>
@@ -28,8 +28,7 @@
         <td> Type </td>
         <td> Access </td>
         <!-- TODO-if time: <td> Default Value </td> -->
-        <td> Action </td>
-        <!--<td> Delete </td>-->
+        <td ng-show="adminOnly"> Action </td>
       </tr>
 
       <tr ng-repeat="field in fields | filter: filtner_name: orderBy:'-date'">
@@ -37,13 +36,12 @@
         <td ng-bind="field.type"></td>
         <td ng-bind="field.access"></td>
         <!-- <td ng-bind="field.default_value"></td> -->
-        <td><button class="remove" ng-click="viewField(field)" data-toggle="modal" data-target="#fieldModal">View</button></td>
-        <!--<td><button class="remove" ng-click="deleteField(field)">Delete</button></td>-->
+        <td ng-show="adminOnly"><button class="remove" ng-click="viewField(field)" data-toggle="modal" data-target="#fieldModal">View</button></td>
       </tr>
     </table>
   </div>
 
-  <span ng-show="authorized">
+  <span ng-show="adminOnly">
     <h1>Add a Custom Field</h1>
 
     <form id="createFieldForm">

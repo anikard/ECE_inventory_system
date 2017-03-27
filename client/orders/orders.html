@@ -84,7 +84,7 @@
         <div class="form-group" >
             <p> <b> User: </b> {{thisOrder.customer_name}}</p>
             <p>
-              <span ng-show="thisOrder.status == 'outstanding'">
+              <span ng-show="thisOrder.status === 'outstanding' && isAuthorized">
                 <table id = "openRequestTable" class="small table">
                   <tr>
                     <td> Item </td>
@@ -104,7 +104,7 @@
                 </table>
               </span>
 
-              <span ng-show="thisOrder.status == 'onLoan'">
+              <span ng-show="thisOrder.status === 'onLoan' && isAuthorized">
                 <table id = "openRequestTable" class="table">
                   <tr>
                     <td> Item </td>
@@ -126,7 +126,8 @@
               || thisOrder.status == 'returned'
               || thisOrder.status == 'disbursed'
               || thisOrder.status == 'approved'
-              || thisOrder.status == 'converted'">
+              || thisOrder.status == 'converted'
+              || !isAuthorized">
                 <table id = "openRequestTable" class="table">
                   <tr>
                     <td> Item </td>
@@ -165,7 +166,7 @@
           </div>
 
 
-      <div ng-if="authorized">
+      <div ng-if="isAuthorized">
         <div class="error" ng-show="errorMessage">{{ errorMessage }}</div>
         <form id="request_response_form">
           <label for="message-text" class="form-control-label">Comment:</label>
