@@ -238,6 +238,7 @@ var orders_app = angular.module('orders_app', []);
               $scope.responseToOrder = {};
               $('#orderModal').modal('hide');
               $scope.refreshOrders();
+              alert("Successfully " + data.status + ".");
             }
           });
 
