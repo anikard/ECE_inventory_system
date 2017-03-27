@@ -562,21 +562,15 @@ var orders_app = angular.module('orders_app', []);
 
     $scope.typeChanged = function() {
       $scope.orders = OrderFactory.getorders( function (data) {
-        $scope.orders = data;
-        if ($scope.showRequestType === "loan") {
-
-          for (var i =0; i < $scope.orders.length; i++)
-          {  if ($scope.orders[i].type != "loan") {
-                $scope.orders.splice(i,1);
-              }
-          }
+        if($scope.showRequestType === "all") {
+          $scope.orders = data;
         }
-        else if ($scope.showRequestType === "disburse") {
-
-          for (var i =0; i < $scope.orders.length; i++)
-          {  if ($scope.orders[i].type != "disburse") {
-                $scope.orders.splice(i,1);
-              }
+        else {
+          $scope.orders = [];
+          for (var i = 0; i < data.length; i++) {
+            if (data[i].type === $scope.showRequestType) {
+              $scope.orders.push(data[i]);
+            }
           }
         }
       });
