@@ -219,13 +219,23 @@ var orders_app = angular.module('orders_app', []);
               item.quantity_to_return = 0;
             }
             if($scope.thisOrder.status == "outstanding" || $scope.thisOrder.status == "onLoan") {
-              ($document[0].getElementById('cancelOrderButton')).style.display = "inline";
-              ($document[0].getElementById('request_response_form')).style.display = "block";
-              ($document[0].getElementById('respondOrderButton')).style.display = "inline";
+              if ($document[0].getElementById('cancelOrderButton')) {
+                ($document[0].getElementById('cancelOrderButton')).style.display = "inline";
+              }
+              if ($document[0].getElementById('request_response_form')) {
+                ($document[0].getElementById('request_response_form')).style.display = "block";
+              }
+              if ($document[0].getElementById('respondOrderButton')) {
+                ($document[0].getElementById('respondOrderButton')).style.display = "inline";
+              }
             }
             else {
-              ($document[0].getElementById('cancelOrderButton')).style.display = "none";
-              ($document[0].getElementById('request_response_form')).style.display = "none";
+              if ($document[0].getElementById('cancelOrderButton')) {
+                ($document[0].getElementById('cancelOrderButton')).style.display = "none";
+              }
+              if ($document[0].getElementById('request_response_form')) {
+                ($document[0].getElementById('request_response_form')).style.display = "none";
+              }
             }
             console.log(data);
         });
@@ -568,6 +578,9 @@ var orders_app = angular.module('orders_app', []);
             $scope.viewOrder(req);
             $("#orderModal").modal();
           }
+          // else if (rowNum == 0) {
+          //   alert('This request does not exist.');
+          // }
 
         }
     })
