@@ -57,7 +57,7 @@
 
 
 
-  <div class="customerTable" id = "cTable" >
+  <div class="customerTable" id = "cTable" style="height:25em;">
     <table id = "myItemTable">
       <tr>
         <td> Name </td>
@@ -70,7 +70,7 @@
         <td> Action </td>
       </tr>
 
-      <tr ng-repeat="product in products | filter: filter_name | orderBy:'-date'">
+      <tr ng-repeat="product in products | filter: filter_name | orderBy:'-date' | limitTo: paginationLimit()">
         <td ng-bind="product.name"></td>
         <td ng-bind="product.model"></td>
         <td ng-bind="product.quantity"></td>
@@ -83,6 +83,10 @@
       </tr>
     </table>
   </div>
+
+    <button class = "remove" style="margin-top:1em; width: 20%; color: black;" ng-show="hasMoreItemsToShow()" ng-click="showMoreItems()">
+      Show more
+ </button>
 
 
 <span ng-show="authorized">

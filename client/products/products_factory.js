@@ -154,6 +154,24 @@ products_app.controller('productsController', function($scope, $window, $rootSco
       $scope.products = data;
       $scope.originalProducts = data;
 
+      /** PAGINATION **/
+
+          var pagesShown = 1;
+          var pageSize = 5;
+
+          $scope.paginationLimit = function(data) {
+           return pageSize * pagesShown;
+          };
+
+          $scope.hasMoreItemsToShow = function() {
+           return pagesShown < ($scope.products.length / pageSize);
+          };
+
+          $scope.showMoreItems = function() {
+           pagesShown = pagesShown + 1;       
+          }; 
+
+      /** END OF PAGINATION **/
 
 
       $scope.currentTags = [];
