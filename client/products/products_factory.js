@@ -664,29 +664,6 @@ products_app.controller('productsController', function($scope, $window, $rootSco
       $scope.viewProduct(product);
       $("#productModal").modal();
 
-        // var element = document.getElementById('myItemTable').getElementsByTagName('tr')[rowNum];
-
-        // if (element) {
-        //   var container = "window";
-        //   var containerTop = $(container).scrollTop();
-        //   var containerBottom = containerTop + $(container).height();
-        //   var elemTop = element.offsetTop;
-        //   var elemBottom = elemTop + $(element).height();
-
-        //   var elemAbsTop = element.getBoundingClientRect().top;
-
-        //   $("#myItemTable tr:nth-child("+rowNum+")")[0].scrollIntoView();
-
-        //   window.scrollBy(0,-100);
-
-        //   var cols = element.getElementsByTagName('td');
-
-        //   for (var x = 0; x < cols.length; x++) {
-        //     cols[x].style.backgroundColor = "lightgreen";
-        //   }
-
-        // }
-
       }
 
 })

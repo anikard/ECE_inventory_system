@@ -470,38 +470,5 @@ var orders_app = angular.module('orders_app', []);
         $scope.viewOrder(req);
         $("#orderModal").modal();
 
-
-          // var trs = document.getElementById('myRequestsTable').getElementsByTagName('tr');
-          // var arr = Array.prototype.slice.call( trs )
-
-          // var element = {};
-          // if ($scope.requestIndex) {
-          //   element = trs[$scope.requestIndex];
-          // }
-          // else {
-          //   element = trs[rowNum];
-          // }
-
-          // // var element = trs[$scope.requestIndex];
-
-          // if (rowNum || element) {
-          //   var container = "window";
-          //   var containerTop = $(container).scrollTop();
-          //   var containerBottom = containerTop + $(container).height();
-          //   var elemTop = element.offsetTop;
-          //   var elemBottom = elemTop + $(element).height();
-
-          //   var elemAbsTop = element.getBoundingClientRect().top;
-
-          //   $("#myRequestsTable tr:nth-child("+$scope.requestIndex+")")[0].scrollIntoView();
-
-          //   window.scrollBy(0,-100);
-
-          //   var cols = element.getElementsByTagName('td');
-
-          //   for (var x = 0; x < cols.length; x++) {
-          //     cols[x].style.backgroundColor = "lightgreen";
-          //   }
-          // }
         }
     })
