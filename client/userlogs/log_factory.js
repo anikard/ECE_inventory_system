@@ -95,6 +95,27 @@ var log_app = angular.module('log_app', []);
           $scope.logs = data;
           $scope.originalLogs = $scope.logs;
           color_table_elements();
+
+          /** PAGINATION **/
+
+          var pagesShown = 1;
+          var pageSize = 7;
+
+          $scope.paginationLimit = function(data) {
+           return pageSize * pagesShown;
+          };
+
+          $scope.hasMoreItemsToShow = function() {
+           return pagesShown < ($scope.logs.length / pageSize);
+          };
+
+          $scope.showMoreItems = function() {
+           pagesShown = pagesShown + 1;       
+          }; 
+
+         /** END OF PAGINATION **/
+
+
         });
 
         LogFactory.getItems(function(data) {
