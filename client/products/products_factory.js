@@ -661,7 +661,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
   $scope.scrollIntoView = function(rowNum, product) {
       console.log("in scroll into view + row num = " + rowNum);
 
-        if (product) {
+        if (product && rowNum > 0) {
           $scope.viewProduct(product);
           $("#productModal").modal();
         }
