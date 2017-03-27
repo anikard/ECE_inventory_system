@@ -62,7 +62,7 @@ fields_app.controller('fieldsController', function($scope, $http, FieldsFactory)
         jQuery.get('../navBar_auth.html', function(data) {
               document.getElementById("navBar").innerHTML = data;
         });
-    } 
+    }
     else {
         jQuery.get('../navBar_unAuth.html', function(data) {
               document.getElementById("navBar").innerHTML = data;
@@ -81,6 +81,12 @@ fields_app.controller('fieldsController', function($scope, $http, FieldsFactory)
     $scope.fields = data;
   })
 
+  $scope.refreshFields = function () {
+    $scope.fields = FieldsFactory.getfields(function(data) {
+      $scope.fields = data;
+    })
+  }
+
   $scope.addField = function() {
     console.log($scope.new_field);
     if(!$scope.new_field.access) {
@@ -93,8 +99,8 @@ fields_app.controller('fieldsController', function($scope, $http, FieldsFactory)
       else {
         $scope.errorMessage = null;
         $scope.new_field.date = new Date();
-        $scope.fields.push($scope.new_field)
         $scope.new_field = {};
+        $scope.refreshFields();
       }
     });
   }
@@ -107,12 +113,15 @@ fields_app.controller('fieldsController', function($scope, $http, FieldsFactory)
   $scope.confirmDeleteModal = function(field) {
     console.log(field);
     FieldsFactory.deleteField(field, function(data) {
+      /*
       for (var i = 0; i < $scope.fields.length; i++) {
         if ($scope.fields[i]._id === field._id) {
           $scope.fields.splice(i,1);
           break;
         }
       }
+      */
+      $scope.refreshFields();
       console.log("deleting field, refresh now");
       $scope.currentField = {};
       // TODO: remove from
@@ -142,10 +151,13 @@ fields_app.controller('fieldsController', function($scope, $http, FieldsFactory)
     FieldsFactory.updateField(field, function (data){});
     $('#editConfirmModal').modal('hide');
     $('#fieldModal').modal('hide');
+    $scope.refreshFields();
+    /*
     $scope.fields = FieldsFactory.getfields(function(data) {
       $scope.fields = data;
       console.log(data);
     });
+    */
   }
 
   $scope.cancelEditModal = function(field) {

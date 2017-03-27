@@ -85,7 +85,16 @@ function del(req, res) {
 
     var i = 0;
     var idx = -1;
+    console.log("Logging cart");
+    console.log(cart);
+    console.log("$$$$")
+    console.log(cart.items);
+    console.log("&&&&")
+    console.log(req.body.item._id);
+    console.log("(())((()))")
     for(i = 0; i < cart.items.length; i++){
+      console.log(cart.items[i].item);
+      console.log("****");
       if(cart.items[i].item == req.body.item._id){
         idx = i;
         //break;

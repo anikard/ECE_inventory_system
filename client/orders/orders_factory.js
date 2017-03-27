@@ -116,18 +116,15 @@ var orders_app = angular.module('orders_app', []);
         // --> changed design decision: single table view for requests 3/20
         $('.tabs .tab-links a').on('click', function(e)  {
             var currentAttrValue = jQuery(this).attr('href');
-     
+
             // Show/Hide Tabs
             jQuery('.tabs ' + currentAttrValue).show().siblings().hide();
-     
+
             // Change/remove current tab to active
             jQuery(this).parent('li').addClass('active').siblings().removeClass('active');
-     
+
             e.preventDefault();
         });
-
-
-
 
         $scope.user = OrderFactory.getuser(function(data) {
           $scope.user = data;
@@ -142,7 +139,7 @@ var orders_app = angular.module('orders_app', []);
               jQuery.get('../navBar_auth.html', function(data) {
                     document.getElementById("navBar").innerHTML = data;
               });
-          } 
+          }
           else {
               jQuery.get('../navBar_unAuth.html', function(data) {
                     document.getElementById("navBar").innerHTML = data;
@@ -164,16 +161,24 @@ var orders_app = angular.module('orders_app', []);
         $scope.removeOrder = function(order) {
           $('#orderModal').modal('hide');
           OrderFactory.removeOrder(order, function(data) {
+            /*
             for (var i =0; i < $scope.orders.length; i++)
             {  if ($scope.orders[i]._id === order._id) {
                   $scope.orders.splice(i,1);
                   break;
                 }
             }
+            */
+            $scope.refreshOrders();
         });
 
       }
 
+      $scope.refreshOrders = function () {
+          $scope.orders = OrderFactory.getorders(/*thisId,*/ function(data) {
+            $scope.orders = data;
+          });
+      }
 
       $scope.viewOrder = function(order) {
           OrderFactory.viewOrder(order, function(data) {
@@ -232,6 +237,8 @@ var orders_app = angular.module('orders_app', []);
               $('#orderModal').modal('hide');
             }
           });
+
+          $scope.refreshOrders();
         }
       }
 

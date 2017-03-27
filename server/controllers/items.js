@@ -29,7 +29,7 @@ module.exports = (app) => {
       if (item) {
         return res.status(405).send({ error: "Item already exist!" });
       }
-      props = _.pick(req.body, ['name','quantity', 'quantity_available', 'location','model','description','tags','image','fields']);
+      props = _.pick(req.body, ['name','quantity', 'quantity_available', 'model','description','tags','image','fields']);
       item = new Item(props);
       item.save(function(err){
         if(err){
@@ -95,7 +95,7 @@ module.exports = (app) => {
   app.post('/api/item/update', util.requirePrivileged, function(req, res, next) {
     if (! req.body._id && !req.body.item) return res.status(400).send({ error: "Missing ref id" });
     req.body._id = req.body._id || req.body.item;
-    props = _.pick(req.body, ['name','quantity', 'quantity_available', 'location','model','description','tags','image','fields']);
+    props = _.pick(req.body, ['name','quantity', 'quantity_available', 'model','description','tags','image','fields']);
 
     var currQuantity = 0;
 
@@ -183,7 +183,7 @@ module.exports = (app) => {
       if (result.length > 0)
         return res.status(405).send({ error: "Item(s) already exist!" , items: result.map(e=>e.name)});
       let items = imports.map(e=>
-        new Item(_.pick(e, ['name','quantity','location','model','description','tags','image','fields']))
+        new Item(_.pick(e, ['name','quantity','model','description','tags','image','fields']))
       );
       async.each(items,(item, cb) => item.save(cb),
         function (err) {

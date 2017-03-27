@@ -95,14 +95,19 @@ products_app.factory('ProductsFactory', function($http) {
   }
 
   factory.viewProduct = function(/*userID,*/ product, callback) {
+    console.log("Factory view called on : " + product.name);
     factory.getorders(/*userID,*/ function(data) {
-      console.log("Factory view called on : " + product.name);
       relevantOrders = [];
-      for (var i = 0; i < orders.length; i++) {
-        if (data[i].item_name === product.name) {
-          relevantOrders.push(orders[i]);
+      for (var i = 0; i < data.length; i++) {
+        if (data[i].items) {
+          for (var j = 0; j < data[i].items.length; j++) {
+            if (data[i].items[j].item.name === product.name) {
+              relevantOrders.push(orders[i]);
+            }
+          }
         }
       }
+      console.log("relevantOrders");
       console.log(relevantOrders);
       callback(product, relevantOrders);
     })
@@ -218,7 +223,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
         jQuery.get('../navBar_auth.html', function(data) {
               document.getElementById("navBar").innerHTML = data;
         });
-    } 
+    }
     else {
         jQuery.get('../navBar_unAuth.html', function(data) {
               document.getElementById("navBar").innerHTML = data;
@@ -333,9 +338,9 @@ products_app.controller('productsController', function($scope, $window, $rootSco
   }
 
   $scope.calculateMyLoans = function(product) {
-    console.log("Calculate My Loans");
-    console.log(product);
-    console.log($scope.myOrders);
+    //console.log("Calculate My Loans");
+    //console.log(product);
+    //console.log($scope.myOrders);
     let myLoanTotal = 0;
     for (var i = 0; i < $scope.myOrders.length; i++) {
       if ($scope.myOrders[i].items) {
@@ -371,7 +376,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
   }
 
   $scope.requestProduct = function(product) {
-    console.log("request called");
+    console.log("request called on : " + product);
   }
 
 
@@ -430,14 +435,23 @@ products_app.controller('productsController', function($scope, $window, $rootSco
   }
 
   // TODO: Remove parent mess (due to ng-controller="productsController" in select tag probably)
-  $scope.tagClicked = function(customer) {
+  $scope.tagClicked = function() {
+
+
     console.log("tagClicked");
-    console.log(customer);
-    console.log($scope.$parent.currentTags);
-    if($scope.$parent.currentTags.indexOf(customer.name) == -1) {
-      $scope.$parent.currentTags.push(customer.name);
+    console.log($scope.currentTags);
+    if($scope.tagSelected === "createNewTag") {
+      $scope.createNewTag();
     }
-    console.log($scope.$parent.currentTags);
+    else if($scope.tagSelected === "") {
+
+    }
+    else {
+      if($scope.currentTags.indexOf($scope.tagSelected) == -1) {
+        $scope.currentTags.push($scope.tagSelected);
+      }
+    }
+    console.log($scope.currentTags);
   }
 
   // TODO: refactor to combine tagClicked and searchTag to be tagClicked(tag, tagList);

@@ -38,9 +38,13 @@
       </table>
     </div>
 
-
+    <div class="error" ng-if="errorMessage">{{ errorMessage }}</div>
+    <button class = "blueButton" ng-click="showDisburseModal('Create')">Create Request</button>
+    <button ng-show="authorized" class="blueButton" ng-click="showDisburseModal('Direct')">Direct Disburse or Loan</button>
+    <!--
     <button class = "blueButton" data-toggle="modal" data-target="#orderModal" ng-click="showOrderModal()">Create Request</button>
     <button ng-show="authorized" class="blueButton" data-toggle="modal" data-target="#disburseModal">Direct Disburse or Loan</button>
+    -->
 
     <h1 style="margin-top:3em;">Add an item to your cart</h1>
 
@@ -56,6 +60,7 @@
 
 
   <!-- MODAL FOR REGULAR REQUEST-->
+  <!--
     <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -80,6 +85,7 @@
               </tr>
             </table>
 
+
             <div class="form-group">
               <div class="radio">
                 <label><input type="radio" name="optionResponse" class="disburseButton" ng-model="this_request.type" value = "disburse">Disburse</label>
@@ -93,14 +99,14 @@
 
           </div>
           <div class="modal-footer">
-          <!-- <button class="btn btn-danger" ng-click='removeOrder(thisOrder)'  id = "cancelOrderButton">Cancel order</button> -->
             <button type="button" class="btn btn-primary" ng-click="createRequest()" id = "respondOrderButton">Create</button>
-          <!--<button ng-show="authorized" type="button" class="btn btn-primary" ng-->
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
     </div>
+
+  -->
 
     <!-- MODAL FOR DIRECT DISBURSAL-->
     <div class="modal fade" id="disburseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -110,7 +116,7 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
-            <h1 class="modal-title" id="exampleModalLabel">Direct Disburse</h1>
+            <h1 class="modal-title" id="exampleModalLabel">{{modalType}} Request</h1>
           </div>
           <div class="modal-body" align="left">
             <table class="createRequestTable">
@@ -124,10 +130,12 @@
               </tr>
             </table>
 
-            <select class = "feedback-input" id = "customerList" name="customerOptions" ng-model="this_request.user">
-              <option value="" selected disabled>User Name</option>
-              <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.username || customer.netId || customer.name"></option>
-            </select>
+            <span ng-show="modalType === 'Direct'">
+              <select class = "feedback-input" id = "customerList" name="customerOptions" ng-model="this_request.user">
+                <option value="" selected disabled>User Name</option>
+                <option ng-repeat="customer in customers" value="{{customer._id}}" ng-bind="customer.username || customer.netId || customer.name"></option>
+              </select>
+            </span>
 
             <div class="form-group">
               <div class="radio">
@@ -138,12 +146,12 @@
               </div>
             </div>
 
-            <textarea style="display:block; width: 80%; margin-left:10%" class = "feedback-input" ng-model="this_request.reason" placeholder="Comment"></textarea>
+            <textarea style="display:block; width: 80%; margin-left:10%" class = "feedback-input" ng-model="this_request.reason" placeholder="Comment or Reason for Request" ng-required="modalType === 'Create'"></textarea>
 
           </div>
           <div class="modal-footer">
             <!-- <button class="btn btn-danger" ng-click='removeOrder(thisOrder)'  id = "cancelOrderButton">Cancel order</button> -->
-            <button type="button" class="btn btn-primary" ng-click="createRequest()" id = "respondOrderButton">Create Disburse</button>
+            <button type="button" class="btn btn-primary" ng-click="createRequest()" id = "respondOrderButton">Create</button>
             <!--<button ng-show="authorized" type="button" class="btn btn-primary" ng-->
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           </div>
