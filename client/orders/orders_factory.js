@@ -467,8 +467,10 @@ var orders_app = angular.module('orders_app', []);
     $scope.scrollIntoView = function(rowNum, req) {
         console.log("in scroll into view ");
 
-        $scope.viewOrder(req);
-        $("#orderModal").modal();
+          if (req) {
+            $scope.viewOrder(req);
+            $("#orderModal").modal();
+          }
 
         }
     })
