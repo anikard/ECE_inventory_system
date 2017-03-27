@@ -32,7 +32,7 @@
     <h1>BULK IMPORT</h1>
 
     <form id="createEmailForm" style="margin: 1em;">
-              <textarea id = "itemList" class = "feedback-input" ng-model="items.list" style = "width: 70%; " placeholder='List of items. Example: [{"name":"resistors","quantity":10},{"name":"transistors","quantity":20}]' cols="40" rows="7"></textarea>
+              <textarea id = "itemList" class = "feedback-input" ng-model="items.list" style = "width: 70%; " placeholder='List of items. Example: [{"name":"resistors","quantity":10, "quantity_available":10},{"name":"transistors","quantity":20, "quantity_available":20}]' cols="40" rows="7"></textarea>
 
               <input type="submit" value="Import Items" style="margin-left:40%; width: 30%;" ng-click="importItems(items)">
     </form>
