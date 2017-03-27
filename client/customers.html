@@ -269,7 +269,7 @@
             jQuery.get('navBar_auth.html', function(data) {
                   document.getElementById("navBar").innerHTML = data;
             });
-        } 
+        }
         else {
             jQuery.get('navBar_unAuth.html', function(data) {
                   document.getElementById("navBar").innerHTML = data;
@@ -285,6 +285,12 @@
         console.log($scope.users);
       });
 
+      $scope.refreshUsers = function () {
+        $scope.users = auth.getUsers(function(data) {
+          $scope.users = data;
+        });
+      }
+
       $scope.registerUser = function() {
         console.log("scope registering ");
         if (!document.getElementById("unField").value || !document.getElementById("pdField").value) {
@@ -296,6 +302,7 @@
         });
         document.getElementById("unField").value = '';
         document.getElementById("pdField").value = '';
+        $scope.refreshUsers();
       }
 
       $scope.logout = function() {
@@ -330,6 +337,7 @@
           console.log("update status Success");
         })
         $('#changeStatusModal').modal('hide');
+        $scope.refreshUsers();
       }
 
   });

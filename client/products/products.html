@@ -94,7 +94,6 @@
     <!--<input class = "feedback-input" type="url" ng-model="new_product.image_url" placeholder="image url">-->
     <textarea class = "feedback-input" ng-model="new_product.description" placeholder="description"></textarea>
     <input class = "feedback-input" type="text" ng-model="new_product.model" placeholder="model">
-    <input class = "feedback-input" type="text" ng-model="new_product.location" placeholder="location">
 <!--
     <br>
     <span>
@@ -137,10 +136,10 @@
     </span>
     <br>
 
-    <select id="tag_select_modal" class = "feedback-input" ng-controller="productsController" id = "tagList" name="tagOptions">
-      <option value="" disabled selected="selected">Add a Tag</option>
-      <option value="1" ng-click="createNewTag()">Create New Tag</option>
-      <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
+    <select id="tag_select_modal" class="feedback-input" id="tagList" name="tagOptions" ng-change="tagClicked()" ng-model="tagSelected">
+      <option value="">Add a Tag</option>
+      <option value="createNewTag">Create New Tag</option>
+      <option ng-repeat="tag in tags" ng-bind="tag.name" value="{{tag.name}}"></option>
     </select>
 
 
@@ -176,12 +175,12 @@
             <input type="number" min="1" ng-readonly="!editing" ng-model="currentProduct.quantity"required/>
           </p>
           <p>
-            <label><b>Description:  </b></label>
-            <textarea ng-readonly="!editing" ng-model="currentProduct.description"></textarea>
+            <label><b>Quantity Available:  </b></label>
+            <input type="number" min="1" ng-readonly="!editing" ng-model="currentProduct.quantity_available"required/>
           </p>
           <p>
-            <label><b>Location:  </b></label>
-            <input type="text" ng-readonly="!editing" ng-model="currentProduct.location"/>
+            <label><b>Description:  </b></label>
+            <textarea ng-readonly="!editing" ng-model="currentProduct.description"></textarea>
           </p>
           <p ng-repeat="field in fields">
             <span ng-show="authorized || field.access=='public'">
@@ -189,7 +188,7 @@
               <input ng-show="field.type=='short-form'" type="text" ng-readonly="!editing" ng-model="currentProduct.fields[field.name]">
               <textarea ng-show="field.type=='long-form'"type="text" ng-readonly="!editing" ng-model="currentProduct.fields[field.name]"></textarea>
               <input ng-show="field.type=='integer'" type="number" ng-readonly="!editing" ng-model="currentProduct.fields[field.name]">
-              <input ng-show="field.type=='floating-point'" type="number" step="0.01" ng-readonly="!editing" ng-model="new_product.fields[field.name]">
+              <input ng-show="field.type=='floating-point'" type="number" step="0.01" ng-readonly="!editing" ng-model="currentProduct.fields[field.name]">
             </span>
           </p>
           <p>
@@ -205,10 +204,10 @@
             <br>
           </p>
           <p>
-            <select id="tag_select_main" class = "feedback-input" ng-if="editing" ng-controller="productsController" id = "tagList" name="tagOptions" ng-model="new_order.tags[new_order.tags.length]">
-              <option value="" disabled selected="selected">Add a Tag</option>
-              <option value="1" ng-click="createNewTag()">Create New Tag</option>
-              <option ng-repeat="tag in tags" ng-bind="tag.name" ng-click="tagClicked(tag)"></option>
+            <select id="tag_select_main" class="feedback-input" id="tagList" name="tagOptions" ng-change="tagClicked()" ng-model="tagSelected">
+              <option value="">Add a Tag</option>
+              <option value="createNewTag">Create New Tag</option>
+              <option ng-repeat="tag in tags" ng-bind="tag.name" value="{{tag.name}}"></option>
             </select>
           </p>
         </div>
@@ -219,8 +218,11 @@
           </span>
           <button type="button" class="btn btn-secondary" ng-click="closeItemModal()" data-dismiss="modal">Close</button>
           <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Add to Cart</button>
-          <span ng-show="authorized">
+          <span ng-show="adminOnly">
             <button type="button" class="btn btn-primary" ng-click="editProduct(currentProduct)">{{editing == true ? 'Save Edits' : 'Edit' }}</button>
+          </span>
+          <span ng-show="authorized">
+            <button type="button" class="btn btn-primary" ng-click="deltaQuantity(currentProduct)">Log Loss/Aquires</button>
           </span>
         </div>
         <br>
@@ -229,12 +231,22 @@
           <table>
             <tr>
               <td> User Name </td>
-              <td> Item </td>
-              <td> Quantity </td>
+              <td> # of Items </td>
               <td> Date Issued </td>
-              <td> Date Fulfilled </td>
               <td> Status </td>
+              <td> Type </td>
+              <td> View Request </td>
             </tr>
+            <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-date'">
+              <td style="display:none;" ng-bind="order._id"></td>
+              <td ng-bind="order.customer_name || order.user.username"></td>
+              <td ng-bind="order.items.length"></td>
+              <td ng-bind="order.date | date:'short'"></td>
+              <td ng-bind="order.status"></td>
+              <td ng-bind="order.type"></td>
+              <td><button class = "remove" ng-click='viewOrder(order)' data-toggle="modal" data-target="#orderModal">View</button></td>
+            </tr>
+            <!--
             <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
               <td ng-bind="order.customer_name || order.user.username"></td>
               <td ng-bind="order.item_name"></td>
@@ -243,6 +255,7 @@
               <td ng-bind="order.dateDone | date:'short'"></td>
               <td ng-bind="order.status"></td>
             </tr>
+          -->
           </table>
         </div>
       </div>
@@ -282,7 +295,7 @@
        </select>
      -->
      <form id="addOrderForm">
-       <input class = "feedback-input" type="text" value="{{thisProduct.name}}" ng-readonly="true" />
+       <input class = "feedback-input" type="text" value="{{currentProduct.name}}" ng-readonly="true" />
 
 
         <input class = "feedback-input" type="number" min="1" ng-model="new_order.quantity" placeholder="quantity">
@@ -354,6 +367,31 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmEditModal(currentProduct)>Confirm</button>
           <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelEditModal(currentProduct)>Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--DELTA QUANTITY MODAL -->
+<div class="modal fade" id="deltaQuantityModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h1 class="modal-title" id="exampleModalLabel">Log Losses and Aquisitions of Product</h1>
+      </div>
+      <div class="modal-body" align="left">
+        <div class="form-group" >
+          <label><b>Change in item quantity:  </b></label>
+          <input class = "feedback-input" type="number" ng-model="deltaQuantity" required>
+        </div>
+        <div class="error" ng-show="errorMessage">{{ errorMessage }}</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmDeltaQuantity(currentProduct)>Confirm</button>
+          <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelDeltaQuantity(currentProduct)>Cancel</button>
         </div>
       </div>
     </div>
