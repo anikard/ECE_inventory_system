@@ -107,8 +107,8 @@ var orders_app = angular.module('orders_app', []);
           };
 
           $scope.showMoreItems = function() {
-           pagesShown = pagesShown + 1;       
-          }; 
+           pagesShown = pagesShown + 1;
+          };
 
           /** END OF PAGINATION **/
 
@@ -557,6 +557,28 @@ var orders_app = angular.module('orders_app', []);
       OrderFactory.addOrder(order, function(data) {
         console.log("adding order");
         $scope.errorMessage = null;
+      });
+    }
+
+    $scope.typeChanged = function() {
+      $scope.orders = OrderFactory.getorders( function (data) {
+        $scope.orders = data;
+        if ($scope.showRequestType === "loan") {
+
+          for (var i =0; i < $scope.orders.length; i++)
+          {  if ($scope.orders[i].type != "loan") {
+                $scope.orders.splice(i,1);
+              }
+          }
+        }
+        else if ($scope.showRequestType === "disburse") {
+
+          for (var i =0; i < $scope.orders.length; i++)
+          {  if ($scope.orders[i].type != "disburse") {
+                $scope.orders.splice(i,1);
+              }
+          }
+        }
       });
     }
 

@@ -42,6 +42,11 @@
 <h1>REQUESTS</h1>
 <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search requests">
 
+<select id="request_type_select" class="feedback-input" name="requestOptions" ng-change="typeChanged()" ng-model="showRequestType">
+  <option value="all">All</option>
+  <option value="disburse">Disburse</option>
+  <option value="loan">Loan</option>
+</select>
 
 <div class="customerTable" id = "cTable" style="height:25em;">
     <table id = "myRequestsTable" class="table">
