@@ -63,7 +63,7 @@ Finally, clone and deploy the project
 ```
 git clone https://github.com/anikard/ECE_inventory_system
 cd ECE_inventory_system && npm install
-node server.js
+node server.js >/dev/null 2>&1 &
 ```
 ### Then access the site at:
 https://localhost:8443
