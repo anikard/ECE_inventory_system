@@ -92,8 +92,28 @@ var orders_app = angular.module('orders_app', []);
           console.log("ORDERS");
           console.log($scope.orders);
 
+          /** PAGINATION **/
+          // show more functionality source: http://www.angulartutorial.net/2014/04/angular-js-client-side-show-more.html
 
-          // using for LOGS
+          var pagesShown = 1;
+          var pageSize = 5;
+
+          $scope.paginationLimit = function(data) {
+           return pageSize * pagesShown;
+          };
+
+          $scope.hasMoreItemsToShow = function() {
+           return pagesShown < ($scope.orders.length / pageSize);
+          };
+
+          $scope.showMoreItems = function() {
+           pagesShown = pagesShown + 1;       
+          }; 
+
+          /** END OF PAGINATION **/
+
+
+          /** LOG LINKS **/
           if ($window.localStorage['requestSelected'] && !$scope.selected_request) {
             $scope.selected_request = $window.localStorage['requestSelected'];
           }
@@ -111,6 +131,8 @@ var orders_app = angular.module('orders_app', []);
           $scope.requestIndex = thisReqIndex+1;
 
           $scope.scrollIntoView(thisReqIndex+1, thisReq);
+
+          /** END OF LOG LINKS **/
 
         });
 
