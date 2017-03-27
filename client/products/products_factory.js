@@ -170,12 +170,14 @@ products_app.controller('productsController', function($scope, $window, $rootSco
       $window.localStorage['itemSelected'] = "";
 
       var thisProductIndex = -1;
+      var product = {};
       for (var i = 0; i < $scope.products.length; i++) {
         if ($scope.products[i].name == $scope.selected_item) {
           thisProductIndex = i;
+          product = $scope.products[i];
         }
       }
-      $scope.scrollIntoView(thisProductIndex+1);
+      $scope.scrollIntoView(thisProductIndex+1, product);
 
     });
 
@@ -656,30 +658,34 @@ products_app.controller('productsController', function($scope, $window, $rootSco
 
   // from logs view
 
-  $scope.scrollIntoView = function(rowNum) {
-      console.log("in scroll into view");
-        var element = document.getElementById('myItemTable').getElementsByTagName('tr')[rowNum];
+  $scope.scrollIntoView = function(rowNum, product) {
+      console.log("in scroll into view + row num = " + rowNum);
 
-        if (element) {
-          var container = "window";
-          var containerTop = $(container).scrollTop();
-          var containerBottom = containerTop + $(container).height();
-          var elemTop = element.offsetTop;
-          var elemBottom = elemTop + $(element).height();
+      $scope.viewProduct(product);
+      $("#productModal").modal();
 
-          var elemAbsTop = element.getBoundingClientRect().top;
+        // var element = document.getElementById('myItemTable').getElementsByTagName('tr')[rowNum];
 
-          $("#myItemTable tr:nth-child("+rowNum+")")[0].scrollIntoView();
+        // if (element) {
+        //   var container = "window";
+        //   var containerTop = $(container).scrollTop();
+        //   var containerBottom = containerTop + $(container).height();
+        //   var elemTop = element.offsetTop;
+        //   var elemBottom = elemTop + $(element).height();
 
-          window.scrollBy(0,-100);
+        //   var elemAbsTop = element.getBoundingClientRect().top;
 
-          var cols = element.getElementsByTagName('td');
+        //   $("#myItemTable tr:nth-child("+rowNum+")")[0].scrollIntoView();
 
-          for (var x = 0; x < cols.length; x++) {
-            cols[x].style.backgroundColor = "lightgreen";
-          }
+        //   window.scrollBy(0,-100);
 
-        }
+        //   var cols = element.getElementsByTagName('td');
+
+        //   for (var x = 0; x < cols.length; x++) {
+        //     cols[x].style.backgroundColor = "lightgreen";
+        //   }
+
+        // }
 
       }
 
