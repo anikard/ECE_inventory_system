@@ -40,10 +40,10 @@
 
     <div class="error" ng-if="errorMessage">{{ errorMessage }}</div>
     <button class = "blueButton" ng-click="showDisburseModal('Create')">Create Request</button>
-    <button ng-show="authorized" class="blueButton" ng-click="showDisburseModal('Direct')">Direct Disburse or Loan</button>
+    <button ng-show="isAuthorized" class="blueButton" ng-click="showDisburseModal('Direct')">Direct Disburse or Loan</button>
     <!--
     <button class = "blueButton" data-toggle="modal" data-target="#orderModal" ng-click="showOrderModal()">Create Request</button>
-    <button ng-show="authorized" class="blueButton" data-toggle="modal" data-target="#disburseModal">Direct Disburse or Loan</button>
+    <button ng-show="isAuthorized" class="blueButton" data-toggle="modal" data-target="#disburseModal">Direct Disburse or Loan</button>
     -->
 
     <h1 style="margin-top:3em;">Add an item to your cart</h1>
@@ -154,7 +154,7 @@
           <div class="modal-footer">
             <!-- <button class="btn btn-danger" ng-click='removeOrder(thisOrder)'  id = "cancelOrderButton">Cancel order</button> -->
             <button type="button" class="btn btn-primary" ng-click="createRequest()" id = "respondOrderButton">Create</button>
-            <!--<button ng-show="authorized" type="button" class="btn btn-primary" ng-->
+            <!--<button ng-show="isAuthorized" type="button" class="btn btn-primary" ng-->
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
           </div>
         </div>
