@@ -68,6 +68,8 @@ node server.js >/dev/null 2>&1 &
 ### Then access the site at:
 https://localhost:8443
 
+#### admin credentials: username = admin; password = admin.
+
 ### Sample import string:
 ```
 [{"name":"resistors","quantity":10, "quantity_available":10},{"name":"transistors","quantity":20, "quantity_available":20}]
