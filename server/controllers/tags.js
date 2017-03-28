@@ -12,13 +12,13 @@ module.exports = (app) => {
 function show(req, res, next) {
 	// We don't limit on tags, since there should not be so many tags that pagination is necessary
 	Tag.find({})
-		.exec(function(err, results) {
-			if(err) {
-				res.status(500).send({ error: err});
-			} else {
-				res.json(results);
-			}
-		});
+	.exec(function(err, results) {
+		if(err) {
+			res.status(500).send({ error: err});
+		} else {
+			res.json(results);
+		}
+	});
 }
 
 function add(req, res, next) {

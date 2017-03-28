@@ -4,6 +4,7 @@ var _ = require('lodash');
 var Item = mongoose.model('Item');
 var Field = mongoose.model('Field');
 var Log = mongoose.model('Log');
+var Tag = mongoose.model('Tag');
 var util = require('./util.js');
 var async = require("async");
 
@@ -168,16 +169,6 @@ module.exports = (app) => {
   });
 
   app.post('/api/item/addAll', util.requirePrivileged, function(req, res, next) {
-    console.log("IN ADD ALL ITEMS");
-    console.log(req.body);
-    // console.log(req.body.imports);
-    // var importList = (req.body.imports)[0];
-    // console.log("IMPORT LIST");
-    // console.log(importList);
-    // (req.body.imports)[0].quantity_available = (req.body.imports)[0].quantity;
-    // xx.replace("quantity", "quantity_available"); 
-    // console.log("REPLACEMENT");
-    console.log(req.body);
     
     if (!req.body)
       return res.status(400).send({ error: "Empty body" });
@@ -193,8 +184,12 @@ module.exports = (app) => {
       if (err) return next(err);
       if (result.length > 0)
         return res.status(405).send({ error: "Item(s) already exist!" , items: result.map(e=>e.name)});
-      let items = imports.map(e=>
-        new Item(_.pick(e, ['name','quantity', 'quantity_available', 'model','description','tags','image','fields']))
+      let items = imports.map(e=>{
+        if (e.tags && e.tags.length) {
+          e.tags.forEach(addTag);
+        }
+        return new Item(_.pick(e, ['name','quantity', 'quantity_available', 'model','description','tags','image','fields']))
+      }
       );
       async.each(items,(item, cb) => item.save(cb),
         function (err) {
@@ -211,4 +206,12 @@ module.exports = (app) => {
 
   });
 
+}
+
+function addTag(name) {
+  Tag.findOne({name:name}, (err, tag)=>{
+    if(err || tag) return;
+    tag = new Tag({name: name});
+    tag.save();
+  })
 }
