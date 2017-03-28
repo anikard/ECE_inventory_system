@@ -14,36 +14,45 @@ var s = schedule.scheduleJob('*/5 * * * * *', function(){
   var now = new Date();
   var date_now = dateFormat(now, "yyyy-mm-dd");
   Request.find({status: "onLoan"})
-  .populate('user')
+  .populate('items.item user')
   .exec((err, results) => {
     if(err) return console.log(err);
-    var emails = new Array();
-    results.forEach(r => {
-      if(r.user && r.user.email)
-        emails.push(r.user.email);
-    });
-    Email.find({ dates: { $exists: true, $not: {$size: 0} } })
-    .exec((err, results) => {
-      if (err) return console.log(err);
-      results.forEach(e => {
-        dates = e.dates;
-        var new_dates = [];
-        for(let i = 0; i < dates.length; i++){
-          if(dates[i] < date_now) {
-            new_dates.push(dates[i]);
-          } else {
-          	emails.forEach(address=>{
-          		mailer.send({
-          			to: address,
-          			subject: e.subjectTag && `${e.subjectTag} ${e.subject}` || e.subject,
-          			text: e.body,
-          		})
-          	})
-          }
-        }
-        e.dates = new_dates;
-        e.save();
-      });
+    results.forEach(request => {
+      if(request.user && request.user.email){
+        let user = request.user;
+        Email.find({ dates: { $exists: true, $not: {$size: 0} } })
+        .exec((err, results) => {
+          if (err) return console.log(err);
+          results.forEach(e => {
+            dates = e.dates;
+            var new_dates = [];
+            for(let i = 0; i < dates.length; i++){
+              dates[i] = dates[i].trim();
+              if(dates[i] > date_now) {
+                new_dates.push(dates[i]);
+              } else {
+                let body = e.body;
+                body += "\n----------------------------------\nRequest Summary\n";
+                body += `User: ${user.name} (${user.username})\n`;
+                body += `Reason: ${request.reason}\n`;
+                body += `Note: ${request.note || 'N/A'}\n`;
+                body += `Status: ${request.status}\n`;
+                body += `Type: ${request.type}\n`;
+                body += `Date: ${request.date}\n\n`;
+                body += `Items:\n`;
+                request.items.forEach(i=>body+=`Name: ${i.item.name}\t\tQuantity: ${i.item.quantity}\n`);
+                mailer.send({
+                  to: user.email,
+                  subject: e.subject,
+                  text: body,
+                });
+              }
+            }
+            e.dates = new_dates;
+            e.save();
+          });
+        });
+      }
     });
   });
 });
