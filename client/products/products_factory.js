@@ -203,11 +203,6 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     });
 
 
-    //$scope.myName = auth.currentUser();
-    //$scope.myID = {userId: auth.currentUserID()};
-    //console.log($scope.myName);
-    //$scope.authorized = (auth.currentUserStatus()=="admin");
-
     $scope.customFields = [];
 
     $scope.logout = function() {
@@ -300,7 +295,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
           $scope.currentTags = [];
         });
         window.location.assign("/dispProducts");
-        
+
       }
     });
   }
@@ -659,8 +654,6 @@ products_app.controller('productsController', function($scope, $window, $rootSco
         $scope.products = data;
         $scope.originalProducts = data;
 
-
-
         $scope.currentTags = [];
         $scope.searchTags = [];
         $scope.excludeTags = [];
@@ -698,7 +691,6 @@ products_app.controller('productsController', function($scope, $window, $rootSco
 
 
   // from logs view
-
   $scope.scrollIntoView = function(rowNum, product) {
       console.log("in scroll into view + row num = " + rowNum);
       console.log("PRODUCT SELECTED: ");

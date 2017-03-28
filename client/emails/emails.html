@@ -12,12 +12,9 @@
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 
-
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
-
 
     <link rel="stylesheet" type="text/css" href="emails_style.css">
       <script src="emails_factory.js"></script>
@@ -30,8 +27,6 @@
 
 
     <h1>EMAIL SUPPORT</h1>
-    <!-- <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter"> -->
-
 
     <h2>Subscribed Managers</h2>
     <div class="customerTable" id = "cTable" style="margin-left: 10%; width: 80%;">
@@ -40,7 +35,6 @@
             <td> Manager Username </td>
             <td> Email </td>
             <td> Change Subscription Status </td>
-            <!-- <td> View Request </td> -->
           </tr>
 
           <tr ng-repeat="user in sub_managers | filter: filter_name | orderBy:'-status'">
@@ -83,9 +77,7 @@
           <div style="margin: 1em;">
             <p>From: <span style = "font-weight:bold" id = "email_from"></span></p>
             <p>To: <span style = "font-weight:bold" id = "email_to"></span></p>
-            <!-- <p style = "font-weight:bold">Subject: <span id = "email_subj_tag"></span> <span id = "email_subj"></span></p> -->
             <p>Subject: <span style = "font-weight:bold" id = "email_subj"></span></p>
-
 
             <hr>
 

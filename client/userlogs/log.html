@@ -23,12 +23,7 @@
   
   <!-- <span ng-if="authorized"><a href="/dispCustomers">users</a> |</span> <a href="/dispOrders">requests</a> | <a href="/dispProducts">items</a> | <span ng-if="authorized"><a href="/dispFields">custom fields</a> | </span> <a href="/dispCart">cart</a> | <span ng-if="authorized"><a href="/dispLog">log</a> | </span> <a href="" ng-click="logout()">logout {{myName}}</a> -->
 
-  <!-- TO FIX -->
 <h1> {{myName | uppercase}}'S LOGS</h1>
-
-
-<!-- TESTING -->
-  <!-- <button class = "blueButton" style = "width: 37%; margin-left: 2em; padding-left: 5px; padding-right: 5px " id="scrollButton" ng-click="scrollIntoView(3)">Testing: Scroll to element</button> -->
 
 
 <form>
@@ -92,7 +87,6 @@
         <td ng-if="log.event!='request' && log.event!='Request'"><span>{{log.event}}</span></td>
         <td ng-bind="log.date | date:'short'"></td>
         <td ng-bind="log.admin_actions"></td>
-        <!-- <td><button class = "blueButton">View</button></td> -->
       </tr>
     </table>
   </div>

@@ -600,9 +600,6 @@ var orders_app = angular.module('orders_app', []);
             $scope.viewOrder(req);
             $("#orderModal").modal();
           }
-          // else if (rowNum == 0) {
-          //   alert('This request does not exist.');
-          // }
 
         }
     })
