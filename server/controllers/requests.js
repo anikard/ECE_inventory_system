@@ -62,8 +62,10 @@ function add (req, res) {
 		if (!cart || cart.items.length === 0)
 			return res.status(400).send({ error: "Empty cart" });
 		for (let i = 0;i<cart.items.length;i++){
+			/*
 			if (cart.items[i].item.quantity_available < cart.items[i].quantity)
 				return res.status(405).send({ error: `Request quantity of ${cart.items[i].item.name} exceeds stock limit` });
+				*/
 		}
 		let request = new Request({
         	user: id,
@@ -132,6 +134,7 @@ function convert(id, req, res) {
 		items: req.body.items,
 		reason: req.body.reason || "",
 		status: req.body.status || "outstanding",
+		note: req.body.note || "",
 		type: req.body.type || "disburse"
 	});
 	request.save((err,request) => {
@@ -253,7 +256,7 @@ function direct (id, req, res) {
 			cart.save((err)=>{
 				if (err) return res.status(500).send({ error: err });
 
-				
+
 				User.findOne({_id:id}, (err, user)=>{
 					if (err) return next(err);
 					email(request, `${user.name} received a new disbursement`);

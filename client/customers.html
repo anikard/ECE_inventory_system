@@ -294,12 +294,14 @@
           };
 
           $scope.hasMoreItemsToShow = function() {
-           return pagesShown < ($scope.users.length / pageSize);
+            if ($scope.users) {
+             return pagesShown < ($scope.users.length / pageSize);
+           }
           };
 
           $scope.showMoreItems = function() {
-           pagesShown = pagesShown + 1;       
-          }; 
+           pagesShown = pagesShown + 1;
+          };
 
       /** END OF PAGINATION **/
 
