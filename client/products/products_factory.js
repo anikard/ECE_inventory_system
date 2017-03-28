@@ -188,7 +188,8 @@ products_app.controller('productsController', function($scope, $window, $rootSco
         $scope.selected_item = $window.localStorage['itemSelected'];
       }
       $window.localStorage['itemSelected'] = "";
-
+      console.log("SELECTED ITEM");
+      console.log($scope.selected_item);
       var thisProductIndex = -1;
       var product = {};
       for (var i = 0; i < $scope.products.length; i++) {
@@ -698,10 +699,14 @@ products_app.controller('productsController', function($scope, $window, $rootSco
 
   $scope.scrollIntoView = function(rowNum, product) {
       console.log("in scroll into view + row num = " + rowNum);
-
+      console.log("PRODUCT SELECTED: ");
+      console.log(product);
         if (product && rowNum > 0) {
           $scope.viewProduct(product);
           $("#productModal").modal();
+        }
+        else if ($scope.selected_item && rowNum==0) {
+          alert('This item does not exist.');
         }
 
       }

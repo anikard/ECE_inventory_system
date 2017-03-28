@@ -67,6 +67,7 @@ var log_app = angular.module('log_app', []);
         LogFactory.getorders(function(data) {
           console.log("scope getting requests");
           console.log(data);
+          $scope.list_of_requests = data;
         });
 
 
@@ -75,20 +76,44 @@ var log_app = angular.module('log_app', []);
           console.log("scope getting logs");
           console.log(data);
 
-
           for (var m = 0; m < data.length; m++) {
+            data[m].items = [];
+            var quant = data[m].quantity;
+            if (data[m].request) {
+              for (var r = 0; r < $scope.list_of_requests.length; r++) {
+                if ($scope.list_of_requests[r]._id == data[m].request) {
+                  for (var it = 0; it < $scope.list_of_requests[r].items.length; it++) {
+                    if ($scope.list_of_requests[r].items[it].item == null) {
+                      data[m].items.push("[Deleted item]");
+                    }
+                    else {
+                      data[m].items.push($scope.list_of_requests[r].items[it].item.name);
+                    }
+                  }
+                }
+              }
+              data[m].quantity = quant;
+            }
+            else {
 
-            var items_array = [];
+              var items_array = [];
 
-            for (var a = 0; a < data[m].item.length; a++) {
-              items_array.push(data[m].item[a].name);
+              for (var a = 0; a < data[m].item.length; a++) {
+                items_array.push(data[m].item[a].name);
+              }
+
+              data[m].items = items_array;
+
+              if (items_array.length == 0) {
+                data[m].items.push(data[m].name_list[0]);
+              }
+
             }
 
-            data[m].items = items_array;
-
-            if (items_array.length == 0) {
-              data[m].items.push(data[m].name_list[0]);
-            }
+            // if (data[m].name_list[0]==null) {
+            // if (data[m].item.length < data[m].quantity.length) {
+            //   data[m].items.push("[Deleted item]");
+            // }
 
           }
 
@@ -152,6 +177,7 @@ var log_app = angular.module('log_app', []);
           var item_info = {};
           $rootScope.item_selected = item_name;
           $window.localStorage['itemSelected'] = item_name;
+          //$window.localStorage['itemDeleted'] = item_name;
 
           $window.location.href = "/products/products.html";
 
