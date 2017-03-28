@@ -63,8 +63,31 @@
       <tr style="text-align: center;" ng-repeat="log in logs | filter: search | limitTo: paginationLimit()">
         <td ng-bind="log.init_user.username"></td>
         <td ng-bind="log.rec_user.username"></td>
-        <td> <p ng-repeat="it in log.items"> <a ng-click="getItem(it)">{{it}}</a> </p> </td>
-        <td> <p ng-repeat="qu in log.quantity">{{qu}}</p> </td>
+        <td> 
+          <p> <a ng-click="getItem(log.items[0])">{{log.items[0]}}</a> </p>
+          <p> <a ng-click="getItem(log.items[1])">{{log.items[1]}}</a> </p>
+          <p> <a ng-click="getItem(log.items[2])">{{log.items[2]}}</a> </p>
+          <p> <a ng-click="getItem(log.items[3])">{{log.items[3]}}</a> </p>
+          <p> <a ng-click="getItem(log.items[4])">{{log.items[4]}}</a> </p>
+          <p> <a ng-click="getItem(log.items[5])">{{log.items[5]}}</a> </p>
+          <p> <a ng-click="getItem(log.items[6])">{{log.items[6]}}</a> </p>
+          <p> <a ng-click="getItem(log.items[7])">{{log.items[7]}}</a> </p>
+          <p> <a ng-click="getItem(log.items[8])">{{log.items[8]}}</a> </p>
+          <!-- todo 3/27/17: ng-repeat code below not working for some event type requests...(?) -->
+          <!-- <p ng-repeat="it in log.items"> <a ng-click="getItem(it)">{{it}}</a> </p>  -->
+        </td>
+        <td>  <p>{{log.quantity[0]}}</p>
+              <p>{{log.quantity[1]}}</p>
+              <p>{{log.quantity[2]}}</p>
+              <p>{{log.quantity[3]}}</p>
+              <p>{{log.quantity[4]}}</p>
+              <p>{{log.quantity[5]}}</p>
+              <p>{{log.quantity[6]}}</p>
+              <p>{{log.quantity[7]}}</p>
+              <p>{{log.quantity[8]}}</p>
+              <!-- todo 3/27/17: ng-repeat code below not working for some event type requests...(?) -->
+          <!-- <p ng-repeat="quant in log.quantity">{{quant}}</p>  -->
+        </td>
         <td ng-if="log.event=='request' || log.event=='Request'"><a ng-click="viewRequest(log.request)">{{log.event}}</a></td>
         <td ng-if="log.event!='request' && log.event!='Request'"><span>{{log.event}}</span></td>
         <td ng-bind="log.date | date:'short'"></td>
