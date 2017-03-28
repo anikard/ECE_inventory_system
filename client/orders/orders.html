@@ -63,7 +63,7 @@
 
       <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-date' | limitTo: paginationLimit()">
         <td style="display:none;" ng-bind="order._id"></td>
-        <td ng-bind="order.customer_name || order.user.username"></td>
+        <td ng-bind="order.user.netId || order.customer_name || order.user.username"></td>
         <td ng-bind="order.items.length"></td>
         <td ng-bind="order.date | date:'short'"></td>
         <td ng-bind="order.status"></td>
@@ -91,7 +91,7 @@
       <div class="modal-body" align="left">
 
         <div class="form-group" >
-            <p> <b> User: </b> {{thisOrder.customer_name}}</p>
+            <p> <b> User: </b> {{thisOrder.customer_name || thisOrder.user.username || thisOrder.user.netId}}</p>
             <p>
               <span ng-show="thisOrder.status === 'outstanding' && isAuthorized">
                 <table id = "openRequestTable" class="small table">
