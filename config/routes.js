@@ -29,6 +29,7 @@ module.exports = (app) => {
   require('./../server/controllers/fields.js')(app);
   require('./../server/controllers/logs.js')(app);
   require('./../server/controllers/email.js')(app);
+  require('./../server/controllers/tags.js')
   require('./../server/controllers/mailer.js').routes(app);
 
   app.get('/home', function(req, res) {
@@ -73,10 +74,14 @@ module.exports = (app) => {
 
   app.get('/dispFields', util.requireLoginGui, function(req, res) {
     res.redirect('fields/fields.html');
-  })
+  });
 
   app.get('/dashboard', util.requireLoginGui, function(req, res) {
     res.redirect('dashboard.html');
+  });
+
+  app.get('/dispTags', util.requireLoginGui, function(req, res) {
+    res.redirect('tags/tags.html');
   });
 
   // app.config(function ($stateProvider) {
