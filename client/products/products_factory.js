@@ -284,6 +284,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
         console.log("addProduct success");
         $scope.errorMessage = null;
         $scope.new_product.date = new Date();
+        alert("Successfully added item");
         /*
         if(showProduct($scope.new_product)) {
           $scope.products.push($scope.new_product);
@@ -299,6 +300,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
           $scope.currentTags = [];
         });
         window.location.assign("/dispProducts");
+        
       }
     });
   }
