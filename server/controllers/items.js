@@ -29,7 +29,7 @@ module.exports = (app) => {
         return res.status(500).send({ error: err });
       }
       if (item) {
-        return res.status(405).send({ error: "Item already exist!" });
+        return res.status(405).send({ error: "Item already exists!" });
       }
       props = _.pick(req.body, ['name','quantity', 'quantity_available', 'model','description','tags','image','fields']);
       item = new Item(props);
