@@ -19,9 +19,9 @@
 
 
   <h1>CUSTOM FIELDS</h1>
-  <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="filter">
+  <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search fields">
 
-  <div class="fieldTable" id = "fTable">
+  <div class="fieldTable" id = "fTable" style="margin: 0px 5%; width: 90%;">
     <table>
       <tr>
         <td> Name </td>
@@ -58,6 +58,7 @@
           <input class="feedback-input" type="checkbox" ng-model="new_field.access" ng-true-value="private" ng-false-value="public">
         </label>
       </div>
+      <br>
       <div class="error" ng-if="errorMessage">{{ errorMessage }}</div>
       <input type="submit" ng-disabled="createFieldForm.$invalid" ng-click="addField()">
       <br>
