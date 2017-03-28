@@ -492,21 +492,23 @@ products_app.controller('productsController', function($scope, $window, $rootSco
   }
 
   // TODO: refactor to combine tagClicked and searchTag to be tagClicked(tag, tagList);
-  $scope.searchTag = function(tag) {
+  $scope.searchTag = function() {
+    var tag = $scope.searchTagSelected;
     console.log("searchTag");
     console.log(tag);
     console.log($scope.searchTags);
-    if($scope.searchTags.indexOf(tag.name) == -1) {
-      $scope.searchTags.push(tag.name);
+    if($scope.searchTags.indexOf(tag) == -1) {
+      $scope.searchTags.push(tag);
     }
     console.log($scope.searchTags);
     $scope.filterTags();
   }
 
   // TODO: refactor with above
-  $scope.excludeTag = function(tag) {
-    if($scope.excludeTags.indexOf(tag.name) == -1) {
-      $scope.excludeTags.push(tag.name);
+  $scope.excludeTag = function() {
+    var tag = $scope.excludeTagSelected;
+    if($scope.excludeTags.indexOf(tag) == -1) {
+      $scope.excludeTags.push(tag);
     }
     $scope.filterTags();
   }
@@ -540,6 +542,8 @@ products_app.controller('productsController', function($scope, $window, $rootSco
   }
 
   $scope.removeTag = function(tag) {
+    console.log(tag);
+    console.log($scope.cTag);
     for (var i =0; i < $scope.currentTags.length; i++)
     {
       if ($scope.currentTags[i] === tag) {
@@ -549,6 +553,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     }
     console.log("remove tag called");
     console.log(tag);
+    $scope.tagSelected = "";
   }
 
   // TODO: refactor to combine removeTag and removeSearchTag to be removeTag(tag, tagList);
@@ -564,6 +569,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     console.log(tag);
     console.log($scope.searchTags);
     $scope.filterTags();
+    $scope.searchTagSelected = "";
   }
 
   $scope.removeExcludeTag = function(tag) {
@@ -578,6 +584,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     console.log(tag);
     console.log($scope.excludeTags);
     $scope.filterTags();
+    $scope.excludeTagSelected = "";
   }
 
   // TODO: Refactor
