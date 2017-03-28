@@ -325,7 +325,10 @@
         });
         document.getElementById("unField").value = '';
         document.getElementById("pdField").value = '';
+        document.getElementById("nField").value = '';
+        document.getElementById("emField").value = '';
         $scope.refreshUsers();
+        if(!alert('Successfully added user')){window.location.reload();}
       }
 
       $scope.logout = function() {
@@ -417,13 +420,13 @@
         ng-model="new_user.username" ></input>
       </div>
       <div class="form-group">
-        <input type="text" id="unField" style = "display:inline-block; width:40%; height: 53px;"
+        <input type="text" id="nField" style = "display:inline-block; width:40%; height: 53px;"
         class="form-control feedback-input"
         placeholder="Name"
         ng-model="new_user.name" ></input>
       </div>
       <div class="form-group">
-        <input type="text" id="unField" style = "display:inline-block; width:40%; height: 53px;"
+        <input type="text" id="emField" style = "display:inline-block; width:40%; height: 53px;"
         class="form-control feedback-input"
         placeholder="Email"
         ng-model="new_user.email" ></input>

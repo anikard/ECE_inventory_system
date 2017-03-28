@@ -52,7 +52,7 @@ function show(req, res, next) {
 	Log.find({})
  	.populate('rec_user init_user item')
 	.sort('-date')
-	.limit(parseInt(req.body.limit) || parseInt(req.query.limit) || 20)
+	// .limit(parseInt(req.body.limit) || parseInt(req.query.limit) || 20)
 	.exec(function(err, results) {
 		if(err) {
 			res.status(500).send({ error: err});

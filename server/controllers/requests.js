@@ -22,7 +22,7 @@ module.exports = (app) => {
 function show (req, res) {
 	let query = (req.user.status === "admin" || req.user.status === "manager") ? {} : { user : req.user._id };
 	Request.find(query)
-	.limit(parseInt(req.query.limit) || 20)
+	// .limit(parseInt(req.query.limit) || 20)
  	.populate('items.item user')
  	.sort('-date')
     .lean()

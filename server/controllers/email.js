@@ -8,7 +8,7 @@ var util = require('./util.js');
 module.exports = (app) => {
   app.get('/api/email/show', util.requireLogin, function(req, res, next) {
     Email.find({})
-    .limit(parseInt(req.query.limit) || 200)
+    // .limit(parseInt(req.query.limit) || 200)
     .exec((err, results) => {
       if(err) {
         res.status(500).send({ error: err });

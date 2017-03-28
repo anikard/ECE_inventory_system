@@ -96,18 +96,20 @@ var log_app = angular.module('log_app', []);
             }
             else {
 
-              var items_array = [];
+             if (data[m].item) {
+               var items_array = [];
+              
+                for (var a = 0; a < data[m].item.length; a++) {
+                  items_array.push(data[m].item[a].name);
+                }
 
-              for (var a = 0; a < data[m].item.length; a++) {
-                items_array.push(data[m].item[a].name);
-              }
+                data[m].items = items_array;
 
-              data[m].items = items_array;
+                if (items_array.length == 0) {
+                  data[m].items.push(data[m].name_list[0]);
+                }
 
-              if (items_array.length == 0) {
-                data[m].items.push(data[m].name_list[0]);
-              }
-
+             }
             }
 
             // if (data[m].name_list[0]==null) {
@@ -123,19 +125,19 @@ var log_app = angular.module('log_app', []);
 
           /** PAGINATION **/
 
-          var pagesShown = 1;
-          var pageSize = 7;
+          $scope.pagesShown = 1;
+          $scope.pageSize = 7;
 
           $scope.paginationLimit = function(data) {
-           return pageSize * pagesShown;
+           return $scope.pageSize * $scope.pagesShown;
           };
 
           $scope.hasMoreItemsToShow = function() {
-           return pagesShown < ($scope.logs.length / pageSize);
+           return $scope.pagesShown < ($scope.logs.length / $scope.pageSize);
           };
 
           $scope.showMoreItems = function() {
-           pagesShown = pagesShown + 1;       
+           $scope.pagesShown = $scope.pagesShown + 1;       
           }; 
 
          /** END OF PAGINATION **/
@@ -360,6 +362,7 @@ var log_app = angular.module('log_app', []);
                 var df = $scope.dateSelected;
                 var result = [];
                 for (var i=0; i<$scope.logs.length; i++){
+                  console.log(df);
                     if ($scope.logs[i].date >= df)  {
                         result.push($scope.logs[i]);
                     }
@@ -367,6 +370,21 @@ var log_app = angular.module('log_app', []);
                 console.log("filtering logs");
                 console.log(result);
                 $scope.logs = result;
+
+                  $scope.pagesShown = 1;
+                  $scope.pageSize = 7;
+
+                  $scope.paginationLimit = function(data) {
+                   return $scope.pageSize * $scope.pagesShown;
+                  };
+
+                  $scope.hasMoreItemsToShow = function() {
+                   return $scope.pagesShown < ($scope.logs.length / $scope.pageSize);
+                  };
+
+                  $scope.showMoreItems = function() {
+                   $scope.pagesShown = $scope.pagesShown + 1;       
+                  }; 
       }
 
       $("#datepicker").datepicker({

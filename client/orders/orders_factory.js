@@ -306,7 +306,7 @@ var orders_app = angular.module('orders_app', []);
             $scope.errorMessage = "Insufficient quantity available for one or more items requested";
           }
           if (totalActedOn != item.quantity) {
-            $scope.errorMessage = "The quantity acted on for an item does not" +
+            $scope.errorMessage = "The quantity acted on for an item does not " +
             "align with the quantity requested for that item.";
           }
         }
