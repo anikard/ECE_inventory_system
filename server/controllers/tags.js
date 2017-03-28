@@ -1,7 +1,9 @@
 var mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 var Tag = mongoose.model('Tag');
+var Item = mongoose.model('Item');
 var util = require('./util.js');
+var async = require("async");
 
 module.exports = (app) => {
 	app.get('/api/tag/show', util.requireLogin, show);
@@ -45,14 +47,27 @@ function add(req, res, next) {
 }
 
 function del(req, res, next) {
-	Tag.remove({ name: req.body.name},
-		function (err, request) {
-			if (err) {
-				res.status(500).send({ error: err });
-			} else {
-				res.status(200).send("Successfully deleted a tag!");
-			}
-			res.end();
-		}
-	);
+	Item.find({tags: req.body.name}, (err, items) => {
+		items.forEach(i=>{
+			tags = [];
+			i.tags.forEach(t => {
+				if(t !== req.body.name) tags.push(t);
+			});
+			i.tags = tags;
+		});
+		async.each(items,(item, cb) => item.save(cb),
+		  function (err) {
+		    if (err) return next(err);
+		    Tag.remove({ name: req.body.name},
+		    	function (err, request) {
+		    		if (err) {
+		    			return next(err);
+		    		} else {
+		    			res.status(200).send("Successfully deleted a tag!");
+		    		}
+		    	}
+		    );
+		});
+	});
+	
 }
