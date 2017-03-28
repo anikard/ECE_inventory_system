@@ -27,9 +27,6 @@ require('./config/mongoose.js');
 // require bodyParser since we need to handle post data for adding a user
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
-// static file server pointing to the "client" directory
-app.use(express.static(path.join(__dirname, './client')));
 // app.set('views', __dirname + '/client');
 // app.engine('html', engine.mustache);
 // app.set('view engine', 'html');
