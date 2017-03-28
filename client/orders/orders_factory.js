@@ -246,7 +246,7 @@ var orders_app = angular.module('orders_app', []);
       $scope.respondToOrder = function() {
         console.log("RESPONDING TO ORDER");
         for (var i = 0; i < $scope.thisOrder.items.length; i++) {
-          if(!$scope.thisOrder.items[i].name) {
+          if(!$scope.thisOrder.items[i].item) {
             $scope.thisOrder.items.splice(i,1);
           }
         }
