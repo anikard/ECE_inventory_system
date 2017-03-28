@@ -151,7 +151,7 @@ var log_app = angular.module('log_app', []);
         $scope.user = LogFactory.getcustomers(function(data) {
          $scope.user = data;
 
-         $scope.authorized = data.status == "admin";
+         $scope.authorized = data.status == "admin" || data.status == "manager";
          $scope.myName = data.username || data.netId || data.name;
 
          if ($scope.authorized) {
