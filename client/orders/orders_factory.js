@@ -205,6 +205,7 @@ var orders_app = angular.module('orders_app', []);
       }
 
       $scope.viewOrder = function(order) {
+          $scope.errorMessage = null;
           OrderFactory.viewOrder(order, function(data) {
 
             $scope.thisOrder = data;
@@ -244,6 +245,11 @@ var orders_app = angular.module('orders_app', []);
 
       $scope.respondToOrder = function() {
         console.log("RESPONDING TO ORDER");
+        for (var i = 0; i < $scope.thisOrder.items.length; i++) {
+          if(!$scope.thisOrder.items[i].name) {
+            $scope.thisOrder.items.splice(i,1);
+          }
+        }
         $scope.responseToOrder = {};
 
         if ($scope.thisOrder.status == "outstanding") {

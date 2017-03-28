@@ -157,6 +157,7 @@ var orders_app = angular.module('cart_app', []);
 
       $scope.showDisburseModal = function (modalType) {
         $scope.modalType = modalType;
+        $scope.modalErrorMessage = null;
         if($scope.orders.length > 0) {
           $scope.errorMessage = null;
           $scope.this_request = {};
@@ -169,6 +170,7 @@ var orders_app = angular.module('cart_app', []);
       }
 
       $scope.createRequest = function() {
+
         if($scope.modalType === "Direct" && !$scope.this_request.user) {
           $scope.modalErrorMessage = "User required for direct action";
         }

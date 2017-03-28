@@ -30,7 +30,7 @@
         </tr>
 
         <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
-          <td ng-bind="order.item.name"></td>
+          <td ng-bind="order.item.name || '[Deleted item]'"></td>
           <td ng-bind="order.quantity"></td>
           <!--<td ng-bind="order.date | date:'short'"></td>-->
           <td><button class = "remove" ng-click='removeFromCart(order)'>Remove</button></td>
