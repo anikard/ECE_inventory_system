@@ -31,7 +31,7 @@
         <td ng-show="adminOnly"> Action </td>
       </tr>
 
-      <tr ng-repeat="field in fields | filter: filtner_name: orderBy:'-date'">
+      <tr ng-repeat="field in fields | filter: filter_name: orderBy:'-date'">
         <td ng-bind="field.name"></td>
         <td ng-bind="field.type"></td>
         <td ng-bind="field.access"></td>

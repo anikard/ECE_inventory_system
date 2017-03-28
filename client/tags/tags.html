@@ -1,0 +1,70 @@
+<html ng-app="tags_app">
+<head>
+  <title>Tags</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <script type="text/javascript" src="./tags_factory.js"></script>
+  <link rel="stylesheet" href="./tags_style.css">
+
+</head>
+
+<body ng-controller="tagsController">
+
+  <div><span id="navBar"></span><a href="" ng-click="logout()">logout {{myName}}</a></div>
+
+
+
+  <h1>Tags</h1>
+  <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search tags">
+
+  <div class="fieldTable" id = "fTable" style="margin: 0px 5%; width: 90%;">
+    <table>
+      <tr>
+        <td> Name </td>
+        <td> Delete </td>
+      </tr>
+
+      <tr ng-repeat="tag in tags | filter: filter_name: orderBy:'-date'">
+        <td ng-bind="tag.name"></td>
+        <td><button class="remove" ng-click="deleteTag(tag)">Delete</button></td>
+      </tr>
+    </table>
+  </div>
+
+  <span ng-show="adminOnly">
+    <h1>Add a Tag</h1>
+
+    <form id="createTagForm">
+      <input class="feedback-input" type="text" ng-model="new_tag.name" placeholder="name" required>
+      <div class="error" ng-if="errorMessage">{{ errorMessage }}</div>
+      <input type="submit" ng-disabled="createTagForm.$invalid" ng-click="addTag(new_tag)">
+      <br>
+    </form>
+  </span>
+
+  <!-- DELETE CONFIRM MODAL -->
+  <div class="modal fade" id="deleteConfirmModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h1 class="modal-title" id="exampleModalLabel">Confirm Deletion</h1>
+        </div>
+        <div class="modal-body" align="left">
+          <div class="form-group" >
+            Confirm Deletion
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmDeleteModal(tagToDelete)>Confirm</button>
+            <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelDeleteModal()>Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

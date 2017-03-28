@@ -17,7 +17,7 @@
     <div><span id="navBar"></span><a href="" ng-click="logout()">logout {{myName}}</a></div>
 
 
-    <h1> {{user.username | uppercase}}'S CART</h1>
+    <h1> {{user.name || user.netId || user.username | uppercase}}'S CART</h1>
     <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search for item">
 
     <div class="customerTable" id = "cTable" >
@@ -148,7 +148,7 @@
               </div>
             </div>
 
-            <textarea style="display:block; width: 80%; margin-left:10%" class = "feedback-input" ng-model="this_request.reason" placeholder="Comment or Reason for Request" ng-required="modalType === 'Create'"></textarea>
+            <textarea style="display:block; width: 80%; margin-left:10%" class = "feedback-input" ng-model="this_request.reason" placeholder="Comment or Reason for Request" ng-required="modalType === 'Create' && !isAuthorized"></textarea>
 
           </div>
           <div class="modal-footer">
