@@ -132,6 +132,7 @@ function convert(id, req, res) {
 		items: req.body.items,
 		reason: req.body.reason || "",
 		status: req.body.status || "outstanding",
+		note: req.body.note || "",
 		type: req.body.type || "disburse"
 	});
 	request.save((err,request) => {
@@ -253,7 +254,7 @@ function direct (id, req, res) {
 			cart.save((err)=>{
 				if (err) return res.status(500).send({ error: err });
 
-				
+
 				User.findOne({_id:id}, (err, user)=>{
 					if (err) return next(err);
 					email(request, `${user.name} received a new disbursement`);

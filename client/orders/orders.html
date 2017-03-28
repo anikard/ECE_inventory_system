@@ -125,8 +125,8 @@
                     <td ng-bind="item.item.name || '[Deleted item]'"></td>
                     <td ng-bind="item.quantity"></td>
                     <!-- TODO: Correct min-max (0-item.quantity)-->
-                    <td ng-show="item.item.name"><input type="number" ng-model="item.quantity_to_disburse"></td>
-                    <td ng-show="item.item.name"><input type="number" ng-model="item.quantity_to_return"></td>
+                    <td ng-show="item.item.name"><input class="noverflow" type="number" ng-model="item.quantity_to_disburse"></td>
+                    <td ng-show="item.item.name"><input class="noverflow" type="number" ng-model="item.quantity_to_return"></td>
                     <!--<td ng-show="!item.item.name"><input type="number" ng-model="item.quantity_to_disburse"></td>
                     <td ng-show="!item.item.name"><input type="number" ng-model="item.quantity_to_return"></td>
                   -->
@@ -173,9 +173,10 @@
           -->
             <p><b>Reason:  </b>{{thisOrder.reason}}</p>
             <p><b>Current Status:  </b>{{thisOrder.status}}</p>
-            <p><b>Suggested Type: </b>{{thisOrder.type}}</p>
+            <p ng-show="thisOrder.status === 'outstanding'"><b>Suggested Type: </b>{{thisOrder.type}}</p>
+            <p ng-show="thisOrder.status != 'outstanding'"><b>Type: </b>{{thisOrder.type}}</p>
+            <p ng-show="thisOrder.status != 'outstanding' && thisOrder.status != 'onLoan'"><b>Comment: </b>{{thisOrder.note}}</p>
             <p><b>Date: </b>{{ thisOrder.date | date:'short'}}</p>
-            <p ng-show="thisOrder.note"><b>Comment: </b>{{thisOrder.note}}</p>
           </div>
 
 
@@ -183,7 +184,7 @@
         <div class="error" ng-show="errorMessage">{{ errorMessage }}</div>
         <form id="request_response_form">
           <label for="message-text" class="form-control-label">Comment:</label>
-          <textarea class="form-control" id="message-text" ng-model="orderResponse.comment"></textarea>
+          <textarea class="form-control" id="message-text" ng-model="thisOrder.note"></textarea>
           <button type="button" class="btn btn-primary" ng-click="respondToOrder()" id = "respondOrderButton">Respond</button>
         </form>
       </div>
