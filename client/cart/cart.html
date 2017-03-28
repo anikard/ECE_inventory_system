@@ -148,7 +148,7 @@
               </div>
             </div>
 
-            <textarea style="display:block; width: 80%; margin-left:10%" class = "feedback-input" ng-model="this_request.reason" placeholder="Comment or Reason for Request" ng-required="modalType === 'Create'"></textarea>
+            <textarea style="display:block; width: 80%; margin-left:10%" class = "feedback-input" ng-model="this_request.reason" placeholder="Comment or Reason for Request" ng-required="modalType === 'Create' && !isAuthorized"></textarea>
 
           </div>
           <div class="modal-footer">

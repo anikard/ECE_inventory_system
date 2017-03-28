@@ -276,7 +276,7 @@ var orders_app = angular.module('orders_app', []);
               $scope.responseToOrder = {};
               $('#orderModal').modal('hide');
               $scope.refreshOrders();
-              alert("Successfully changed status to" + data.status + "");
+              alert("Successfully changed status to " + data.status + "");
             }
           });
 
