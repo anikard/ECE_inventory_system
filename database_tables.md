@@ -5,33 +5,41 @@ Item | Type
 --- | --- 
 id | Integer
 username | String
-Password | encoded String
-Email | String
-Status | String
+name | String
+netId | String
+date | Date
+salt | String
+email | String
+status | String
+hash | String
+active | Boolean
+apiKey | String
+subscribed | String
 
 ## ITEMS
 Item | Type | Required?
 --- | --- | ---
 id | Integer
-Name | String | Required
-Quantity | Integer | Required
-Model # | String
-Description | String
-Location | String
-Fields | {}
-Tags | String []
-Custom Fields | {}
+name | String | Required
+quantity | Integer
+quantity_available | Integer
+model | String
+description | String
+fields | {type: {}}
+image | String
+custom_fields | {}
 
 ## REQUESTS
 Item | Type 
 --- | --- 
 id | Integer
-Item_id | Integer
-Quantity | integer
-User_id | Integer
-Reason | String
-Admin_note | String
-Status | String
+items | [{item: Item, quantity: number}]
+reason | String
+note | String
+status | String
+type | String
+date | Date
+dateFulfilled | Date
 
 ## CART
 Item | Type | Required?
@@ -46,7 +54,7 @@ name | String | Required
 type | String
 access | String
 req | Boolean
-default | 
+default | {{}}
 date | Date
 
 ## LOG
@@ -62,5 +70,11 @@ date | Date
 admin_actions | String   
 name_list | String []
 
-
+## EMAIL
+Item | Type | Required?
+--- | --- | ---
+subjectTag | String
+subject | String
+body | String
+dates | String
 
