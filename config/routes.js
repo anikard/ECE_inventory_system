@@ -2,6 +2,8 @@
 /*                       ROUTES                         */
 /********************************************************/
 const util = require('./../server/controllers/util.js');
+const express = require('express');
+const path = require('path');
 
 module.exports = (app) => {
   app.all('*', [require('./validateRequest')]);
@@ -9,6 +11,13 @@ module.exports = (app) => {
     console.log(`${req.protocol}://${req.get('host')}${req.originalUrl}`);
     next();
   });
+
+  app.all('/',(req,res,next)=>{
+    if(req.user) res.redirect('/welcome');
+    else next();
+  });
+  // static file server pointing to the "client" directory
+  app.use(express.static(path.join(__dirname, '../client')));
 
   require('./../server/controllers/oauth.js')(app);
   require('./../server/controllers/authenticator.js')(app);
