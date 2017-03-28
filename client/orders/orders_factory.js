@@ -303,7 +303,7 @@ var orders_app = angular.module('orders_app', []);
             item.quantity_to_deny;
           grandTotalActedOn += totalActedOn;
           if (totalActedOn != item.quantity) {
-            $scope.errorMessage = "The quantity acted on for an item does not" +
+            $scope.errorMessage = "The quantity acted on for an item does not " +
             "align with the quantity requested for that item.";
           }
         }
