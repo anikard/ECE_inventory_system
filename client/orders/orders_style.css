@@ -72,6 +72,7 @@ body {
       width:100%;
       height: 21em;
       overflow-y:scroll;
+      overflow-x: scroll;
 
       -moz-border-radius-bottomleft:14px;
       -webkit-border-bottom-left-radius:14px;
@@ -171,13 +172,20 @@ body {
 
     .small {
       font-size: 11px;
+      overflow-x: scroll;
       text-align: center;
+    }
+
+    .noverflow {
+      overflow-x: scroll;
+      display: block;
+      width: 100%;
     }
 
     .table {
       text-align: center;
     }
-    
+
 
 /*----- Tabs -----*/
 /*--> changed design decision: single table view for requests 3/20*/
