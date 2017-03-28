@@ -11,7 +11,7 @@ var async = require("async");
 module.exports = (app) => {
   app.get('/api/item/show', util.requireLogin, function(req, res, next) {
     Item.find({})
-    .limit(parseInt(req.query.limit) || 200)
+    // .limit(parseInt(req.query.limit) || 200)
     .exec((err, results) => {
       if(err) {
         res.status(500).send({ error: err });
