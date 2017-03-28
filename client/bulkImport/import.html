@@ -32,16 +32,16 @@
     <h1>BULK IMPORT</h1>
 
     <form id="createEmailForm" style="margin: 1em;">
-              <textarea id = "itemList" class = "feedback-input" ng-model="items.list" style = "width: 70%; " placeholder='List of items. Example: [{"name":"resistors","quantity":10, "quantity_available":10},{"name":"transistors","quantity":20, "quantity_available":20}]' cols="40" rows="7"></textarea>
+              <textarea id = "itemList" class = "feedback-input" ng-model="items.list" style = "width: 70%; " placeholder='List of items.' cols="40" rows="7"></textarea>
 
               <input type="submit" value="Import Items" style="margin-left:40%; width: 30%;" ng-click="importItems(items)">
     </form>
 
-    <p>Sample list of items: [{"name":"resistors","quantity":10, "quantity_available":10},{"name":"transistors","quantity":20, "quantity_available":20}]</p>
-
-    <div>
-      <p id="successDiv" style="display:none;">Successfully imported items. View items <a href="/dispProducts">here</a>.</p>
-      <p id="failureDiv" style="display:none;"></p>
+    <p>Sample list of items: </p>
+    <textarea style = "width:50%; padding: 0.5em;" onClick="this.select();" cols="20" rows="3" readonly/>[{"name":"resistors","quantity":10, "quantity_available":10}, {"name":"transistors","quantity":20, "quantity_available":20, "model": "221B", "description": "small", "tags": ["tag_one", "tag_2"]}]</textarea>
+    <div style="margin-top:1em;">
+      <p id="successDiv" style="display:none; color:green;">Successfully imported items. View items <a href="/dispProducts"><b>here</b></a>.</p>
+      <p id="failureDiv" style="display:none; color:red;"></p>
     </div>
 
 </body>
