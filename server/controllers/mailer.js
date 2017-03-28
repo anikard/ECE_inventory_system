@@ -23,7 +23,10 @@ function send({from, to, subject, text, html}, cb) {
             subject: `${tag}${subject}`,
             text: text,
         };
+        // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         console.log(`Email "${subject}" sent to "${to}"`);
+        // console.log(mailOptions);
+        // console.log("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
         transporter.sendMail(mailOptions, cb);
     });
 }

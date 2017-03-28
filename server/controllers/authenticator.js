@@ -136,7 +136,7 @@ function loginAdmin(req, res, next) {
       } else {
         if(admin){
           req.session.token = admin.generateJWT();
-          return res.status(200).send("success");
+          return res.redirect('/welcome');
         }
         var user = new User();
         user.name = "Admin";
@@ -147,7 +147,7 @@ function loginAdmin(req, res, next) {
         user.save(function (err){
           if(err){ return next(err); }
           req.session.token = user.generateJWT();
-          return res.status(200).send("success");
+          return res.redirect('/welcome');
         });
       }
   });
