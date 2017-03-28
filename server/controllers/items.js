@@ -172,6 +172,7 @@ module.exports = (app) => {
     
     if (!req.body)
       return res.status(400).send({ error: "Empty body" });
+
     imports = JSON.parse(req.body.imports);
     // imports.quantity_available = imports.quantity;
     console.log(imports);
@@ -191,17 +192,43 @@ module.exports = (app) => {
         return new Item(_.pick(e, ['name','quantity', 'quantity_available', 'model','description','tags','image','fields']))
       }
       );
+      
       async.each(items,(item, cb) => item.save(cb),
         function (err) {
           if (err) {
             async.each(items, (doc,cb)=>doc.remove(cb), function () {
-              console.log('Rollback done.');
               return next("DB error");
             });
           } else {
+
+              let quantity_arr = [];
+              items.forEach(i=>quantity_arr.push(i.quantity));
+
+              let name_arr = [];
+              items.forEach(i=>name_arr.push(i.name));
+
+              let arr = [];
+              items.forEach(i=>arr.push(i));
+
+
+                let log = new Log({
+                  init_user: req.user._id,
+                  item: arr,
+                  quantity: quantity_arr,
+                  event: "bulk import",
+                  name_list:name_arr
+                });
+
+                log.save(function(err){
+                  if(err){
+                    console.log(err);
+                  }
+                });
+
             return res.status(200).send("success");
           }
       });
+
     });
 
   });
