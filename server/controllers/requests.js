@@ -320,7 +320,7 @@ function del (req, res) {
 				body += `Type: ${request.type}\n`;
 				body += `Date: ${request.date}\n\n`;
 				body += `Items:\n`;
-				request.items.forEach(i=>body+=`Name: ${i.item.name}\t\tQuantity: ${i.item.quantity}\n`);
+				request.items.forEach(i=>body+=`Name: ${i.item.name}\t\tQuantity: ${i.quantity}\n`);
 				mailer.send({
 	    			to: request.user.email,
 	    			subject: `Your request has been deleted`,
@@ -542,7 +542,7 @@ function email(request, subject){
 		body += `Type: ${request.type}\n`;
 		body += `Date: ${request.date}\n\n`;
 		body += `Items:\n`;
-		request.items.forEach(i=>body+=`Name: ${i.item.name}\t\tQuantity: ${i.item.quantity}\n`);
+		request.items.forEach(i=>body+=`Name: ${i.item.name}\t\tQuantity: ${i.quantity}\n`);
 		mailer.send({
 			to: user.email,
 			subject: subject,
@@ -566,7 +566,7 @@ function emailTo(request, to, subject){
 		body += `Type: ${request.type}\n`;
 		body += `Date: ${request.date}\n\n`;
 		body += `Items:\n`;
-		request.items.forEach(i=>body+=`Name: ${i.item.name}\t\tQuantity: ${i.item.quantity}\n`);
+		request.items.forEach(i=>body+=`Name: ${i.item.name}\t\tQuantity: ${i.quantity}\n`);
 		mailer.send({
 			to: to,
 			subject: subject,

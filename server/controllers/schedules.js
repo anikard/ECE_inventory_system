@@ -40,7 +40,7 @@ var s = schedule.scheduleJob('*/5 * * * * *', function(){
                 body += `Type: ${request.type}\n`;
                 body += `Date: ${request.date}\n\n`;
                 body += `Items:\n`;
-                request.items.forEach(i=>body+=`Name: ${i.item.name}\t\tQuantity: ${i.item.quantity}\n`);
+                request.items.forEach(i=>body+=`Name: ${i.item.name}\t\tQuantity: ${i.quantity}\n`);
                 mailer.send({
                   to: user.email,
                   subject: e.subject,
