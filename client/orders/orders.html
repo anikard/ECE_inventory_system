@@ -103,12 +103,12 @@
                     <td> Quantity Denied </td>
                   </tr>
                   <tr ng-repeat="item in thisOrder.items">
-                    <td ng-bind="item.item.name"></td>
+                    <td ng-bind="item.item.name || '[Deleted item]'"></td>
                     <td ng-bind="item.quantity"></td>
                     <!-- TODO: Correct min-max (0-item.quantity)-->
-                    <td><input type="number" ng-model="item.quantity_to_disburse"></td>
-                    <td><input type="number" ng-model="item.quantity_to_loan"></td>
-                    <td><input type="number" ng-model="item.quantity_to_deny"></td>
+                    <td ng-show="item.item.name"><input type="number" ng-model="item.quantity_to_disburse"></td>
+                    <td ng-show="item.item.name"><input type="number" ng-model="item.quantity_to_loan"></td>
+                    <td ng-show="item.item.name"><input type="number" ng-model="item.quantity_to_deny"></td>
                   </tr>
                 </table>
               </span>
@@ -122,11 +122,14 @@
                     <td> Quantity to Return </td>
                   </tr>
                   <tr ng-repeat="item in thisOrder.items">
-                    <td ng-bind="item.item.name"></td>
+                    <td ng-bind="item.item.name || '[Deleted item]'"></td>
                     <td ng-bind="item.quantity"></td>
                     <!-- TODO: Correct min-max (0-item.quantity)-->
-                    <td><input type="number" ng-model="item.quantity_to_disburse"></td>
-                    <td><input type="number" ng-model="item.quantity_to_return"></td>
+                    <td ng-show="item.item.name"><input type="number" ng-model="item.quantity_to_disburse"></td>
+                    <td ng-show="item.item.name"><input type="number" ng-model="item.quantity_to_return"></td>
+                    <!--<td ng-show="!item.item.name"><input type="number" ng-model="item.quantity_to_disburse"></td>
+                    <td ng-show="!item.item.name"><input type="number" ng-model="item.quantity_to_return"></td>
+                  -->
                   </tr>
                 </table>
               </span>
@@ -143,7 +146,7 @@
                     <td> Quantity Requested </td>
                   </tr>
                   <tr ng-repeat="item in thisOrder.items">
-                    <td ng-bind="item.item.name"></td>
+                    <td ng-bind="item.item.name || '[Deleted item]'"></td>
                     <td ng-bind="item.quantity"></td>
                   </tr>
                 </table>
