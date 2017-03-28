@@ -174,6 +174,9 @@ var orders_app = angular.module('cart_app', []);
         if($scope.modalType === "Direct" && !$scope.this_request.user) {
           $scope.modalErrorMessage = "User required for direct action";
         }
+        else if (!$scope.isAuthorized && !$scope.this_request.reason) {
+          $scope.modalErrorMessage = "Reason required";
+        }
         else {
           console.log("createRequest from cart controller scope");
           $scope.this_request.items = $scope.orders;
