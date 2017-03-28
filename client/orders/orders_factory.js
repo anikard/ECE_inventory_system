@@ -302,6 +302,9 @@ var orders_app = angular.module('orders_app', []);
           var totalActedOn = item.quantity_to_disburse + item.quantity_to_loan +
             item.quantity_to_deny;
           grandTotalActedOn += totalActedOn;
+          if (item.quantity_to_loan + item.quantity_to_disburse > item.item.quantity_available) {
+            $scope.errorMessage = "Insufficient quantity available for one or more items requested";
+          }
           if (totalActedOn != item.quantity) {
             $scope.errorMessage = "The quantity acted on for an item does not" +
             "align with the quantity requested for that item.";

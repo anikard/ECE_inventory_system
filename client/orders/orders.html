@@ -106,9 +106,9 @@
                     <td ng-bind="item.item.name || '[Deleted item]'"></td>
                     <td ng-bind="item.quantity"></td>
                     <!-- TODO: Correct min-max (0-item.quantity)-->
-                    <td ng-show="item.item.name"><input class="noverflow" type="number" ng-model="item.quantity_to_disburse"></td>
-                    <td ng-show="item.item.name"><input class="noverflow" type="number" ng-model="item.quantity_to_loan"></td>
-                    <td ng-show="item.item.name"><input class="noverflow" type="number" ng-model="item.quantity_to_deny"></td>
+                    <td ng-show="item.item.name"><input class="noverflow" min="0" type="number" ng-model="item.quantity_to_disburse"></td>
+                    <td ng-show="item.item.name"><input class="noverflow" min="0" type="number" ng-model="item.quantity_to_loan"></td>
+                    <td ng-show="item.item.name"><input class="noverflow" min="0" type="number" ng-model="item.quantity_to_deny"></td>
                   </tr>
                 </table>
               </span>
@@ -125,8 +125,8 @@
                     <td ng-bind="item.item.name || '[Deleted item]'"></td>
                     <td ng-bind="item.quantity"></td>
                     <!-- TODO: Correct min-max (0-item.quantity)-->
-                    <td ng-show="item.item.name"><input class="noverflow" type="number" ng-model="item.quantity_to_disburse"></td>
-                    <td ng-show="item.item.name"><input class="noverflow" type="number" ng-model="item.quantity_to_return"></td>
+                    <td ng-show="item.item.name"><input class="noverflow" min="0" type="number" ng-model="item.quantity_to_disburse"></td>
+                    <td ng-show="item.item.name"><input class="noverflow" min="0" type="number" ng-model="item.quantity_to_return"></td>
                     <!--<td ng-show="!item.item.name"><input type="number" ng-model="item.quantity_to_disburse"></td>
                     <td ng-show="!item.item.name"><input type="number" ng-model="item.quantity_to_return"></td>
                   -->

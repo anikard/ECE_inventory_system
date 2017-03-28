@@ -176,12 +176,12 @@
           </p>
           <p>
             <label><b>Quantity:  </b></label>
-            <input ng-show="adminOnly" type="number" min="1" ng-readonly="!editing" ng-model="currentProduct.quantity"required/>
+            <input ng-show="adminOnly" type="number" min="0" ng-readonly="!editing" ng-model="currentProduct.quantity"required/>
             <span ng-show="!adminOnly" ng-bind="currentProduct.quantity" />
           </p>
           <p>
             <label><b>Quantity Available:  </b></label>
-            <input ng-show="adminOnly" type="number" min="1" ng-readonly="!editing" ng-model="currentProduct.quantity_available"required/>
+            <input ng-show="adminOnly" type="number" min="0" ng-readonly="!editing" ng-model="currentProduct.quantity_available"required/>
             <span ng-show="!adminOnly" ng-bind="currentProduct.quantity_available" />
           </p>
           <p>
