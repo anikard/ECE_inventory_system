@@ -8,6 +8,8 @@ var Tag = mongoose.model('Tag');
 var util = require('./util.js');
 var async = require("async");
 
+const allFields = ['name','quantity', 'quantity_available', 'model','description','tags','image','fields', 'min_quantity', "last_check_date"];
+
 module.exports = (app) => {
   app.get('/api/item/show', util.requireLogin, function(req, res, next) {
     Item.find({})
@@ -31,7 +33,7 @@ module.exports = (app) => {
       if (item) {
         return res.status(405).send({ error: "Item already exists!" });
       }
-      props = _.pick(req.body, ['name','quantity', 'quantity_available', 'model','description','tags','image','fields']);
+      props = _.pick(req.body, allFields);
       item = new Item(props);
       item.save(function(err){
         if(err){
@@ -96,76 +98,51 @@ module.exports = (app) => {
 
   app.post('/api/item/update', util.requirePrivileged, function(req, res, next) {
     if (! req.body._id && !req.body.item) return res.status(400).send({ error: "Missing ref id" });
-    req.body._id = req.body._id || req.body.item;
-    props = _.pick(req.body, ['name','quantity', 'quantity_available', 'model','description','tags','image','fields']);
-
-    var currQuantity = 0;
+    req.body._id = req.body._id || req.body.item || req.body.id;
 
     Item.findOne({ '_id': req.body._id }, function (err, item) {
-      if (err) {
-        return res.status(500).send({ error: err });
-      }
-      if (!item) {
-        return res.status(405).send({ error: "Missing item? Check the ID" });
-      }
+      if (err) return next(err);
+      if (!item) return res.status(405).send({ error: "Missing item? Check the ID" });
 
-      currQuantity = item.quantity;
+      _.assign(item, _.pick(req.body, allFields));
+      item.save((err) => {
+        var message = "updated an item";
 
-      _.assign(item, props);
-
-      var message = "updated an item";
-
-      if(req.user.status === "admin"){
-        if(req.body.quantity < currQuantity){
-          message = "admin decreased quantity";
+        if(req.user.status === "admin"){
+          if(req.body.quantity < item.quantity){
+            message = "admin decreased quantity";
+          }
+          if(req.body.quantity > item.quantity){
+            message = "admin increased quantity";
+          }
         }
-        if(req.body.quantity > currQuantity){
-          message = "admin increased quantity";
-        }
-      }
-      else{
+        else{
+          if(req.body.quantity < item.quantity){
+            message = "manager logged a loss";
+          }
+          if(req.body.quantity > item.quantity){
+            message = "manager logged an acquisition";
+          }
 
-        if(req.body.quantity < currQuantity){
-          message = "manager logged a loss";
-        }
-        if(req.body.quantity > currQuantity){
-          message = "manager logged an acquisition";
         }
 
-      }
+        var itemArray = [item._id];
+        var itemQuantity = [req.body.quantity];
+        var name_arr = [item.name];
 
-      var itemArray = [item._id];
-      var itemQuantity = [req.body.quantity];
-      var name_arr = [item.name];
-
-      let log = new Log({
-        init_user: req.user._id,
-        item: itemArray,
-        quantity: itemQuantity,
-        event: message,
-        name_list:name_arr
+        let log = new Log({
+          init_user: req.user._id,
+          item: itemArray,
+          quantity: itemQuantity,
+          event: message,
+          name_list:name_arr
+        });
+        log.save(function(err){
+          if(err) return next(err);
+          res.status(200).json(item);
+        }); 
       });
-      log.save(function(err){
-        if(err){
-          res.status(500).send({ error: err });
-          return;
-        }
-      });
-      res.status(200).json(item);
     });
-
-    Item.findByIdAndUpdate(
-      req.body._id,
-      {$set: props},
-      { new: true },
-      function (err, item) {
-        if (err) res.status(500).send({ error: err });
-        else {
-
-
-
-        }
-      });
   });
 
   app.post('/api/item/addAll', util.requirePrivileged, function(req, res, next) {
@@ -189,7 +166,7 @@ module.exports = (app) => {
         if (e.tags && e.tags.length) {
           e.tags.forEach(addTag);
         }
-        return new Item(_.pick(e, ['name','quantity', 'quantity_available', 'model','description','tags','image','fields']))
+        return new Item(_.pick(e, allFields))
       }
       );
       

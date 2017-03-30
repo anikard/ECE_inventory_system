@@ -4,6 +4,7 @@ var schedule = require('node-schedule');
 var mailer = require('./mailer.js');
 var User = mongoose.model('User');
 var Email = mongoose.model('Email');
+var Item = mongoose.model('Item');
 var Request = mongoose.model('Request');
 var dateFormat = require('dateformat');
 var async = require("async");
@@ -33,6 +34,41 @@ var s = schedule.scheduleJob('*/5 * * * * *', function(){
       email.save();
     });
   });
+});
+
+var s1 = schedule.scheduleJob('*/5 * * * * *', function(){
+  var yesterday = new Date();
+  yesterday = yesterday.setDate(yesterday.getDate() - 1);
+  User.find({ 'subscribed': 'subscribed' }, function (err, users) {
+    if(err) return next(err);
+    if(!users.length) return;
+    let addresses = "";
+    for (var i = 0; i < users.length; i++) {
+      addresses = users[i].email?`${addresses},${users[i].email}`:addresses;
+    }
+    if (addresses) addresses = addresses.substring(1);
+    Item.find({ last_check_date: { $exists: true, $lt: yesterday }, min_quantity: {$gt: 0} })
+    .exec((err, items) => {
+      items.forEach(i=>{
+        if(i.quantity_available < i.min_quantity) {
+          let body = "Quantity of "+i.name + " is below minimum. Please restock ASAP!";
+          body += `Name: ${i.name}`;
+          body += `Total quantity: ${i.quantity}`;
+          body += `Quantity avaiable: ${i.quantity_available}`;
+          body += `Minimum quantity: ${i.min_quantity}`;
+          mailer.send({
+            to: addresses,
+            subject: "Quantity of "+i.name + " is below minimum",
+            text: body,
+          });
+          i.last_check_date = new Date();
+          i.save();
+        }
+      });
+    });
+  });
+
+  
 });
 
 function send(email, callback) {
