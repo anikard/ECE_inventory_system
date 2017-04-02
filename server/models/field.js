@@ -10,7 +10,8 @@ var FieldSchema = new mongoose.Schema({
   access: {type: String, default: "public"},
   req: {type: Boolean, default: false},
   default: {type: {} },
-  date: { type : Date, default: Date.now }
+  date: { type : Date, default: Date.now },
+  perAsset: {type: Boolean, default: false},
 });
 
 mongoose.model('Field', FieldSchema);

@@ -3,6 +3,7 @@ mongoose.Promise = require('bluebird');
 var _ = require('lodash');
 var Item = mongoose.model('Item');
 var Field = mongoose.model('Field');
+var Asset = mongoose.model('Asset');
 var Log = mongoose.model('Log');
 var Tag = mongoose.model('Tag');
 var util = require('./util.js');
@@ -27,43 +28,24 @@ module.exports = (app) => {
     if (!req.body.name)
       return res.status(400).send({ error: "Missing itme name" });
     Item.findOne({ 'name': req.body.name }, function (err, item) {
-      if (err) {
-        return res.status(500).send({ error: err });
-      }
-      if (item) {
-        return res.status(405).send({ error: "Item already exists!" });
-      }
-      props = _.pick(req.body, allFields);
-      item = new Item(props);
+      if (err) next (err);
+      if (item) return res.status(405).send({ error: "Item already exists!" });
+      item = new Item(_.pick(req.body, allFields));
       item.save(function(err){
-        if(err){
-          res.status(500).send({ error: err })
-        } else {
-          var itemArray = [item._id];
-          var itemQuantity = [item.quantity];
-          var name_arr = [item.name];
-          let log = new Log({
-            init_user: req.user._id,
-            item: itemArray,
-            quantity: itemQuantity,
-            quantity_available: itemQuantity,
-            event: "item created",
-            name_list:name_arr
-          });
-
-          log.save(function(err){
-            if(err){
-              res.status(500).send({ error: err });
-              return;
-            }
-          });
-
-
-
-
-            res.status(200).send("success"); //  end the function to return
-          }
+        if(err) return next(err);
+        let log = new Log({
+          init_user: req.user._id,
+          item: [item._id],
+          quantity: [item.quantity],
+          quantity_available: [item.quantity],
+          event: "item created",
+          name_list:[item.name]
         });
+        log.save(function(err){
+          if(err) return next(err);
+          res.status(200).send("success"); 
+        });
+      });
     });
   });
 
@@ -97,52 +79,20 @@ module.exports = (app) => {
   });
 
   app.post('/api/item/update', util.requirePrivileged, function(req, res, next) {
-    if (! req.body._id && !req.body.item) return res.status(400).send({ error: "Missing ref id" });
-    req.body._id = req.body._id || req.body.item || req.body.id;
-
-    Item.findOne({ '_id': req.body._id }, function (err, item) {
-      if (err) return next(err);
-      if (!item) return res.status(405).send({ error: "Missing item? Check the ID" });
-
-      _.assign(item, _.pick(req.body, allFields));
-      item.save((err) => {
-        var message = "updated an item";
-
-        if(req.user.status === "admin"){
-          if(req.body.quantity < item.quantity){
-            message = "admin decreased quantity";
-          }
-          if(req.body.quantity > item.quantity){
-            message = "admin increased quantity";
-          }
-        }
-        else{
-          if(req.body.quantity < item.quantity){
-            message = "manager logged a loss";
-          }
-          if(req.body.quantity > item.quantity){
-            message = "manager logged an acquisition";
-          }
-
-        }
-
-        var itemArray = [item._id];
-        var itemQuantity = [req.body.quantity];
-        var name_arr = [item.name];
-
-        let log = new Log({
-          init_user: req.user._id,
-          item: itemArray,
-          quantity: itemQuantity,
-          event: message,
-          name_list:name_arr
-        });
-        log.save(function(err){
-          if(err) return next(err);
-          res.status(200).json(item);
-        }); 
-      });
+    update(req.user, req.body, (err, item)=>{
+      if(err) return next(err);
+      res.status(200).send(item);
     });
+    
+  });
+
+  app.post('/api/item/updateAll', util.requirePrivileged, function(req, res, next) {
+    if(!req.body || !req.body.length) return res.status(400).send({ error: "Malformatted item array" });
+    async.each(req.body, (i, cb) => update(req.user, i, cb),
+      (err) => {
+        if (err) return next(err);
+        res.status(200).send("success");
+      });
   });
 
   app.post('/api/item/addAll', util.requirePrivileged, function(req, res, next) {
@@ -151,8 +101,6 @@ module.exports = (app) => {
       return res.status(400).send({ error: "Empty body" });
 
     imports = JSON.parse(req.body.imports);
-    // imports.quantity_available = imports.quantity;
-    console.log(imports);
     let set = new Set();
     imports.forEach(e => set.add(e.name));
     let names = _.map(imports, e => e.name);
@@ -166,7 +114,9 @@ module.exports = (app) => {
         if (e.tags && e.tags.length) {
           e.tags.forEach(addTag);
         }
-        return new Item(_.pick(e, allFields))
+        let item = new Item(_.pick(e, allFields));
+        item.quantity_available = item.quantity;
+        return item;
       }
       );
       
@@ -177,30 +127,26 @@ module.exports = (app) => {
               return next("DB error");
             });
           } else {
-
               let quantity_arr = [];
               items.forEach(i=>quantity_arr.push(i.quantity));
-
               let name_arr = [];
               items.forEach(i=>name_arr.push(i.name));
-
               let arr = [];
               items.forEach(i=>arr.push(i));
 
+              let log = new Log({
+                init_user: req.user._id,
+                item: arr,
+                quantity: quantity_arr,
+                event: "bulk import",
+                name_list:name_arr
+              });
 
-                let log = new Log({
-                  init_user: req.user._id,
-                  item: arr,
-                  quantity: quantity_arr,
-                  event: "bulk import",
-                  name_list:name_arr
-                });
-
-                log.save(function(err){
-                  if(err){
-                    console.log(err);
-                  }
-                });
+              log.save(function(err){
+                if(err){
+                  console.log(err);
+                }
+              });
 
             return res.status(200).send("success");
           }
@@ -210,6 +156,59 @@ module.exports = (app) => {
 
   });
 
+}
+
+function update(user, newItem, callback) {
+  async.waterfall([
+      (cb) => {
+        if (!newItem) return cb({status:400, message: "Missing item body"});
+        newItem._id = newItem._id || newItem.item || newItem.id;
+        if (!newItem._id) return cb({status:400, message: "Missing ref id"});
+        Item.findOne({ '_id': newItem._id })
+        .exec((err, item) => {
+          if (err) return cb(err);
+          if (!item) return cb({status:405, message: "Missing item? Check the ID"});
+          cb(null, item);
+        })
+      },
+      (item, cb) => {
+        _.assign(item, _.pick(newItem, allFields));
+        item.save((err, i)=>cb(err,i));
+      },
+      (item, cb) => {
+        var message = `Updated item: ${item.name}`;
+        if(user.status === "admin"){
+          if(newItem.quantity < item.quantity){
+            message = "Admin decreased quantity";
+          }
+          if(newItem.quantity > item.quantity){
+            message = "Admin increased quantity";
+          }
+        } else{
+          if(newItem.quantity < item.quantity){
+            message = "Manager logged a loss";
+          }
+          if(newItem.quantity > item.quantity){
+            message = "Manager logged an acquisition";
+          }
+        }
+        var itemArray = [item._id];
+        var itemQuantity = [item.quantity];
+        var name_arr = [item.name];
+
+        let log = new Log({
+          init_user: user._id,
+          item: itemArray,
+          quantity: itemQuantity,
+          event: message,
+          name_list:name_arr
+        });
+        log.save(err=>{
+          if(err) return cb(err);
+          cb(null, item);
+        })
+      }
+  ], callback);
 }
 
 function addTag(name) {

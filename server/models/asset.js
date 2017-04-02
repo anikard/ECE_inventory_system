@@ -6,11 +6,12 @@
 /********************************************************/
 
 var mongoose = require('mongoose');
-//var mailer = require('../controllers/mailer.js');
-
-var AssetSchema = new mongoose.Schema({
-    assetTag: {type: String, default: "", unique: true},
-    custom_fields: {}
-});
+var Schema = mongoose.Schema;
+var AssetSchema = new Schema({
+  assetTag: {type: String, unique: true, required: true},
+  item: {type: Schema.ObjectId, ref:'Item', required: true, autopopulate: true},
+  fields: {},
+}, { timestamps: { createdAt: 'created_at',  updatedAt: 'updated_at'} });
+AssetSchema.plugin(require('mongoose-autopopulate'));
 
 mongoose.model('Asset', AssetSchema);
