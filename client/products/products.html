@@ -121,8 +121,12 @@
 
     <input class = "feedback-input" type="number" min="1" ng-model="new_product.quantity" placeholder="quantity" required>
 
-    <!-- REQUIREMENT: asset tags -->
-     <input class = "feedback-input" type="number" min="1" ng-model="new_product.assetTag" placeholder="Add an asset tag if you wish to configure this item as assets.">
+    <!-- REQUIREMENT: assets -->
+     <!-- <input class = "feedback-input" type="number" min="1" ng-model="new_product.assetTag" placeholder="Add an asset tag if you wish to configure this item as assets."> -->
+     <select id="asset_select" class="feedback-input" name="assetOptions" ng-change="assetClicked()" ng-model="assetOption">
+      <option value="" selected>This item is not an asset.</option>
+      <option value="isAsset">This item is an asset.</option>
+    </select>
 
 
      <h3>Custom Fields</h3>
