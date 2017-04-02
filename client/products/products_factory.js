@@ -270,6 +270,15 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     console.log(cleanCustomFields);
     $scope.currentTags = [];
     $scope.customFields = [];
+
+    // configuring items as assets
+    if ($scope.new_product.assetTag) {
+      $scope.new_product.isAsset = true;
+    }
+    else {
+      $scope.new_product.isAsset = false;
+    }
+
     ProductsFactory.addProduct($scope.new_product, function(data) {
       if(data.error) {
         $scope.errorMessage = data.error;
