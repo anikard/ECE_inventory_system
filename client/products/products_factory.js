@@ -153,6 +153,7 @@ products_app.controller('productsController', function($scope, $window, $rootSco
   $scope.products = ProductsFactory.getproducts(function(data) {
       $scope.products = data;
       $scope.originalProducts = data;
+      // $scope.new_product.isAsset = false;
 
       /** PAGINATION **/
 
@@ -253,6 +254,18 @@ products_app.controller('productsController', function($scope, $window, $rootSco
   console.log($scope.tags);
   console.log($scope.fields);
 
+  // configuring items as assets
+    $scope.assetClicked = function() {
+      console.log('selected asset');
+      if($scope.assetOption === "isAsset") {
+        alert('selected asset');
+        $scope.new_product.isAsset = true;
+      }
+      else {
+        $scope.new_product.isAsset = false;
+      }
+    }   
+
   $scope.addProduct = function() {
     console.log("Query submited!");
     console.log("new product");
@@ -271,13 +284,14 @@ products_app.controller('productsController', function($scope, $window, $rootSco
     $scope.currentTags = [];
     $scope.customFields = [];
 
-    // configuring items as assets
-    if ($scope.new_product.assetTag) {
-      $scope.new_product.isAsset = true;
-    }
-    else {
-      $scope.new_product.isAsset = false;
-    }
+    // // configuring items as assets
+    // $scope.assetClicked = function() {
+    //   console.log('selected asset');
+    //   if($scope.assetOption === "isAsset") {
+    //     alert('selected asset');
+    //     $scope.new_product.isAsset = true;
+    //   }
+    // }   
 
     ProductsFactory.addProduct($scope.new_product, function(data) {
       if(data.error) {

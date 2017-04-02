@@ -201,9 +201,13 @@
 
 
           <p>
-            <label><b>Asset Tag:  </b></label>
-            <input ng-show="adminOnly" type="number" min="1" ng-readonly="!editing" ng-model="currentProduct.assetTag"required/>
-            <span ng-show="!adminOnly" ng-bind="currentProduct.assetTag" />
+            <label><b>Item:  </b></label>
+            <!-- <input type="checkbox" ng-disabled="!editing" ng-model="currentProduct.isAsset"> -->
+            <div class="slideThree">  
+            <input type="checkbox" ng-disabled="!editing" ng-model="currentProduct.isAsset" ng-bind="currentProduct.isAsset" value="assetSelected" id="slideThree" name="check" />
+            <label for="slideThree"></label>
+          </div>
+
           </p>
 
 
