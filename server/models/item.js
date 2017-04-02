@@ -17,6 +17,7 @@ var ItemSchema = new mongoose.Schema({
   tags: [String],
   image: {type: String, default: ""},
   custom_fields: {},
+  isAsset: {type: Boolean, default: false}
 
 }, { timestamps: { createdAt: 'created_at',  updatedAt: 'updated_at'} });
 
