@@ -8,7 +8,7 @@ var Tag = mongoose.model('Tag');
 var util = require('./util.js');
 var async = require("async");
 
-const allFields = ['name','quantity', 'quantity_available', 'model','description','tags','image','fields', 'min_quantity', "last_check_date"];
+const allFields = ['name','quantity', 'quantity_available', 'model','description','tags','image','fields', 'min_quantity', "last_check_date", "isAsset", "assetTag"];
 
 module.exports = (app) => {
   app.get('/api/item/show', util.requireLogin, function(req, res, next) {
