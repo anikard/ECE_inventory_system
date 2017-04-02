@@ -19,6 +19,6 @@ var ItemSchema = new Schema({
   image: {type: String, default: ""},
   isAsset: {type: Boolean, default: false},
   assets: [{type:Schema.ObjectId, ref:'Asset'}]
-}, { timestamps: { createdAt: 'created_at',  updatedAt: 'updated_at'} });
+}, { timestamps: { createdAt: 'createdAt',  updatedAt: 'updatedAt'} });
 
 mongoose.model('Item', ItemSchema);

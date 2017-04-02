@@ -11,10 +11,9 @@ var LogSchema = new mongoose.Schema({
   request: {type:Schema.ObjectId, ref:'Request'},
   event: {type: String, default: ""},
   rec_user: {type:Schema.ObjectId, ref:'User'},
-  date: { type : Date, default: Date.now },
   admin_actions: {type: String, default: ""},  
   name_list: [{type: String}]
-});
+}{ timestamps: { createdAt: 'date'} });
 
 mongoose.model('Log', LogSchema);
 

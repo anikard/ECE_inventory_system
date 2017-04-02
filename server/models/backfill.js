@@ -10,9 +10,13 @@ var BackfillSchema = new Schema({
   	item: {type:Schema.ObjectId, ref:'Item', autopopulate: true},
   	quantity: {type: Number, default: 0}
   }],
-  status: {type: String, default:"requested", enum: ['requested', 'inTransit', 'denied', 'done', 'closed']},
+  status: {type: String, default:"requested", enum: ['requested', 'inTransit', 'denied', 'fulfilled', 'closed']},
   date: { type : Date, default: Date.now },
-}, { timestamps: { createdAt: 'created_at',  updatedAt: 'updated_at'} });
+}, { timestamps: { createdAt: 'createdAt',  updatedAt: 'updatedAt'} });
 BackfillSchema.plugin(require('mongoose-autopopulate'));
 
-mongoose.model('Request', RequestSchema);
+BackfillSchema.statics.findByRequest = (req, cb) => {
+  return this.find({request: req}, cb);
+}
+
+mongoose.model('Backfill', BackfillSchema);

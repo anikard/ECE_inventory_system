@@ -22,7 +22,7 @@ var UserSchema = new mongoose.Schema({
   subscribed: {type: String, default: ""},
   //orders: [{type: Schema.Types.ObjectId, ref:'Order'}],
   //active: String
-}); 
+}, { timestamps: { createdAt: 'createdAt',  updatedAt: 'updatedAt'} }); 
 
 UserSchema.methods.setPassword = function(password){
   this.salt = crypto.randomBytes(16).toString('hex');
