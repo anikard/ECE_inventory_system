@@ -13,7 +13,7 @@ var LogSchema = new mongoose.Schema({
   rec_user: {type:Schema.ObjectId, ref:'User'},
   admin_actions: {type: String, default: ""},  
   name_list: [{type: String}]
-}{ timestamps: { createdAt: 'date'} });
+}, { timestamps: { createdAt: 'date'} });
 
 mongoose.model('Log', LogSchema);
 
