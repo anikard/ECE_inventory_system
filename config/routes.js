@@ -31,6 +31,16 @@ module.exports = (app) => {
   require('./../server/controllers/email.js')(app);
   require('./../server/controllers/tags.js')
   require('./../server/controllers/mailer.js').routes(app);
+  require('./../server/controllers/backfill.js').routes(app);
+
+  app.use(function (err, req, res, next) {
+    console.error(err.stack);
+    if (err.status) {
+      res.status(err.status).send(err.message)
+    } else {
+      res.status(500).send({error: err});
+    }
+  })
 
   app.get('/home', function(req, res) {
     res.redirect('/');

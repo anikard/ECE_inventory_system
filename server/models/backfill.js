@@ -10,6 +10,7 @@ var BackfillSchema = new Schema({
   	item: {type:Schema.ObjectId, ref:'Item', autopopulate: true},
   	quantity: {type: Number, default: 0}
   }],
+  pdf: { type : String, default: ""},
   status: {type: String, default:"requested", enum: ['requested', 'inTransit', 'denied', 'fulfilled', 'closed']},
   date: { type : Date, default: Date.now },
 }, { timestamps: { createdAt: 'createdAt',  updatedAt: 'updatedAt'} });

@@ -20,8 +20,6 @@ var UserSchema = new mongoose.Schema({
   active: {type: Boolean, default: true},
   apiKey: {type: String, default: ""},
   subscribed: {type: String, default: ""},
-  //orders: [{type: Schema.Types.ObjectId, ref:'Order'}],
-  //active: String
 }, { timestamps: { createdAt: 'createdAt',  updatedAt: 'updatedAt'} }); 
 
 UserSchema.methods.setPassword = function(password){

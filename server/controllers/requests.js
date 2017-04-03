@@ -55,7 +55,6 @@ function add (req, res) {
 	// User request
 	id = req.user._id;
 	Cart.findOne({user: req.user._id})
-	.populate('items.item')
 	.exec( function(err, cart) {
 		if (err)
 			return res.status(500).send({ error: err });
@@ -75,8 +74,7 @@ function add (req, res) {
 			type: req.body.type || "disburse"
         });
         request.save((err,request) => {
-        	if (err)
-				return res.status(500).send({ error: err });
+        	if (err) next(err);
 
 			let name_arr = []
 			cart.items.forEach(i=>name_arr.push(i.name));
