@@ -3,10 +3,9 @@
 /********************************************************/
 
 var mongoose = require('mongoose');
-//var mailer = require('../controllers/mailer.js');
 var Schema = mongoose.Schema;
 
-var ItemSchema = new mongoose.Schema({
+var ItemSchema = new Schema({
   name: {type: String, required: true, index: true, unique: true },
   quantity: {type: Number, default: 0},
   quantity_available: {type: Number, default: 0},
@@ -17,11 +16,8 @@ var ItemSchema = new mongoose.Schema({
   fields: {type: {}},
   tags: [String],
   image: {type: String, default: ""},
-  custom_fields: {},
   isAsset: {type: Boolean, default: false},
   assets: [{type:Schema.ObjectId, ref:'Asset'}]
-
-
-}, { timestamps: { createdAt: 'created_at',  updatedAt: 'updated_at'} });
+}, { timestamps: { createdAt: 'createdAt',  updatedAt: 'updatedAt'} });
 
 mongoose.model('Item', ItemSchema);

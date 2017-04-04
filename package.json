@@ -21,7 +21,8 @@
     "async": "latest",
     "node-schedule": "latest",
     "dateformat": "latest",
-    "bluebird": "latest"
+    "bluebird": "latest",
+    "mongoose-autopopulate": "latest"
 
   }
 }
