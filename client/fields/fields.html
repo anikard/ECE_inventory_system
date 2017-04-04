@@ -27,6 +27,7 @@
         <td> Name </td>
         <td> Type </td>
         <td> Access </td>
+        <td> Per Asset </td>
         <!-- TODO-if time: <td> Default Value </td> -->
         <td ng-show="adminOnly"> Action </td>
       </tr>
@@ -35,6 +36,7 @@
         <td ng-bind="field.name"></td>
         <td ng-bind="field.type"></td>
         <td ng-bind="field.access"></td>
+        <td ng-bind="field.perAsset"></td>
         <!-- <td ng-bind="field.default_value"></td> -->
         <td ng-show="adminOnly"><button class="remove" ng-click="viewField(field)" data-toggle="modal" data-target="#fieldModal">View</button></td>
       </tr>
@@ -54,8 +56,14 @@
         <option value="floating-point">Floating Point Number</option>
       </select>
       <div>
-        <label>Is this field private?
-          <input class="feedback-input" type="checkbox" ng-model="new_field.access" ng-true-value="private" ng-false-value="public">
+        <label style = "display:inline;">Is this field private?
+          <input class="feedback-input" style = "display:inline; width: 1em;" type="checkbox" ng-model="new_field.access" ng-true-value="private" ng-false-value="public">
+        </label>
+      </div>
+
+      <div>
+        <label style = "display:inline;">Is this a per-asset field?
+          <input class="feedback-input" style = "display:inline; width: 1em;" type="checkbox" ng-model="new_field.perAsset" ng-true-value="per-asset" ng-false-value="general">
         </label>
       </div>
       <br>
@@ -94,9 +102,14 @@
               </select>
             </p>
             <p>
-              <label><b>Access Private?:  </b></label>
-              <input type="checkbox" ng-readonly="!editing" ng-model="currentField.access"ng-true-value="private" ng-false-value="public"/>
+              <label><b>Private access?  </b></label>
+              <input type="checkbox" ng-readonly="!editing" ng-model="currentField.access" ng-true-value="private" ng-false-value="public"/>
             </p>
+             <p>
+              <label><b>Per-asset?  </b></label>
+              <input type="checkbox" ng-readonly="!editing" ng-model="currentField.perAsset" ng-true-value="per-asset" ng-false-value="general"/>
+            </p>
+
         </div>
       </div>
 
