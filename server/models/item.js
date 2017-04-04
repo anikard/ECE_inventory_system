@@ -4,6 +4,7 @@
 
 var mongoose = require('mongoose');
 //var mailer = require('../controllers/mailer.js');
+var Schema = mongoose.Schema;
 
 var ItemSchema = new mongoose.Schema({
   name: {type: String, required: true, index: true, unique: true },

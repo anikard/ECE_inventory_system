@@ -44,6 +44,8 @@ function add (req, res) {
 	let id = req.body.user || req.body.userId || req.body._id;
 	if(req.body.convert) {
 		// From Converted Request
+		console.log("REQUEST CONVERSION");
+		console.log(req.body);
 		return convert(id, req, res);
 	}
 	if (id) {
