@@ -287,29 +287,21 @@
         </div>
 
 
+        <!-- todo: make assets -->
+        <p>{{sampleAssets = [{"tag": 1, "fieldVal": 11}, {"tag": 2, "fieldVal": 22}] }}</p>
         <!-- ASSETS -->
         <div ng-show="currentProduct.isAsset">
             <h2>Assets</h2>
             <div class="customerTable" id = "cTable2">
               <table>
                 <tr>
-                  <td> Asset Tag </td>
-                  <td> assetfield1 </td>
-                  <td> assetfield2 </td>
-                  <td> View Asset </td>
+                    <td ng-repeat="aField in assetFields" > {{aField.name}}</td>
                 </tr>
-                <tr>
-                  <td> Tag1 </td>
-                  <td> aaa </td>
-                  <td> bbb </td>
-                  <td> <button class = "remove" ng-click='viewOrder(order)' data-toggle="modal" data-target="#orderModal">View</button> </td>
+                <tr ng-repeat="asset in sampleAssets">
+                    <td>{{asset.tag}}</td>
+                    <td>{{asset.fieldVal}}</td>
+                    <td> <button class = "remove" ng-click='viewOrder(order)' data-toggle="modal" data-target="#orderModal">View</button> </td>
                 </tr>
-                <!-- <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-date'">
-                  <td style="display:none;" ng-bind="order._id"></td>
-                  <td ng-bind="order.customer_name || order.user.username"></td>
-                  <td ng-bind="order.date | date:'short'"></td>
-                  <td><button class = "remove" ng-click='viewOrder(order)' data-toggle="modal" data-target="#orderModal">View</button></td>
-                </tr> -->
               </table>
             </div>
         </div>  
