@@ -17,6 +17,11 @@ module.exports = {
     routes: function(app) {
       app.get('/api/backfill/show', util.requireLogin, show);
       app.post('/api/backfill/add', util.requireLogin, add);
+      app.post('/api/backfill/update', util.requireLogin, update);
+      app.post('/api/backfill/close', util.requireLogin, close);
+      app.post('/api/backfill/approve', util.requireLogin, approve);
+      app.post('/api/backfill/deny', util.requireLogin, deny);
+      app.post('/api/backfill/fulfill', util.requireLogin, done);
 
     }
 }
@@ -34,8 +39,11 @@ function show (req, res, next) {
 
 function add (req, res, next) {
   let backfill = new Backfill(_.pick(req.body, ['items', 'request']));
+  if(req.body.status === "requested" || req.body.status === "inTransit")
+    backfill.status = req.body.status;
   verifyAndSave(backfill, (err, backfill)=>{
     if(err) return next(err);
+    email(backfill, "A new backfill request has been added");
     res.status(200).json(backfill);
   });
 }
@@ -48,6 +56,7 @@ function update (req, res, next) {
     _.assign(backfill, _.pick(req.body,['items']));
     verifyAndSave(backfill, (err, backfill)=>{
       if(err) return next(err);
+      email(backfill, "Your backfill request has been updated");
       res.status(200).json(backfill);
     })
   }) 
@@ -56,6 +65,7 @@ function update (req, res, next) {
 function close (req, res, next) {
   setStatus(req.body._id || req.body.id || req.body.backfill, "closed", (err, backfill)=>{
     if(err) return next(err);
+    email(backfill, "Your backfill request has been closed");
     res.status(200).json(backfill);
   })
 }
@@ -63,6 +73,7 @@ function close (req, res, next) {
 function approve (req, res, next) {
   setStatus(req.body._id || req.body.id || req.body.backfill, "inTransit", (err, backfill)=>{
     if(err) return next(err);
+    email(backfill, "Your backfill request has been approved");
     res.status(200).json(backfill);
   })
 }
@@ -70,6 +81,7 @@ function approve (req, res, next) {
 function deny (req, res, next) {
   setStatus(req.body._id || req.body.id || req.body.backfill, "denied", (err, backfill)=>{
     if(err) return next(err);
+    email(backfill, "Your backfill request has been denied");
     res.status(200).json(backfill);
   })
 }
@@ -77,6 +89,7 @@ function deny (req, res, next) {
 function done (req, res, next) {
   setStatus(req.body._id || req.body.id || req.body.backfill, "fulfilled", (err, backfill)=>{
     if(err) return next(err);
+    email(backfill, "Your backfill request is complete");
     res.status(200).json(backfill);
   })
 }
@@ -107,5 +120,34 @@ function setStatus(id, status, cb) {
     });
 
   })
+}
+
+function email(backfill, subject){
+  backfill.populate('request', (err, backfill)=>{
+    if(!backfill) return console.log('Populate fail in backfill');
+    let request = backfill.request;
+    if(err || !request.user || !request.user.email) return;
+    let user = request.user;
+    let body = "Request Summary\n";
+    body += `User: ${user.name} (${user.username})\n`;
+    body += `Reason: ${request.reason}\n`;
+    body += `Note: ${request.note || 'N/A'}\n`;
+    body += `Status: ${request.status}\n`;
+    body += `Type: ${request.type}\n`;
+    body += `Date: ${request.date}\n\n`;
+    body += `Items:\n`;
+    request.items.forEach(i=>body+=`Name: ${i.item.name}\t\tQuantity: ${i.quantity}\n`);
+    body += `\n\n`;
+    body += 'Backfill Summary\n';
+    body += `Date: ${request.date}\n\n`;
+    body += `Items:\n`;
+    backfill.items.forEach(i=>body+=`Name: ${i.item.name}\t\tQuantity: ${i.quantity}\n`);
+    mailer.send({
+      to: user.email,
+      subject: subject,
+      text: body,
+    });
+  })
+
 }
 

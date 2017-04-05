@@ -1,6 +1,8 @@
 {
   "name": "ECE_Inventory_System",
   "version": "0.0.1",
+  "repository": "https://github.com/anikard/ECE_inventory_system/",
+  "license": "MIT",
   "dependencies": {
     "body-parser": "latest",
     "ejs": "latest",
@@ -22,7 +24,8 @@
     "node-schedule": "latest",
     "dateformat": "latest",
     "bluebird": "latest",
-    "mongoose-autopopulate": "latest"
+    "mongoose-autopopulate": "latest",
+    "mongoose-hidden": "latest"
 
   }
 }

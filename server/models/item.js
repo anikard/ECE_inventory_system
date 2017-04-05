@@ -19,5 +19,6 @@ var ItemSchema = new Schema({
   isAsset: {type: Boolean, default: false},
   assets: [{type:Schema.ObjectId, ref:'Asset'}]
 }, { timestamps: { createdAt: 'createdAt',  updatedAt: 'updatedAt'} });
+ItemSchema.plugin(require('mongoose-autopopulate'));
 
 mongoose.model('Item', ItemSchema);
