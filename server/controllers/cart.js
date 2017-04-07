@@ -51,18 +51,18 @@ function add(req, res) {
       let idx = -1;
       for(i = 0; i < cart.items.length; i++){
         if(cart.items[i].item == req.body.item){
-          cart.items[i].quantity = req.body.quantity;
+          cart.items[i].quantity_requested = req.body.quantity_requested;
           idx = i;
           break;
         }
       }
-      if(idx == -1) cart.items.push(_.pick(req.body,['item','quantity']));
+      if(idx == -1) cart.items.push(_.pick(req.body,['item','quantity_requested']));
     } else {
     	cart = new Cart({
     		user: req.user._id,
     		items: []
     	})
-      cart.items.push(_.pick(req.body,['item','quantity']));
+      cart.items.push(_.pick(req.body,['item','quantity_requested']));
     }
     cart.save((err,cart)=>{
       if(err) {

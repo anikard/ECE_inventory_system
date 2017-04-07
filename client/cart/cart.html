@@ -31,7 +31,7 @@
 
         <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
           <td ng-bind="order.item.name || '[Deleted item]'"></td>
-          <td ng-bind="order.quantity"></td>
+          <td ng-bind="order.quantity_requested"></td>
           <!--<td ng-bind="order.date | date:'short'"></td>-->
           <td><button class = "remove" ng-click='removeFromCart(order)'>Remove</button></td>
         </tr>
@@ -53,7 +53,7 @@
         <option value="" selected disabled>Item</option>
         <option ng-repeat="product in products" value="{{product._id}}">{{product.name}} || {{product.description}}</option>
       </select>
-      <input class = "feedback-input" type="number" ng-model="new_order.quantity" placeholder="quantity" required>
+      <input class = "feedback-input" type="number" ng-model="new_order.quantity_requested" placeholder="quantity" required>
       <input type="submit" ng-disabled="createReqForm.$invalid" ng-click="addToCart()">
       <br>
     </form>
@@ -126,7 +126,7 @@
               </tr>
               <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-status'">
                 <td ng-bind="order.item.name"></td>
-                <td ng-bind="order.quantity"></td>
+                <td ng-bind="order.quantity_requested"></td>
               </tr>
             </table>
 

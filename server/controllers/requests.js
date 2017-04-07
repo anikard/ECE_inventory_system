@@ -42,10 +42,6 @@ function show (req, res) {
 
 function add (req, res) {
 	let id = req.body.user || req.body.userId || req.body._id;
-	if(req.body.convert) {
-		// From Converted Request
-		return convert(id, req, res);
-	}
 	if (id) {
 		// Direct disbursal
 		if (req.user.status != "admin" && req.user.status != "manager")
@@ -71,10 +67,10 @@ function add (req, res) {
         	items: cart.items,
         	reason: req.body.reason || "",
 			status: "outstanding",
-			type: req.body.type || "disburse"
-        });
-        request.save((err,request) => {
-        	if (err) next(err);
+			//type: req.body.type || "disburse"
+    });
+    request.save((err,request) => {
+    	if (err) next(err);
 
 			let name_arr = []
 			cart.items.forEach(i=>name_arr.push(i.name));
@@ -102,7 +98,7 @@ function add (req, res) {
     			});
 
 				let quantity_arr = [];
-				request.items.forEach(i=>quantity_arr.push(i.quantity));
+				request.items.forEach(i=>quantity_arr.push(i.quantity_requested));
 
 				let name_arr = [];
 				request.items.forEach(i=>name_arr.push(i.item.name));
@@ -121,83 +117,6 @@ function add (req, res) {
 						return res.status(500).send({ error: err });
 					return res.status(200).json(request);
 				});
-			});
-		});
-	});
-}
-
-function convert(id, req, res) {
-	let request = new Request({
-		user: id,
-		items: req.body.items,
-		reason: req.body.reason || "",
-		status: req.body.status || "outstanding",
-		note: req.body.note || "",
-		type: req.body.type || "disburse"
-	});
-	request.save((err,request) => {
-		if (err) {
-			return res.status(500).send({ error: err });
-		}
-		request.populate('items.item', function(err, request) {
-			if (request.status === "disbursed") {
-				for (let i = 0;i<request.items.length;i++){
-
-					if (req.body.previousStatus === "outstanding") {
-						request.items[i].item.quantity -= req.body.items[i].quantity;
-						request.items[i].item.quantity_available -= req.body.items[i].quantity;
-					}
-					else if (req.body.previousStatus === "onLoan") {
-						request.items[i].item.quantity -= req.body.items[i].quantity;
-					}
-					else {
-						console.log("Error in converted disbursment");
-					}
-					request.items[i].item.save();
-				}
-			}
-
-			if (request.status === "onLoan") {
-				for (let i = 0;i<request.items.length;i++){
-					request.items[i].item.quantity_available -= req.body.items[i].quantity;
-					request.items[i].item.save();
-				}
-			}
-
-			if (request.status === "returned") {
-				for (let i = 0;i<request.items.length;i++){
-					request.items[i].item.quantity_available += req.body.items[i].quantity;
-					request.items[i].item.save();
-				}
-			}
-
-			User.findOne({ _id: id}, (err, user)=>{
-				if (err) return next(err);
-				email(request, `Request update for ${user.name}`);
-			});
-
-			let name_arr = []
-			req.body.items.forEach(i=>name_arr.push(i.name));
-			let arr = []
-			request.items.forEach(i=>arr.push(i.item));
-			let quantity_arr = []
-			request.items.forEach(i=>quantity_arr.push(i.quantity));
-
-			let log = new Log({
-					init_user: id,
-					item: arr,
-					event: "Request",
-					request: request,
-					rec_user: id,
-					quantity: quantity_arr,
-					name_list: name_arr,
-					admin_actions: request.status
-			});
-			log.save((err)=>{
-				if (err)	{
-					return res.status(500).send({ error: err });
-				}
-				return res.status(200).json(request);
 			});
 		});
 	});
@@ -330,199 +249,19 @@ function del (req, res) {
 
 	});
 }
-
 function update (req, res) {
 	Request.findOne({ '_id': req.body._id })
 	.populate('items.item')
 	.exec( function (err, request) {
 		if (err) return res.status(500).send({ error: err});
-
-		// TODO: refactor the following if tree into one clause
-		if (request.status === "outstanding" && req.body.status === "disbursed") {
-			if (req.user.status != "admin" && req.user.status != "manager")
-				return res.status(401).send({ error: "Unauthorized operation"});
-			for (let i = 0;i<request.items.length;i++){
-				if (request.items[i].item.quantity_available < request.items[i].quantity)
-					return res.status(405).send({
-						error: `Request quantity of ${request.items[i].item.name} exceeds stock limit`
-					});
-			}
-			for (let i = 0;i<request.items.length;i++){
-				request.items[i].item.quantity -= request.items[i].quantity;
-				request.items[i].item.quantity_available -= request.items[i].quantity;
-			}
-			request.note = req.body.note || request.note;
-			request.status = "approved";
-			request.save(function (err, request) {
-				if (err) return res.status(500).send({ error: err});
-				for (let i = 0;i<request.items.length;i++){
-					request.items[i].item.save();
-				}
-
-				let arr = []
-	    		request.items.forEach(i=>arr.push(i.item));
-
-				let quantity_arr = []
-				request.items.forEach(i=>quantity_arr.push(i.quantity));
-
-				let name_arr = []
-
-				request.items.forEach(i=>name_arr.push(i.item.name));
-
-				email(request, 'Your request has been approved');
-
-	    		let log = new Log({
-					init_user: req.user,
-					item: arr,
-	 				event: "Request",
-	 				request: request,
-	 				rec_user: request.user,
-	 				admin_actions: "Approved",
-					quantity: quantity_arr,
-					name_list: name_arr
-				});
-				log.save();
-				return res.status(200).json(request);
-			});
-		}
-
-		else if (req.body.previous_status === "onLoan" && req.body.status === "disbursed") {
-			if (req.user.status != "admin" && req.user.status != "manager")
-				return res.status(401).send({ error: "Unauthorized operation"});
-			for (let i = 0;i<request.items.length;i++){
-				request.items[i].item.quantity -= request.items[i].quantity;
-			}
-			request.note = req.body.note || request.note;
-			request.status = "disbursed";
-			request.save(function (err, request) {
-				if (err) return res.status(500).send({ error: err});
-				for (let i = 0;i<request.items.length;i++){
-					request.items[i].item.save();
-				}
-
-				email(request, 'Your request has been updated from on-loan to disbursed');
-
-				let arr = []
-				request.items.forEach(i=>arr.push(i.item));
-
-				let quantity_arr = []
-				request.items.forEach(i=>quantity_arr.push(i.quantity));
-
-				let name_arr = []
-				request.items.forEach(i=>name_arr.push(i.item.name));
-
-				let log = new Log({
-					init_user: req.user,
-					item: arr,
-					event: "Request",
-					request: request,
-					rec_user: request.user,
-					admin_actions: "on loan to disburse",
-					quantity: quantity_arr,
-					name_list: name_arr
-				});
-				log.save();
-				return res.status(200).json(request);
-			});
-		}
-
-		else if (req.body.status === "onLoan") {
-			if (req.user.status != "admin" && req.user.status != "manager") {
-				return res.status(401).send({ error: "Unauthorized operation"});
-			}
-			for (let i = 0;i<request.items.length;i++){
-				if (request.items[i].item.quantity_available < request.items[i].quantity)
-					return res.status(405).send({
-						error: `Request quantity of ${request.items[i].item.name} exceeds stock limit`
-					});
-			}
-			for (let i = 0;i<request.items.length;i++){
-				request.items[i].item.quantity_available -= request.items[i].quantity;
-			}
-			request.note = req.body.note || request.note;
-			request.status = req.body.status;
-			request.type = "loan";
-			request.save(function (err, request) {
-				if (err) return res.status(500).send({ error: err});
-				for (let i = 0;i<request.items.length;i++){
-					request.items[i].item.save();
-				}
-
-				email(request, 'New Loan Request');
-
-				let arr = []
-				request.items.forEach(i=>arr.push(i.item));
-
-				let quantity_arr = []
-				request.items.forEach(i=>quantity_arr.push(i.quantity));
-
-				let name_arr = []
-				request.items.forEach(i=>name_arr.push(i.item.name));
-
-				let log = new Log({
-					init_user: req.user,
-					item: arr,
-					event: "Request",
-					request: request,
-					rec_user: request.user,
-					admin_actions: "Loan",
-					quantity: quantity_arr,
-					name_list: name_arr
-				});
-				log.save();
-				return res.status(200).json(request);
-			});
-		}
-
-		else if (req.body.status === "returned") {
-			if (req.user.status != "admin" && req.user.status != "manager") {
-				return res.status(401).send({ error: "Unauthorized operation"});
-			}
-			for (let i = 0;i<request.items.length;i++){
-				request.items[i].item.quantity_available += request.items[i].quantity;
-			}
-			request.note = req.body.note || request.note;
-			request.status = req.body.status;
-			request.save(function (err, request) {
-				if (err) return res.status(500).send({ error: err});
-				for (let i = 0;i<request.items.length;i++){
-					request.items[i].item.save();
-				}
-
-				email(request, 'Your request has been marked as returned');
-
-				let arr = []
-				request.items.forEach(i=>arr.push(i.item));
-
-				let quantity_arr = []
-				request.items.forEach(i=>quantity_arr.push(i.quantity));
-
-				let name_arr = []
-				request.items.forEach(i=>name_arr.push(i.item.name));
-
-				let log = new Log({
-					init_user: req.user,
-					item: arr,
-					event: "Request",
-					request: request,
-					rec_user: request.user,
-					admin_actions: "Return",
-					quantity: quantity_arr,
-					name_list: name_arr
-				});
-				log.save();
-				return res.status(200).json(request);
-			});
-		}
-
-		else {
-			_.assign(request,_.pick(req.body,['note','status','type','reason','user']));
-			request.save(function (err, request) {
-				if (err) return res.status(500).send({ error: err});
-				email(request, 'Your request has been updated');
-				return res.status(200).json(request);
-			});
-		}
+		req.body.dateUpdated = Date.now;
+		var logStats = generateLogStats(request.items, req.body.items);
+		_.assign(request,_.pick(req.body,['user', 'reason', 'items', 'notes', 'dateUpdated']));
+		request.save(function (err, request) {
+			if (err) return res.status(500).send({ error: err});
+			email(request, 'Your request has been updated');
+			return res.status(200).json(request);
+		});
 	});
 }
 
