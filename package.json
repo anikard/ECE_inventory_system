@@ -25,7 +25,8 @@
     "dateformat": "latest",
     "bluebird": "latest",
     "mongoose-autopopulate": "latest",
-    "mongoose-hidden": "latest"
+    "mongoose-hidden": "latest",
+    "formidable": "latest"
 
   }
 }
