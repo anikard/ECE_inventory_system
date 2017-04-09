@@ -313,7 +313,9 @@ var orders_app = angular.module('orders_app', []);
           $scope.thisOrder.items[i].quantity_disburse += (
             item.outstanding_disburse + item.loan_disburse
           );
-          $scope.thisOrder.items[i].quantity_loan += item.outstanding_loan;
+          $scope.thisOrder.items[i].quantity_loan += (
+            item.outstanding_loan - (item.loan_return + item.loan_disburse)
+          );
           $scope.thisOrder.items[i].quantity_deny += item.outstanding_deny;
           $scope.thisOrder.items[i].quantity_return += item.loan_return;
           $scope.thisOrder.items[i].quantity_backfill += (

@@ -122,18 +122,20 @@
            </span>
 
            <span id="disburse" ng-show="hasDisburse()">
-             <h5>Disburse/Deny Table</h5>
+             <h5>Completed Requests</h5>
              <table id="disburseTable" class="small table">
                <tr>
                  <td> Item </td>
                  <td> Quantity Disbursed </td>
                  <td> Quantity Denied </td>
+                 <td> Quanitty Returned </td>
                </tr>
                <tr ng-repeat="item in thisOrder.items">
                 <span ng-show="item.quantity_disburse > 0 || item.quantity_deny > 0">
                  <td ng-bind="item.item.name || '[Deleted item]'"></td>
                  <td ng-bind="item.quantity_disburse"></td>
                  <td ng-bind="item.quantity_deny"></td>
+                 <td ng-bind="item.quantity_return"></td>
                 </span>
                </tr>
              </table>

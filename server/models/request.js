@@ -21,7 +21,7 @@ var RequestSchema = new mongoose.Schema({
   notes: [{type: String, default:""}],
   //status: {type: String, default:"outstanding", enum: ['outstanding', 'onLoan', 'disbursed', 'returned', 'closed', 'approved', 'converted', 'denied']},
   date: { type : Date, default: Date.now },
-  dateUpdated: { type : Date, default: null},
+  dateUpdated: { type : Date, default: Date.now},
 
 });
 RequestSchema.plugin(require('mongoose-autopopulate'));

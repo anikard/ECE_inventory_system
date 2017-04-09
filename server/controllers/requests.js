@@ -254,7 +254,9 @@ function update (req, res) {
 	.populate('items.item')
 	.exec( function (err, request) {
 		if (err) return res.status(500).send({ error: err});
-		req.body.dateUpdated = Date.now;
+		var nowDate = new Date();
+		var nowISO = nowDate.toISOString();
+		req.body.dateUpdated = nowISO;
 		var logStats = generateLogStats(request.items, req.body.items);
 		_.assign(request,_.pick(req.body,['user', 'reason', 'items', 'notes', 'dateUpdated']));
 		request.save(function (err, request) {
@@ -263,6 +265,23 @@ function update (req, res) {
 			return res.status(200).json(request);
 		});
 	});
+}
+
+function generateLogStats(oldItems, newItems) {
+	// TODO: BROKEN: Ask mike how to update the item quantity and q_avail in this function
+	var logStats = {};
+	for (var i = 0; i < oldItems.length; i++) {
+		var quantity_and_available_delta = oldItems[i].quantity_disburse - newItems[i].quantity_disburse;
+		var quantity_available_only_delta =
+			(newItems[i].loan_return - newItems[i].outstanding_loan);
+		console.log("log stats");
+		console.log(oldItems[i].item.name);
+		console.log(quantity_and_available_delta);
+		console.log(quantity_available_only_delta);
+		oldItems[i].item.quantity += quantity_and_available_delta;
+		oldItems[i].item.quantity_available +=
+			(quantity_and_available_delta + quantity_available_only_delta);
+	}
 }
 
 function email(request, subject){
