@@ -178,14 +178,6 @@ var orders_app = angular.module('cart_app', []);
           $scope.modalErrorMessage = "Reason required";
         }
         else {
-          if($scope.modalType === "Direct") {
-            for (var i = 0; i < $scope.orders.length; i++) {
-              $scope.this_request.type === "disburse" ?
-              $scope.orders[i].quantity_disburse = $scope.orders[i].quantity_requested :
-              $scope.orders[i].quantity_loan = $scope.orders[i].quantity_requested;
-              $scope.orders[i].quantity_requested = 0;
-            }
-          }
           console.log("createRequest from cart controller scope");
           $scope.this_request.items = $scope.orders;
           console.log($scope.this_request);
@@ -199,6 +191,7 @@ var orders_app = angular.module('cart_app', []);
               $scope.modalErrorMessage = null;
               $scope.refreshOrders();
               $scope.this_request = {};
+              //window.location.assign('/orders/orders.html');
             }
           });
         }

@@ -41,34 +41,56 @@ function show (req, res) {
 }
 
 function add (req, res) {
+	var direct = true;
 	let id = req.body.user || req.body.userId || req.body._id;
+
 	if (id) {
 		// Direct disbursal
-		if (req.user.status != "admin" && req.user.status != "manager")
+		if (req.user.status != "admin" && req.user.status != "manager") {
 			return res.status(403).send({ error: "Unauthorized" });
-		return direct(id, req, res);
+		}
+		for(var i = 0; i < req.body.items.length; i++) {
+			req.body.type === "disburse" ?
+			req.body.items[i].quantity_disburse = req.body.items[i].quantity_requested :
+			req.body.items[i].quantity_loan = req.body.items[i].quantity_requested;
+			req.body.items[i].quantity_requested = 0;
+		}
 	}
-	// User request
-	id = req.user._id;
+
+	if(!id) {
+		// User request
+		console.log("USER REQ");
+		id = req.user._id;
+		direct = false;
+	}
+
 	Cart.findOne({user: req.user._id})
 	.exec( function(err, cart) {
 		if (err)
 			return res.status(500).send({ error: err });
 		if (!cart || cart.items.length === 0)
 			return res.status(400).send({ error: "Empty cart" });
-		for (let i = 0;i<cart.items.length;i++){
-			/*
-			if (cart.items[i].item.quantity_available < cart.items[i].quantity)
-				return res.status(405).send({ error: `Request quantity of ${cart.items[i].item.name} exceeds stock limit` });
-				*/
+
+		for(var i = 0; i < req.body.items.length; i++) {
+			var disburseOrLoanAmount =
+				(req.body.items[i].quantity_disburse) ?
+				req.body.items[i].quantity_disburse :
+				req.body.items[i].quantity_loan;
+			if (req.body.items[i].item.quantity_available < disburseOrLoanAmount) {
+				return res.status(405).send({ error: `Request quantity of ${req.body.items[i].item.name} exceeds stock limit` });
+			}
+			req.body.items[i].item = req.body.items[i].item._id;
+
 		}
+
+
+
 		let request = new Request({
         	user: id,
-        	items: cart.items,
+        	items: req.body.items,
         	reason: req.body.reason || "",
-			status: "outstanding",
-			//type: req.body.type || "disburse"
     });
+
     request.save((err,request) => {
     	if (err) next(err);
 
@@ -117,89 +139,7 @@ function add (req, res) {
 						return res.status(500).send({ error: err });
 					return res.status(200).json(request);
 				});
-			});
-		});
-	});
-}
 
-function direct (id, req, res) {
-	Cart.findOne({user: req.user})
-	.populate('items.item')
-	.exec(function(err, cart) {
-		if (err)
-			return res.status(500).send({ error: err });
-		if (!cart || cart.items.length === 0)
-				return res.status(400).send({ error: "Empty Cart" });
-		for (let i = 0;i<cart.items.length;i++){
-			if (cart.items[i].item.quantity_available < cart.items[i].quantity)
-				return res.status(405).send({ error: `Request quantity of ${cart.items[i].item.name} exceeds stock limit` });
-		}
-		let currentStatus = {};
-		if (req.body.type === "loan") {
-			currentStatus = "onLoan";
-		}
-		else if (req.body.type === "disburse") {
-			currentStatus = "disbursed";
-		}
-		let request = new Request({
-        	user: id,
-        	items: cart.items,
-        	reason: req.body.reason || "",
-        	note: req.body.note || "",
-					status: currentStatus,
-					type: req.body.type,
-        });
-        for (let i = 0;i < cart.items.length;i++){
-			if (req.body.type === "disburse") {
-				cart.items[i].item.quantity -= cart.items[i].quantity;
-				cart.items[i].item.quantity_available -= cart.items[i].quantity;
-			}
-			else if (req.body.type === "loan") {
-				cart.items[i].item.quantity_available -= cart.items[i].quantity;
-			}
-		}
-        request.save((err,request) => {
-        	if (err)
-				return res.status(500).send({ error: err });
-			for (let i = 0;i<cart.items.length;i++){
-				cart.items[i].item.save();
-			}
-
-			let name_arr = []
-			cart.items.forEach(i=>name_arr.push(i.name));
-
-
-			cart.items = [];
-			cart.save((err)=>{
-				if (err) return res.status(500).send({ error: err });
-
-
-				User.findOne({_id:id}, (err, user)=>{
-					if (err) return next(err);
-					email(request, `${user.name} received a new disbursement`);
-				});
-
-	    		let arr = []
-	    		request.items.forEach(i=>arr.push(i.item));
-
-				let quantity_arr = []
-				request.items.forEach(i=>quantity_arr.push(i.quantity));
-
-	    		let log = new Log({
-					init_user: req.user,
-					item: arr,
-	 				event: "Request",
-	 				rec_user: id,
-	 				request: request,
-					quantity: quantity_arr,
-					name_list: name_arr,
-					admin_actions: "disbursement"
-				});
-				log.save((err)=>{
-					if (err)
-						return res.status(500).send({ error: err });
-					return res.status(200).json(request);
-				});
 			});
 		});
 	});
