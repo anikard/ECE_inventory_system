@@ -15,6 +15,7 @@ var RequestSchema = new mongoose.Schema({
     quantity_deny: {type: Number, default: 0},
     quantity_return: {type: Number, default: 0},
     quantity_backfill: {type: Number, default: 0},
+    quantity_cancel: {type: Number, default: 0},
     type: {type: String, default:"disburse"}
   }],
 

@@ -37,13 +37,13 @@ var orders_app = angular.module('orders_app', []);
         callback(order);
       }
 
-      factory.updateOrder = function(info, callback) {
+      factory.updateOrder = function(info, oldOrder, callback) {
         $http.post('/api/request/update', info)
           .success(function(output) {
-              callback(output);
+              callback(output, null);
           })
           .error(function(error) {
-            callback(error);
+            callback(error, oldOrder);
           })
       }
 
@@ -161,10 +161,12 @@ var orders_app = angular.module('orders_app', []);
         });
 
         $scope.user = OrderFactory.getuser(function(data) {
+          // TODO: ask mike to get user id from backend on this call
           $scope.user = data;
 
           $scope.isAuthorized = data.status == "admin" || data.status =="manager";
           $scope.myName = data.username || data.netId || data.name;
+          $scope.myId = data._id;
 
           console.log("AUTHORIZED:")
           console.log($scope.isAuthorized);
@@ -263,20 +265,24 @@ var orders_app = angular.module('orders_app', []);
           $scope.errorMessage = null;
           $scope.thisOrder = order;
           $scope.populateZerosInTables();
+          $scope.orderId = order.user._id;
+          $scope.isMe = $scope.orderId == $scope.myId;
       }
 
 
-      $scope.respondToOrder = function() {
+      $scope.respondToOrder = function(order) {
+        var oldOrder = angular.copy(order);
         console.log("RESPONDING TO ORDER");
         var debug = $scope.thisOrder;
         $scope.updateThisOrderQuantities();
         // SIMPLIFIED RESPONSE
-        OrderFactory.updateOrder($scope.thisOrder, function(data) {
+        OrderFactory.updateOrder($scope.thisOrder, oldOrder, function(data, oldOrder) {
           console.log("in respond");
           console.log(data);
-          if(data.error) {
+          if(data.err) {
             console.log("error")
-            $scope.errorMessage = data.error;
+            $scope.errorMessage = data.err;
+            $scope.thisOrder = oldOrder;
           }
           else {
             $scope.orderResponse = {};

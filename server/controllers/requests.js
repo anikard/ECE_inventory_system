@@ -194,6 +194,10 @@ function update (req, res) {
 	.populate('items.item')
 	.exec( function (err, request) {
 		if (err) return res.status(500).send({ error: err});
+		var updateCheckString = updateCheck(request.items, req.body.items);
+		if (updateCheckString != "") {
+			return res.status(403).send({ err: updateCheckString });
+		}
 		var nowDate = new Date();
 		var nowISO = nowDate.toISOString();
 		req.body.dateUpdated = nowISO;
@@ -205,6 +209,34 @@ function update (req, res) {
 			return res.status(200).json(request);
 		});
 	});
+}
+
+function updateCheck(oldItems, newItems) {
+	for (var i = 0; i < oldItems.length; i++) {
+		var quantityAvailable = oldItems[i].item.quantity_available;
+		console.log("QA");
+		console.log(quantityAvailable);
+		var quantityDelta = generateQuantityDeltas(oldItems[i], newItems[i]);
+		console.log(quantityDelta);
+		if (quantityDelta.disburse_delta > quantityAvailable || quantityDelta.loan_delta > quantityAvailable) {
+			return "Quantities acted on exceed quantities available";
+		}
+		if (quantityDelta.total_delta > oldItems[i].quantity_requested) {
+			return "Quantities acted on exceed quantities requested";
+		}
+	}
+	return "";
+}
+
+function generateQuantityDeltas(oldItem, newItem) {
+	var delta = {};
+	delta.disburse_delta = newItem.quantity_disburse - oldItem.quantity_disburse;
+	delta.loan_delta = newItem.quantity_loan - oldItem.quantity_loan;
+	delta.deny_delta = newItem.quantity_deny = oldItem.quantity_deny;
+	delta.cancel_delta = newItem.quantity_cancel = oldItem.quantity_cancel;
+	delta.total_delta = delta.disburse_delta + delta.loan_delta + delta.deny_delta
+	+ delta.cancel_delta;
+	return delta;
 }
 
 function generateLogStats(oldItems, newItems) {

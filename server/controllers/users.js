@@ -5,9 +5,9 @@ var util = require('./util.js');
 var _ = require('lodash');
 
 module.exports = (app) => {
-  // Get current user info 
+  // Get current user info
   app.get('/api/user', util.requireLogin, function(req, res, next){
-  	res.status(200).json(_.pick(req.user, ['username','name','netId','email','status','active','apiKey']));
+  	res.status(200).json(_.pick(req.user, ['username','name','netId','email','status','active','apiKey', '_id']));
   });
 
   app.get('/api/user/apiKey/get', util.requireLogin, getApiKey);
@@ -88,7 +88,7 @@ function update(req, res, next){
       }
     });
   });
-  
+
 }
 
 function subscribe(req, res, next){
@@ -110,21 +110,21 @@ function subscribe(req, res, next){
       }
     });
   });
-  
+
 }
 
 function del(req, res, next){
   req.body._id = req.body._id || req.body.user;
   if (!req.body._id) return res.status(400).send("Missing _id or user");
   if (req.body._id === req.user._id) return res.status(400).send("Cannot delete yourself");
-  User.findOneAndRemove({'_id': req.body._id}, 
+  User.findOneAndRemove({'_id': req.body._id},
     function(err){
       if(err){
         res.status(500).send({ error: err });
       } else {
         res.status(200).send("Successfully removed a user!");
       }
-  });    
+  });
 }
 
 function add(req, res, next){
@@ -146,8 +146,8 @@ function add(req, res, next){
         res.status(500).send({ error: err });
       } else {
         res.status(200).send("Successfully added a user!");
-      }   
+      }
     });
   });
-  
+
 }
