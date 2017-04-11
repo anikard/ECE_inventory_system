@@ -9,6 +9,9 @@ var Tag = mongoose.model('Tag');
 var Backfill = mongoose.model('Backfill');
 var util = require('./util.js');
 var async = require("async");
+var formidable = require("formidable");
+var path = require('path');
+const fs = require('fs');
 
 module.exports = {
     
@@ -160,7 +163,7 @@ function upload(req, res, next) {
   form.multiples = true;
 
   // store all uploads in the /uploads directory
-  form.uploadDir = path.join(__dirname, '/uploads');
+  form.uploadDir = path.join(__dirname, '../../uploads');
 
   // every time a file has been uploaded successfully,
   // rename it to it's orignal name
