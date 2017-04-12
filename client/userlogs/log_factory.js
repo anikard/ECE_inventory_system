@@ -60,7 +60,7 @@ var log_app = angular.module('log_app', []);
     });
 
 
-    log_app.controller('logController', function($scope, $rootScope, $window, $http, LogFactory, /*auth,*/ $document) {
+    log_app.controller('logController', function($scope, $window, $http, LogFactory, /*auth,*/ $document) {
         // console.log("USER ID: " + auth.currentUserID());
         // var thisId = {userId: auth.currentUserID()};
 
@@ -177,7 +177,6 @@ var log_app = angular.module('log_app', []);
         $scope.getItem = function(item_name) {
           // console.log("GETTING ITEM " + item_name);
           var item_info = {};
-          $rootScope.item_selected = item_name;
           $window.localStorage['itemSelected'] = item_name;
           //$window.localStorage['itemDeleted'] = item_name;
 

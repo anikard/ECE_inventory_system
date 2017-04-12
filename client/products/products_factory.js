@@ -174,7 +174,7 @@ products_app.factory('ProductsFactory', function($http) {
 
 //products_app.controller('productsController', function($scope, /*auth,*/ ProductsFactory, $document) {
 
-products_app.controller('productsController', function($scope, $window, $rootScope, $http, /*auth,*/ ProductsFactory, $document) {
+products_app.controller('productsController', function($scope, $window, $http, /*auth,*/ ProductsFactory, $document) {
 
   $scope.products = ProductsFactory.getproducts(function(data) {
       $scope.products = data;
