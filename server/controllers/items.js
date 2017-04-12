@@ -12,7 +12,7 @@ var async = require("async");
 const allFields = ['name','quantity', 'model','description','tags','image','fields', 'min_quantity', "last_check_date", "isAsset", "assets"];
 
 module.exports = (app) => {
-  app.get('/api/asset/add', util.requireLogin, function(req, res, next) {
+  app.post('/api/asset/add', util.requireLogin, function(req, res, next) {
     let asset = new Asset({
       item: "58df32bfa760bacfd7ed05e2",
     });
