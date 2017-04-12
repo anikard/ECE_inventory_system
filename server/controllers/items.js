@@ -13,6 +13,13 @@ const allFields = ['name','quantity', 'model','description','tags','image','fiel
 
 module.exports = (app) => {
   app.post('/api/asset/add', util.requireLogin, function(req, res, next) {
+    /*
+      TODO:
+        - find item id from req.body.item_name
+        - create random numeric assetTag
+        - link asset to item
+    */
+
     let asset = new Asset({
       item: "58df32bfa760bacfd7ed05e2",
     });
