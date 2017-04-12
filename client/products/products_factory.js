@@ -86,30 +86,16 @@ products_app.factory('ProductsFactory', function($http) {
       .success(function(output) {
         products = output;
 
-
-        var this_item_id;
-
-        for (var j = 0; j < products.length; j++) {
-          if (products[j].name == info.name) {
-            this_item_id = products[j]._id;
-          }
-        }
-
-
-         // if ($scope.new_product.isAsset) {
+         if (info.isAsset) {
               console.log("creating assets");
           
-               $http.post('/api/asset/add', {tag: "thisTag"}).success(function(output) {
-                  
-                  console.log("added asset");
-                  console.log(output);
-                })
-
-
-        // }
-
-
-
+               for (var n = 0; n < info.quantity_available.length; n++) {
+                  $http.post('/api/asset/add', {item_name: info.name}).success(function(output) {
+                    console.log("added asset");
+                    console.log(output);
+                  })
+               }
+        }
 
         callback(products);
       })
