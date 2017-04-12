@@ -79,11 +79,10 @@ function add (req, res) {
 			if (req.body.items[i].item.quantity_available < disburseOrLoanAmount) {
 				return res.status(405).send({ error: `Request quantity of ${req.body.items[i].item.name} exceeds stock limit` });
 			}
-			req.body.items[i].item = req.body.items[i].item._id;
-
+			//req.body.items[i].item = req.body.items[i].item._id;
+			//req.body.items[i].item.quantity_available -= req.body.items[i].quantity_disburse + req.boyd.items[i].quantity_loan;
+			//req.body.items[i].item.quantity -= req.body.items[i].quantity_disburse;
 		}
-
-
 
 		let request = new Request({
         	user: id,
@@ -201,9 +200,30 @@ function update (req, res) {
 		var nowDate = new Date();
 		var nowISO = nowDate.toISOString();
 		req.body.dateUpdated = nowISO;
-		var logStats = generateLogStats(request.items, req.body.items);
+		//var logStats = generateLogStats(request.items, req.body.items);
+
+		var logStats = {};
+		for (var i = 0; i < request.items.length; i++) {
+			var quantity_and_available_delta = request.items[i].quantity_disburse - req.body.items[i].quantity_disburse;
+			var quantity_available_only_delta =
+				(req.body.items[i].loan_return - req.body.items[i].outstanding_loan);
+			console.log("log stats");
+			console.log(request.items[i].item.name);
+			console.log(quantity_and_available_delta);
+			console.log(quantity_available_only_delta);
+			req.body.items[i].item.quantity += quantity_and_available_delta;
+			req.body.items[i].item.quantity_available +=
+				(quantity_and_available_delta + quantity_available_only_delta);
+		}
+
+
+
 		_.assign(request,_.pick(req.body,['user', 'reason', 'items', 'notes', 'dateUpdated']));
 		request.save(function (err, request) {
+			for (let i = 0; i < request.items.length; i++) {
+				console.log(request.items[i].item.quantity_available);
+				request.items[i].item.save();
+			}
 			if (err) return res.status(500).send({ error: err});
 			email(request, 'Your request has been updated');
 			return res.status(200).json(request);

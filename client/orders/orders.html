@@ -189,7 +189,7 @@
            <!-- Display previous Notes Here -->
          </div>
 
-         <label>Previous Comments </label>
+         <label ng-show="thisOrder.notes.length > 0">Previous Comments </label>
          <div ng-repeat="note in thisOrder.notes">
            <span ng-bind="note"></span>
          </div>
