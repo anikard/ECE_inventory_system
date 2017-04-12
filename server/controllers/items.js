@@ -19,11 +19,11 @@ module.exports = (app) => {
     asset.assetTag = asset.id;
     asset.save();
     Item.findOne({_id:"58df32bfa760bacfd7ed05e2"},(err,item)=>{
-      console.log(item);
-      console.log(item.assets);
-      if(item.assets)item.assets.push(asset.id);
-      else item.assets = [asset.id];
-      item.save((err,item)=>res.status(200).json(item));
+      // // console.log(item);
+      // // console.log(item.assets);
+      // if(item.assets)item.assets.push(asset.id);
+      // else item.assets = [asset.id];
+      // item.save((err,item)=>res.status(200).json(item));
 
     })
   });
@@ -62,6 +62,12 @@ module.exports = (app) => {
       if (item) return res.status(405).send({ error: "Item already exists!" });
       item = new Item(_.pick(req.body, allFields));
       item.quantity_available = item.quantity;
+
+      // if (item.isAsset) {
+      //   console.log("creating assets");
+      // }
+
+
       item.save(function(err){
         if(err) return next(err);
         let log = new Log({
