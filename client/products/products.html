@@ -300,7 +300,7 @@
                 <tr ng-repeat="asset in sampleAssets">
                     <td>{{asset.tag}}</td>
                     <td>{{asset.fieldVal}}</td>
-                    <td> <button class = "remove" ng-click='viewOrder(order)' data-toggle="modal" data-target="#orderModal">View</button> </td>
+                    <td> <button class = "remove" ng-click='viewAsset(asset)' data-toggle="modal" data-target="#assetModal">View</button> </td>
                 </tr>
               </table>
             </div>
@@ -311,6 +311,74 @@
     </div>
   </div>
 </div>
+
+
+
+<!-- ASSET MODAL -->
+
+
+<div class="modal fade" id="assetModal" tabindex="-2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" ng-click="closeItemModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h1 class="modal-title" id="exampleModalLabel">View Asset</h1>
+      </div>
+      <div class="modal-body" align="left">
+        <div class="form-group" >
+          <label><b>Asset Tag: </b></label>
+          <input id=productName type="text" ng-readonly="!editing" ng-model="currentProduct.name" required/>
+          <p>
+            <label><b>Fields:  </b></label>
+            <input type="text" ng-readonly="!editing" ng-model="currentProduct.model"/>
+          </p>
+          
+        </div>
+        <br>
+        <div class="modal-footer">
+          <span ng-show="adminOnly">
+            <button class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmAssetModal">Delete Asset</button>
+          </span>
+          <button type="button" class="btn btn-secondary" ng-click="closeItemModal()" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Add to Cart</button>
+          <span ng-show="authorized">
+            <button type="button" class="btn btn-primary" ng-click="editProduct(currentProduct)">{{editing == true ? 'Save Edits' : 'Edit' }}</button>
+          </span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- DELETE CONFIRM ASSET MODAL -->
+<div class="modal fade" id="deleteConfirmAssetModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h1 class="modal-title" id="exampleModalLabel">Confirm Deletion</h1>
+      </div>
+      <div class="modal-body" align="left">
+        <div class="form-group" >
+          Confirm Deletion
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmDeleteModal(thisProduct)>Confirm</button>
+          <!-- TODO CHANGE TO DELETE THIS PRODUCT -->
+          <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelDeleteModal()>Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <!--REQUEST MODAL -->
 
