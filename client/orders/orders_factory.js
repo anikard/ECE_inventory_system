@@ -275,6 +275,7 @@ var orders_app = angular.module('orders_app', []);
         console.log("RESPONDING TO ORDER");
         var debug = $scope.thisOrder;
         $scope.updateThisOrderQuantities();
+        $scope.thisOrder.notes.push($scope.thisOrder.currentNote);
         // SIMPLIFIED RESPONSE
         OrderFactory.updateOrder($scope.thisOrder, oldOrder, function(data, oldOrder) {
           console.log("in respond");

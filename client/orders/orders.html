@@ -189,10 +189,16 @@
            <!-- Display previous Notes Here -->
          </div>
 
+         <label>Previous Comments </label>
+         <div ng-repeat="note in thisOrder.notes">
+           <span ng-bind="note"></span>
+         </div>
+         <br>
+
 
          <form>
-           <label for="message-text" class="form-control-label">Comment:</label>
-           <textarea class="form-control" id="message-text" ng-model="thisOrder.note"></textarea>
+           <label for="message-text" class="form-control-label">Add Comment:</label>
+           <textarea class="form-control" id="message-text" ng-model="thisOrder.currentNote"></textarea>
            <br>
            <button type="button" class="btn btn-primary" ng-click="respondToOrder(thisOrder)" id = "respondOrderButton">Respond</button>
          </form>
