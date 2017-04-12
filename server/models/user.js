@@ -16,11 +16,13 @@ var UserSchema = new mongoose.Schema({
   salt: {type: String, default: ""},
   email: {type: String, default: ""},
   status: {type: String, default: ""},
-  hash: {type: String, default: ""},
+  hash: {type: String, default: "", hide: true},
   active: {type: Boolean, default: true},
-  apiKey: {type: String, default: ""},
+  apiKey: {type: String, default: "", hide: true},
   subscribed: {type: String, default: ""},
 }, { timestamps: { createdAt: 'createdAt',  updatedAt: 'updatedAt'} }); 
+
+UserSchema.plugin(require('mongoose-hidden'));
 
 UserSchema.methods.setPassword = function(password){
   this.salt = crypto.randomBytes(16).toString('hex');

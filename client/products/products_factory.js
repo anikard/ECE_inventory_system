@@ -225,6 +225,14 @@ products_app.controller('productsController', function($scope, $window, $rootSco
 
   $scope.fields = ProductsFactory.getfields(function(data) {
     $scope.fields = data;
+
+    // to fix to change
+    var dataCopy = data;
+    dataCopy.unshift({"name":"Asset Tag"});
+    dataCopy.push({"name":"View Asset"})
+    $scope.assetFields = dataCopy;
+    console.log("ASSET FIELDS::::");
+    console.log($scope.assetFields);
   })
 
   $scope.user = ProductsFactory.getuser(function(data) {

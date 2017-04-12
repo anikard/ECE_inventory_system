@@ -11,7 +11,7 @@ var FieldSchema = new mongoose.Schema({
   req: {type: Boolean, default: false},
   default: {type: {} },
   date: { type : Date, default: Date.now },
-  perAsset: {type: Boolean, default: false},
+  perAsset: {type: String, default: "general", enum: ['per-asset', 'general']},
 });
 
 mongoose.model('Field', FieldSchema);

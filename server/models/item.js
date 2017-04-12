@@ -4,7 +4,6 @@
 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-//var AssetSchema = new mongoose.Schema();
 
 var ItemSchema = new Schema({
   name: {type: String, required: true, index: true, unique: true },
@@ -20,5 +19,6 @@ var ItemSchema = new Schema({
   isAsset: {type: Boolean, default: false},
   assets: [{type:Schema.ObjectId, ref:'Asset'}]
 }, { timestamps: { createdAt: 'createdAt',  updatedAt: 'updatedAt'} });
+ItemSchema.plugin(require('mongoose-autopopulate'));
 
 mongoose.model('Item', ItemSchema);

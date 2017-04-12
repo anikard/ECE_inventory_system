@@ -29,7 +29,7 @@ function add(req, res) {
 	Field.findOne({ name: req.body.name }, function (err, field) {
       if (err) return res.status(500).send({ error: err });
       if (field) return res.status(405).send({ error: "Field already exist" });
-      field = new Field(_.pick(req.body, ['name','type','access','req','default']));
+      field = new Field(_.pick(req.body, ['name','type', 'perAsset', 'access','req','default']));
       field.save(function(err){
           if(err){
             res.status(500).send({ error: err })
@@ -57,7 +57,7 @@ function del(req, res) {
 function update(req, res) {
 	if (! req.body.name) return res.status(400).send({ error: "Missing name" });
 	Field.findOneAndUpdate({name: req.body.name}, {
-		$set: _.pick(req.body, ['type','access','req','default'])
+		$set: _.pick(req.body, ['type','access','perAsset','req','default'])
 	}, function(err, field){
       if(err){
         res.status(500).send({ error: err })

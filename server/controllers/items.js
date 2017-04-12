@@ -9,12 +9,42 @@ var Tag = mongoose.model('Tag');
 var util = require('./util.js');
 var async = require("async");
 
-const allFields = ['name','quantity', 'quantity_available', 'model','description','tags','image','fields', 'min_quantity', "last_check_date", "isAsset", "assets"];
+const allFields = ['name','quantity', 'model','description','tags','image','fields', 'min_quantity', "last_check_date", "isAsset", "assets"];
 
 module.exports = (app) => {
+  app.get('/api/asset/add', util.requireLogin, function(req, res, next) {
+    let asset = new Asset({
+      item: "58df32bfa760bacfd7ed05e2",
+    });
+    asset.assetTag = asset.id;
+    asset.save();
+    Item.findOne({_id:"58df32bfa760bacfd7ed05e2"},(err,item)=>{
+      console.log(item);
+      console.log(item.assets);
+      if(item.assets)item.assets.push(asset.id);
+      else item.assets = [asset.id];
+      item.save((err,item)=>res.status(200).json(item));
+
+    })
+  });
+
+  app.get('/api/asset/show', util.requireLogin, function(req, res, next) {
+    Item.find({})
+    // .limit(parseInt(req.query.limit) || 200)
+    .populate('assets')
+    .exec((err, results) => {
+      if(err) {
+        res.status(500).send({ error: err });
+      } else {
+        res.status(200).json(results);
+      }
+    })
+  });
+
   app.get('/api/item/show', util.requireLogin, function(req, res, next) {
     Item.find({})
     // .limit(parseInt(req.query.limit) || 200)
+    .populate('assets')
     .exec((err, results) => {
       if(err) {
         res.status(500).send({ error: err });
@@ -31,6 +61,7 @@ module.exports = (app) => {
       if (err) next (err);
       if (item) return res.status(405).send({ error: "Item already exists!" });
       item = new Item(_.pick(req.body, allFields));
+      item.quantity_available = item.quantity;
       item.save(function(err){
         if(err) return next(err);
         let log = new Log({
@@ -172,6 +203,8 @@ function update(user, newItem, callback) {
         })
       },
       (item, cb) => {
+        if(newItem.quantity || newItem.quantity === 0)
+          item.quantity_available += newItem.quantity - item.quantity;
         _.assign(item, _.pick(newItem, allFields));
         item.save((err, i)=>cb(err,i));
       },
