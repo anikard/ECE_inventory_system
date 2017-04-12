@@ -408,6 +408,22 @@ products_app.controller('productsController', function($scope, $window, $http, /
     }
   }
 
+  $scope.editAsset = function(asset) {
+    console.log("edit asset called");
+
+    if ($scope.editing) {
+      $('#editConfirmModal').modal('show');
+      $scope.editing = false;
+    }
+    else {
+      console.log("Going into edit mode, save asset to oldAsset");
+      originalAsset = angular.copy(asset);
+      console.log(originalAsset);
+      $scope.editing = true;
+    }
+  }
+
+
   $scope.viewOrder = function(order) {
     $window.localStorage['requestSelected'] = order._id;
     $window.location.href = "/orders/orders.html";
