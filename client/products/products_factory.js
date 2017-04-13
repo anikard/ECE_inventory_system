@@ -137,6 +137,9 @@ products_app.factory('ProductsFactory', function($http) {
       console.log(relevantOrders);
       callback(product, relevantOrders);
     })
+
+    // call asset/show to display all assets; will also contain info for each asset
+
   }
 
   factory.updateProduct = function(info, callback) {
