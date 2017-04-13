@@ -86,6 +86,9 @@ products_app.factory('ProductsFactory', function($http) {
       .success(function(output) {
         products = output;
 
+        // TODO: item has assets --> changing quantity not allowed
+        // add and delete specific assets --> should change quantity
+
          if (info.isAsset) {
               console.log("creating assets");
           
