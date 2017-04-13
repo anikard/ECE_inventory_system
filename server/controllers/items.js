@@ -36,6 +36,16 @@ module.exports = (app) => {
   });
 
   app.get('/api/asset/show', util.requireLogin, function(req, res, next) {
+    /*
+
+      TODO: return an object similar to
+        {
+          "assetTag": 2, 
+          "fields": [{"name": 1, "value": 2}, {"name": 3, "value": 4}]
+        }
+
+    */
+
     Item.find({})
     // .limit(parseInt(req.query.limit) || 200)
     .populate('assets')
