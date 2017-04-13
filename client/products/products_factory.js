@@ -106,6 +106,15 @@ products_app.factory('ProductsFactory', function($http) {
       })
   }
 
+
+  factory.viewAsset = function(asset, callback) {
+    console.log("Factory view called on view asset");
+    // var sampleAsset = {"assetTag": 2, "fieldVal1": 22, "fieldVal2": 42};
+    console.log(asset);
+    callback(asset);
+  }
+
+
   factory.viewProduct = function(/*userID,*/ product, callback) {
     console.log("Factory view called on : " + product.name);
     factory.getorders(/*userID,*/ function(data) {
@@ -238,11 +247,23 @@ products_app.controller('productsController', function($scope, $window, $http, /
   $scope.fields = ProductsFactory.getfields(function(data) {
     $scope.fields = data;
 
-    // to fix to change
-    var dataCopy = data;
-    dataCopy.unshift({"name":"Asset Tag"});
-    dataCopy.push({"name":"View Asset"})
-    $scope.assetFields = dataCopy;
+    var non_asset_fields = [];
+    var only_asset_fields = [];
+
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].perAsset == "per-asset") {
+        only_asset_fields.push(data[i]);
+      }
+      else if (data[i].perAsset == "general") {
+        non_asset_fields.push(data[i]);
+      }
+    }
+
+    $scope.fields = non_asset_fields;
+
+    // only_asset_fields.unshift({"name":"Asset Tag"});
+    // only_asset_fields.push({"name":"View Asset"})
+    $scope.assetFields = only_asset_fields;
     console.log("ASSET FIELDS::::");
     console.log($scope.assetFields);
   })
@@ -507,6 +528,25 @@ products_app.controller('productsController', function($scope, $window, $http, /
       $scope.refreshProducts();
       window.location.assign("/dispProducts");
     }
+  }
+
+
+  $scope.viewAsset = function(asset) {
+    console.log("View asset selected");
+    console.log(asset);
+    var sampleAsset = {"assetTag": 2, "fields": [{"name": 1, "value": 2}, {"name": 3, "value": 4}]};
+    $scope.currentAsset = angular.copy(asset);
+    originalAsset = angular.copy(asset);
+    $scope.currentAsset = sampleAsset; // testing
+    // $scope.currentTags = product.tags;
+    ProductsFactory.viewAsset(asset, function(data) {
+      $scope.thisAsset = data;
+      $scope.thisAsset = sampleAsset; // testing
+      // $scope.new_order = {};
+      // $scope.new_order.itemId = data._id;
+      $scope.editing = false;
+      console.log(data);
+    })
   }
 
 

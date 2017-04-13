@@ -288,18 +288,20 @@
 
 
         <!-- todo: make assets -->
-        <p>{{sampleAssets = [{"tag": 1, "fieldVal": 11}, {"tag": 2, "fieldVal": 22}] }}</p>
+        <p style="display:none;">{{sampleAssets = [{"assetTag": 1, "fieldVal": 11}, {"assetTag": 2, "fieldVal": 22}] }}</p>
         <!-- ASSETS -->
         <div ng-show="currentProduct.isAsset">
             <h2>Assets</h2>
             <div class="customerTable" id = "cTable2">
               <table>
                 <tr>
-                    <td ng-repeat="aField in assetFields" > {{aField.name}}</td>
+                    <!-- <td ng-repeat="aField in assetFields" > {{aField.name}}</td> -->
+                    <td>Asset Tag</td>
+                    <td>View Asset</td>
                 </tr>
                 <tr ng-repeat="asset in sampleAssets">
-                    <td>{{asset.tag}}</td>
-                    <td>{{asset.fieldVal}}</td>
+                    <td>{{asset.assetTag}}</td>
+                    <!-- <td ng-repeat="aField in assetFields" > {{asset.fieldVal}}</td> -->
                     <td> <button class = "remove" ng-click='viewAsset(asset)' data-toggle="modal" data-target="#assetModal">View</button> </td>
                 </tr>
               </table>
@@ -325,13 +327,18 @@
         </button>
         <h1 class="modal-title" id="exampleModalLabel">View Asset</h1>
       </div>
+      <!-- <p>{{currentAsset}}</p> -->
+      <!-- <p>{{thisAsset}}</p> -->
       <div class="modal-body" align="left">
         <div class="form-group" >
           <label><b>Asset Tag: </b></label>
-          <input id=productName type="text" ng-readonly="!editing" ng-model="currentProduct.name" required/>
+          <input type="text" ng-readonly="!editing" ng-model="thisAsset.assetTag" required/>
           <p>
-            <label><b>Fields:  </b></label>
-            <input type="text" ng-readonly="!editing" ng-model="currentProduct.model"/>
+            <h3>Fields:</h3>
+            <div style="margin-left:1em;" ng-repeat="field in thisAsset.fields">
+              <label><b>{{field.name}}:  </b></label>
+              <input type="text" ng-readonly="!editing" ng-model="field.value"/>
+            </div>
           </p>
           
         </div>
@@ -341,7 +348,7 @@
             <button class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirmAssetModal">Delete Asset</button>
           </span>
           <button type="button" class="btn btn-secondary" ng-click="closeItemModal()" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Add to Cart</button>
+          <!-- <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Add to Cart</button> -->
           <span ng-show="authorized">
             <button type="button" class="btn btn-primary" ng-click="editAsset(currentProduct)">{{editing == true ? 'Save Edits' : 'Edit' }}</button>
                     <!-- TODO CHANGE TO EDIT THIS ASSET -->
