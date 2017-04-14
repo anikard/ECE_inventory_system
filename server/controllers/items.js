@@ -12,27 +12,37 @@ var async = require("async");
 const allFields = ['name','quantity', 'model','description','tags','image','fields', 'min_quantity', "last_check_date", "isAsset", "assets"];
 
 module.exports = (app) => {
-  app.post('/api/asset/add', util.requireLogin, function(req, res, next) {
+  app.use('/api/asset/add', util.requireLogin, function(req, res, next) {
     /*
       TODO:
         - find item id from req.body.item_name
         - create random numeric assetTag
         - link asset to item
     */
-
-    let asset = new Asset({
-      item: "58df32bfa760bacfd7ed05e2",
+    let name = req.body.item_name||req.body.item||req.body.name
+              ||req.query.item_name||req.query.item||req.query.name;
+    Item.findOne({name: name})
+    .exec((err,item) => {
+      if(err) return next(err);
+      if(item.isAsset) return next({status: 400, error: `${item.name} is already an asset.`});
+      item.isAsset = true;
+      let start = randomInt(0, 1000000);
+      let assets = [];
+      for(let i=0;i<item.quantity;i++){
+        let tag = start*10000+i;
+        let asset = new Asset({
+          item: item._id,
+          assetTag: tag.toString(),
+        });
+        assets.push(asset);
+        asset.save();
+      }
+      item.assets = assets;
+      item.save(err=>{
+        if(err)return next(err);
+        res.status(200).send(item);
+      })
     });
-    asset.assetTag = asset.id;
-    asset.save();
-    Item.findOne({_id:"58df32bfa760bacfd7ed05e2"},(err,item)=>{
-      // // console.log(item);
-      // // console.log(item.assets);
-      // if(item.assets)item.assets.push(asset.id);
-      // else item.assets = [asset.id];
-      // item.save((err,item)=>res.status(200).json(item));
-
-    })
   });
 
   app.get('/api/asset/show', util.requireLogin, function(req, res, next) {
@@ -46,15 +56,11 @@ module.exports = (app) => {
 
     */
 
-    Item.find({})
-    // .limit(parseInt(req.query.limit) || 200)
+    Item.findOne({name: req.query.name||req.query.item_name||req.query.item})
     .populate('assets')
-    .exec((err, results) => {
-      if(err) {
-        res.status(500).send({ error: err });
-      } else {
-        res.status(200).json(results);
-      }
+    .exec((err, result) => {
+      if(err)return next(err);
+      res.status(200).json(result.assets);
     })
   });
 
@@ -273,4 +279,8 @@ function addTag(name) {
     tag = new Tag({name: name});
     tag.save();
   })
+}
+
+function randomInt (low, high) {
+  return Math.floor(Math.random() * (high - low) + low);
 }
