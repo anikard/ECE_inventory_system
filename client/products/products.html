@@ -332,10 +332,10 @@
       <div class="modal-body" align="left">
         <div class="form-group" >
           <label><b>Asset Tag: </b></label>
-          <input type="text" ng-readonly="!editing" ng-model="thisAsset.assetTag" required/>
+          <input type="text" ng-readonly="!editing" ng-model="currentAsset.assetTag" required/>
           <p>
             <h3>Fields:</h3>
-            <div style="margin-left:1em;" ng-repeat="field in thisAsset.fields">
+            <div style="margin-left:1em;" ng-repeat="field in currentAsset.fields">
               <label><b>{{field.name}}:  </b></label>
               <input type="text" ng-readonly="!editing" ng-model="field.value"/>
             </div>

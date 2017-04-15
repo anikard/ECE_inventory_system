@@ -99,8 +99,8 @@ products_app.factory('ProductsFactory', function($http) {
               console.log("creating assets");
           
                // for (var n = 0; n < info.quantity_available; n++) {
-                console.log("creating assets in for loop");
-                  $http.get('/api/asset/add', {item_name: info.name}).success(function(output) {
+                // console.log("creating assets in for loop");
+                  $http.post('/api/asset/add', {item_name: info.name}).success(function(output) {
                     console.log("added asset");
                     console.log(output);
                   })
@@ -154,17 +154,25 @@ products_app.factory('ProductsFactory', function($http) {
       console.log("Update item form incomplete");
       return;
     }
+
+    // tasks apr 15
+    // TODO: if convert to asset but some items are on loan, THROW ERROR
+    // because 
+    // "cannot convert item to asset. Unable to add serial numbers to loaned items."
+
+    // todo : edit asset tag --> asset tags must be unique
+
     $http.post('/api/item/update', info).success(function(output) {
       // TODO
       console.log("product Successfully updated in factory");
 
       // fix
-      if (info.isAsset) {
-        $http.get('/api/asset/add', {item_name: info.name}).success(function(output) {
-            console.log("added asset");
-            console.log(output);
-        })
-      }
+      // if (info.isAsset) {
+      //   $http.get('/api/asset/add', {item_name: info.name}).success(function(output) {
+      //       console.log("added asset");
+      //       console.log(output);
+      //   })
+      // }
 
     })
   }
