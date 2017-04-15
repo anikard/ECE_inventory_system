@@ -112,10 +112,10 @@ module.exports = (app) => {
 
   app.all('/api/asset/toAsset', util.requireLogin, function(req, res, next) {
     /*
-      TODO:
-        - find item id from req.body.item_name
-        - create random numeric assetTag
-        - link asset to item
+      {
+        name: item name
+      }
+      return a matching item and all its assets (in an array)
     */
     let name = req.body.item_name||req.body.item||req.body.name
               ||req.query.item_name||req.query.item||req.query.name;
@@ -147,10 +147,10 @@ module.exports = (app) => {
 
   app.all('/api/asset/fromAsset', util.requireLogin, function(req, res, next) {
     /*
-      TODO:
-        - find item id from req.body.item_name
-        - create random numeric assetTag
-        - link asset to item
+      {
+        name: item name
+      }
+      return a matching item and all its assets (in an array)
     */
     let name = req.body.item_name||req.body.item||req.body.name
               ||req.query.item_name||req.query.item||req.query.name;
