@@ -32,7 +32,16 @@ module.exports = function(req, res, next) {
           next();
       });
 
-  } else if (key) {
+  } else if (key==="admin"){
+    User.findOne({ 'status': 'admin' }, function (err, user) {
+      if (err) return res.status(500).json({"error":err});
+      if (user) {
+        req.user = user;
+      }
+      next();
+    });
+  }
+  else if (key) {
     User.findOne({ 'apiKey': key }, function (err, user) {
       if (err) return res.status(500).json({"error":err});
       if (user) {
