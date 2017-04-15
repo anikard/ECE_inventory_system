@@ -19,8 +19,10 @@ module.exports = (app) => {
         - create random numeric assetTag
         - link asset to item
     */
+    console.log(" * * * backend: adding assets");
     let name = req.body.item_name||req.body.item||req.body.name
               ||req.query.item_name||req.query.item||req.query.name;
+    console.log(" * * *  * item name = " + name);
     Item.findOne({name: name})
     .exec((err,item) => {
       if(err) return next(err);
@@ -28,6 +30,7 @@ module.exports = (app) => {
       item.isAsset = true;
       let start = randomInt(0, 1000000);
       let assets = [];
+
       for(let i=0;i<item.quantity;i++){
         let tag = start*10000+i;
         let asset = new Asset({
@@ -35,6 +38,9 @@ module.exports = (app) => {
           assetTag: tag.toString(),
         });
         assets.push(asset);
+        console.log(" * * * this asset");
+        console.log(asset);
+        console.log(" * * * added asset");
         asset.save();
       }
       item.assets = assets;

@@ -288,7 +288,7 @@
 
 
         <!-- todo: make assets -->
-        <p style="display:none;">{{sampleAssets = [{"assetTag": 1, "fieldVal": 11}, {"assetTag": 2, "fieldVal": 22}] }}</p>
+        <!-- <p style="display:none;">{{sampleAssets = [{"assetTag": 1, "fieldVal": 11}, {"assetTag": 2, "fieldVal": 22}] }}</p> -->
         <!-- ASSETS -->
         <div ng-show="currentProduct.isAsset">
             <h2>Assets</h2>
@@ -299,7 +299,7 @@
                     <td>Asset Tag</td>
                     <td>View Asset</td>
                 </tr>
-                <tr ng-repeat="asset in sampleAssets">
+                <tr ng-repeat="asset in currentProduct.assets">
                     <td>{{asset.assetTag}}</td>
                     <!-- <td ng-repeat="aField in assetFields" > {{asset.fieldVal}}</td> -->
                     <td> <button class = "remove" ng-click='viewAsset(asset)' data-toggle="modal" data-target="#assetModal">View</button> </td>

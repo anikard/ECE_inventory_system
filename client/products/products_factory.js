@@ -1,6 +1,4 @@
-
 var products_app = angular.module('products_app', []);
-
 
 products_app.factory('ProductsFactory', function($http) {
   var factory = {};
@@ -89,15 +87,24 @@ products_app.factory('ProductsFactory', function($http) {
         // TODO: item has assets --> changing quantity not allowed
         // add and delete specific assets --> should change quantity
 
+        console.log("     ****sdf*****sfd*********sdf********sdf*******")
+        console.log("       INFO: created item: ");
+        console.log(info);
+        //  console.log("       OUTPUT: created item: ");
+        // console.log("output");
+
+        console.log("     ****sdf*****sfd*********sdf********sdf*******")
+
          if (info.isAsset) {
               console.log("creating assets");
           
-               for (var n = 0; n < info.quantity_available.length; n++) {
-                  $http.post('/api/asset/add', {item_name: info.name}).success(function(output) {
+               // for (var n = 0; n < info.quantity_available; n++) {
+                console.log("creating assets in for loop");
+                  $http.get('/api/asset/add', {item_name: info.name}).success(function(output) {
                     console.log("added asset");
                     console.log(output);
                   })
-               }
+               // }
         }
 
         callback(products);
@@ -150,6 +157,15 @@ products_app.factory('ProductsFactory', function($http) {
     $http.post('/api/item/update', info).success(function(output) {
       // TODO
       console.log("product Successfully updated in factory");
+
+      // fix
+      if (info.isAsset) {
+        $http.get('/api/asset/add', {item_name: info.name}).success(function(output) {
+            console.log("added asset");
+            console.log(output);
+        })
+      }
+
     })
   }
 
@@ -540,14 +556,15 @@ products_app.controller('productsController', function($scope, $window, $http, /
   $scope.viewAsset = function(asset) {
     console.log("View asset selected");
     console.log(asset);
-    var sampleAsset = {"assetTag": 2, "fields": [{"name": 1, "value": 2}, {"name": 3, "value": 4}]};
+    // var sampleAsset = {"assetTag": 2, "fields": [{"name": 1, "value": 2}, {"name": 3, "value": 4}]};
     $scope.currentAsset = angular.copy(asset);
     originalAsset = angular.copy(asset);
-    $scope.currentAsset = sampleAsset; // testing
+    // $scope.currentAsset = sampleAsset; // testing
     // $scope.currentTags = product.tags;
     ProductsFactory.viewAsset(asset, function(data) {
       $scope.thisAsset = data;
-      $scope.thisAsset = sampleAsset; // testing
+      // $scope.thisAsset = sampleAsset; // testing
+      $scope.thisAsset = {};
       // $scope.new_order = {};
       // $scope.new_order.itemId = data._id;
       $scope.editing = false;
