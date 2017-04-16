@@ -55,6 +55,7 @@
     <tr>
       <td> User Name </td>
       <td> # of Items </td>
+      <td> Type </td>
       <td> Date Issued </td>
       <td> Last Updated </td>
       <td> View Request </td>
@@ -64,6 +65,7 @@
       <td style="display:none;" ng-bind="order._id"></td>
       <td ng-bind="order.user.netId || order.customer_name || order.user.username"></td>
       <td ng-bind="order.items.length"></td>
+      <td ng-bind="order.type"></td>
       <td ng-bind="order.date | date:'short'"></td>
       <td ng-bind="order.dateUpdated | date:'short'"></td>
       <td><button class = "remove" ng-click='viewOrder(order)'>View</buttion></td> <!-- data-toggle="modal" data-target="#orderModal">View</button></td>-->
@@ -112,6 +114,7 @@
            <p> <b> User: </b> {{thisOrder.customer_name || thisOrder.user.username || thisOrder.user.netId}}</p>
            <p><b>Reason:  </b>{{thisOrder.reason}}</p>
            <p><b>Date: </b>{{ thisOrder.date | date:'short'}}</p>
+           <p><b>Suggested Type: </b>{{ thisOrder.type }}</p>
            <div class="error" ng-show="errorMessage">{{ errorMessage }}</div>
            <span id="outstanding" ng-show=hasOutstanding()>
              <h5>Outstanding Requests</h5>
@@ -128,20 +131,18 @@
                  <!-- Chnage this show variable to be based on if id = thisOrder.id -->
                  <th ng-show="isMe"> Quantity to Cancel </th>
                </tr>
-               <tr ng-repeat="item in thisOrder.items">
-                 <span ng-show="item.quantity_requested > 0">
-                   <td ng-bind="item.item.name || '[Deleted item]'"></td>
-                   <td ng-bind="item.quantity_requested"></td>
-                   <td ng-bind="item.type"></td>
-                   <!--<td ng-bind="item.quantity_requested - (item.outstanding_disburse + item.outstanding_loan + item.outstanding_deny + item.outstanding_backfill)"></td>-->
-                   <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.outstanding_disburse"></td>
-                   <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.outstanding_loan"></td>
-                   <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.outstanding_deny"></td>
-                   <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.outstanding_backfill"></td>
-                   <!-- Chnage this show variable to be based on if id = thisOrder.id -->
-                   <td ng-show="isMe"><input class="noverflow" min="0" type="number" ng-model="item.quantity_cancel"></td>
-                 </span>
-                 </tr>
+               <tr ng-repeat="item in thisOrder.items" ng-show="item.quantity_requested > 0">
+                 <td ng-bind="item.item.name || '[Deleted item]'"></td>
+                 <td ng-bind="item.quantity_requested"></td>
+                 <td ng-bind="item.type"></td>
+                 <!--<td ng-bind="item.quantity_requested - (item.outstanding_disburse + item.outstanding_loan + item.outstanding_deny + item.outstanding_backfill)"></td>-->
+                 <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.outstanding_disburse"></td>
+                 <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.outstanding_loan"></td>
+                 <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.outstanding_deny"></td>
+                 <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.outstanding_backfill"></td>
+                 <!-- Chnage this show variable to be based on if id = thisOrder.id -->
+                 <td ng-show="isMe"><input class="noverflow" min="0" type="number" ng-model="item.quantity_cancel"></td>
+                </tr>
              </table>
            </span>
 
@@ -154,13 +155,11 @@
                  <td> Quantity Denied </td>
                  <td> Quanitty Returned </td>
                </tr>
-               <tr ng-repeat="item in thisOrder.items">
-                <span ng-show="item.quantity_disburse > 0 || item.quantity_deny > 0">
+               <tr ng-repeat="item in thisOrder.items" ng-show="item.quantity_disburse + item.quantity_deny + item.quantity_return > 0">
                  <td ng-bind="item.item.name || '[Deleted item]'"></td>
                  <td ng-bind="item.quantity_disburse"></td>
                  <td ng-bind="item.quantity_deny"></td>
                  <td ng-bind="item.quantity_return"></td>
-                </span>
                </tr>
              </table>
            </span>
@@ -176,15 +175,13 @@
                  <!-- Chnage this show variable to be based on if id = thisOrder.id -->
                  <td ng-show="isMe"> Quantity to Request Backfill </td>
                </tr>
-               <tr ng-repeat="item in thisOrder.items">
-                 <span ng-show="item.quantity_loan > 0">
-                   <td ng-bind="item.item.name || '[Deleted item]'"></td>
-                   <td ng-bind="item.quantity_loan"></td>
-                   <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.loan_disburse"></td>
-                   <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.loan_return"></td>
-                                    <!-- Chnage this show variable to be based on if id = thisOrder.id -->
-                   <td ng-show="isMe"><input class="noverflow" min="0" type="number" ng-model="item.loan_backfill"></td>
-                 </span>
+               <tr ng-repeat="item in thisOrder.items" ng-show="item.quantity_loan > 0">
+                 <td ng-bind="item.item.name || '[Deleted item]'"></td>
+                 <td ng-bind="item.quantity_loan"></td>
+                 <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.loan_disburse"></td>
+                 <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.loan_return"></td>
+                                  <!-- Chnage this show variable to be based on if id = thisOrder.id -->
+                 <td ng-show="isMe"><input class="noverflow" min="0" type="number" ng-model="item.loan_backfill"></td>
                </tr>
              </table>
            </span>
@@ -202,9 +199,9 @@
                  </tr>
                </table>
                <br>
-               <p><b>status:  </b>{{backfill.status}}</p>
-               <p>
-                 <b>new status: </b>
+               <p ng-show="!isAuthorized"><b>status:  </b>{{backfill.status}}</p>
+               <p ng-show="isAuthorized">
+                 <b>status: </b>
                  <select id="backfill-status" class="feedback-input" id="statusList" name="statusOptions" ng-model="backfill.status">
                    <option value="{{backfill.copyStatus}}">{{backfill.copyStatus}}</option>
                    <option ng-repeat="status in validBackfillStatuses(backfill)" ng-bind="status" value="{{status}}"></option>

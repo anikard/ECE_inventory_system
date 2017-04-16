@@ -83,11 +83,16 @@ function add (req, res) {
 	}
 
 	Cart.findOne({user: req.user._id})
+	//.populate('items.item')
 	.exec( function(err, cart) {
 		if (err)
 			return res.status(500).send({ error: err });
 		if (!cart || cart.items.length === 0)
 			return res.status(400).send({ error: "Empty cart" });
+
+		console.log("&&&&&&&&&&&&7: " + cart);
+		console.log("*************:");
+		consoel.log
 
 		for(var i = 0; i < req.body.items.length; i++) {
 			req.body.items[i].type = req.body.type;
@@ -98,16 +103,38 @@ function add (req, res) {
 			if (req.body.items[i].item.quantity_available < disburseOrLoanAmount) {
 				return res.status(405).send({ error: `Request quantity of ${req.body.items[i].item.name} exceeds stock limit` });
 			}
-			//req.body.items[i].item = req.body.items[i].item._id;
-			//req.body.items[i].item.quantity_available -= req.body.items[i].quantity_disburse + req.boyd.items[i].quantity_loan;
-			//req.body.items[i].item.quantity -= req.body.items[i].quantity_disburse;
+			/*
+			else{
+				req.body.items[i].item = req.body.items[i].item._id;
+				req.body.items[i].item.quantity_available -= req.body.items[i].quantity_disburse + req.body.items[i].quantity_loan;
+				req.body.items[i].item.quantity -= req.body.items[i].quantity_disburse;
+				req.body.items[i].item.save((err, success) => {
+					if(err) console.log("&&*&*&*&*&*: " + err);
+					if(success) console.log("%%%%%%%% " + success);
+				})
+			}
+			*/
 		}
+/*
+		Request.create({
+			user: id,
+			items: req.body.items,
+			reason: req.body.reason || "",
+			type: req.body.type || "disburse"
+		}, function (err, request))
 
+*/
 		let request = new Request({
         	user: id,
         	items: req.body.items,
         	reason: req.body.reason || "",
+					type: req.body.type || "disburse",
     });
+/*
+		for(var i = 0; i < request.items.length; i++) {
+
+		}
+		*/
 
     request.save((err,request) => {
     	if (err) next(err);
@@ -290,7 +317,7 @@ function updateCheck(request, oldItems, newItems) {
 			//generateNewBackfill(request, oldItems[i].item, quantityDelta.backfill_delta);
 		}
 	}
-	generateNewBackfill(request, newBackfills)
+	if (newBackfills.length > 0) generateNewBackfill(request, newBackfills);
 	return "";
 }
 
@@ -307,12 +334,6 @@ function generateQuantityDeltas(oldItem, newItem) {
 }
 
 function generateNewBackfill(request, backfillItems) {
-
-	//let bfItems = [];
-	//bfItems.push({
-	//	item: currentItem,
-	//	quantity: backfillAmount
-	//});
 	console.log("backfill");
 	console.log(backfillItems);
 	Backfill.create({ items: backfillItems, request: request._id }, function (err, bf) {
@@ -321,10 +342,6 @@ function generateNewBackfill(request, backfillItems) {
 		}
 		else {
 			console.log("BF SUCC: " + bf);
-			//let backfills = [];
-			//backfills.push(bf);
-			//request.backfills = bf;
-			//console.log("END GENERAT: " + request);
 		}
 	});
 
