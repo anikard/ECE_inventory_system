@@ -8,7 +8,7 @@ var CartSchema = new mongoose.Schema({
   user: {type:Schema.ObjectId, ref:'User', required: true, autopopulate: true},
   items: [{
   	item: {type:Schema.ObjectId, ref:'Item'},
-  	quantity: {type: Number, default: 0}
+  	quantity_requested: {type: Number, default: 0}
   }]
 
 });

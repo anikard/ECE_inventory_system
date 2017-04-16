@@ -6,13 +6,16 @@ var Cart = mongoose.model('Cart');
 var User = mongoose.model('User');
 var Item = mongoose.model('Item');
 var Log = mongoose.model('Log');
+var Backfill = mongoose.model('Backfill');
 var util = require('./util.js');
 var mailer = require('./mailer.js');
+var backfiller = require('./backfill.js');
 var _ = require('lodash');
 
 module.exports = (app) => {
 
 	app.get('/api/request/show', util.requireLogin, show);
+	app.post('/api/request/findOne', util.requireLogin, findOneRequest);
 	app.post('/api/request/add', util.requireLogin, add);
 	app.post('/api/request/close', util.requireLogin, close);
 	app.post('/api/request/del', util.requirePrivileged, del);
@@ -40,248 +43,171 @@ function show (req, res) {
     });
 }
 
+function findOneRequest(req, res, next) {
+	Request.findOne({_id:req.body._id||req.body.id||req.body.request})
+	.exec((err,request)=>{
+		if(err) return next(err);
+		if(!request) return next({status:400,error:"No such request"});
+		request = request.toJSON();
+		Backfill.find({request:request._id}, (err,results)=>{
+			//some error checking before...
+			request.backfills = results;
+			res.status(200).send(request);
+		});
+		//res.send(500).send({error: "Find one error"});
+	})
+}
+
 function add (req, res) {
+	console.log("BEGIN ADD");
+	console.log(req.body);
+	var direct = true;
 	let id = req.body.user || req.body.userId || req.body._id;
-	if(req.body.convert) {
-		// From Converted Request
-		console.log("REQUEST CONVERSION");
-		console.log(req.body);
-		return convert(id, req, res);
-	}
+
 	if (id) {
 		// Direct disbursal
-		if (req.user.status != "admin" && req.user.status != "manager")
+		if (req.user.status != "admin" && req.user.status != "manager") {
 			return res.status(403).send({ error: "Unauthorized" });
-		return direct(id, req, res);
+		}
+		for(var i = 0; i < req.body.items.length; i++) {
+			req.body.type === "disburse" ?
+			req.body.items[i].quantity_disburse = req.body.items[i].quantity_requested :
+			req.body.items[i].quantity_loan = req.body.items[i].quantity_requested;
+			req.body.items[i].quantity_requested = 0;
+		}
 	}
-	// User request
-	id = req.user._id;
+
+	if(!id) {
+		// User request
+		console.log("USER REQ");
+		id = req.user._id;
+		direct = false;
+	}
+
 	Cart.findOne({user: req.user._id})
+	//.populate('items.item')
 	.exec( function(err, cart) {
 		if (err)
 			return res.status(500).send({ error: err });
 		if (!cart || cart.items.length === 0)
 			return res.status(400).send({ error: "Empty cart" });
-		for (let i = 0;i<cart.items.length;i++){
+
+		//console.log("&&&&&&&&&&&&7: " + cart);
+		//console.log("*************:");
+		//consoel.log
+
+		console.log("IN REQ");
+		console.log(req.body);
+
+		for(var i = 0; i < req.body.items.length; i++) {
+			req.body.items[i].type = req.body.type;
+			var disburseOrLoanAmount =
+				(req.body.items[i].quantity_disburse) ?
+				req.body.items[i].quantity_disburse :
+				req.body.items[i].quantity_loan;
+			if (req.body.items[i].item.quantity_available < disburseOrLoanAmount) {
+				return res.status(405).send({ error: `Request quantity of ${req.body.items[i].item.name} exceeds stock limit` });
+			}
 			/*
-			if (cart.items[i].item.quantity_available < cart.items[i].quantity)
-				return res.status(405).send({ error: `Request quantity of ${cart.items[i].item.name} exceeds stock limit` });
-				*/
+			else{
+				req.body.items[i].item = req.body.items[i].item._id;
+				req.body.items[i].item.quantity_available -= req.body.items[i].quantity_disburse + req.body.items[i].quantity_loan;
+				req.body.items[i].item.quantity -= req.body.items[i].quantity_disburse;
+				req.body.items[i].item.save((err, success) => {
+					if(err) console.log("&&*&*&*&*&*: " + err);
+					if(success) console.log("%%%%%%%% " + success);
+				})
+			}
+			*/
 		}
-		let request = new Request({
+
+		console.log("ALMOST THERE");
+		console.log(req.body);
+
+
+		var newRequest = new Request({
         	user: id,
-        	items: cart.items,
+        	items: req.body.items,
         	reason: req.body.reason || "",
-			status: "outstanding",
-			type: req.body.type || "disburse"
-        });
-        request.save((err,request) => {
-        	if (err) next(err);
+					type: req.body.type || "disburse"
+    });
 
-			let name_arr = []
-			cart.items.forEach(i=>name_arr.push(i.name));
+		var promise = newRequest.save();
+		promise.then(function(rP) {
+			console.log("IN PROMISE");
+			console.log(rP);
 
-			cart.items = [];
+			Request.findById(rP._id)
+			.populate('items.item')
+			.exec(function (err, request){
+
+				for (var i = 0; i < request.items.length; i++) {
+					//request.items[i].item = request.items[i].item._id;
+					console.log("Check: " + request.items[i].item.name);
+					console.log(request.items[i].quantity_disburse);
+					console.log(request.items[i].quantity_loan);
+					console.log(request.items[i].item.quantity);
+					console.log(request.items[i].item.quantity_available);
+					request.items[i].item.quantity_available -= request.items[i].quantity_disburse + request.items[i].quantity_loan;
+					request.items[i].item.quantity -= request.items[i].quantity_disburse;
+					request.items[i].item.save((err, success) => {
+						if(err) {
+							console.log("&&*&*&*&*&*: " + err);
+						}
+						if(success) {
+							console.log("%%%%%%%% " + success);
+						}
+					})
+				}
+
+	    	if (err) next(err);
+
+				let name_arr = []
+				cart.items.forEach(i=>name_arr.push(i.name));
+
+				cart.items = [];
 
 
-			cart.save((err)=>{
-				if (err)
-					return res.status(500).send({ error: err });
-	    		let arr = [];
-	    		request.items.forEach(i=>arr.push(i.item));
-
-	    		email(request, `${req.user.name} added a new request`);
-
-    			User.find({ 'subscribed': 'subscribed' }, function (err, users) {
-    				if(err) return next(err);
-    				if(!users.length) return;
-    				let addresses = "";
-    				for (var i = 0; i < users.length; i++) {
-    					addresses = users[i].email?`${addresses},${users[i].email}`:addresses;
-    				}
-    				if (addresses) addresses = addresses.substring(1);
-    				emailTo(request, addresses, `${req.user.name} added a new request`);
-    			});
-
-				let quantity_arr = [];
-				request.items.forEach(i=>quantity_arr.push(i.quantity));
-
-				let name_arr = [];
-				request.items.forEach(i=>name_arr.push(i.item.name));
-
-	    		let log = new Log({
-					init_user: id,
-					item: arr,
-	 				event: "Request",
-	 				request: request,
-	 				rec_user: id,
-					quantity: quantity_arr,
-					name_list: name_arr
-				});
-				log.save((err)=>{
+				cart.save((err)=>{
 					if (err)
 						return res.status(500).send({ error: err });
-					return res.status(200).json(request);
-				});
-			});
-		});
-	});
-}
+		    		let arr = [];
+		    		request.items.forEach(i=>arr.push(i.item));
 
-function convert(id, req, res) {
-	let request = new Request({
-		user: id,
-		items: req.body.items,
-		reason: req.body.reason || "",
-		status: req.body.status || "outstanding",
-		note: req.body.note || "",
-		type: req.body.type || "disburse"
-	});
-	request.save((err,request) => {
-		if (err) {
-			return res.status(500).send({ error: err });
-		}
-		request.populate('items.item', function(err, request) {
-			if (request.status === "disbursed") {
-				for (let i = 0;i<request.items.length;i++){
+		    		email(request, `${req.user.name} added a new request`);
 
-					if (req.body.previousStatus === "outstanding") {
-						request.items[i].item.quantity -= req.body.items[i].quantity;
-						request.items[i].item.quantity_available -= req.body.items[i].quantity;
-					}
-					else if (req.body.previousStatus === "onLoan") {
-						request.items[i].item.quantity -= req.body.items[i].quantity;
-					}
-					else {
-						console.log("Error in converted disbursment");
-					}
-					request.items[i].item.save();
-				}
-			}
+	    			User.find({ 'subscribed': 'subscribed' }, function (err, users) {
+	    				if(err) return next(err);
+	    				if(!users.length) return;
+	    				let addresses = "";
+	    				for (var i = 0; i < users.length; i++) {
+	    					addresses = users[i].email?`${addresses},${users[i].email}`:addresses;
+	    				}
+	    				if (addresses) addresses = addresses.substring(1);
+	    				emailTo(request, addresses, `${req.user.name} added a new request`);
+	    			});
 
-			if (request.status === "onLoan") {
-				for (let i = 0;i<request.items.length;i++){
-					request.items[i].item.quantity_available -= req.body.items[i].quantity;
-					request.items[i].item.save();
-				}
-			}
+					let quantity_arr = [];
+					request.items.forEach(i=>quantity_arr.push(i.quantity_requested));
 
-			if (request.status === "returned") {
-				for (let i = 0;i<request.items.length;i++){
-					request.items[i].item.quantity_available += req.body.items[i].quantity;
-					request.items[i].item.save();
-				}
-			}
+					let name_arr = [];
+					request.items.forEach(i=>name_arr.push(i.item.name));
 
-			User.findOne({ _id: id}, (err, user)=>{
-				if (err) return next(err);
-				email(request, `Request update for ${user.name}`);
-			});
+		    		let log = new Log({
+						init_user: id,
+						item: arr,
+		 				event: "Request",
+		 				request: request,
+		 				rec_user: id,
+						quantity: quantity_arr,
+						name_list: name_arr
+					});
+					log.save((err)=>{
+						if (err)
+							return res.status(500).send({ error: err });
+						return res.status(200).json(request);
+					});
 
-			let name_arr = []
-			req.body.items.forEach(i=>name_arr.push(i.name));
-			let arr = []
-			request.items.forEach(i=>arr.push(i.item));
-			let quantity_arr = []
-			request.items.forEach(i=>quantity_arr.push(i.quantity));
-
-			let log = new Log({
-					init_user: id,
-					item: arr,
-					event: "Request",
-					request: request,
-					rec_user: id,
-					quantity: quantity_arr,
-					name_list: name_arr,
-					admin_actions: request.status
-			});
-			log.save((err)=>{
-				if (err)	{
-					return res.status(500).send({ error: err });
-				}
-				return res.status(200).json(request);
-			});
-		});
-	});
-}
-
-function direct (id, req, res) {
-	Cart.findOne({user: req.user})
-	.populate('items.item')
-	.exec(function(err, cart) {
-		if (err)
-			return res.status(500).send({ error: err });
-		if (!cart || cart.items.length === 0)
-				return res.status(400).send({ error: "Empty Cart" });
-		for (let i = 0;i<cart.items.length;i++){
-			if (cart.items[i].item.quantity_available < cart.items[i].quantity)
-				return res.status(405).send({ error: `Request quantity of ${cart.items[i].item.name} exceeds stock limit` });
-		}
-		let currentStatus = {};
-		if (req.body.type === "loan") {
-			currentStatus = "onLoan";
-		}
-		else if (req.body.type === "disburse") {
-			currentStatus = "disbursed";
-		}
-		let request = new Request({
-        	user: id,
-        	items: cart.items,
-        	reason: req.body.reason || "",
-        	note: req.body.note || "",
-					status: currentStatus,
-					type: req.body.type,
-        });
-        for (let i = 0;i < cart.items.length;i++){
-			if (req.body.type === "disburse") {
-				cart.items[i].item.quantity -= cart.items[i].quantity;
-				cart.items[i].item.quantity_available -= cart.items[i].quantity;
-			}
-			else if (req.body.type === "loan") {
-				cart.items[i].item.quantity_available -= cart.items[i].quantity;
-			}
-		}
-        request.save((err,request) => {
-        	if (err)
-				return res.status(500).send({ error: err });
-			for (let i = 0;i<cart.items.length;i++){
-				cart.items[i].item.save();
-			}
-
-			let name_arr = []
-			cart.items.forEach(i=>name_arr.push(i.name));
-
-
-			cart.items = [];
-			cart.save((err)=>{
-				if (err) return res.status(500).send({ error: err });
-
-
-				User.findOne({_id:id}, (err, user)=>{
-					if (err) return next(err);
-					email(request, `${user.name} received a new disbursement`);
-				});
-
-	    		let arr = []
-	    		request.items.forEach(i=>arr.push(i.item));
-
-				let quantity_arr = []
-				request.items.forEach(i=>quantity_arr.push(i.quantity));
-
-	    		let log = new Log({
-					init_user: req.user,
-					item: arr,
-	 				event: "Request",
-	 				rec_user: id,
-	 				request: request,
-					quantity: quantity_arr,
-					name_list: name_arr,
-					admin_actions: "disbursement"
-				});
-				log.save((err)=>{
-					if (err)
-						return res.status(500).send({ error: err });
-					return res.status(200).json(request);
 				});
 			});
 		});
@@ -332,200 +258,135 @@ function del (req, res) {
 
 	});
 }
-
 function update (req, res) {
 	Request.findOne({ '_id': req.body._id })
-	.populate('items.item')
+	.populate('items.item backfills')
+	//.populate('backfills.backfill')
 	.exec( function (err, request) {
 		if (err) return res.status(500).send({ error: err});
+		var updateCheckString = updateCheck(request, request.items, req.body.items);
+		if (updateCheckString != "") {
+			return res.status(403).send({ err: updateCheckString });
+		}
+		var nowDate = new Date();
+		var nowISO = nowDate.toISOString();
+		req.body.dateUpdated = nowISO;
+		//var logStats = generateLogStats(request.items, req.body.items);
 
-		// TODO: refactor the following if tree into one clause
-		if (request.status === "outstanding" && req.body.status === "disbursed") {
-			if (req.user.status != "admin" && req.user.status != "manager")
-				return res.status(401).send({ error: "Unauthorized operation"});
-			for (let i = 0;i<request.items.length;i++){
-				if (request.items[i].item.quantity_available < request.items[i].quantity)
-					return res.status(405).send({
-						error: `Request quantity of ${request.items[i].item.name} exceeds stock limit`
-					});
-			}
-			for (let i = 0;i<request.items.length;i++){
-				request.items[i].item.quantity -= request.items[i].quantity;
-				request.items[i].item.quantity_available -= request.items[i].quantity;
-			}
-			request.note = req.body.note || request.note;
-			request.status = "approved";
-			request.save(function (err, request) {
-				if (err) return res.status(500).send({ error: err});
-				for (let i = 0;i<request.items.length;i++){
-					request.items[i].item.save();
-				}
+		var logStats = {};
+		for (var i = 0; i < request.items.length; i++) {
+			var quantity_and_available_delta = request.items[i].quantity_disburse - req.body.items[i].quantity_disburse;
+			var quantity_available_only_delta =
+				(req.body.items[i].loan_return - req.body.items[i].outstanding_loan);
+			console.log("log stats");
+			console.log(request.items[i].item.name);
+			console.log(quantity_and_available_delta);
+			console.log(quantity_available_only_delta);
+			request.items[i].item.quantity += quantity_and_available_delta;
+			request.items[i].item.quantity_available +=
+				(quantity_and_available_delta + quantity_available_only_delta);
+		}
 
-				let arr = []
-	    		request.items.forEach(i=>arr.push(i.item));
-
-				let quantity_arr = []
-				request.items.forEach(i=>quantity_arr.push(i.quantity));
-
-				let name_arr = []
-
-				request.items.forEach(i=>name_arr.push(i.item.name));
-
-				email(request, 'Your request has been approved');
-
-	    		let log = new Log({
-					init_user: req.user,
-					item: arr,
-	 				event: "Request",
-	 				request: request,
-	 				rec_user: request.user,
-	 				admin_actions: "Approved",
-					quantity: quantity_arr,
-					name_list: name_arr
-				});
-				log.save();
-				return res.status(200).json(request);
+		for (let i = 0; i < request.items.length; i++) {
+			console.log("Quantity available");
+			console.log(request.items[i].item.quantity_available);
+			request.items[i].item.save(function (err, success) {
+				console.log("Err: " + err);
+				console.log("Suc: " + success);
 			});
 		}
 
-		else if (req.body.previous_status === "onLoan" && req.body.status === "disbursed") {
-			if (req.user.status != "admin" && req.user.status != "manager")
-				return res.status(401).send({ error: "Unauthorized operation"});
-			for (let i = 0;i<request.items.length;i++){
-				request.items[i].item.quantity -= request.items[i].quantity;
-			}
-			request.note = req.body.note || request.note;
-			request.status = "disbursed";
-			request.save(function (err, request) {
-				if (err) return res.status(500).send({ error: err});
-				for (let i = 0;i<request.items.length;i++){
-					request.items[i].item.save();
-				}
-
-				email(request, 'Your request has been updated from on-loan to disbursed');
-
-				let arr = []
-				request.items.forEach(i=>arr.push(i.item));
-
-				let quantity_arr = []
-				request.items.forEach(i=>quantity_arr.push(i.quantity));
-
-				let name_arr = []
-				request.items.forEach(i=>name_arr.push(i.item.name));
-
-				let log = new Log({
-					init_user: req.user,
-					item: arr,
-					event: "Request",
-					request: request,
-					rec_user: request.user,
-					admin_actions: "on loan to disburse",
-					quantity: quantity_arr,
-					name_list: name_arr
+		for (let i = 0; i < req.body.backfills.length; i++) {
+			Backfill.findOne({_id: req.body.backfills[i]._id}, (err, backfill) => {
+				backfill.status = req.body.backfills[i].status;
+				backfill.save(function(err, success) {
+					console.log("BFE: " + err);
+					console.log("BFS: " + success);
 				});
-				log.save();
-				return res.status(200).json(request);
 			});
 		}
 
-		else if (req.body.status === "onLoan") {
-			if (req.user.status != "admin" && req.user.status != "manager") {
-				return res.status(401).send({ error: "Unauthorized operation"});
-			}
-			for (let i = 0;i<request.items.length;i++){
-				if (request.items[i].item.quantity_available < request.items[i].quantity)
-					return res.status(405).send({
-						error: `Request quantity of ${request.items[i].item.name} exceeds stock limit`
-					});
-			}
-			for (let i = 0;i<request.items.length;i++){
-				request.items[i].item.quantity_available -= request.items[i].quantity;
-			}
-			request.note = req.body.note || request.note;
-			request.status = req.body.status;
-			request.type = "loan";
-			request.save(function (err, request) {
-				if (err) return res.status(500).send({ error: err});
-				for (let i = 0;i<request.items.length;i++){
-					request.items[i].item.save();
-				}
+		console.log("REQUESTE BEFORE: " + request)
+		_.assign(request,_.pick(req.body,['user', 'reason', 'items', 'notes', 'dateUpdated']));
+		console.log("REQUEST AFTER: " + request);
+		request.save(function (err) {
 
-				email(request, 'New Loan Request');
+			if (err) return res.status(500).send({ error: err});
+			email(request, 'Your request has been updated');
+			return res.status(200).json(request);
+		});
+	});
+}
 
-				let arr = []
-				request.items.forEach(i=>arr.push(i.item));
-
-				let quantity_arr = []
-				request.items.forEach(i=>quantity_arr.push(i.quantity));
-
-				let name_arr = []
-				request.items.forEach(i=>name_arr.push(i.item.name));
-
-				let log = new Log({
-					init_user: req.user,
-					item: arr,
-					event: "Request",
-					request: request,
-					rec_user: request.user,
-					admin_actions: "Loan",
-					quantity: quantity_arr,
-					name_list: name_arr
-				});
-				log.save();
-				return res.status(200).json(request);
-			});
+function updateCheck(request, oldItems, newItems) {
+	var newBackfills = [];
+	for (var i = 0; i < oldItems.length; i++) {
+		var quantityAvailable = oldItems[i].item.quantity_available;
+		console.log("QA");
+		console.log(quantityAvailable);
+		var quantityDelta = generateQuantityDeltas(oldItems[i], newItems[i]);
+		console.log(quantityDelta);
+		if (quantityDelta.disburse_delta > quantityAvailable || quantityDelta.loan_delta > quantityAvailable) {
+			return "Quantities acted on exceed quantities available";
 		}
-
-		else if (req.body.status === "returned") {
-			if (req.user.status != "admin" && req.user.status != "manager") {
-				return res.status(401).send({ error: "Unauthorized operation"});
-			}
-			for (let i = 0;i<request.items.length;i++){
-				request.items[i].item.quantity_available += request.items[i].quantity;
-			}
-			request.note = req.body.note || request.note;
-			request.status = req.body.status;
-			request.save(function (err, request) {
-				if (err) return res.status(500).send({ error: err});
-				for (let i = 0;i<request.items.length;i++){
-					request.items[i].item.save();
-				}
-
-				email(request, 'Your request has been marked as returned');
-
-				let arr = []
-				request.items.forEach(i=>arr.push(i.item));
-
-				let quantity_arr = []
-				request.items.forEach(i=>quantity_arr.push(i.quantity));
-
-				let name_arr = []
-				request.items.forEach(i=>name_arr.push(i.item.name));
-
-				let log = new Log({
-					init_user: req.user,
-					item: arr,
-					event: "Request",
-					request: request,
-					rec_user: request.user,
-					admin_actions: "Return",
-					quantity: quantity_arr,
-					name_list: name_arr
-				});
-				log.save();
-				return res.status(200).json(request);
-			});
+		if (quantityDelta.total_delta > oldItems[i].quantity_requested) {
+			return "Quantities acted on exceed quantities requested";
 		}
+		if (quantityDelta.backfill_delta > 0) {
+			var newBackfill = {
+				item: oldItems[i].item,
+				quantity: quantityDelta.backfill_delta
+			};
+			newBackfills.push(newBackfill);
+			//generateNewBackfill(request, oldItems[i].item, quantityDelta.backfill_delta);
+		}
+	}
+	if (newBackfills.length > 0) generateNewBackfill(request, newBackfills);
+	return "";
+}
 
+function generateQuantityDeltas(oldItem, newItem) {
+	var delta = {};
+	delta.disburse_delta = newItem.quantity_disburse - oldItem.quantity_disburse;
+	delta.loan_delta = newItem.quantity_loan - oldItem.quantity_loan;
+	delta.deny_delta = newItem.quantity_deny - oldItem.quantity_deny;
+	delta.cancel_delta = newItem.quantity_cancel - oldItem.quantity_cancel;
+	delta.return_delta = newItem.quantity_return - oldItem.quantity_return;
+	delta.total_delta = delta.disburse_delta + delta.loan_delta + delta.deny_delta
+	+ delta.cancel_delta + delta.return_delta;
+	delta.backfill_delta = newItem.quantity_backfill - oldItem.quantity_backfill;
+	return delta;
+}
+
+function generateNewBackfill(request, backfillItems) {
+	console.log("backfill");
+	console.log(backfillItems);
+	Backfill.create({ items: backfillItems, request: request._id }, function (err, bf) {
+		if (err) {
+			console.log("BF ERR: " + err);
+		}
 		else {
-			_.assign(request,_.pick(req.body,['note','status','type','reason','user']));
-			request.save(function (err, request) {
-				if (err) return res.status(500).send({ error: err});
-				email(request, 'Your request has been updated');
-				return res.status(200).json(request);
-			});
+			console.log("BF SUCC: " + bf);
 		}
 	});
+
+}
+
+function generateLogStats(oldItems, newItems) {
+	// TODO: BROKEN: Ask mike how to update the item quantity and q_avail in this function
+	var logStats = {};
+	for (var i = 0; i < oldItems.length; i++) {
+		var quantity_and_available_delta = oldItems[i].quantity_disburse - newItems[i].quantity_disburse;
+		var quantity_available_only_delta =
+			(newItems[i].loan_return - newItems[i].outstanding_loan);
+		console.log("log stats");
+		console.log(oldItems[i].item.name);
+		console.log(quantity_and_available_delta);
+		console.log(quantity_available_only_delta);
+		oldItems[i].item.quantity += quantity_and_available_delta;
+		oldItems[i].item.quantity_available +=
+			(quantity_and_available_delta + quantity_available_only_delta);
+	}
 }
 
 function email(request, subject){

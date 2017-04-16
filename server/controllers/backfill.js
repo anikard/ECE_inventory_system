@@ -14,7 +14,7 @@ var path = require('path');
 const fs = require('fs');
 
 module.exports = {
-    
+
     send: null,
 
     routes: function(app) {
@@ -63,7 +63,12 @@ function update (req, res, next) {
       email(backfill, "Your backfill request has been updated");
       res.status(200).json(backfill);
     })
-  }) 
+  })
+}
+
+function updateFromRequest (backfill) {
+  Backfill.findOne({_id:backfill._id})
+  .exec
 }
 
 function close (req, res, next) {
@@ -185,4 +190,3 @@ function upload(req, res, next) {
   });
 
 }
-

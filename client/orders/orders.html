@@ -51,152 +51,235 @@
 </select>
 
 <div class="customerTable" id = "cTable" style="height:25em;">
-    <table id = "myRequestsTable" class="table">
-      <tr>
-        <td> User Name </td>
-        <td> # of Items </td>
-        <td> Date Issued </td>
-        <td> Status </td>
-        <td> Type </td>
-        <td> View Request </td>
-      </tr>
+  <table id = "myRequestsTable" class="table">
+    <tr>
+      <td> User Name </td>
+      <td> # of Items </td>
+      <td> Type </td>
+      <td> Date Issued </td>
+      <td> Last Updated </td>
+      <td> View Request </td>
+    </tr>
 
-      <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-date' | limitTo: paginationLimit()">
-        <td style="display:none;" ng-bind="order._id"></td>
-        <td ng-bind="order.user.netId || order.customer_name || order.user.username"></td>
-        <td ng-bind="order.items.length"></td>
-        <td ng-bind="order.date | date:'short'"></td>
-        <td ng-bind="order.status"></td>
-        <td ng-bind="order.type"></td>
-        <td><button class = "remove" ng-click='viewOrder(order)' data-toggle="modal" data-target="#orderModal">View</button></td>
-      </tr>
-    </table>
-  </div>
-
-  <button class = "remove" style="margin-top:1em; width: 20%; color: black;" ng-show="hasMoreItemsToShow()" ng-click="showMoreItems()">
-      Show more
- </button>
-
-<div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-
-        </button>
-          <h1 class="modal-title" id="exampleModalLabel">View Request</h1>
-
-      </div>
-      <div class="modal-body" align="left">
-
-        <div class="form-group" >
-            <p> <b> User: </b> {{thisOrder.customer_name || thisOrder.user.username || thisOrder.user.netId}}</p>
-            <p>
-              <span ng-show="thisOrder.status === 'outstanding' && isAuthorized">
-                <table id = "openRequestTable" class="small table">
-                  <tr>
-                    <td> Item </td>
-                    <td> Quantity Requested </td>
-                    <td> Quantity to Disburse </td>
-                    <td> Quantity to Loan </td>
-                    <td> Quantity Denied </td>
-                  </tr>
-                  <tr ng-repeat="item in thisOrder.items">
-                    <td ng-bind="item.item.name || '[Deleted item]'"></td>
-                    <td ng-bind="item.quantity"></td>
-                    <!-- TODO: Correct min-max (0-item.quantity)-->
-                    <td ng-show="item.item.name"><input class="noverflow" min="0" type="number" ng-model="item.quantity_to_disburse"></td>
-                    <td ng-show="item.item.name"><input class="noverflow" min="0" type="number" ng-model="item.quantity_to_loan"></td>
-                    <td ng-show="item.item.name"><input class="noverflow" min="0" type="number" ng-model="item.quantity_to_deny"></td>
-                  </tr>
-                </table>
-              </span>
-
-              <span ng-show="thisOrder.status === 'onLoan' && isAuthorized">
-                <table id = "openRequestTable" class="table">
-                  <tr>
-                    <td> Item </td>
-                    <td> Quantity on Loan </td>
-                    <td> Quantity to Disburse </td>
-                    <td> Quantity to Return </td>
-                  </tr>
-                  <tr ng-repeat="item in thisOrder.items">
-                    <td ng-bind="item.item.name || '[Deleted item]'"></td>
-                    <td ng-bind="item.quantity"></td>
-                    <!-- TODO: Correct min-max (0-item.quantity)-->
-                    <td ng-show="item.item.name"><input class="noverflow" min="0" type="number" ng-model="item.quantity_to_disburse"></td>
-                    <td ng-show="item.item.name"><input class="noverflow" min="0" type="number" ng-model="item.quantity_to_return"></td>
-                    <!--<td ng-show="!item.item.name"><input type="number" ng-model="item.quantity_to_disburse"></td>
-                    <td ng-show="!item.item.name"><input type="number" ng-model="item.quantity_to_return"></td>
-                  -->
-                  </tr>
-                </table>
-              </span>
-
-              <span ng-show="thisOrder.status == 'denied'
-              || thisOrder.status == 'returned'
-              || thisOrder.status == 'disbursed'
-              || thisOrder.status == 'approved'
-              || thisOrder.status == 'converted'
-              || !isAuthorized">
-                <table id = "openRequestTable" class="table">
-                  <tr>
-                    <td> Item </td>
-                    <td> Quantity Requested </td>
-                  </tr>
-                  <tr ng-repeat="item in thisOrder.items">
-                    <td ng-bind="item.item.name || '[Deleted item]'"></td>
-                    <td ng-bind="item.quantity"></td>
-                  </tr>
-                </table>
-              </span>
-
-            </p>
-
-
-<!--
-              <table>
-                <tr>
-                  <td><b>Item</b></td>
-                  <td><b>Quantity</b></td>
-                </tr>
-                <tr ng-repeat="item in thisOrder.items">
-                  <td ng-bind="item.item.name"></td>
-                  <td ng-bind="item.quantity"></td>
-                </tr>
-              </table>
-            </p>
-
-            <p><b>Item:  </b>{{thisOrder.item_name}}</p>
-            <p><b>Quantity:  </b>{{thisOrder.quantity}}</p>
-          -->
-            <p><b>Reason:  </b>{{thisOrder.reason}}</p>
-            <p><b>Current Status:  </b>{{thisOrder.status}}</p>
-            <p ng-show="thisOrder.status === 'outstanding'"><b>Suggested Type: </b>{{thisOrder.type}}</p>
-            <p ng-show="thisOrder.status != 'outstanding'"><b>Type: </b>{{thisOrder.type}}</p>
-            <p ng-show="thisOrder.status != 'outstanding' && thisOrder.status != 'onLoan'"><b>Comment: </b>{{thisOrder.note}}</p>
-            <p><b>Date: </b>{{ thisOrder.date | date:'short'}}</p>
-          </div>
-
-
-      <div ng-if="isAuthorized">
-        <div class="error" ng-show="errorMessage">{{ errorMessage }}</div>
-        <form id="request_response_form">
-          <label for="message-text" class="form-control-label">Comment:</label>
-          <textarea class="form-control" id="message-text" ng-model="thisOrder.note"></textarea>
-          <button type="button" class="btn btn-primary" ng-click="respondToOrder()" id = "respondOrderButton">Respond</button>
-        </form>
-      </div>
-
-      <div class="modal-footer">
-
-        <button class="btn btn-danger" ng-click='removeOrder(thisOrder)' ng-show="isAuthorized || thisOrder.status === 'outstanding'" id = "cancelOrderButton">Cancel order</button>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
+    <tr ng-repeat="order in orders | filter: filter_name | orderBy:'-date' | limitTo: paginationLimit()">
+      <td style="display:none;" ng-bind="order._id"></td>
+      <td ng-bind="order.user.netId || order.customer_name || order.user.username"></td>
+      <td ng-bind="order.items.length"></td>
+      <td ng-bind="order.type"></td>
+      <td ng-bind="order.date | date:'short'"></td>
+      <td ng-bind="order.dateUpdated | date:'short'"></td>
+      <td><button class = "remove" ng-click='viewOrder(order)'>View</buttion></td> <!-- data-toggle="modal" data-target="#orderModal">View</button></td>-->
+    </tr>
+  </table>
 </div>
+
+<button class = "remove" style="margin-top:1em; width: 20%; color: black;" ng-show="hasMoreItemsToShow()" ng-click="showMoreItems()">
+    Show more
+</button>
+<!--
+<div class="customerTable" id = "bTable" style="height:25em;">
+  <table id = "myBackfillTable" class="table">
+    <tr>
+      <td> Request Id </td>
+      <td> # of Items </td>
+      <td> Date Issued </td>
+      <td> Last Updated </td>
+      <td> View Request </td>
+    </tr>
+
+    <tr ng-repeat="backfill in backfills | filter: filter_name | orderBy:'-date'">
+      <td style="display:none;" ng-bind="backfill._id"></td>
+      <td ng-bind="backfill.request._id"></td>
+      <td ng-bind="backfill.items.length"></td>
+      <td ng-bind="backfill.date | date:'short'"></td>
+      <td ng-bind="backfill.date | date:'short'"></td>
+      <td><button class = "remove" ng-click='viewBackfill(backfill)' data-toggle="modal" data-target="#backfillModal">View</button></td>
+    </tr>
+  </table>
+</div>
+-->
+
+
+ <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+     <div class="modal-content">
+       <div class="modal-header">
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+         </button>
+         <h1 class="modal-title" id="exampleModalLabel">View Request</h1>
+       </div>
+       <div class="modal-body" align="left">
+         <div class="form-group" >
+           <p> <b> User: </b> {{thisOrder.customer_name || thisOrder.user.username || thisOrder.user.netId}}</p>
+           <p><b>Reason:  </b>{{thisOrder.reason}}</p>
+           <p><b>Date: </b>{{ thisOrder.date | date:'short'}}</p>
+           <p><b>Suggested Type: </b>{{ thisOrder.type }}</p>
+           <div class="error" ng-show="errorMessage">{{ errorMessage }}</div>
+           <span id="outstanding" ng-show=hasOutstanding()>
+             <h5>Outstanding Requests</h5>
+             <table id="outstandingTable" class="small table">
+               <tr>
+                 <th> Item </th>
+                 <th> Outstanding Remaining </th>
+                 <th> Suggested Type </th>
+                 <!--<th> Outstanding Remaining</th>-->
+                 <th ng-show="isAuthorized"> Quantity to Disburse </th>
+                 <th ng-show="isAuthorized"> Quantity to Loan </th>
+                 <th ng-show="isAuthorized"> Quantity to Deny </th>
+                 <th ng-show="isAuthorized"> Quantity to Accept as Backfill </th>
+                 <!-- Chnage this show variable to be based on if id = thisOrder.id -->
+                 <th ng-show="isMe"> Quantity to Cancel </th>
+               </tr>
+               <tr ng-repeat="item in thisOrder.items" ng-show="item.quantity_requested > 0">
+                 <td ng-bind="item.item.name || '[Deleted item]'"></td>
+                 <td ng-bind="item.quantity_requested"></td>
+                 <td ng-bind="item.type"></td>
+                 <!--<td ng-bind="item.quantity_requested - (item.outstanding_disburse + item.outstanding_loan + item.outstanding_deny + item.outstanding_backfill)"></td>-->
+                 <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.outstanding_disburse"></td>
+                 <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.outstanding_loan"></td>
+                 <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.outstanding_deny"></td>
+                 <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.outstanding_backfill"></td>
+                 <!-- Chnage this show variable to be based on if id = thisOrder.id -->
+                 <td ng-show="isMe"><input class="noverflow" min="0" type="number" ng-model="item.quantity_cancel"></td>
+                </tr>
+             </table>
+           </span>
+
+           <span id="disburse" ng-show="hasDisburse()">
+             <h5>Completed Requests</h5>
+             <table id="disburseTable" class="small table">
+               <tr>
+                 <td> Item </td>
+                 <td> Quantity Disbursed </td>
+                 <td> Quantity Denied </td>
+                 <td> Quanitty Returned </td>
+               </tr>
+               <tr ng-repeat="item in thisOrder.items" ng-show="(item.quantity_disburse + item.quantity_deny + item.quantity_return) > 0">
+                 <td ng-bind="item.item.name || '[Deleted item]'"></td>
+                 <td ng-bind="item.quantity_disburse"></td>
+                 <td ng-bind="item.quantity_deny"></td>
+                 <td ng-bind="item.quantity_return"></td>
+               </tr>
+             </table>
+           </span>
+
+           <span id="loan" ng-show="hasLoan()">
+             <h5>Loan Table</h5>
+             <table id="loanTable" class="small table">
+               <tr>
+                 <td> Item </td>
+                 <td> Quantity on Loan </td>
+                 <td ng-show="isAuthorized"> Quantity to Disburse </td>
+                 <td ng-show="isAuthorized"> Quantity Returned </td>
+                 <!-- Chnage this show variable to be based on if id = thisOrder.id -->
+                 <td ng-show="isMe"> Quantity to Request Backfill </td>
+               </tr>
+               <tr ng-repeat="item in thisOrder.items" ng-show="item.quantity_loan > 0">
+                 <td ng-bind="item.item.name || '[Deleted item]'"></td>
+                 <td ng-bind="item.quantity_loan"></td>
+                 <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.loan_disburse"></td>
+                 <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.loan_return"></td>
+                                  <!-- Chnage this show variable to be based on if id = thisOrder.id -->
+                 <td ng-show="isMe"><input class="noverflow" min="0" type="number" ng-model="item.loan_backfill"></td>
+               </tr>
+             </table>
+           </span>
+           <span ng-show="hasBackfill()" id="backfill">
+             <h5> Backfills </h5>
+             <span ng-repeat="backfill in thisOrder.backfills">
+               <table id="backfillTable" class="small table">
+                 <tr>
+                   <td> Item </td>
+                   <td> Quantity </td>
+                 </tr>
+                 <tr ng-repeat="item in backfill.items">
+                    <td ng-bind="item.item.name || '[Deleted item]'"></td>
+                    <td ng-bind="item.quantity"></td>
+                 </tr>
+               </table>
+               <br>
+               <p ng-show="!isAuthorized"><b>status:  </b>{{backfill.status}}</p>
+               <p ng-show="isAuthorized">
+                 <b>status: </b>
+                 <select id="backfill-status" class="feedback-input" id="statusList" name="statusOptions" ng-model="backfill.status">
+                   <option value="{{backfill.copyStatus}}">{{backfill.copyStatus}}</option>
+                   <option ng-repeat="status in validBackfillStatuses(backfill)" ng-bind="status" value="{{status}}"></option>
+                 </select>
+               </p>
+               <p><b>origin: </b>{{backfill.origin}}</p>
+               <p><b>pdf: </b>TODO pdf </p>
+             </span>
+
+           </span>
+
+           <!--
+           <span id="backfill-live" ng-show="hasBackfillLive()">
+             <table id="backfillLiveTable" class="small table">
+               <tr>
+                 <td> Item </td>
+                 <td> Quantity in Transit</td>
+                 <td> Quantity to Fulfill</td>
+                 <td> Quantity to Fail</td>
+                 <td> pdf </td>
+                 <td ng-show="!isAuthorized"> Quantity to Request Backfill </td>
+               </tr>
+               <tr ng-repeat="backfill in thisOrder.backfills">
+                 <span ng-repeat="item in backfill.items">
+                   <td ng-bind="item.item.name || '[Deleted item]'"></td>
+                   <td ng-bind="item.quantity_transit_outstanding"></td>
+                   <td><input class="noverflow" min="0" type="number" ng-model="item.quantity_fulfilled"></td>
+                   <td><input class="noverflow" min="0" type="number" ng-model="item.quantity_failed"></td>
+                 </span>
+               </tr>
+             </table>
+           </span>
+           <span id="backfill-completed" ng-show="hasBackfillComplete()">
+             <table id="backfillCompletedTable" class="small table">
+               <tr>
+                 <td> Item </td>
+                 <td> Quantity Fulfileed</td>
+                 <td> Quantity Denied</td>
+                 <td> Quantity Failed</td>
+                 <td> pdf </td>
+                 <td ng-show="!isAuthorized"> Quantity to Request Backfill </td>
+               </tr>
+               <tr ng-repeat="item in backfillItems">
+                 <td ng-bind="item.item.name || '[Deleted item]'"></td>
+                 <td ng-bind="item.quantity_req"></td>
+                 <td ng-readonly="!isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.quantity_disburse"></td>
+                 <td ng-readonly="!isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.quantity_return"></td>
+                 <td ng-readonly="!isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.quantity_deny"></td>
+                 <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.quantity_deny"></td>
+               </tr>
+             </table>
+           </span>
+         -->
+
+         </div>
+
+         <label ng-show="thisOrder.notes.length > 0">Previous Comments </label>
+         <div ng-repeat="note in thisOrder.notes">
+           <span ng-bind="note"></span>
+         </div>
+         <br>
+
+
+         <form>
+           <label for="message-text" class="form-control-label">Add Comment:</label>
+           <textarea class="form-control" id="message-text" ng-model="thisOrder.currentNote"></textarea>
+           <br>
+           <button type="button" class="btn btn-primary" ng-click="respondToOrder(thisOrder)" id = "respondOrderButton">Respond</button>
+         </form>
+
+         <div class="modal-footer">
+           <button class="btn btn-danger" ng-click='removeOrder(thisOrder)' ng-show="isAuthorized || thisOrder.status === 'outstanding'" id = "cancelOrderButton">Cancel order</button>
+           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+         </div>
+       </div>
+     </div>
+   </div>
+ </div>
 
   <script type="text/javascript">
     $('#orderModal').on('show.bs.modal', function (event) {
@@ -206,5 +289,5 @@
 
   </script>
 
-</body>
+  </body>
 </html>

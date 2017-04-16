@@ -109,7 +109,7 @@ var orders_app = angular.module('cart_app', []);
       $scope.addToCart = function() {
         console.log("addToCart from cart controller scope");
         var itemSelected = $document[ 0 ].getElementById('productList');
-        if (!itemSelected.value || !$scope.new_order || !$scope.new_order.quantity) {
+        if (!itemSelected.value || !$scope.new_order || !$scope.new_order.quantity_requested) {
             alert('Please fill out all the fields.');
             return;
           }
@@ -122,7 +122,7 @@ var orders_app = angular.module('cart_app', []);
 
         OrderFactory.addToCart($scope.new_order, function(data) {
           var pushOrder = {};
-          pushOrder.quantity = $scope.new_order.quantity;
+          pushOrder.quantity_requested = $scope.new_order.quantity_requested;
           pushOrder.item = {};
           pushOrder.item.name = $scope.current_item_name;
           // Refresh $scope.orders;
@@ -191,6 +191,7 @@ var orders_app = angular.module('cart_app', []);
               $scope.modalErrorMessage = null;
               $scope.refreshOrders();
               $scope.this_request = {};
+              //window.location.assign('/orders/orders.html');
             }
           });
         }

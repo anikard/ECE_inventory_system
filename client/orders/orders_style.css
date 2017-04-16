@@ -171,7 +171,7 @@ body {
     }
 
     .small {
-      font-size: 11px;
+      font-size: 9px;
       overflow-x: scroll;
       text-align: center;
     }
@@ -179,6 +179,7 @@ body {
     .noverflow {
       overflow-x: scroll;
       display: block;
+      text-align: center;
       width: 100%;
     }
 
