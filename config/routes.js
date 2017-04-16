@@ -34,9 +34,9 @@ module.exports = (app) => {
   require('./../server/controllers/backfill.js').routes(app);
 
   app.use(function (err, req, res, next) {
-    console.error(err.stack);
+    console.error(err);
     if (err.status) {
-      res.status(err.status).send(err.message)
+      res.status(err.status).send(err.message||err.error);
     } else {
       res.status(500).send({error: err});
     }

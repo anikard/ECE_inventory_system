@@ -12,32 +12,181 @@ var async = require("async");
 const allFields = ['name','quantity', 'model','description','tags','image','fields', 'min_quantity', "last_check_date", "isAsset", "assets"];
 
 module.exports = (app) => {
-  app.get('/api/asset/add', util.requireLogin, function(req, res, next) {
-    let asset = new Asset({
-      item: "58df32bfa760bacfd7ed05e2",
+  app.post('/api/asset/add', util.requireLogin, function(req, res, next) {
+    /*
+      {
+        item_name: item name
+        fields: per asset custome fields
+        assetTag: optional tag
+      }
+      return : new asset json object
+    */
+    let name = req.body.item_name || req.body.name || req.body.item;
+    if(!name) return next({status: 400, error: `Item id is not supplied`});
+    Item.findOne({name: name})
+    .exec((err,item) => {
+      if(err) return next(err);
+      if(!item) return next({status: 400, error: `${item.name} does not exist.`});
+      if(!item.isAsset) return next({status: 400, error: `${item.name} is not an asset.`});
+      let tag = randomInt(0, 10000000000);
+      if(req.body.assetTag)
+        tag = req.body.assetTag.toString();
+      let asset = new Asset({
+        item: item._id,
+        assetTag: tag,
+      })
+      let assets = [];
+      if(item.assets && item.assets.length)
+        assets = item.assets;
+      assets.push(asset);
+      item.assets = assets;
+      item.quantity_available+=1;
+      item.quantity+=1;
+      asset.save((err)=>{
+        if(err)return next(err);
+        item.save(err=>{
+          if(err)return next(err);
+          res.status(200).send(asset);
+        })
+      });
+      
     });
-    asset.assetTag = asset.id;
-    asset.save();
-    Item.findOne({_id:"58df32bfa760bacfd7ed05e2"},(err,item)=>{
-      console.log(item);
-      console.log(item.assets);
-      if(item.assets)item.assets.push(asset.id);
-      else item.assets = [asset.id];
-      item.save((err,item)=>res.status(200).json(item));
-
-    })
   });
 
-  app.get('/api/asset/show', util.requireLogin, function(req, res, next) {
-    Item.find({})
-    // .limit(parseInt(req.query.limit) || 200)
-    .populate('assets')
-    .exec((err, results) => {
-      if(err) {
-        res.status(500).send({ error: err });
-      } else {
-        res.status(200).json(results);
+  app.all('/api/asset/del', util.requireLogin, function(req, res, next) {
+    /*
+      {
+        id: asset id to delete
       }
+      OR
+      {
+        assetTag: asset tag to delete
+      }
+    */
+    let id = req.body._id || req.body.asset || req.body.id
+              || req.query._id || req.query.asset || req.query.id;
+
+    let tag = req.body.assetTag || req.body.tag
+              || req.query.assetTag || req.query.tag;
+    if (!id && !tag) return next({status: 400, error: `Field missing`});
+    if(id){
+      Asset.findOneAndRemove({_id:id}, (err, asset)=>{
+        if(err) return next(err);
+        if(!asset) return next({status: 400, error: `No such asset`});
+        Item.findOne({_id:asset.item}, (err, item)=>{
+          item.quantity-=1;
+          item.quantity_available-=1;
+          let assets = [];
+          for(let i=0;i<item.assets.length;i++){
+            if(item.assets[i]!==asset._id)
+              assets.push(item.assets[i]);
+          }
+          item.assets = assets;
+          item.save((err)=>{
+            if(err)return next(err);
+            res.status(200).send(asset);
+          })
+        });
+      })
+    } else {
+      Asset.findOneAndRemove({assetTag:tag}, (err, asset)=>{
+        if(err) return next(err);
+        if(!asset) return next({status: 400, error: `No such asset`});
+        Item.findOne({_id:asset.item}, (err, item)=>{
+          item.quantity-=1;
+          item.quantity_available-=1;
+          let assets = [];
+          for(let i=0;i<item.assets.length;i++){
+            if(item.assets[i]!==asset._id)
+              assets.push(item.assets[i]);
+          }
+          item.assets = assets;
+          item.save((err)=>{
+            if(err)return next(err);
+            res.status(200).send(asset);
+          })
+        });
+      })
+    }
+  });
+
+  app.all('/api/asset/toAsset', util.requireLogin, function(req, res, next) {
+    /*
+      {
+        name: item name
+      }
+      return a matching item and all its assets (in an array)
+    */
+    let name = req.body.item_name||req.body.item||req.body.name
+              ||req.query.item_name||req.query.item||req.query.name;
+    if(!name) return next({status: 400, error: `Item name is not supplied`});
+    Item.findOne({name: name})
+    .exec((err,item) => {
+      if(err) return next(err);
+      if(item.isAsset) return next({status: 400, error: `${item.name} is already an asset.`});
+      item.isAsset = true;
+      let start = randomInt(0, 1000000);
+      let assets = [];
+
+      for(let i=0;i<item.quantity;i++){
+        let tag = start*10000+i;
+        let asset = new Asset({
+          item: item._id,
+          assetTag: tag.toString(),
+        });
+        assets.push(asset);
+        asset.save();
+      }
+      item.assets = assets;
+      item.save(err=>{
+        if(err)return next(err);
+        res.status(200).send(item);
+      })
+    });
+  });
+
+  app.all('/api/asset/fromAsset', util.requireLogin, function(req, res, next) {
+    /*
+      {
+        name: item name
+      }
+      return a matching item and all its assets (in an array)
+    */
+    let name = req.body.item_name||req.body.item||req.body.name
+              ||req.query.item_name||req.query.item||req.query.name;
+
+    if(!name) return next({status: 400, error: `Item name is not supplied`});
+    Item.findOne({name: name})
+    .populate(assets)
+    .exec((err,item) => {
+      if(err) return next(err);
+      if(!item.isAsset) return next({status: 400, error: `${item.name} is not an asset.`});
+      item.isAsset = false;
+      if(item.assets && item.assets.length) {
+        item.assets.forEach(i=>i.remove());
+      } 
+      item.assets = [];
+      item.save(err=>{
+        if(err)return next(err);
+        res.status(200).send(item);
+      });
+    });
+  });
+
+  app.all('/api/asset/show', util.requireLogin, function(req, res, next) {
+    /*
+      {
+        name: item name
+      }
+      return a matching item and all its assets (in an array)
+    */
+    let name = req.query.name||req.query.item_name||req.query.item;
+    if(!name) return next({status: 400, error: `Item name is not supplied`});
+    Item.findOne({name: name})
+    .populate('assets')
+    .exec((err, result) => {
+      if(err)return next(err);
+      res.status(200).json(result.assets);
     })
   });
 
@@ -62,6 +211,22 @@ module.exports = (app) => {
       if (item) return res.status(405).send({ error: "Item already exists!" });
       item = new Item(_.pick(req.body, allFields));
       item.quantity_available = item.quantity;
+
+      if (item.isAsset) {
+        let start = randomInt(0, 1000000);
+        let assets = [];
+        for(let i=0;i<item.quantity;i++){
+          let tag = start*10000+i;
+          let asset = new Asset({
+            item: item._id,
+            assetTag: tag.toString(),
+          });
+          assets.push(asset);
+          asset.save();
+        }
+        item.assets = assets;
+      }
+
       item.save(function(err){
         if(err) return next(err);
         let log = new Log({
@@ -250,4 +415,8 @@ function addTag(name) {
     tag = new Tag({name: name});
     tag.save();
   })
+}
+
+function randomInt (low, high) {
+  return Math.floor(Math.random() * (high - low) + low);
 }
