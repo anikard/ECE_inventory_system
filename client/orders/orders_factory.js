@@ -243,10 +243,9 @@ var orders_app = angular.module('orders_app', []);
         // Why is this method being called outside of modal on page load??
         if($scope.thisOrder && $scope.thisOrder.user) {
           for (var i = 0; i < $scope.thisOrder.items.length; i++) {
-            if ($scope.thisOrder.items[i].quantity_disburse > 0
-              || $scope.thisOrder.items[i].quantity_deny > 0) {
-              return true;
-            }
+            return ($scope.thisOrder.items[i].quantity_disburse +
+            $scope.thisOrder.items[i].quantity_deny +
+            $scope.thisOrder.items[i].quantity_return) > 0;
           }
         }
         return false;
@@ -308,7 +307,6 @@ var orders_app = angular.module('orders_app', []);
           $scope.thisOrder.backfills[i].copyStatus = $scope.thisOrder.backfills[i].status;
         }
       }
-
 
       $scope.respondToOrder = function(order) {
         var oldOrder = angular.copy(order);

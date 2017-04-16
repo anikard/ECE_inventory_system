@@ -59,6 +59,8 @@ function findOneRequest(req, res, next) {
 }
 
 function add (req, res) {
+	console.log("BEGIN ADD");
+	console.log(req.body);
 	var direct = true;
 	let id = req.body.user || req.body.userId || req.body._id;
 
@@ -90,9 +92,12 @@ function add (req, res) {
 		if (!cart || cart.items.length === 0)
 			return res.status(400).send({ error: "Empty cart" });
 
-		console.log("&&&&&&&&&&&&7: " + cart);
-		console.log("*************:");
-		consoel.log
+		//console.log("&&&&&&&&&&&&7: " + cart);
+		//console.log("*************:");
+		//consoel.log
+
+		console.log("IN REQ");
+		console.log(req.body);
 
 		for(var i = 0; i < req.body.items.length; i++) {
 			req.body.items[i].type = req.body.type;
@@ -115,76 +120,95 @@ function add (req, res) {
 			}
 			*/
 		}
-/*
-		Request.create({
-			user: id,
-			items: req.body.items,
-			reason: req.body.reason || "",
-			type: req.body.type || "disburse"
-		}, function (err, request))
 
-*/
-		let request = new Request({
+		console.log("ALMOST THERE");
+		console.log(req.body);
+
+
+		var newRequest = new Request({
         	user: id,
         	items: req.body.items,
         	reason: req.body.reason || "",
-					type: req.body.type || "disburse",
+					type: req.body.type || "disburse"
     });
-/*
-		for(var i = 0; i < request.items.length; i++) {
 
-		}
-		*/
+		var promise = newRequest.save();
+		promise.then(function(rP) {
+			console.log("IN PROMISE");
+			console.log(rP);
 
-    request.save((err,request) => {
-    	if (err) next(err);
+			Request.findById(rP._id)
+			.populate('items.item')
+			.exec(function (err, request){
 
-			let name_arr = []
-			cart.items.forEach(i=>name_arr.push(i.name));
+				for (var i = 0; i < request.items.length; i++) {
+					//request.items[i].item = request.items[i].item._id;
+					console.log("Check: " + request.items[i].item.name);
+					console.log(request.items[i].quantity_disburse);
+					console.log(request.items[i].quantity_loan);
+					console.log(request.items[i].item.quantity);
+					console.log(request.items[i].item.quantity_available);
+					request.items[i].item.quantity_available -= request.items[i].quantity_disburse + request.items[i].quantity_loan;
+					request.items[i].item.quantity -= request.items[i].quantity_disburse;
+					request.items[i].item.save((err, success) => {
+						if(err) {
+							console.log("&&*&*&*&*&*: " + err);
+						}
+						if(success) {
+							console.log("%%%%%%%% " + success);
+						}
+					})
+				}
 
-			cart.items = [];
+	    	if (err) next(err);
+
+				let name_arr = []
+				cart.items.forEach(i=>name_arr.push(i.name));
+
+				cart.items = [];
 
 
-			cart.save((err)=>{
-				if (err)
-					return res.status(500).send({ error: err });
-	    		let arr = [];
-	    		request.items.forEach(i=>arr.push(i.item));
-
-	    		email(request, `${req.user.name} added a new request`);
-
-    			User.find({ 'subscribed': 'subscribed' }, function (err, users) {
-    				if(err) return next(err);
-    				if(!users.length) return;
-    				let addresses = "";
-    				for (var i = 0; i < users.length; i++) {
-    					addresses = users[i].email?`${addresses},${users[i].email}`:addresses;
-    				}
-    				if (addresses) addresses = addresses.substring(1);
-    				emailTo(request, addresses, `${req.user.name} added a new request`);
-    			});
-
-				let quantity_arr = [];
-				request.items.forEach(i=>quantity_arr.push(i.quantity_requested));
-
-				let name_arr = [];
-				request.items.forEach(i=>name_arr.push(i.item.name));
-
-	    		let log = new Log({
-					init_user: id,
-					item: arr,
-	 				event: "Request",
-	 				request: request,
-	 				rec_user: id,
-					quantity: quantity_arr,
-					name_list: name_arr
-				});
-				log.save((err)=>{
+				cart.save((err)=>{
 					if (err)
 						return res.status(500).send({ error: err });
-					return res.status(200).json(request);
-				});
+		    		let arr = [];
+		    		request.items.forEach(i=>arr.push(i.item));
 
+		    		email(request, `${req.user.name} added a new request`);
+
+	    			User.find({ 'subscribed': 'subscribed' }, function (err, users) {
+	    				if(err) return next(err);
+	    				if(!users.length) return;
+	    				let addresses = "";
+	    				for (var i = 0; i < users.length; i++) {
+	    					addresses = users[i].email?`${addresses},${users[i].email}`:addresses;
+	    				}
+	    				if (addresses) addresses = addresses.substring(1);
+	    				emailTo(request, addresses, `${req.user.name} added a new request`);
+	    			});
+
+					let quantity_arr = [];
+					request.items.forEach(i=>quantity_arr.push(i.quantity_requested));
+
+					let name_arr = [];
+					request.items.forEach(i=>name_arr.push(i.item.name));
+
+		    		let log = new Log({
+						init_user: id,
+						item: arr,
+		 				event: "Request",
+		 				request: request,
+		 				rec_user: id,
+						quantity: quantity_arr,
+						name_list: name_arr
+					});
+					log.save((err)=>{
+						if (err)
+							return res.status(500).send({ error: err });
+						return res.status(200).json(request);
+					});
+
+				});
 			});
 		});
 	});
