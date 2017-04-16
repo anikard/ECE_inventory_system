@@ -349,10 +349,11 @@ function generateQuantityDeltas(oldItem, newItem) {
 	var delta = {};
 	delta.disburse_delta = newItem.quantity_disburse - oldItem.quantity_disburse;
 	delta.loan_delta = newItem.quantity_loan - oldItem.quantity_loan;
-	delta.deny_delta = newItem.quantity_deny = oldItem.quantity_deny;
-	delta.cancel_delta = newItem.quantity_cancel = oldItem.quantity_cancel;
+	delta.deny_delta = newItem.quantity_deny - oldItem.quantity_deny;
+	delta.cancel_delta = newItem.quantity_cancel - oldItem.quantity_cancel;
+	delta.return_delta = newItem.quantity_return - oldItem.quantity_return;
 	delta.total_delta = delta.disburse_delta + delta.loan_delta + delta.deny_delta
-	+ delta.cancel_delta;
+	+ delta.cancel_delta + delta.return_delta;
 	delta.backfill_delta = newItem.quantity_backfill - oldItem.quantity_backfill;
 	return delta;
 }
