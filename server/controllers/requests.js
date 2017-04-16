@@ -6,13 +6,16 @@ var Cart = mongoose.model('Cart');
 var User = mongoose.model('User');
 var Item = mongoose.model('Item');
 var Log = mongoose.model('Log');
+var Backfill = mongoose.model('Backfill');
 var util = require('./util.js');
 var mailer = require('./mailer.js');
+var backfiller = require('./backfill.js');
 var _ = require('lodash');
 
 module.exports = (app) => {
 
 	app.get('/api/request/show', util.requireLogin, show);
+	app.post('/api/request/findOne', util.requireLogin, findOneRequest);
 	app.post('/api/request/add', util.requireLogin, add);
 	app.post('/api/request/close', util.requireLogin, close);
 	app.post('/api/request/del', util.requirePrivileged, del);
@@ -38,6 +41,21 @@ function show (req, res) {
          	res.json(results);
        	}
     });
+}
+
+function findOneRequest(req, res, next) {
+	Request.findOne({_id:req.body._id||req.body.id||req.body.request})
+	.exec((err,request)=>{
+		if(err) return next(err);
+		if(!request) return next({status:400,error:"No such request"});
+		request = request.toJSON();
+		Backfill.find({request:request._id}, (err,results)=>{
+			//some error checking before...
+			request.backfills = results;
+			res.status(200).send(request);
+		});
+		//res.send(500).send({error: "Find one error"});
+	})
 }
 
 function add (req, res) {
@@ -72,6 +90,7 @@ function add (req, res) {
 			return res.status(400).send({ error: "Empty cart" });
 
 		for(var i = 0; i < req.body.items.length; i++) {
+			req.body.items[i].type = req.body.type;
 			var disburseOrLoanAmount =
 				(req.body.items[i].quantity_disburse) ?
 				req.body.items[i].quantity_disburse :
@@ -190,10 +209,11 @@ function del (req, res) {
 }
 function update (req, res) {
 	Request.findOne({ '_id': req.body._id })
-	.populate('items.item')
+	.populate('items.item backfills')
+	//.populate('backfills.backfill')
 	.exec( function (err, request) {
 		if (err) return res.status(500).send({ error: err});
-		var updateCheckString = updateCheck(request.items, req.body.items);
+		var updateCheckString = updateCheck(request, request.items, req.body.items);
 		if (updateCheckString != "") {
 			return res.status(403).send({ err: updateCheckString });
 		}
@@ -211,19 +231,35 @@ function update (req, res) {
 			console.log(request.items[i].item.name);
 			console.log(quantity_and_available_delta);
 			console.log(quantity_available_only_delta);
-			req.body.items[i].item.quantity += quantity_and_available_delta;
-			req.body.items[i].item.quantity_available +=
+			request.items[i].item.quantity += quantity_and_available_delta;
+			request.items[i].item.quantity_available +=
 				(quantity_and_available_delta + quantity_available_only_delta);
 		}
 
+		for (let i = 0; i < request.items.length; i++) {
+			console.log("Quantity available");
+			console.log(request.items[i].item.quantity_available);
+			request.items[i].item.save(function (err, success) {
+				console.log("Err: " + err);
+				console.log("Suc: " + success);
+			});
+		}
 
+		for (let i = 0; i < req.body.backfills.length; i++) {
+			Backfill.findOne({_id: req.body.backfills[i]._id}, (err, backfill) => {
+				backfill.status = req.body.backfills[i].status;
+				backfill.save(function(err, success) {
+					console.log("BFE: " + err);
+					console.log("BFS: " + success);
+				});
+			});
+		}
 
+		console.log("REQUESTE BEFORE: " + request)
 		_.assign(request,_.pick(req.body,['user', 'reason', 'items', 'notes', 'dateUpdated']));
-		request.save(function (err, request) {
-			for (let i = 0; i < request.items.length; i++) {
-				console.log(request.items[i].item.quantity_available);
-				request.items[i].item.save();
-			}
+		console.log("REQUEST AFTER: " + request);
+		request.save(function (err) {
+
 			if (err) return res.status(500).send({ error: err});
 			email(request, 'Your request has been updated');
 			return res.status(200).json(request);
@@ -231,7 +267,8 @@ function update (req, res) {
 	});
 }
 
-function updateCheck(oldItems, newItems) {
+function updateCheck(request, oldItems, newItems) {
+	var newBackfills = [];
 	for (var i = 0; i < oldItems.length; i++) {
 		var quantityAvailable = oldItems[i].item.quantity_available;
 		console.log("QA");
@@ -244,7 +281,16 @@ function updateCheck(oldItems, newItems) {
 		if (quantityDelta.total_delta > oldItems[i].quantity_requested) {
 			return "Quantities acted on exceed quantities requested";
 		}
+		if (quantityDelta.backfill_delta > 0) {
+			var newBackfill = {
+				item: oldItems[i].item,
+				quantity: quantityDelta.backfill_delta
+			};
+			newBackfills.push(newBackfill);
+			//generateNewBackfill(request, oldItems[i].item, quantityDelta.backfill_delta);
+		}
 	}
+	generateNewBackfill(request, newBackfills)
 	return "";
 }
 
@@ -256,7 +302,32 @@ function generateQuantityDeltas(oldItem, newItem) {
 	delta.cancel_delta = newItem.quantity_cancel = oldItem.quantity_cancel;
 	delta.total_delta = delta.disburse_delta + delta.loan_delta + delta.deny_delta
 	+ delta.cancel_delta;
+	delta.backfill_delta = newItem.quantity_backfill - oldItem.quantity_backfill;
 	return delta;
+}
+
+function generateNewBackfill(request, backfillItems) {
+
+	//let bfItems = [];
+	//bfItems.push({
+	//	item: currentItem,
+	//	quantity: backfillAmount
+	//});
+	console.log("backfill");
+	console.log(backfillItems);
+	Backfill.create({ items: backfillItems, request: request._id }, function (err, bf) {
+		if (err) {
+			console.log("BF ERR: " + err);
+		}
+		else {
+			console.log("BF SUCC: " + bf);
+			//let backfills = [];
+			//backfills.push(bf);
+			//request.backfills = bf;
+			//console.log("END GENERAT: " + request);
+		}
+	});
+
 }
 
 function generateLogStats(oldItems, newItems) {

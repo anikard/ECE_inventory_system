@@ -5,6 +5,7 @@ var orders_app = angular.module('orders_app', []);
       var orders = [];
       var customers = [];
       var products = [];
+      var backfills = [];
 
       factory.getproducts = function(callback) {
         $http.get('/products').success(function(output) {
@@ -26,6 +27,13 @@ var orders_app = angular.module('orders_app', []);
         })
       }
 
+      factory.getbackfills = function(callback) {
+        $http.get('/api/backfill/show').success(function(output) {
+          backfills = output;
+          callback(backfills);
+        })
+      }
+
       factory.getorders = function(callback) {
         $http.get('/api/request/show').success(function(output) {
           orders = output;
@@ -33,9 +41,18 @@ var orders_app = angular.module('orders_app', []);
         })
       }
 
-      factory.viewOrder = function(order, callback) {
-        callback(order);
+      factory.viewOrder = function(info, callback) {
+        $http.post('/api/request/findOne', info)
+          .success(function(output) {
+            callback(output);
+          })
+          .error(function(error) {
+            console.log("ERR in fcatory viewOrder");
+            callback(error);
+          })
       }
+
+
 
       factory.updateOrder = function(info, oldOrder, callback) {
         $http.post('/api/request/update', info)
@@ -98,16 +115,12 @@ var orders_app = angular.module('orders_app', []);
         $scope.orders = OrderFactory.getorders(/*thisId,*/ function(data) {
           $scope.orders = data;
           $scope.thisOrder = {};
-
           console.log("ORDERS");
           console.log($scope.orders);
-
           /** PAGINATION **/
           // show more functionality source: http://www.angulartutorial.net/2014/04/angular-js-client-side-show-more.html
-
           var pagesShown = 1;
           var pageSize = 5;
-
           $scope.paginationLimit = function(data) {
            return pageSize * pagesShown;
           };
@@ -119,16 +132,12 @@ var orders_app = angular.module('orders_app', []);
           $scope.showMoreItems = function() {
            pagesShown = pagesShown + 1;
           };
-
           /** END OF PAGINATION **/
-
-
           /** LOG LINKS **/
           if ($window.localStorage['requestSelected'] && !$scope.selected_request) {
             $scope.selected_request = $window.localStorage['requestSelected'];
           }
           $window.localStorage['requestSelected'] = "";
-
           var thisReqIndex = -1;
           var thisReq = {};
           for (var i = 0; i < $scope.orders.length; i++) {
@@ -137,13 +146,13 @@ var orders_app = angular.module('orders_app', []);
               thisReq = $scope.orders[i];
             }
           }
-
           $scope.requestIndex = thisReqIndex+1;
-
           $scope.scrollIntoView(thisReqIndex+1, thisReq);
-
           /** END OF LOG LINKS **/
+        });
 
+        $scope.backfills = OrderFactory.getbackfills(function(data) {
+          $scope.backfills = data;
         });
 
         // TABS for loans vs disbursements
@@ -257,16 +266,38 @@ var orders_app = angular.module('orders_app', []);
       }
 
       $scope.hasBackfill = function() {
+        if ($scope.thisOrder) {
+          if ($scope.thisOrder.backfills) {
+            return $scope.thisOrder.backfills.length > 0;
+          }
+        }
         return false;
       }
 
+      $scope.validBackfillStatuses = function(status) {
+        var statuses = ['requested', 'inTransit', 'denied', 'failed', 'fulfilled', 'closed'];
+        return statuses;
+      }
+
+      $scope.backfillStatuses = ['requested', 'inTransit', 'denied', 'failed', 'fulfilled', 'closed'];
 
       $scope.viewOrder = function(order) {
+        //$scope.backfillStatuses = ['requested', 'inTransit', 'denied', 'failed', 'fulfilled', 'closed'];
+        OrderFactory.viewOrder(order, function(data) {
           $scope.errorMessage = null;
-          $scope.thisOrder = order;
+          $scope.thisOrder = data;
           $scope.populateZerosInTables();
+          $scope.copyStatus();
           $scope.orderId = order.user._id;
           $scope.isMe = $scope.orderId == $scope.myId;
+          $('#orderModal').modal('show');
+        });
+      }
+
+      $scope.copyStatus = function() {
+        for (var i = 0; i < $scope.thisOrder.backfills.length; i++) {
+          $scope.thisOrder.backfills[i].copyStatus = $scope.thisOrder.backfills[i].status;
+        }
       }
 
 

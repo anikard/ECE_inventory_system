@@ -146,6 +146,10 @@
               <div class="radio">
                 <label><input type="radio" name="optionResponse" class="loanButton" ng-model="this_request.type" value = "loan">Loan</label>
               </div>
+              <!-- Trigger pdf ability when selected -->
+              <div class="radio" ng-show="modalType != 'Direct'">
+                <label><input type="radio" name="optionResponse" class="backfillButton" ng-model="this_request.type" value="backfill">Backfill</label>
+              </div>
             </div>
 
             <textarea style="display:block; width: 80%; margin-left:10%" class = "feedback-input" ng-model="this_request.reason" placeholder="Comment or Reason for Request" ng-required="modalType === 'Create' && !isAuthorized"></textarea>

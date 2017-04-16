@@ -18,9 +18,11 @@ var RequestSchema = new mongoose.Schema({
     quantity_cancel: {type: Number, default: 0},
     type: {type: String, default:"disburse"}
   }],
-
+  //assets:[{type:Schema.ObjectId, ref:'Asset', autopopulate: true}],
+  backfills:[{type:Schema.ObjectId, ref:'Backfill', autopopulate: true}],
   notes: [{type: String, default:""}],
   //status: {type: String, default:"outstanding", enum: ['outstanding', 'onLoan', 'disbursed', 'returned', 'closed', 'approved', 'converted', 'denied']},
+  type: {type: String, default: "disburse"},
   date: { type : Date, default: Date.now },
   dateUpdated: { type : Date, default: Date.now},
 
