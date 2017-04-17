@@ -133,6 +133,7 @@ module.exports = (app) => {
         let asset = new Asset({
           item: item._id,
           assetTag: tag.toString(),
+          fields: TODOTODO
         });
         assets.push(asset);
         asset.save();
@@ -190,6 +191,14 @@ module.exports = (app) => {
     })
   });
 
+  app.post('/api/asset/update', util.requirePrivileged, function(req, res, next) {
+    asset_update(req.user, req.body, (err, asset)=>{
+      if(err) return next(err);
+      res.status(200).send(asset);
+    });
+    
+  });
+
   app.get('/api/item/show', util.requireLogin, function(req, res, next) {
     Item.find({})
     // .limit(parseInt(req.query.limit) || 200)
@@ -215,6 +224,13 @@ module.exports = (app) => {
       if (item.isAsset) {
         let start = randomInt(0, 1000000);
         let assets = [];
+
+        let assetsFields = {};
+        for (var i = 0; i < req.body.assetFields.length; i++) {
+          asdfasdfasdf
+        }
+
+
         for(let i=0;i<item.quantity;i++){
           let tag = start*10000+i;
           let asset = new Asset({
@@ -355,6 +371,62 @@ module.exports = (app) => {
 }
 
 function update(user, newItem, callback) {
+  async.waterfall([
+      (cb) => {
+        if (!newItem) return cb({status:400, message: "Missing item body"});
+        newItem._id = newItem._id || newItem.item || newItem.id;
+        if (!newItem._id) return cb({status:400, message: "Missing ref id"});
+        Item.findOne({ '_id': newItem._id })
+        .exec((err, item) => {
+          if (err) return cb(err);
+          if (!item) return cb({status:405, message: "Missing item? Check the ID"});
+          cb(null, item);
+        })
+      },
+      (item, cb) => {
+        if(newItem.quantity || newItem.quantity === 0)
+          item.quantity_available += newItem.quantity - item.quantity;
+        _.assign(item, _.pick(newItem, allFields));
+        item.save((err, i)=>cb(err,i));
+      },
+      (item, cb) => {
+        var message = `Updated item: ${item.name}`;
+        if(user.status === "admin"){
+          if(newItem.quantity < item.quantity){
+            message = "Admin decreased quantity";
+          }
+          if(newItem.quantity > item.quantity){
+            message = "Admin increased quantity";
+          }
+        } else{
+          if(newItem.quantity < item.quantity){
+            message = "Manager logged a loss";
+          }
+          if(newItem.quantity > item.quantity){
+            message = "Manager logged an acquisition";
+          }
+        }
+        var itemArray = [item._id];
+        var itemQuantity = [item.quantity];
+        var name_arr = [item.name];
+
+        let log = new Log({
+          init_user: user._id,
+          item: itemArray,
+          quantity: itemQuantity,
+          event: message,
+          name_list:name_arr
+        });
+        log.save(err=>{
+          if(err) return cb(err);
+          cb(null, item);
+        })
+      }
+  ], callback);
+}
+
+// todo
+function asset_update(user, newAsset, callback) {
   async.waterfall([
       (cb) => {
         if (!newItem) return cb({status:400, message: "Missing item body"});
