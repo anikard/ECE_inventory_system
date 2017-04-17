@@ -123,17 +123,22 @@ module.exports = (app) => {
     Item.findOne({name: name})
     .exec((err,item) => {
       if(err) return next(err);
-      if(item.isAsset) return next({status: 400, error: `${item.name} is already an asset.`});
+      // if(item.isAsset) return next({status: 400, error: `${item.name} is already an asset.`});
       item.isAsset = true;
       let start = randomInt(0, 1000000);
       let assets = [];
+
+      let assetsFields = {};
+        for (var i = 0; i < req.body.assetFields.length; i++) {
+          assetsFields[req.body.assetFields[i].name] = "";
+        }
 
       for(let i=0;i<item.quantity;i++){
         let tag = start*10000+i;
         let asset = new Asset({
           item: item._id,
           assetTag: tag.toString(),
-          fields: TODOTODO
+          fields: assetsFields
         });
         assets.push(asset);
         asset.save();

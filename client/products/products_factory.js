@@ -155,6 +155,7 @@ products_app.factory('ProductsFactory', function($http) {
       return;
     }
 
+    // asset todo
     // tasks apr 15
     // TODO: if convert to asset but some items are on loan, THROW ERROR
     // because 
@@ -167,12 +168,14 @@ products_app.factory('ProductsFactory', function($http) {
       console.log("product Successfully updated in factory");
 
       // fix
-      // if (info.isAsset) {
-      //   $http.get('/api/asset/add', {item_name: info.name}).success(function(output) {
-      //       console.log("added asset");
-      //       console.log(output);
-      //   })
-      // }
+      if (info.isAsset && info.convertedToAsset) {
+        console.log("converting to asset = " + info.name);
+        alert(info);
+        $http.post('/api/asset/toAsset', {item_name: info.name, assetFields: info.assetFields}).success(function(output) {
+            console.log("added asset");
+            console.log(output);
+        })
+      }
 
     })
   }
@@ -522,6 +525,10 @@ products_app.controller('productsController', function($scope, $window, $http, /
 
     console.log(product);
     product.tags = $scope.currentTags;
+    if (!originalProduct.isAsset) {
+      product.convertedToAsset = true;
+      product.assetFields = $scope.assetFields;
+    }
     ProductsFactory.updateProduct(product, function (data) {
       console.log("confirm edit calling factory");
     })
