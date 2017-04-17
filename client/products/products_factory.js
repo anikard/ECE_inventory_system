@@ -605,6 +605,7 @@ products_app.controller('productsController', function($scope, $window, $http, /
 
     var stopper = $scope.new_order.quantity;
     if (stopper > 0){
+      $scope.new_order.quantity_requested = $scope.new_order.quantity;
 
       ProductsFactory.addOrder($scope.new_order, function(data) {
         $scope.new_order = {};
