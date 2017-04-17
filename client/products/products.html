@@ -84,12 +84,6 @@
         <td ng-show="authorized" ng-bind="product.quantity - product.quantity_available"></td>
         <td ng-show="!authorized" ng-bind="calculateMyLoans(product)"></td>
 
-        <td ng-show="authorized" ng-bind="calculateTotalBackfillRequested(product)"></td>
-        <td ng-show="!authorized" ng-bind="calculateMyBackfillRequested(product)"></td>
-
-        <td ng-show="authorized" ng-bind="calculateTotalBackfillInTransit(product)"></td>
-        <td ng-show="!authorized" ng-bind="calculateMyBackfillInTransit(product)"></td>
-
         <td ng-bind="product.tags"></td>
         <!--<td><button class="remove" ng-click="viewProduct(product)" data-toogle="modal" data-target"#productModal">View</button></td>-->
         <td><button class = "remove" ng-click='viewProduct(product)' data-toggle="modal" data-target="#productModal">View</button></td>
@@ -207,6 +201,37 @@
             <label><b>Quantity Available:  </b></label>
             <span ng-bind="currentProduct.quantity_available" />
           </p>
+          <p ng-show="authorized">
+            <label><b>Total on Loan:  </b></label>
+            <span ng-bind="currentProduct.quantity - currentProduct.quantity_available" />
+          </p>
+          <p>
+            <label><b>Quantity on Loan to Me:  </b></label>
+            <span ng-bind="calculateMyLoans(currentProduct)" />
+          </p>
+          <p ng-show="authorized">
+            <label><b>Total Backfill Requested:  </b></label>
+            <span ng-bind="calculateTotalBackfillRequested(currentProduct)" />
+          </p>
+          <p>
+            <label><b>My Backfill Requested:  </b></label>
+            <span ng-bind="calculateMyBackfillRequested(currentProduct)" />
+          </p>
+          <p ng-show="authorized">
+            <label><b>Total Backfill in Transit:  </b></label>
+            <span ng-bind="calculateTotalBackfillInTransit(currentProduct)" />
+          </p>
+          <p>
+            <label><b>My Backfill in Transit:  </b></label>
+            <span ng-bind="calculateMyBackfillInTransit(currentProduct)" />
+          </p>
+          <p>
+            <label><b>Minimum Stock: </b></label>
+            <span ng-bind="currentProduct.min_quantity" />
+          </p>
+          <p>
+            <label><b>Minimum Stock Enabled? </b></label>
+            <span ng-bind="currentProduct.min_endabled" />
           <p>
             <label><b>Description:  </b></label>
             <textarea ng-readonly="!editing" ng-model="currentProduct.description"></textarea>
