@@ -186,13 +186,11 @@
           </p>
           <p>
             <label><b>Quantity:  </b></label>
-            <input ng-show="adminOnly" type="number" min="0" ng-readonly="currentProduct.isAsset || (!currentProduct.isAsset && !editing)" ng-model="currentProduct.quantity"required/>
-            <span ng-show="!adminOnly" ng-bind="currentProduct.quantity" />
+            <span ng-bind="currentProduct.quantity" />
           </p>
           <p>
             <label><b>Quantity Available:  </b></label>
-            <input ng-show="adminOnly" type="number" min="0" ng-readonly="currentProduct.isAsset || (!currentProduct.isAsset && !editing)" ng-model="currentProduct.quantity_available"required/>
-            <span ng-show="!adminOnly" ng-bind="currentProduct.quantity_available" />
+            <span ng-bind="currentProduct.quantity_available" />
           </p>
           <p>
             <label><b>Description:  </b></label>
@@ -203,7 +201,7 @@
           <p>
             <label><b>Item:  </b></label>
             <!-- <input type="checkbox" ng-disabled="!editing" ng-model="currentProduct.isAsset"> -->
-            <div class="slideThree">  
+            <div class="slideThree">
             <input type="checkbox" ng-disabled="!editing" ng-model="currentProduct.isAsset" ng-bind="currentProduct.isAsset" value="assetSelected" id="slideThree" name="check" />
             <label for="slideThree"></label>
           </div>
@@ -306,7 +304,7 @@
                 </tr>
               </table>
             </div>
-        </div>  
+        </div>
 
 
       </div>
@@ -340,7 +338,7 @@
               <input type="text" ng-readonly="!editing" ng-model="field.value"/>
             </div>
           </p>
-          
+
         </div>
         <br>
         <div class="modal-footer">
