@@ -270,9 +270,15 @@ var orders_app = angular.module('orders_app', []);
       $scope.validBackfillStatuses = function(status) {
         switch (status.copyStatus) {
           case 'requested':
-            return ['inTransit', 'deny'];
+            return ['inTransit', 'denied'];
           case 'inTransit':
             return ['fulfilled', 'failed'];
+          case 'failed':
+            return ['failed'];    
+          case 'denied':
+            return ['denied'];
+          case 'fulfilled':
+            return ['fulfilled'];
           default:
             return [];
         }

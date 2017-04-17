@@ -268,8 +268,9 @@ function update (req, res) {
 			return res.status(403).send({ err: updateCheckString });
 		}
 		req.body.dateUpdated = new Date().toISOString();
+
 		generateBackfills(request, req.body.items);
-		saveBackfills(req);
+		saveBackfills(request, req);
 
 		updateItemQuantities(request, req);
 		req.body.items = refreshRequestQuantities(req);
@@ -314,6 +315,16 @@ function updateCheck(request, newItems) {
 
 function updateItemQuantities(request, req) {
 	for (var i = 0; i < request.items.length; i++) {
+		/*
+		var loanBackfillQuantity = 0;
+		var
+		for (j through newLoanBackfillItems){
+
+		}
+		for (k through updateBackfillItems) {
+
+		}
+		*/
 		var quantity_and_available_delta = 0 - req.body.items[i].quantity_outstanding_disburse;
 		var quantity_only_delta = 0 - req.body.items[i].quantity_loan_disburse;
 		var quantity_available_only_delta =
@@ -337,6 +348,8 @@ function refreshRequestQuantities(req) {
 	//TODO: extract once it's confirmed working
 	for (var i = 0; i < req.body.items.length; i++) {
 		var item = req.body.items[i];
+		console.log("refresh");
+		console.log(item.quantity_loan_backfill);
 		req.body.items[i].quantity_requested -= (
 			item.quantity_outstanding_disburse + item.quantity_outstanding_loan
 			+ item.quantity_outstanding_deny + item.quantity_outstanding_backfill + item.quantity_cancel
@@ -345,7 +358,8 @@ function refreshRequestQuantities(req) {
 			item.quantity_outstanding_disburse + item.quantity_loan_disburse
 		);
 		req.body.items[i].quantity_loan += (
-			item.quantity_outstanding_loan - (item.quantity_loan_return + item.quantity_loan_disburse)
+			item.quantity_outstanding_loan - (item.quantity_loan_return
+			+ item.quantity_loan_disburse + item.quantity_loan_backfill)
 		);
 		req.body.items[i].quantity_deny += item.quantity_outstanding_deny;
 		req.body.items[i].quantity_return += item.quantity_loan_return;
@@ -368,11 +382,14 @@ function refreshRequestQuantities(req) {
 }
 
 function generateBackfills(request, newItems) {
+	//console.log("in backfill generate");
+	//console.log(request);
+	//console.log(newItems);
 	var newBackfills = [];
 	var loanBackfills = [];
 
 	for (var i = 0; i < request.items.length; i++) {
-		if (newItems.quantity_outstanding_backfill > 0) {
+		if (newItems[i].quantity_outstanding_backfill > 0) {
 			var newBackfill = {
 				item: request.items[i].item,
 				quantity: newItems[i].quantity_outstanding_backfill,
@@ -381,13 +398,14 @@ function generateBackfills(request, newItems) {
 			newBackfills.push(newBackfill);
 		}
 
-		if (newItems.quantity_loan_backfill > 0) {
+		if (newItems[i].quantity_loan_backfill > 0) {
 			var newLoanBackfill = {
 				item: request.items[i].item,
 				quantity: newItems[i].quantity_loan_backfill,
 				origin: 'loan'
 			}
 			loanBackfills.push(newLoanBackfill);
+			//decrementQuantityAvailable(request.items[i], newItems[i].quantity_loan_backfill);
 		}
 	}
 
@@ -398,7 +416,14 @@ function generateBackfills(request, newItems) {
 function generateNewBackfill(request, backfillItems) {
 	console.log("backfill");
 	console.log(backfillItems);
-	Backfill.create({ items: backfillItems, request: request._id }, function (err, bf) {
+	var backfillOrigin = backfillItems[0].origin;
+	var backfillStatus = backfillOrigin === 'loan' ? 'requested' : 'inTransit';
+	Backfill.create({
+		 items: backfillItems,
+		 request: request._id,
+		 origin: backfillOrigin,
+		 status: backfillStatus
+	 }, function (err, bf) {
 		if (err) {
 			console.log("BF ERR: " + err);
 		}
@@ -408,15 +433,108 @@ function generateNewBackfill(request, backfillItems) {
 	});
 }
 
-function saveBackfills(req) {
+function saveBackfills(request, req) {
 	for (let i = 0; i < req.body.backfills.length; i++) {
-		Backfill.findOne({_id: req.body.backfills[i]._id}, (err, backfill) => {
+		// Generate mape of backfills id, quantity (+/-)
+		Backfill.findOne({_id: req.body.backfills[i]._id})
+		.populate('items.item')
+		.exec((err, backfill) => {
+			for (var j = 0; j < backfill.items.length; j++){
+				// returns -1, 1, 0 based on state transistion
+				var backfillSignMultiplier = determineBackfillSignMultiplier(backfill, req.body.backfills[i].status);
+				console.log(backfillSignMultiplier);
+				// TODO: inTransit -> failed
+				if (backfillSignMultiplier == 2 || backfillSignMultiplier == -2) {
+					console.log("Failed from loan");
+					Request.findOne({_id: request._id})
+					.exec(function (err, foundRequest) {
+						// For each item in this backfill,
+						// increment the corresponding item's quantity_loan in foundRequest
+
+						for (let j = 0; j < backfill.items.length; j++) {
+							for (let k = 0; k < foundRequest.items.length; k++) {
+								if (backfill.items[j].item.name === foundRequest.items[k].item.name) {
+									foundRequest.items[k].quantity_loan += backfill.items[j].quantity;
+								}
+							}
+						}
+						if (backfillSignMultiplier == -2) foundRequest.notes.push("[Autogen] new loan added from failed backfill at " + new Date().toISOString());
+						foundRequest.save((err, success) => {
+							console.log("FAILED FROM LOAN ERROR: " + err);
+							console.log("FAILED FROM LOAN SUCC: " + success);
+						});
+					});
+				}
+				/*
+				else if (backfillSignMultiplier == -2) {
+					console.log("Failed from outstanding");
+					Request.findOne({_id: request._id})
+					.exec(function (err, foundRequest) {
+						for (let j = 0; j < backfill.items.length; j++) {
+							for (let k = 0; k < foundRequest.items.length; k++) {
+								if (backfill.items[j].item.name === foundRequest.items[k].item.name) {
+									foundRequest.items[k].quantity_loan += backfill.items[j].quantity;
+								}
+							}
+						}
+
+						foundRequest.notes.push("[Autogen] new loan added from failed backfill at " + new Date().toISOString());
+						foundRequest.save((err, success) => {
+							console.log("FAILED FROM LOAN ERROR: " + err);
+							console.log("FAILED FROM LOAN SUCC: " + success);
+						});
+					});
+
+				}
+				*/
+				else {
+					console.log("Backfill didn't fail");
+					for (var p = 0; p < backfill.items.length; p++) {
+						var quantityAvailableDelta = backfillSignMultiplier * backfill.items[p].quantity;
+						backfill.items[p].item.quantity_available += quantityAvailableDelta;
+						backfill.items[p].item.save(function(err, success) {
+							if (err) console.log("BF QA err: " + err);
+							if (success) console.log("BF QA succ: " + success);
+						});
+					}
+				}
+			}
 			backfill.status = req.body.backfills[i].status;
 			backfill.save(function(err, success) {
 				console.log("BFE: " + err);
 				console.log("BFS: " + success);
 			});
 		});
+	}
+	//return mapping
+}
+
+function determineBackfillSignMultiplier(backfill, newStatus) {
+	console.log("determineSign");
+	console.log(backfill);
+	console.log(newStatus);
+	if (backfill.status === 'requested' && newStatus === 'inTransit' && backfill.origin === 'outstanding') {
+		return -1;
+	}
+	else if (backfill.status === 'inTransit' && newStatus === 'fulfilled') {
+		return 1;
+	}
+	else if (backfill.status === 'requested' && newStatus === 'denied'){
+		return 0;
+	}
+	else if (backfill.status === 'requested' && newStatus === 'inTransit' && backfill.origin === 'loan') {
+		return 0;
+	}
+	else if (backfill.status === 'inTransit' && newStatus === 'failed' && backfill.origin === 'loan'){
+		// TODO: handle inTransit -> failed case
+		return 2;
+	}
+	else if (backfill.status === 'inTransit' && newStatus === 'failed' && backfill.origin === 'outstanding'){
+		// TODO: handle inTransit -> failed case
+		return -2;
+	}
+	else {
+		console.log("BROKEN DETERMINATION");
 	}
 }
 
