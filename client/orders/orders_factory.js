@@ -126,7 +126,9 @@ var orders_app = angular.module('orders_app', []);
           };
 
           $scope.hasMoreItemsToShow = function() {
-           return pagesShown < ($scope.orders.length / pageSize);
+            if ($scope.orders) {
+             return pagesShown < ($scope.orders.length / pageSize);
+            }
           };
 
           $scope.showMoreItems = function() {
@@ -206,14 +208,6 @@ var orders_app = angular.module('orders_app', []);
         $scope.removeOrder = function(order) {
           $('#orderModal').modal('hide');
           OrderFactory.removeOrder(order, function(data) {
-            /*
-            for (var i =0; i < $scope.orders.length; i++)
-            {  if ($scope.orders[i]._id === order._id) {
-                  $scope.orders.splice(i,1);
-                  break;
-                }
-            }
-            */
             $scope.refreshOrders();
         });
 
@@ -276,15 +270,18 @@ var orders_app = angular.module('orders_app', []);
       $scope.validBackfillStatuses = function(status) {
         switch (status.copyStatus) {
           case 'requested':
-            return ['inTransit', 'deny'];
+            return ['inTransit', 'denied'];
           case 'inTransit':
             return ['fulfilled', 'failed'];
+          case 'failed':
+            return ['failed'];    
+          case 'denied':
+            return ['denied'];
+          case 'fulfilled':
+            return ['fulfilled'];
           default:
             return [];
         }
-
-        //var statuses = ['requested', 'inTransit', 'denied', 'failed', 'fulfilled', 'closed'];
-        //return statuses;
       }
 
       $scope.backfillStatuses = ['requested', 'inTransit', 'denied', 'failed', 'fulfilled', 'closed'];
@@ -294,7 +291,7 @@ var orders_app = angular.module('orders_app', []);
         OrderFactory.viewOrder(order, function(data) {
           $scope.errorMessage = null;
           $scope.thisOrder = data;
-          $scope.populateZerosInTables();
+          //$scope.populateZerosInTables();
           $scope.copyStatus();
           $scope.orderId = order.user._id;
           $scope.isMe = $scope.orderId == $scope.myId;
@@ -312,7 +309,7 @@ var orders_app = angular.module('orders_app', []);
         var oldOrder = angular.copy(order);
         console.log("RESPONDING TO ORDER");
         var debug = $scope.thisOrder;
-        $scope.updateThisOrderQuantities();
+        //$scope.updateThisOrderQuantities();
         if($scope.thisOrder.currentNote) $scope.thisOrder.notes.push($scope.thisOrder.currentNote);
         // SIMPLIFIED RESPONSE
         OrderFactory.updateOrder($scope.thisOrder, oldOrder, function(data, oldOrder) {
@@ -331,42 +328,6 @@ var orders_app = angular.module('orders_app', []);
             alert("Successfully changed status to " + data.status + "");
           }
         });
-      }
-
-      $scope.populateZerosInTables = function() {
-        for (var i = 0; i < $scope.thisOrder.items.length; i++) {
-          $scope.thisOrder.items[i].quantity_cancel = 0;
-
-          $scope.thisOrder.items[i].outstanding_disburse = 0;
-          $scope.thisOrder.items[i].outstanding_loan = 0;
-          $scope.thisOrder.items[i].outstanding_deny = 0;
-          $scope.thisOrder.items[i].outstanding_backfill = 0;
-
-          $scope.thisOrder.items[i].loan_disburse = 0;
-          $scope.thisOrder.items[i].loan_return = 0;
-          $scope.thisOrder.items[i].loan_backfill = 0;
-        }
-      }
-
-      $scope.updateThisOrderQuantities = function() {
-        for (var i = 0; i < $scope.thisOrder.items.length; i++) {
-          var item = $scope.thisOrder.items[i];
-          $scope.thisOrder.items[i].quantity_requested -= (
-            item.outstanding_disburse + item.outstanding_loan
-            + item.outstanding_deny + item.outstanding_backfill + item.quantity_cancel
-          );
-          $scope.thisOrder.items[i].quantity_disburse += (
-            item.outstanding_disburse + item.loan_disburse
-          );
-          $scope.thisOrder.items[i].quantity_loan += (
-            item.outstanding_loan - (item.loan_return + item.loan_disburse)
-          );
-          $scope.thisOrder.items[i].quantity_deny += item.outstanding_deny;
-          $scope.thisOrder.items[i].quantity_return += item.loan_return;
-          $scope.thisOrder.items[i].quantity_backfill += (
-            item.outstanding_backfill + item.loan_backfill
-          );
-        }
       }
 
   // from logs view
