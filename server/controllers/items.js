@@ -227,7 +227,7 @@ module.exports = (app) => {
 
         let assetsFields = {};
         for (var i = 0; i < req.body.assetFields.length; i++) {
-          asdfasdfasdf
+          assetsFields[req.body.assetFields[i].name] = "";
         }
 
 
@@ -236,6 +236,7 @@ module.exports = (app) => {
           let asset = new Asset({
             item: item._id,
             assetTag: tag.toString(),
+            fields: assetsFields
           });
           assets.push(asset);
           asset.save();
