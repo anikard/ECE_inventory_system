@@ -126,7 +126,9 @@ var orders_app = angular.module('orders_app', []);
           };
 
           $scope.hasMoreItemsToShow = function() {
-           return pagesShown < ($scope.orders.length / pageSize);
+            if ($scope.orders) {
+             return pagesShown < ($scope.orders.length / pageSize);
+            }
           };
 
           $scope.showMoreItems = function() {
@@ -294,7 +296,7 @@ var orders_app = angular.module('orders_app', []);
         OrderFactory.viewOrder(order, function(data) {
           $scope.errorMessage = null;
           $scope.thisOrder = data;
-          $scope.populateZerosInTables();
+          //$scope.populateZerosInTables();
           $scope.copyStatus();
           $scope.orderId = order.user._id;
           $scope.isMe = $scope.orderId == $scope.myId;
@@ -312,7 +314,7 @@ var orders_app = angular.module('orders_app', []);
         var oldOrder = angular.copy(order);
         console.log("RESPONDING TO ORDER");
         var debug = $scope.thisOrder;
-        $scope.updateThisOrderQuantities();
+        //$scope.updateThisOrderQuantities();
         if($scope.thisOrder.currentNote) $scope.thisOrder.notes.push($scope.thisOrder.currentNote);
         // SIMPLIFIED RESPONSE
         OrderFactory.updateOrder($scope.thisOrder, oldOrder, function(data, oldOrder) {
@@ -333,6 +335,7 @@ var orders_app = angular.module('orders_app', []);
         });
       }
 
+/*
       $scope.populateZerosInTables = function() {
         for (var i = 0; i < $scope.thisOrder.items.length; i++) {
           $scope.thisOrder.items[i].quantity_cancel = 0;
@@ -347,7 +350,8 @@ var orders_app = angular.module('orders_app', []);
           $scope.thisOrder.items[i].loan_backfill = 0;
         }
       }
-
+      */
+/*
       $scope.updateThisOrderQuantities = function() {
         for (var i = 0; i < $scope.thisOrder.items.length; i++) {
           var item = $scope.thisOrder.items[i];
@@ -368,6 +372,7 @@ var orders_app = angular.module('orders_app', []);
           );
         }
       }
+      */
 
   // from logs view
     $scope.scrollIntoView = function(rowNum, req) {

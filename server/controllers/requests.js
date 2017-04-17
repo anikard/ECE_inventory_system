@@ -261,50 +261,18 @@ function del (req, res) {
 function update (req, res) {
 	Request.findOne({ '_id': req.body._id })
 	.populate('items.item backfills')
-	//.populate('backfills.backfill')
 	.exec( function (err, request) {
 		if (err) return res.status(500).send({ error: err});
-		var updateCheckString = updateCheck(request, request.items, req.body.items);
+		var updateCheckString = updateCheck(request, req.body.items);
 		if (updateCheckString != "") {
 			return res.status(403).send({ err: updateCheckString });
 		}
-		var nowDate = new Date();
-		var nowISO = nowDate.toISOString();
-		req.body.dateUpdated = nowISO;
-		//var logStats = generateLogStats(request.items, req.body.items);
+		req.body.dateUpdated = new Date().toISOString();
+		generateBackfills(request, req.body.items);
+		saveBackfills(req);
 
-		var logStats = {};
-		for (var i = 0; i < request.items.length; i++) {
-			var quantity_and_available_delta = request.items[i].quantity_disburse - req.body.items[i].quantity_disburse;
-			var quantity_available_only_delta =
-				(req.body.items[i].loan_return - req.body.items[i].outstanding_loan);
-			console.log("log stats");
-			console.log(request.items[i].item.name);
-			console.log(quantity_and_available_delta);
-			console.log(quantity_available_only_delta);
-			request.items[i].item.quantity += quantity_and_available_delta;
-			request.items[i].item.quantity_available +=
-				(quantity_and_available_delta + quantity_available_only_delta);
-		}
-
-		for (let i = 0; i < request.items.length; i++) {
-			console.log("Quantity available");
-			console.log(request.items[i].item.quantity_available);
-			request.items[i].item.save(function (err, success) {
-				console.log("Err: " + err);
-				console.log("Suc: " + success);
-			});
-		}
-
-		for (let i = 0; i < req.body.backfills.length; i++) {
-			Backfill.findOne({_id: req.body.backfills[i]._id}, (err, backfill) => {
-				backfill.status = req.body.backfills[i].status;
-				backfill.save(function(err, success) {
-					console.log("BFE: " + err);
-					console.log("BFS: " + success);
-				});
-			});
-		}
+		updateItemQuantities(request, req);
+		req.body.items = refreshRequestQuantities(req);
 
 		console.log("REQUESTE BEFORE: " + request)
 		_.assign(request,_.pick(req.body,['user', 'reason', 'items', 'notes', 'dateUpdated']));
@@ -318,44 +286,113 @@ function update (req, res) {
 	});
 }
 
-function updateCheck(request, oldItems, newItems) {
-	var newBackfills = [];
-	for (var i = 0; i < oldItems.length; i++) {
-		var quantityAvailable = oldItems[i].item.quantity_available;
+function updateCheck(request, newItems) {
+	for (var i = 0; i < request.items.length; i++) {
+		var quantityAvailable = request.items[i].item.quantity_available;
 		console.log("QA");
 		console.log(quantityAvailable);
-		var quantityDelta = generateQuantityDeltas(oldItems[i], newItems[i]);
-		console.log(quantityDelta);
-		if (quantityDelta.disburse_delta > quantityAvailable || quantityDelta.loan_delta > quantityAvailable) {
+
+		var quantityMadeUnavailable = newItems[i].quantity_outstanding_disburse + newItems[i].quantity_loan_disburse
+		if (quantityMadeUnavailable > quantityAvailable) {
 			return "Quantities acted on exceed quantities available";
 		}
-		if (quantityDelta.total_delta > oldItems[i].quantity_requested) {
+
+		var quantityActedOutstanding = newItems[i].quantity_outstanding_disburse + newItems[i].quantity_outstanding_loan
+		+ newItems[i].quantity_outstanding_deny + newItems[i].quantity_outstanding_backfill;
+		if (quantityActedOutstanding > request.items[i].quantity_requested) {
 			return "Quantities acted on exceed quantities requested";
 		}
-		if (quantityDelta.backfill_delta > 0) {
-			var newBackfill = {
-				item: oldItems[i].item,
-				quantity: quantityDelta.backfill_delta
-			};
-			newBackfills.push(newBackfill);
-			//generateNewBackfill(request, oldItems[i].item, quantityDelta.backfill_delta);
+
+		var quantityActedLoan = newItems[i].quantity_loan_disburse + newItems[i].quantity_loan_return
+		+ newItems[i].quantity_loan_backfill;
+		if (quantityActedLoan > request.items[i].quantity_loan) {
+			return "Quantities acted on exceed quantities requested";
 		}
 	}
-	if (newBackfills.length > 0) generateNewBackfill(request, newBackfills);
 	return "";
 }
 
-function generateQuantityDeltas(oldItem, newItem) {
-	var delta = {};
-	delta.disburse_delta = newItem.quantity_disburse - oldItem.quantity_disburse;
-	delta.loan_delta = newItem.quantity_loan - oldItem.quantity_loan;
-	delta.deny_delta = newItem.quantity_deny - oldItem.quantity_deny;
-	delta.cancel_delta = newItem.quantity_cancel - oldItem.quantity_cancel;
-	delta.return_delta = newItem.quantity_return - oldItem.quantity_return;
-	delta.total_delta = delta.disburse_delta + delta.loan_delta + delta.deny_delta
-	+ delta.cancel_delta + delta.return_delta;
-	delta.backfill_delta = newItem.quantity_backfill - oldItem.quantity_backfill;
-	return delta;
+function updateItemQuantities(request, req) {
+	for (var i = 0; i < request.items.length; i++) {
+		var quantity_and_available_delta = 0 - req.body.items[i].quantity_outstanding_disburse;
+		var quantity_only_delta = 0 - req.body.items[i].quantity_loan_disburse;
+		var quantity_available_only_delta =
+			(req.body.items[i].quantity_loan_return - req.body.items[i].quantity_outstanding_loan);
+		console.log("log stats");
+		console.log(request.items[i].item.name);
+		console.log(quantity_and_available_delta);
+		console.log(quantity_only_delta);
+		console.log(quantity_available_only_delta);
+		request.items[i].item.quantity += quantity_and_available_delta + quantity_only_delta;
+		request.items[i].item.quantity_available +=
+			(quantity_and_available_delta + quantity_available_only_delta);
+		request.items[i].item.save(function (err, success) {
+			console.log("Err: " + err);
+			console.log("Suc: " + success);
+		});
+	}
+}
+
+function refreshRequestQuantities(req) {
+	//TODO: extract once it's confirmed working
+	for (var i = 0; i < req.body.items.length; i++) {
+		var item = req.body.items[i];
+		req.body.items[i].quantity_requested -= (
+			item.quantity_outstanding_disburse + item.quantity_outstanding_loan
+			+ item.quantity_outstanding_deny + item.quantity_outstanding_backfill + item.quantity_cancel
+		);
+		req.body.items[i].quantity_disburse += (
+			item.quantity_outstanding_disburse + item.quantity_loan_disburse
+		);
+		req.body.items[i].quantity_loan += (
+			item.quantity_outstanding_loan - (item.quantity_loan_return + item.quantity_loan_disburse)
+		);
+		req.body.items[i].quantity_deny += item.quantity_outstanding_deny;
+		req.body.items[i].quantity_return += item.quantity_loan_return;
+		req.body.items[i].quantity_backfill += (
+			item.quantity_outstanding_backfill + item.quantity_loan_backfill
+		);
+
+		req.body.items[i].quantity_cancel = 0;
+
+		req.body.items[i].quantity_outstanding_disburse = 0;
+		req.body.items[i].quantity_outstanding_loan = 0;
+		req.body.items[i].quantity_outstanding_deny = 0;
+		req.body.items[i].quantity_outstanding_backfill = 0;
+
+		req.body.items[i].quantity_loan_disburse = 0;
+		req.body.items[i].quantity_loan_return = 0;
+		req.body.items[i].quantity_loan_backfill = 0;
+	}
+	return req.body.items;
+}
+
+function generateBackfills(request, newItems) {
+	var newBackfills = [];
+	var loanBackfills = [];
+
+	for (var i = 0; i < request.items.length; i++) {
+		if (newItems.quantity_outstanding_backfill > 0) {
+			var newBackfill = {
+				item: request.items[i].item,
+				quantity: newItems[i].quantity_outstanding_backfill,
+				origin: 'outstanding'
+			};
+			newBackfills.push(newBackfill);
+		}
+
+		if (newItems.quantity_loan_backfill > 0) {
+			var newLoanBackfill = {
+				item: request.items[i].item,
+				quantity: newItems[i].quantity_loan_backfill,
+				origin: 'loan'
+			}
+			loanBackfills.push(newLoanBackfill);
+		}
+	}
+
+	if (newBackfills.length > 0) generateNewBackfill(request, newBackfills);
+	if (loanBackfills.length > 0) generateNewBackfill(request, loanBackfills);
 }
 
 function generateNewBackfill(request, backfillItems) {
@@ -369,23 +406,17 @@ function generateNewBackfill(request, backfillItems) {
 			console.log("BF SUCC: " + bf);
 		}
 	});
-
 }
 
-function generateLogStats(oldItems, newItems) {
-	// TODO: BROKEN: Ask mike how to update the item quantity and q_avail in this function
-	var logStats = {};
-	for (var i = 0; i < oldItems.length; i++) {
-		var quantity_and_available_delta = oldItems[i].quantity_disburse - newItems[i].quantity_disburse;
-		var quantity_available_only_delta =
-			(newItems[i].loan_return - newItems[i].outstanding_loan);
-		console.log("log stats");
-		console.log(oldItems[i].item.name);
-		console.log(quantity_and_available_delta);
-		console.log(quantity_available_only_delta);
-		oldItems[i].item.quantity += quantity_and_available_delta;
-		oldItems[i].item.quantity_available +=
-			(quantity_and_available_delta + quantity_available_only_delta);
+function saveBackfills(req) {
+	for (let i = 0; i < req.body.backfills.length; i++) {
+		Backfill.findOne({_id: req.body.backfills[i]._id}, (err, backfill) => {
+			backfill.status = req.body.backfills[i].status;
+			backfill.save(function(err, success) {
+				console.log("BFE: " + err);
+				console.log("BFS: " + success);
+			});
+		});
 	}
 }
 
@@ -410,7 +441,6 @@ function email(request, subject){
 			text: body,
 		});
 	});
-
 }
 
 function emailTo(request, to, subject){

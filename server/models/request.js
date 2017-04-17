@@ -9,14 +9,22 @@ var RequestSchema = new mongoose.Schema({
   reason: {type: String, default: ""},
   items: [{
   	item: {type:Schema.ObjectId, ref:'Item', autopopulate: true},
-    quantity_requested: {type: Number, default:0},
+    quantity_requested: {type: Number, default: 0},
     quantity_disburse: {type: Number, default: 0},
     quantity_loan: {type: Number, default: 0},
     quantity_deny: {type: Number, default: 0},
     quantity_return: {type: Number, default: 0},
     quantity_backfill: {type: Number, default: 0},
     quantity_cancel: {type: Number, default: 0},
-    //type: {type: String, default:"disburse"}
+
+    quantity_outstanding_disburse: {type: Number, default: 0},
+    quantity_outstanding_loan: {type: Number, default: 0},
+    quantity_outstanding_deny: {type: Number, default:0},
+    quantity_outstanding_backfill: {type: Number, default: 0},
+
+    quantity_loan_disburse: {type: Number, default: 0},
+    quantity_loan_return: {type: Number, default: 0},
+    quantity_loan_backfill: {type: Number, default: 0}
   }],
   //assets:[{type:Schema.ObjectId, ref:'Asset', autopopulate: true}],
   backfills:[{type:Schema.ObjectId, ref:'Backfill', autopopulate: true}],
