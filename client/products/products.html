@@ -208,7 +208,6 @@
 
           </p>
 
-
           <p ng-repeat="field in fields">
             <span ng-show="authorized || field.access=='public'">
               <label><b>{{ field.name }}: </b></label>
@@ -330,13 +329,20 @@
       <div class="modal-body" align="left">
         <div class="form-group" >
           <label><b>Asset Tag: </b></label>
-          <input type="text" ng-readonly="!editing" ng-model="currentAsset.assetTag" required/>
+          <input type="text" ng-readonly="!assetEditing" ng-model="currentAsset.assetTag" required/>
           <p>
             <h3>Fields:</h3>
-            <div style="margin-left:1em;" ng-repeat="field in currentAsset.fields">
-              <label><b>{{field.name}}:  </b></label>
-              <input type="text" ng-readonly="!editing" ng-model="field.value"/>
-            </div>
+            <p style="margin-left:1em;" ng-repeat="field in assetFields">
+            <span ng-show="authorized || field.access=='public'">
+              <label style="margin-right:0.5em;"><b>{{ field.name }}: </b></label>
+              <input ng-show="field.type=='short-form'" type="text" ng-readonly="!assetEditing" ng-model="currentAsset.fields[field.name]">
+              <textarea ng-show="field.type=='long-form'"type="text" ng-readonly="!assetEditing" ng-model="currentAsset.fields[field.name]"></textarea>
+              <input ng-show="field.type=='integer'" type="number" ng-readonly="!assetEditing" ng-model="currentAsset.fields[field.name]">
+              <input ng-show="field.type=='floating-point'" type="number" step="0.01" ng-readonly="!assetEditing" ng-model="currentAsset.fields[field.name]">
+            </span>
+          </p>
+
+            <!-- TODOTODO -->
           </p>
 
         </div>
@@ -348,7 +354,7 @@
           <button type="button" class="btn btn-secondary" ng-click="closeItemModal()" data-dismiss="modal">Close</button>
           <!-- <button type="button" class="btn btn-primary" ng-click="requestProduct(thisProduct)" data-toggle="modal" data-target="#requestModal">Add to Cart</button> -->
           <span ng-show="authorized">
-            <button type="button" class="btn btn-primary" ng-click="editAsset(currentProduct)">{{editing == true ? 'Save Edits' : 'Edit' }}</button>
+            <button type="button" class="btn btn-primary" ng-click="editAsset(currentAsset)">{{assetEditing == true ? 'Save Edits' : 'Edit' }}</button>
                     <!-- TODO CHANGE TO EDIT THIS ASSET -->
 
           </span>
@@ -375,7 +381,7 @@
           Confirm Deletion
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmDeleteModal(thisProduct)>Confirm</button>
+          <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmDeleteModal(currentAsset)>Confirm</button>
           <!-- TODO CHANGE TO DELETE THIS ASSET -->
           <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelDeleteModal()>Cancel</button>
         </div>
@@ -489,6 +495,30 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmEditModal(currentProduct)>Confirm</button>
           <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelEditModal(currentProduct)>Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- EDIT CONFIRM ASSET MODAL -->
+<div class="modal fade" id="editConfirmAssetModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h1 class="modal-title" id="exampleModalLabel">Confirm Asset Edits</h1>
+      </div>
+      <div class="modal-body" align="left">
+        <div class="form-group" >
+          Confirm Asset Edits
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmEditAssetModal(currentAsset)>Confirm</button>
+          <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=cancelEditAssetModal(currentAsset)>Cancel</button>
         </div>
       </div>
     </div>

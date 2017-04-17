@@ -99,11 +99,11 @@ products_app.factory('ProductsFactory', function($http) {
               console.log("creating assets");
           
                // for (var n = 0; n < info.quantity_available; n++) {
-                // console.log("creating assets in for loop");
-                  $http.post('/api/asset/add', {item_name: info.name}).success(function(output) {
-                    console.log("added asset");
-                    console.log(output);
-                  })
+
+                  // $http.post('/api/asset/toAsset', {item_name: info.name, asset_fields: info.assetFields}).success(function(output) {
+                  //   console.log("added asset");
+                  //   console.log(output);
+                  // })
                // }
         }
 
@@ -155,6 +155,7 @@ products_app.factory('ProductsFactory', function($http) {
       return;
     }
 
+    // asset todo
     // tasks apr 15
     // TODO: if convert to asset but some items are on loan, THROW ERROR
     // because 
@@ -167,13 +168,26 @@ products_app.factory('ProductsFactory', function($http) {
       console.log("product Successfully updated in factory");
 
       // fix
-      // if (info.isAsset) {
-      //   $http.get('/api/asset/add', {item_name: info.name}).success(function(output) {
-      //       console.log("added asset");
-      //       console.log(output);
-      //   })
-      // }
+      if (info.isAsset && info.convertedToAsset) {
+        console.log("converting to asset = " + info.name);
+        alert(info);
+        $http.post('/api/asset/toAsset', {item_name: info.name, assetFields: info.assetFields}).success(function(output) {
+            console.log("added asset");
+            console.log(output);
+        })
+      }
 
+    })
+  }
+
+
+  factory.updateAsset = function(info, callback) {
+    if (!info.assetTag) {
+      console.log("Update asset form incomplete");
+      return;
+    }
+    $http.post('/api/asset/update', info).success(function(output) {
+      console.log("asset Successfully updated in factory");
     })
   }
 
@@ -340,6 +354,9 @@ products_app.controller('productsController', function($scope, $window, $http, /
   $scope.addProduct = function() {
     console.log("Query submited!");
     console.log("new product");
+    $scope.new_product.assetFields = $scope.assetFields;
+    //new_product.fields[field.name]
+
     console.log($scope.customFields);
     $scope.new_product.tags = $scope.currentTags;
     var cleanCustomFields = [];
@@ -462,15 +479,15 @@ products_app.controller('productsController', function($scope, $window, $http, /
   $scope.editAsset = function(asset) {
     console.log("edit asset called");
 
-    if ($scope.editing) {
-      $('#editConfirmModal').modal('show');
-      $scope.editing = false;
+    if ($scope.assetEditing) {
+      $('#editConfirmAssetModal').modal('show');
+      $scope.assetEditing = false;
     }
     else {
       console.log("Going into edit mode, save asset to oldAsset");
       originalAsset = angular.copy(asset);
       console.log(originalAsset);
-      $scope.editing = true;
+      $scope.assetEditing = true;
     }
   }
 
@@ -508,6 +525,10 @@ products_app.controller('productsController', function($scope, $window, $http, /
 
     console.log(product);
     product.tags = $scope.currentTags;
+    if (!originalProduct.isAsset) {
+      product.convertedToAsset = true;
+      product.assetFields = $scope.assetFields;
+    }
     ProductsFactory.updateProduct(product, function (data) {
       console.log("confirm edit calling factory");
     })
@@ -523,6 +544,28 @@ products_app.controller('productsController', function($scope, $window, $http, /
     $scope.currentProduct = angular.copy(originalProduct);
     console.log($scope.currentProduct);
     $('#editConfirmModal').modal('hide');
+  }
+
+  // assets
+  $scope.confirmEditAssetModal = function(asset) {
+    console.log("confirm edit asset");
+
+    console.log(asset);
+    ProductsFactory.updateAsset(asset, function (data) {
+      console.log("confirm edit asset calling factory");
+    })
+    $scope.refreshProducts();
+    window.location.assign("/dispProducts");
+
+  }
+
+  $scope.cancelEditAssetModal = function(asset) {
+    console.log("Cancel Edit asset");
+    console.log(originalAsset);
+    console.log($scope.currentAsset);
+    $scope.currentAsset = angular.copy(originalAsset);
+    console.log($scope.currentAsset);
+    $('#editConfirmAssetModal').modal('hide');
   }
 
   $scope.requestProduct = function(product) {
