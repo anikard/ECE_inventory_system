@@ -16,29 +16,6 @@
 
   <div><span id="navBar"></span><a href="" ng-click="logout()">logout {{myName}}</a></div>
 
-<!-- <h1>REQUESTS WITH TABS</h1>
-
-<div class="tabs">
-    <ul class="tab-links">
-        <li class="active"><a href="#tab1">Loans</a></li>
-        <li><a href="#tab2">Disbursements</a></li>
-    </ul>
-
-    <div class="tab-content">
-        <div id="tab1" class="tab active">
-            <p>Tab #1 content goes here!</p>
-            <p>Donec pulvs.</p>
-        </div>
-
-        <div id="tab2" class="tab">
-            <p>Tab #2 content goes here!</p>
-            <p>Donec p ut adipiscing nisi. Etiam rutrum sodales gravida! Aliquam tellus orci, iaculis vel.</p>
-        </div>
-
-    </div>
-</div> -->
-
-
 <h1>REQUESTS</h1>
 <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search requests">
 <div>
@@ -76,29 +53,6 @@
 <button class = "remove" style="margin-top:1em; width: 20%; color: black;" ng-show="hasMoreItemsToShow()" ng-click="showMoreItems()">
     Show more
 </button>
-<!--
-<div class="customerTable" id = "bTable" style="height:25em;">
-  <table id = "myBackfillTable" class="table">
-    <tr>
-      <td> Request Id </td>
-      <td> # of Items </td>
-      <td> Date Issued </td>
-      <td> Last Updated </td>
-      <td> View Request </td>
-    </tr>
-
-    <tr ng-repeat="backfill in backfills | filter: filter_name | orderBy:'-date'">
-      <td style="display:none;" ng-bind="backfill._id"></td>
-      <td ng-bind="backfill.request._id"></td>
-      <td ng-bind="backfill.items.length"></td>
-      <td ng-bind="backfill.date | date:'short'"></td>
-      <td ng-bind="backfill.date | date:'short'"></td>
-      <td><button class = "remove" ng-click='viewBackfill(backfill)' data-toggle="modal" data-target="#backfillModal">View</button></td>
-    </tr>
-  </table>
-</div>
--->
-
 
  <div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
    <div class="modal-dialog" role="document">
@@ -208,52 +162,7 @@
                <p><b>origin: </b>{{backfill.origin}}</p>
                <p><b>pdf: </b>TODO pdf </p>
              </span>
-
            </span>
-
-           <!--
-           <span id="backfill-live" ng-show="hasBackfillLive()">
-             <table id="backfillLiveTable" class="small table">
-               <tr>
-                 <td> Item </td>
-                 <td> Quantity in Transit</td>
-                 <td> Quantity to Fulfill</td>
-                 <td> Quantity to Fail</td>
-                 <td> pdf </td>
-                 <td ng-show="!isAuthorized"> Quantity to Request Backfill </td>
-               </tr>
-               <tr ng-repeat="backfill in thisOrder.backfills">
-                 <span ng-repeat="item in backfill.items">
-                   <td ng-bind="item.item.name || '[Deleted item]'"></td>
-                   <td ng-bind="item.quantity_transit_outstanding"></td>
-                   <td><input class="noverflow" min="0" type="number" ng-model="item.quantity_fulfilled"></td>
-                   <td><input class="noverflow" min="0" type="number" ng-model="item.quantity_failed"></td>
-                 </span>
-               </tr>
-             </table>
-           </span>
-           <span id="backfill-completed" ng-show="hasBackfillComplete()">
-             <table id="backfillCompletedTable" class="small table">
-               <tr>
-                 <td> Item </td>
-                 <td> Quantity Fulfileed</td>
-                 <td> Quantity Denied</td>
-                 <td> Quantity Failed</td>
-                 <td> pdf </td>
-                 <td ng-show="!isAuthorized"> Quantity to Request Backfill </td>
-               </tr>
-               <tr ng-repeat="item in backfillItems">
-                 <td ng-bind="item.item.name || '[Deleted item]'"></td>
-                 <td ng-bind="item.quantity_req"></td>
-                 <td ng-readonly="!isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.quantity_disburse"></td>
-                 <td ng-readonly="!isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.quantity_return"></td>
-                 <td ng-readonly="!isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.quantity_deny"></td>
-                 <td ng-show="isAuthorized"><input class="noverflow" min="0" type="number" ng-model="item.quantity_deny"></td>
-               </tr>
-             </table>
-           </span>
-         -->
-
          </div>
 
          <label ng-show="thisOrder.notes.length > 0">Previous Comments </label>

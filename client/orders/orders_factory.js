@@ -208,14 +208,6 @@ var orders_app = angular.module('orders_app', []);
         $scope.removeOrder = function(order) {
           $('#orderModal').modal('hide');
           OrderFactory.removeOrder(order, function(data) {
-            /*
-            for (var i =0; i < $scope.orders.length; i++)
-            {  if ($scope.orders[i]._id === order._id) {
-                  $scope.orders.splice(i,1);
-                  break;
-                }
-            }
-            */
             $scope.refreshOrders();
         });
 
@@ -284,9 +276,6 @@ var orders_app = angular.module('orders_app', []);
           default:
             return [];
         }
-
-        //var statuses = ['requested', 'inTransit', 'denied', 'failed', 'fulfilled', 'closed'];
-        //return statuses;
       }
 
       $scope.backfillStatuses = ['requested', 'inTransit', 'denied', 'failed', 'fulfilled', 'closed'];
@@ -334,45 +323,6 @@ var orders_app = angular.module('orders_app', []);
           }
         });
       }
-
-/*
-      $scope.populateZerosInTables = function() {
-        for (var i = 0; i < $scope.thisOrder.items.length; i++) {
-          $scope.thisOrder.items[i].quantity_cancel = 0;
-
-          $scope.thisOrder.items[i].outstanding_disburse = 0;
-          $scope.thisOrder.items[i].outstanding_loan = 0;
-          $scope.thisOrder.items[i].outstanding_deny = 0;
-          $scope.thisOrder.items[i].outstanding_backfill = 0;
-
-          $scope.thisOrder.items[i].loan_disburse = 0;
-          $scope.thisOrder.items[i].loan_return = 0;
-          $scope.thisOrder.items[i].loan_backfill = 0;
-        }
-      }
-      */
-/*
-      $scope.updateThisOrderQuantities = function() {
-        for (var i = 0; i < $scope.thisOrder.items.length; i++) {
-          var item = $scope.thisOrder.items[i];
-          $scope.thisOrder.items[i].quantity_requested -= (
-            item.outstanding_disburse + item.outstanding_loan
-            + item.outstanding_deny + item.outstanding_backfill + item.quantity_cancel
-          );
-          $scope.thisOrder.items[i].quantity_disburse += (
-            item.outstanding_disburse + item.loan_disburse
-          );
-          $scope.thisOrder.items[i].quantity_loan += (
-            item.outstanding_loan - (item.loan_return + item.loan_disburse)
-          );
-          $scope.thisOrder.items[i].quantity_deny += item.outstanding_deny;
-          $scope.thisOrder.items[i].quantity_return += item.loan_return;
-          $scope.thisOrder.items[i].quantity_backfill += (
-            item.outstanding_backfill + item.loan_backfill
-          );
-        }
-      }
-      */
 
   // from logs view
     $scope.scrollIntoView = function(rowNum, req) {
