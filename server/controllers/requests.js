@@ -85,19 +85,11 @@ function add (req, res) {
 	}
 
 	Cart.findOne({user: req.user._id})
-	//.populate('items.item')
 	.exec( function(err, cart) {
 		if (err)
 			return res.status(500).send({ error: err });
 		if (!cart || cart.items.length === 0)
 			return res.status(400).send({ error: "Empty cart" });
-
-		//console.log("&&&&&&&&&&&&7: " + cart);
-		//console.log("*************:");
-		//consoel.log
-
-		console.log("IN REQ");
-		console.log(req.body);
 
 		for(var i = 0; i < req.body.items.length; i++) {
 			req.body.items[i].type = req.body.type;
@@ -108,22 +100,7 @@ function add (req, res) {
 			if (req.body.items[i].item.quantity_available < disburseOrLoanAmount) {
 				return res.status(405).send({ error: `Request quantity of ${req.body.items[i].item.name} exceeds stock limit` });
 			}
-			/*
-			else{
-				req.body.items[i].item = req.body.items[i].item._id;
-				req.body.items[i].item.quantity_available -= req.body.items[i].quantity_disburse + req.body.items[i].quantity_loan;
-				req.body.items[i].item.quantity -= req.body.items[i].quantity_disburse;
-				req.body.items[i].item.save((err, success) => {
-					if(err) console.log("&&*&*&*&*&*: " + err);
-					if(success) console.log("%%%%%%%% " + success);
-				})
-			}
-			*/
 		}
-
-		console.log("ALMOST THERE");
-		console.log(req.body);
-
 
 		var newRequest = new Request({
         	user: id,
@@ -133,29 +110,24 @@ function add (req, res) {
     });
 
 		var promise = newRequest.save();
-		promise.then(function(rP) {
+		promise.then(function(requestPromise) {
 			console.log("IN PROMISE");
-			console.log(rP);
+			console.log(requestPromise);
 
-			Request.findById(rP._id)
+			Request.findById(requestPromise._id)
 			.populate('items.item')
 			.exec(function (err, request){
 
 				for (var i = 0; i < request.items.length; i++) {
-					//request.items[i].item = request.items[i].item._id;
-					console.log("Check: " + request.items[i].item.name);
-					console.log(request.items[i].quantity_disburse);
-					console.log(request.items[i].quantity_loan);
-					console.log(request.items[i].item.quantity);
-					console.log(request.items[i].item.quantity_available);
+					console.log("Check: " + request.items[i]);
 					request.items[i].item.quantity_available -= request.items[i].quantity_disburse + request.items[i].quantity_loan;
 					request.items[i].item.quantity -= request.items[i].quantity_disburse;
 					request.items[i].item.save((err, success) => {
 						if(err) {
-							console.log("&&*&*&*&*&*: " + err);
+							console.log("RP ERR: " +err);
 						}
 						if(success) {
-							console.log("%%%%%%%% " + success);
+							console.log("RP SUCC: " + success);
 						}
 					})
 				}
@@ -315,16 +287,6 @@ function updateCheck(request, newItems) {
 
 function updateItemQuantities(request, req) {
 	for (var i = 0; i < request.items.length; i++) {
-		/*
-		var loanBackfillQuantity = 0;
-		var
-		for (j through newLoanBackfillItems){
-
-		}
-		for (k through updateBackfillItems) {
-
-		}
-		*/
 		var quantity_and_available_delta = 0 - req.body.items[i].quantity_outstanding_disburse;
 		var quantity_only_delta = 0 - req.body.items[i].quantity_loan_disburse;
 		var quantity_available_only_delta =
@@ -382,9 +344,6 @@ function refreshRequestQuantities(req) {
 }
 
 function generateBackfills(request, newItems) {
-	//console.log("in backfill generate");
-	//console.log(request);
-	//console.log(newItems);
 	var newBackfills = [];
 	var loanBackfills = [];
 
@@ -445,58 +404,10 @@ function saveBackfills(request, req) {
 				console.log(backfillSignMultiplier);
 				// TODO: inTransit -> failed
 				if (backfillSignMultiplier == 2 || backfillSignMultiplier == -2) {
-					console.log("Failed from loan");
-					Request.findOne({_id: request._id})
-					.exec(function (err, foundRequest) {
-						// For each item in this backfill,
-						// increment the corresponding item's quantity_loan in foundRequest
-
-						for (let j = 0; j < backfill.items.length; j++) {
-							for (let k = 0; k < foundRequest.items.length; k++) {
-								if (backfill.items[j].item.name === foundRequest.items[k].item.name) {
-									foundRequest.items[k].quantity_loan += backfill.items[j].quantity;
-								}
-							}
-						}
-						if (backfillSignMultiplier == -2) foundRequest.notes.push("[Autogen] new loan added from failed backfill at " + new Date().toISOString());
-						foundRequest.save((err, success) => {
-							console.log("FAILED FROM LOAN ERROR: " + err);
-							console.log("FAILED FROM LOAN SUCC: " + success);
-						});
-					});
+					handleFailCondition(request, backfill, backfillSignMultiplier);
 				}
-				/*
-				else if (backfillSignMultiplier == -2) {
-					console.log("Failed from outstanding");
-					Request.findOne({_id: request._id})
-					.exec(function (err, foundRequest) {
-						for (let j = 0; j < backfill.items.length; j++) {
-							for (let k = 0; k < foundRequest.items.length; k++) {
-								if (backfill.items[j].item.name === foundRequest.items[k].item.name) {
-									foundRequest.items[k].quantity_loan += backfill.items[j].quantity;
-								}
-							}
-						}
-
-						foundRequest.notes.push("[Autogen] new loan added from failed backfill at " + new Date().toISOString());
-						foundRequest.save((err, success) => {
-							console.log("FAILED FROM LOAN ERROR: " + err);
-							console.log("FAILED FROM LOAN SUCC: " + success);
-						});
-					});
-
-				}
-				*/
 				else {
-					console.log("Backfill didn't fail");
-					for (var p = 0; p < backfill.items.length; p++) {
-						var quantityAvailableDelta = backfillSignMultiplier * backfill.items[p].quantity;
-						backfill.items[p].item.quantity_available += quantityAvailableDelta;
-						backfill.items[p].item.save(function(err, success) {
-							if (err) console.log("BF QA err: " + err);
-							if (success) console.log("BF QA succ: " + success);
-						});
-					}
+					handleCommonCondition(backfill, backfillSignMultiplier);
 				}
 			}
 			backfill.status = req.body.backfills[i].status;
@@ -507,6 +418,37 @@ function saveBackfills(request, req) {
 		});
 	}
 	//return mapping
+}
+
+function handleFailCondition(request, backfill, backfillSignMultiplier) {
+	console.log("Failed from loan");
+	Request.findOne({_id: request._id})
+	.exec(function (err, foundRequest) {
+		for (let j = 0; j < backfill.items.length; j++) {
+			for (let k = 0; k < foundRequest.items.length; k++) {
+				if (backfill.items[j].item.name === foundRequest.items[k].item.name) {
+					foundRequest.items[k].quantity_loan += backfill.items[j].quantity;
+				}
+			}
+		}
+		if (backfillSignMultiplier == -2) foundRequest.notes.push("[Autogen] new loan added from failed backfill at " + new Date().toISOString());
+		foundRequest.save((err, success) => {
+			console.log("FAILED FROM LOAN ERROR: " + err);
+			console.log("FAILED FROM LOAN SUCC: " + success);
+		});
+	});
+}
+
+function handleCommonCondition(backfill, backfillSignMultiplier) {
+	console.log("Backfill didn't fail");
+	for (var p = 0; p < backfill.items.length; p++) {
+		var quantityAvailableDelta = backfillSignMultiplier * backfill.items[p].quantity;
+		backfill.items[p].item.quantity_available += quantityAvailableDelta;
+		backfill.items[p].item.save(function(err, success) {
+			if (err) console.log("BF QA err: " + err);
+			if (success) console.log("BF QA succ: " + success);
+		});
+	}
 }
 
 function determineBackfillSignMultiplier(backfill, newStatus) {
