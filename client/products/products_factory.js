@@ -97,7 +97,7 @@ products_app.factory('ProductsFactory', function($http) {
 
          if (info.isAsset) {
               console.log("creating assets");
-          
+
                // for (var n = 0; n < info.quantity_available; n++) {
 
                   // $http.post('/api/asset/toAsset', {item_name: info.name, asset_fields: info.assetFields}).success(function(output) {
@@ -158,7 +158,7 @@ products_app.factory('ProductsFactory', function($http) {
     // asset todo
     // tasks apr 15
     // TODO: if convert to asset but some items are on loan, THROW ERROR
-    // because 
+    // because
     // "cannot convert item to asset. Unable to add serial numbers to loaned items."
 
     // todo : edit asset tag --> asset tags must be unique
@@ -234,8 +234,8 @@ products_app.controller('productsController', function($scope, $window, $http, /
           };
 
           $scope.showMoreItems = function() {
-           pagesShown = pagesShown + 1;       
-          }; 
+           pagesShown = pagesShown + 1;
+          };
 
       /** END OF PAGINATION **/
 
@@ -349,7 +349,7 @@ products_app.controller('productsController', function($scope, $window, $http, /
       else {
         $scope.new_product.isAsset = false;
       }
-    }   
+    }
 
   $scope.addProduct = function() {
     console.log("Query submited!");
@@ -379,7 +379,7 @@ products_app.controller('productsController', function($scope, $window, $http, /
     //     alert('selected asset');
     //     $scope.new_product.isAsset = true;
     //   }
-    // }   
+    // }
 
     // if ($scope.new_product.isAsset) {
     //   console.log("creating assets");
@@ -518,6 +518,22 @@ products_app.controller('productsController', function($scope, $window, $http, /
       }
     }
     return myLoanTotal;
+  }
+
+  $scope.calculateTotalBackfillRequested = function(prduct) {
+    return 0;
+  }
+
+  $scope.calculateMyBackfillRequested = function(product) {
+    return 0;
+  }
+
+  $scope.calculateTotalBackfillInTransit = function(product) {
+    return 0;
+  }
+
+  $scope.calculateMyBackfillInTransit = function(product) {
+    return 0;
   }
 
   $scope.confirmEditModal = function(product) {
