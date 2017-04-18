@@ -490,35 +490,40 @@ function processItem (item, user, fields, cb) {
   }
   let query = isAdmin? {'items.item': item._id} : { 'user' :user._id, 'items.item': item._id};
   Request.find(query)
-  .populate('items.item backfills')
+  .populate('items.item')
   .exec((err, requests)=>{
     if(err) cb(err);
-    let total_loan = 0;
-    let total_requested = 0;
-    let total_backfill_requested = 0;
-    let total_backfill_transit = 0;
-    requests.forEach(r=>{
-      r.items.forEach(i=>{
-        if(i.item.equals(item._id) || i.item._id.equals(item._id)){
-          total_loan += i.quantity_loan;
-          total_requested += i.quantity_requested;
-        }
+    let arr = [];
+    requests.forEach(r=>arr.push(r._id));
+    Backfill.find( { request : { $in : arr } } )
+    .exec((err, backfills)=>{
+      let total_loan = 0;
+      let total_requested = 0;
+      let total_backfill_requested = 0;
+      let total_backfill_transit = 0;
+      requests.forEach(r=>{
+        r.items.forEach(i=>{
+          if(i.item._id.equals(item._id)){
+            total_loan += i.quantity_loan;
+            total_requested += i.quantity_requested;
+          }
+        });
       });
-      r.backfills.forEach(b=>{
+      backfills.forEach(b=>{
         b.items.forEach(i=>{
-          if(i.item.equals(item._id)){
+          if(i.item._id.equals(item._id)){
             if(b.status==='requested') total_backfill_requested+=i.quantity;
             if(b.status==='inTransit') total_backfill_transit+=i.quantity;
           }
         })
       })
-    });
-    _.assign(item,{
-      quantity_loan: total_loan,
-      quantity_requested: total_requested,
-      quantity_backfill_requested: total_backfill_requested,
-      quantity_backfill_transit: total_backfill_transit,
-    });
-    cb(null, item);
+      _.assign(item,{
+        quantity_loan: total_loan,
+        quantity_requested: total_requested,
+        quantity_backfill_requested: total_backfill_requested,
+        quantity_backfill_transit: total_backfill_transit,
+      });
+      cb(null, item);
+    })
   });
 }
