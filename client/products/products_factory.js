@@ -74,9 +74,15 @@ products_app.factory('ProductsFactory', function($http) {
   }
 
    factory.addAsset = function(info, callback) {
-    $http.post('/api/asset/add', info).success(function(output) {
-      callback(output);
-    })
+    $http.post('/api/asset/add', info)
+      .success(function(output) {
+        callback(output);
+      })
+      .error(function(error){
+        console.log("ERROR FOUND: ");
+        console.log(error);
+        callback(error);
+      })
   }
 
   factory.addProduct = function(info, callback) {
@@ -198,9 +204,15 @@ products_app.factory('ProductsFactory', function($http) {
       console.log("Update asset form incomplete");
       return;
     }
-    $http.post('/api/asset/update', info).success(function(output) {
-      console.log("asset Successfully updated in factory");
-    })
+    $http.post('/api/asset/update', info)
+      .success(function(output) {
+        callback(output);
+      })
+      .error(function(error){
+        console.log("ERROR FOUND: ");
+        console.log(error);
+        callback(error);
+      })
   }
 
   factory.deleteAsset = function(asset, callback) {
@@ -608,10 +620,22 @@ products_app.controller('productsController', function($scope, $window, $http, /
     console.log(asset);
     ProductsFactory.updateAsset(asset, function (data) {
       console.log("confirm edit asset calling factory");
-    })
-    $scope.refreshProducts();
-    window.location.assign("/dispProducts");
 
+      if (data.error) {
+        if(data.error.errmsg.includes("duplicate")) {
+          alert("Please enter a unique asset tag.");
+        }
+      }
+      else if (data.errmsg) {
+        alert(data.errmsg);
+      }
+      else {
+        alert("Updated asset with tag " + data.assetTag + ".")
+        $scope.currentAsset = {};
+        $scope.refreshProducts();
+        window.location.assign("/dispProducts");
+      }
+    })
   }
 
   $scope.cancelEditAssetModal = function(asset) {
@@ -929,9 +953,25 @@ products_app.controller('productsController', function($scope, $window, $http, /
     // $scope.currentTags.push($scope.newTag.name);
 
     ProductsFactory.addAsset(currentAsset, function(data) {
-      $scope.currentAsset = {};
-      $('#assetCreationModal').modal('hide');
-      $scope.refreshProducts();
+      console.log("results of add asset");
+      console.log(data);
+
+      if (data.error) {
+        if(data.error.errmsg.includes("duplicate")) {
+          alert("Please enter a unique asset tag.");
+        }
+      }
+      else if (data.errmsg) {
+        alert(data.errmsg);
+      }
+      else {
+        alert("Created new asset with tag " + data.assetTag + ".")
+        $scope.currentAsset = {};
+        $('#assetCreationModal').modal('hide');
+        $scope.refreshProducts();
+      }
+
+      
       // window.location.assign("/dispProducts");
     });
 
