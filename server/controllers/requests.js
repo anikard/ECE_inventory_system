@@ -25,6 +25,7 @@ module.exports = (app) => {
 		let query = {status: 'requested'};
 		let isAdmin = req.user.status=='admin' || req.user.status=='manager';
 		Backfill.find(query)
+		.limit(parseInt(req.query.limit) || 200)
 		.populate('request')
 		.exec((err, bfs)=>{
 			if(err)return next(err);
@@ -70,7 +71,7 @@ function show (req, res) {
 	let query = (req.user.status === "admin" || req.user.status === "manager") ? {} : { user : req.user._id };
 	_.assign(_.pick(req.query, ['user','type']));
 	Request.find(query)
-	// .limit(parseInt(req.query.limit) || 20)
+	.limit(parseInt(req.query.limit) || 200)
  	.populate('items.item user')
  	.sort('-date')
     .lean()
