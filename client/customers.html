@@ -358,6 +358,7 @@
         console.log($scope.selectedUser);
         var info = {};
         info.status = status;
+        info.email = $scope.myemail;
         info._id = $scope.selectedUser._id;
         auth.updateUser(info, function() {
           console.log("update status Success");
@@ -449,7 +450,7 @@
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
-          <h1 class="modal-title" id="exampleModalLabel">Change Satus</h1>
+          <h1 class="modal-title" id="exampleModalLabel">Change Status</h1>
         </div>
         <div class="modal-body" align="left">
           <div class="form-group" >
@@ -457,6 +458,12 @@
               <option ng-repeat="status in statuses" ng-bind"status">{{status}}</option>
             </select>
           </div>
+          <input type="text" id="emField" style = "display:inline-block; width:40%; height: 53px;"
+          class="form-control feedback-input"
+          placeholder="Email"
+          ng-show="!authorized"
+          ng-model="myemail" ></input>
+
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" aria-hidden="true" ng-click=confirmChangeStatus()>Confirm</button>
             <button type="button" class="btn btn-secondary" aria-hidden="true" data-dismiss="modal">Cancel</button><!--ng-click=cancelEditModal(currentProduct)>Cancel</button>-->
