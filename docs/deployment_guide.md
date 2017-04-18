@@ -1,11 +1,24 @@
 
 ### Program requirements:
 
-OS: Ubuntu 14
-Framework: MEAN (Node 6). 
+OS: Ubuntu 14 or 16
+Framework: MEAN (Node 6.x, MongoDB 3.4). 
 
 For a full list of package dependencies, check the package.json[ECE_inventory_system/package.json] file found in the main page of this project
 
+## Setup:
+
+### Install MongoDB
+```
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+```
+For Ubuntu 14:
+```
+echo "deb [ arch=amd64 ] http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list
+```
+For Ubuntu 16:
+```
+echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list
 Then,
 ```
 sudo apt-get update
