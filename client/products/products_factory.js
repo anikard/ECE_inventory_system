@@ -197,6 +197,13 @@ products_app.factory('ProductsFactory', function($http) {
     })
   }
 
+  factory.deleteAsset = function(asset, callback) {
+
+    $http.post('/api/asset/del', asset).success(function(output) {
+      callback(output);
+    })
+  }
+
   factory.deleteProduct = function(product, callback) {
 
     $http.post('/api/item/del', product).success(function(output) {
@@ -454,6 +461,19 @@ products_app.controller('productsController', function($scope, $window, $http, /
 
     $('#deleteConfirmModal').modal('hide');
     $('#productModal').modal('hide');
+    $scope.refreshProducts();
+    //window.location.assign("/dispProducts");
+    //$('#createItemForm').reset();
+  }
+
+   $scope.confirmDeleteAssetModal = function(asset) {
+    console.log("confirm delete asset");
+    ProductsFactory.deleteAsset(asset, function(data) {
+    
+      });
+
+    $('#deleteConfirmAssetModal').modal('hide');
+    $('#assetModal').modal('hide');
     $scope.refreshProducts();
     //window.location.assign("/dispProducts");
     //$('#createItemForm').reset();
@@ -899,7 +919,7 @@ products_app.controller('productsController', function($scope, $window, $http, /
       $scope.currentAsset = {};
       $('#assetCreationModal').modal('hide');
       $scope.refreshProducts();
-      window.location.assign("/dispProducts");
+      // window.location.assign("/dispProducts");
     });
 
       
@@ -935,6 +955,10 @@ products_app.controller('productsController', function($scope, $window, $http, /
 
   $scope.cancelDeltaQuantity = function(product){
     $('#deltaQuantityModal').modal('hide');
+  }
+
+  $scope.cancelDeleteAssetModal = function(){
+    $('#deleteConfirmAssetModal').modal('hide');
   }
 
 
