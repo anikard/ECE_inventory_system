@@ -263,7 +263,9 @@ var orders_app = angular.module('orders_app', []);
 
       $scope.hasAssets = function() {
         if($scope.thisOrder) {
-          return $scope.thisOrder.assets.length > 0;
+          if ($scope.thisOrder.assets) {
+            return $scope.thisOrder.assets.length > 0;
+          }
         }
       }
 
@@ -421,9 +423,11 @@ var orders_app = angular.module('orders_app', []);
         }
       }
       $scope.copyAssets = function() {
-        for (var i = 0; i < $scope.thisOrder.assets.length; i++) {
-          $scope.thisOrder.assets[i].copyStatus = $scope.thisOrder.assets[i].status;
-        }
+         if ($scope.thisOrder.assets) {
+            for (var i = 0; i < $scope.thisOrder.assets.length; i++) {
+              $scope.thisOrder.assets[i].copyStatus = $scope.thisOrder.assets[i].status;
+            }
+          }
       }
 
       $scope.respondToOrder = function(order) {
