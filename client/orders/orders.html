@@ -22,14 +22,6 @@
 
 <h1>REQUESTS</h1>
 <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search requests">
-<div>
-  <label>Select Type of request to display</label>
-</div>
-<select id="request_type_select" class="feedback-input" name="requestOptions" ng-change="typeChanged()" ng-model="showRequestType">
-  <option value="all">All</option>
-  <option value="disburse">Disburse</option>
-  <option value="loan">Loan</option>
-</select>
 
 <div class="customerTable" id = "cTable" style="height:25em;">
   <table id = "myRequestsTable" class="table">
@@ -195,7 +187,7 @@
                  </select>
                </p>
                <p><b>origin: </b>{{backfill.origin}}</p>
-               
+
                <p style="display:none;" id="backfillID" ng-value="backfill._id">{{backfill._id}}</p>
                <!-- <p>{{backfill._id}}</p> -->
                <script type="text/javascript">
