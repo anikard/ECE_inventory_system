@@ -136,7 +136,6 @@ function add (req, res) {
 
 	if(!id) {
 		// User request
-		console.log("USER REQ");
 		id = req.user._id;
 		direct = false;
 	}
@@ -168,15 +167,12 @@ function add (req, res) {
 
 		var promise = newRequest.save();
 		promise.then(function(requestPromise) {
-			console.log("IN PROMISE");
-			console.log(requestPromise);
 
 			Request.findById(requestPromise._id)
 			.populate('items.item')
 			.exec(function (err, request){
 
 				for (var i = 0; i < request.items.length; i++) {
-					console.log("Check: " + request.items[i]);
 					request.items[i].item.quantity_available -= request.items[i].quantity_disburse + request.items[i].quantity_loan;
 					request.items[i].item.quantity -= request.items[i].quantity_disburse;
 					request.items[i].item.save((err, success) => {
@@ -320,9 +316,7 @@ function update (req, res) {
 		updateItemQuantities(request, req);
 		req.body.items = refreshRequestQuantities(req);
 
-		console.log("REQUESTE BEFORE: " + request)
 		_.assign(request,_.pick(req.body,['user', 'reason', 'items', 'notes', 'dateUpdated']));
-		console.log("REQUEST AFTER: " + request);
 		request.save(function (err) {
 
 			if (err) return res.status(500).send({ error: err});
@@ -335,8 +329,6 @@ function update (req, res) {
 function updateCheck(request, newItems) {
 	for (var i = 0; i < request.items.length; i++) {
 		var quantityAvailable = request.items[i].item.quantity_available;
-		console.log("QA");
-		console.log(quantityAvailable);
 
 		var quantityMadeUnavailable = newItems[i].quantity_outstanding_disburse + newItems[i].quantity_loan_disburse
 		if (quantityMadeUnavailable > quantityAvailable) {
@@ -364,11 +356,6 @@ function updateItemQuantities(request, req) {
 		var quantity_only_delta = 0 - req.body.items[i].quantity_loan_disburse;
 		var quantity_available_only_delta =
 			(req.body.items[i].quantity_loan_return - req.body.items[i].quantity_outstanding_loan);
-		console.log("log stats");
-		console.log(request.items[i].item.name);
-		console.log(quantity_and_available_delta);
-		console.log(quantity_only_delta);
-		console.log(quantity_available_only_delta);
 		request.items[i].item.quantity += quantity_and_available_delta + quantity_only_delta;
 		request.items[i].item.quantity_available +=
 			(quantity_and_available_delta + quantity_available_only_delta);

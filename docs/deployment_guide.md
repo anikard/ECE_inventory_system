@@ -1,4 +1,11 @@
 
+### Program requirements:
+
+OS: Ubuntu 14
+Framework: MEAN (Node 6). 
+
+For a full list of package dependencies, check the package.json[ECE_inventory_system/package.json] file found in the main page of this project
+
 Then,
 ```
 sudo apt-get update
@@ -64,3 +71,18 @@ Put `nodeapp.service` in /etc/systemd/system. Then type
 # sudo systemctl start nodeapp
 ```
 Watch the logs at `sudo journalctl --follow -u nodeapp`
+
+
+### procedure to install the system from scratch using backed up data
+
+Locate the desired backup (daily/weekly/monthly) directory. 
+
+Follow these steps to perform a restore:
+
+1. Copy the encrypted archive file to the production server. 
+
+2. Type the following in the SSH terminal of the production server.
+```
+# openssl enc -aes-256-cbc -d -k 1234567890 -in mongo.tar.gz.aes | gunzip > db.archive
+# mongorestore --archive=db.archive
+```

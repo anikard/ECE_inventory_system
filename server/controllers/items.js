@@ -239,6 +239,24 @@ module.exports = (app) => {
     });
   });
 
+  app.get('/api/item/showBelowThreshold', util.requireLogin, function(req, res, next) {
+    let id = req.query._id || req.query.id || req.query.item;
+    let query = id ? {_id:id} : {};
+    Item.find(query)
+    // .limit(parseInt(req.query.limit) || 200)
+    .exec((err, items) => {
+      if (err) return next(err);
+      Field.find({}, (err, fields)=> {
+        if (err) return next(err);
+       
+        async.map(items, (i,cb)=> processItem(i, req.user, fields, cb), (err, results)=>{
+          if (err) return next(err);
+          res.status(200).send(results.filter(r=>r.quantity_available<r.min_quantity));
+        })
+      });
+    });
+  });
+
   app.post('/api/item/add', util.requirePrivileged, function(req, res, next) {
     if (!req.body.name)
       return res.status(400).send({ error: "Missing itme name" });
