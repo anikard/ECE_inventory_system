@@ -5,9 +5,9 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var BackfillSchema = new Schema({
-  request: {type:Schema.ObjectId, ref:'Request'},
+  request: {type:Schema.ObjectId, ref:'Request', autopopulate: true},
   items: [{
-  	item: {type:Schema.ObjectId, ref:'Item'},
+  	item: {type:Schema.ObjectId, ref:'Item', autopopulate: true},
     quantity: {type: Number, default: 0}
   	//quantity_outstanding_request: {type: Number, default: 0},
     //quantity_loan_request: {type: Number, default: 0},

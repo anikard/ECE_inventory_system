@@ -19,7 +19,47 @@ module.exports = (app) => {
 	app.post('/api/request/add', util.requireLogin, add);
 	app.post('/api/request/close', util.requireLogin, close);
 	app.post('/api/request/del', util.requirePrivileged, del);
-	app.post('/api/request/update', util.requirePrivileged, update);
+	app.post('/api/request/update', util.requireLogin, update);
+
+	app.get('/api/request/showbackfillrequested', util.requireLogin, (req, res, next)=>{
+		let query = {status: 'requested'};
+		let isAdmin = req.user.status=='admin' || req.user.status=='manager';
+		Backfill.find(query)
+		.populate('request')
+		.exec((err, bfs)=>{
+			if(err)return next(err);
+			let requests = new Set();
+			bfs.forEach(b=>{if(isAdmin || b.request.user.equals(req.user._id))requests.add(b.request)});
+			let arr = [];
+			requests.forEach(r=>arr.push(r));
+			res.status(200).send(arr);
+		})
+		// Request.find({ backfills: { $exists: true, $not: {$size: 0} } })
+		// .populate('backfills')
+		// .exec((err, requests)=>{
+		// 	if (err) return next(err);
+		// 	res.status(200).send(requests.filter(r=>{
+		// 		let flag = false;
+		// 		r.backfills.forEach(b=>flag = flag || b.status==='requested');
+		// 		return flag;
+		// 	}))
+		// })
+	});
+
+	app.get('/api/request/showbackfilltransit', util.requireLogin, (req, res, next)=>{
+		let query = {status: 'inTransit'};
+		let isAdmin = req.user.status=='admin' || req.user.status=='manager';
+		Backfill.find(query)
+		.populate('request')
+		.exec((err, bfs)=>{
+			if(err)return next(err);
+			let requests = new Set();
+			bfs.forEach(b=>{if(isAdmin || b.request.user.equals(req.user._id))requests.add(b.request)});
+			let arr = [];
+			requests.forEach(r=>arr.push(r));
+			res.status(200).send(arr);
+		})
+	})
 }
 
 /*
