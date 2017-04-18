@@ -261,6 +261,12 @@ var orders_app = angular.module('orders_app', []);
         return false;
       }
 
+      $scope.hasAssets = function() {
+        if($scope.thisOrder) {
+          return $scope.thisOrder.assets.length > 0;
+        }
+      }
+
       $scope.hasBackfill = function() {
         if ($scope.thisOrder) {
           if ($scope.thisOrder.backfills) {
@@ -277,13 +283,38 @@ var orders_app = angular.module('orders_app', []);
           case 'inTransit':
             return ['fulfilled', 'failed'];
           case 'failed':
-            return ['failed'];    
+            return ['failed'];
           case 'denied':
             return ['denied'];
           case 'fulfilled':
             return ['fulfilled'];
           default:
             return [];
+        }
+      }
+
+      $scope.validAssetStatuses = function(status) {
+        switch (status.copyStatus) {
+          case 'outstanding':
+           return ['disbursed', 'onLoan', 'denied', 'backfill-transit'];
+          case 'onLoan':
+            return ['disbursed', 'returned', 'backfill-requested'];
+          case 'backfill-requested':
+            return ['backfill-transit', 'backfill-denied'];
+          case 'backfill-transit':
+            return ['backfill-fulfilled', 'backfill-failed'];
+          case 'denied':
+            return ['denied'];
+          case 'disbursed':
+            return ['disbursed'];
+          case 'returned':
+            return ['returned'];
+          case 'backfill-denied':
+            return ['backfill-denied'];
+          case 'backfill-failed':
+            return ['backfill-failed'];
+          case 'backfill-fulfilled':
+            return ['backfill-fulfilled'];
         }
       }
 
@@ -371,6 +402,7 @@ var orders_app = angular.module('orders_app', []);
           $scope.thisOrder = data;
           //$scope.populateZerosInTables();
           $scope.copyStatus();
+          $scope.copyAssets();
           $scope.orderId = order.user._id;
           $scope.isMe = $scope.orderId == $scope.myId;
 
@@ -386,6 +418,11 @@ var orders_app = angular.module('orders_app', []);
       $scope.copyStatus = function() {
         for (var i = 0; i < $scope.thisOrder.backfills.length; i++) {
           $scope.thisOrder.backfills[i].copyStatus = $scope.thisOrder.backfills[i].status;
+        }
+      }
+      $scope.copyAssets = function() {
+        for (var i = 0; i < $scope.thisOrder.assets.length; i++) {
+          $scope.thisOrder.assets[i].copyStatus = $scope.thisOrder.assets[i].status;
         }
       }
 

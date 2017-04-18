@@ -90,7 +90,7 @@ function show (req, res) {
 
 /*
 GET or POST
-parameter: 
+parameter:
 request: request id
 Return: one request that matches the id
 */
@@ -113,7 +113,7 @@ function findOneRequest(req, res, next) {
 
 /*
 POST
-parameter: 
+parameter:
 user: id of the user which direct disbursal is given to
 type: string of request type
 */
@@ -241,7 +241,7 @@ function add (req, res) {
 
 /*
 POST
-parameter: 
+parameter:
 id: id of the request
 */
 function close (req, res)  {
@@ -260,7 +260,7 @@ function close (req, res)  {
 
 /*
 POST
-parameter: 
+parameter:
 id: id of the request
 */
 function del (req, res) {
@@ -296,7 +296,7 @@ function del (req, res) {
 
 /*
 POST
-parameter: 
+parameter:
 id: id of the request
 */
 function update (req, res) {
@@ -309,6 +309,9 @@ function update (req, res) {
 			return res.status(403).send({ err: updateCheckString });
 		}
 		req.body.dateUpdated = new Date().toISOString();
+
+		//saveAssets(request, req);
+		_.assign(request, _.pick(req.body, ['assets']));
 
 		generateBackfills(request, req.body.items);
 		saveBackfills(request, req);
