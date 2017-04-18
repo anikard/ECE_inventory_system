@@ -225,7 +225,7 @@ products_app.factory('ProductsFactory', function($http) {
       })
       .error(function(error){
         console.log("ERROR FOUND IN UPDATE: ");
-        alert(error);
+        // alert(error);
         callback(error);
       })
   }
@@ -639,13 +639,14 @@ products_app.controller('productsController', function($scope, $window, $http, /
       console.log("confirm edit asset calling factory");
 
       if (data.error) {
-        alert(error);
+        //alert(error);
         if(data.error.errmsg.includes("duplicate")) {
           alert("Please enter a unique asset tag.");
         }
       }
       else if (data.errmsg) {
-        alert(data.errmsg);
+        // alert(data.errmsg);
+        alert("Please enter valid formats.");
       }
       else {
         alert("Updated asset with tag " + data.assetTag + ".")
@@ -759,11 +760,13 @@ products_app.controller('productsController', function($scope, $window, $http, /
 
      ProductsFactory.setMinThreshold(minThrObj, function(data) {
         if (data.error) {
-          alert(error);
+          alert("Please enter valid formats.");
+          //alert(error);
           
         }
         else if (data.errmsg) {
-          alert(data.errmsg);
+          alert("Please enter valid formats.");
+          //alert(data.errmsg);
         }
         else {
           alert("Successfully set minimum threshold.")
@@ -1065,7 +1068,8 @@ products_app.controller('productsController', function($scope, $window, $http, /
         }
       }
       else if (data.errmsg) {
-        alert(data.errmsg);
+        //alert(data.errmsg);
+        alert("Please enter valid formats.");
       }
       else {
         alert("Created new asset with tag " + data.assetTag + ".")
