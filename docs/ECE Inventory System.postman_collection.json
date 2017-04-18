@@ -1,0 +1,840 @@
+{
+	"variables": [],
+	"info": {
+		"name": "ECE Inventory System",
+		"_postman_id": "3196e1ea-5028-0ecf-78b2-ed1c8e22d530",
+		"description": "This is our new-updated API Docs for ECE Inventory System for ECE 458. Note that the base URL (which is labeled as {{api-url}} throughout the document) is https://rapid-320.vm.duke.edu:8443/api. {{api-key}} can be acquired through making a browser request for https://rapid-320.vm.duke.edu:8443/api. The collection can be imported into your own Postman via the link https://www.getpostman.com/collections/5f736b86b3fefe3007e2. To fully understand how the Postman system works, the user is encouraged to follow along the tutorials in Postman Docs (https://www.getpostman.com/docs/) at least until the end of \"Variables and Environments\" section.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Assets",
+			"description": "",
+			"item": [
+				{
+					"name": "Add asset",
+					"request": {
+						"url": "{{api-url}}/asset/add",
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": "Adds an individual asset to an item"
+					},
+					"response": []
+				},
+				{
+					"name": "Convert an item to an asset",
+					"request": {
+						"url": "{{api-url}}/asset/toAsset",
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "name",
+								"value": "i7 Chip",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"i7 Chip\"\n}"
+						},
+						"description": "Convert an item to be an asset"
+					},
+					"response": []
+				},
+				{
+					"name": "Converts an asset into a non-asset item",
+					"request": {
+						"url": "{{api-url}}/asset/fromAsset",
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"i7 Chip\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Backfill",
+			"description": "",
+			"item": [
+				{
+					"name": "Show all backfill requests",
+					"request": {
+						"url": "{{api-url}}/backfill/show",
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Add a new backfill request",
+					"request": {
+						"url": "{{api-url}}/backfill/add",
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"status\": \"inTransit\",\n\t\"items\":[{\n\t\t\"item\":\"58f5fa3d928bd2d317aa50c1\",\n\t\t\"quantity\": 3\n\t}],\n\t\"request\": \"58f5fa5d928bd2d317aa50c5\"\n}"
+						},
+						"description": "Note that this method requires an associated request"
+					},
+					"response": []
+				},
+				{
+					"name": "Update a backfill request",
+					"request": {
+						"url": "{{api-url}}/backfill/update",
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"_id\": \"58f5fa93928bd2d317aa50c8\",\n\t\"items\":[{\n\t\t\"item\":\"58f5fa3d928bd2d317aa50c1\",\n\t\t\"quantity\": 1\n\t}]\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Conclude a backfill request",
+					"request": {
+						"url": "{{api-url}}/backfill/close",
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"_id\": \"58f5fa93928bd2d317aa50c8\"\n}"
+						},
+						"description": "Here, we use a shorthand: a request can either be closed, approved, denied or fullfilled with the respective API calls being /close, /approve, /deny and /fulfill. We demo /close here as an example."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"description": "The methods here are relevant to adding items to the cart. Note that in backend, these methods are used by developers only for their convenience.",
+			"item": [
+				{
+					"name": "Show the items in the cart",
+					"request": {
+						"url": "{{api-url}}/cart/show",
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": "Shows the items in the cart of a user"
+					},
+					"response": []
+				},
+				{
+					"name": "Add an item to the cart",
+					"request": {
+						"url": "{{api-url}}/cart/add",
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"item\": \"58f5fa3d928bd2d317aa50c1\",\n\t\"quantity_requested\": \"0\"\n}"
+						},
+						"description": "This adds an item to the cart."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete an item in the cart",
+					"request": {
+						"url": "{{api-url}}/cart/del",
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"item\": {\n\t\"_id\":\t\"58f5aea95d1a64b0ad7af4f9\"\n\t}\n}"
+						},
+						"description": "This adds an item to the cart."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Custom Field",
+			"description": "This are the methods that deal with custom fields.",
+			"item": [
+				{
+					"name": "Show all custom fields",
+					"request": {
+						"url": "{{api-url}}/customField/show",
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Add a new custom field",
+					"request": {
+						"url": "{{api-url}}/customField/add",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"custom_1\",\n\t\"type\": \"short text\",\n\t\"private\": \"true\",\n\t\"req\": \"false\"\n}"
+						},
+						"description": "Name and type are the only required fields; type can be one of \"short text\", \"long text\", \"int\" or \"float\". Only admins can set a field to be private."
+					},
+					"response": []
+				},
+				{
+					"name": "Update a custom field",
+					"request": {
+						"url": "{{api-url}}/customField/update",
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"custom_1\",\n\t\"type\": \"int\",\n\t\"private\": \"true\",\n\t\"req\": \"false\"\n}"
+						},
+						"description": "Updates a custom field; the name field is required for the matching process"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a custom field",
+					"request": {
+						"url": "{{api-url}}/customField/del",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"custom_1\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Emails",
+			"description": "These are the methods required for the email methods",
+			"item": [
+				{
+					"name": "Show email status",
+					"request": {
+						"url": "{{api-url}}/email/show",
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": "This email shows the current state of the emails."
+					},
+					"response": []
+				},
+				{
+					"name": "Add a new email",
+					"request": {
+						"url": "{{api-url}}/email/add",
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"subject\": \"Hiiiiiiii\",\n\t\"subjectTag\": \"LOL\",\n\t\"body\": \"This is a test email\",\n\t\"dates\": \"2017-03-20\"\n}"
+						},
+						"description": "This method allows scheduling an email."
+					},
+					"response": []
+				},
+				{
+					"name": "Update email",
+					"request": {
+						"url": "{{api-url}}/email/update",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"_id\": \"58f56604a3f9fca7969b698e\",\n\t\"subjectTag\": \"LOLOLOL\"\n}"
+						},
+						"description": "Use this method to update anything to do with the email"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Items",
+			"description": "These are the methods that are relevant to items.",
+			"item": [
+				{
+					"name": "Show a list of items",
+					"request": {
+						"url": "{{api-url}}/item/show",
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": "This request shows a list of all items. The default limit is 20 items; the limit can be modified by a ?limit= parameter."
+					},
+					"response": []
+				},
+				{
+					"name": "Add an item",
+					"request": {
+						"url": "{{api-url}}/item/add",
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"i7 Chip\",\n\t\"fields\":{\n\t\t\"location\": \"room1\",\n\t\t\"note\" : \"note\" \n\t},\n\t\"tags\": [\"chip\", \"latest\"],\n\t\"description\": \"latest chip\",\n\t\"model\": \"i7 700\",\n\t\"quantity\": 5\n}"
+						},
+						"description": "The name field, quantity and fields that are marked required by the administrative staff are required."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete an item",
+					"request": {
+						"url": "{{api-url}}/item/del",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"i7 Chip\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Update an item",
+					"request": {
+						"url": "{{api-url}}/item/update",
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"_id\": \"58f55e0c2297cca790d6f388\",\n\t\"name\": \"i7 Chip\",\n\t\"fields\":{\n\t\t\"location\": \"room10\",\n\t\t\"note\" : \"note\" \n\t},\n\t\"tags\": [\"chip\", \"latest\"],\n\t\"description\": \"latest chip\",\n\t\"model\": \"i7 7000_mike\",\n\t\"quantity\": 100\n}"
+						},
+						"description": "Only \"name\" field is required"
+					},
+					"response": []
+				},
+				{
+					"name": "Update the minimum quantity of a bulk of items",
+					"request": {
+						"url": "{{api-url}}/item/updateAllMinQuantity",
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\"items\": [\"i7 Chip\", \"resistors\"],\n\"min_quantity\": 8,\n\"min_enabled\": true\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Show items that are below threshold",
+					"request": {
+						"url": "{{api-url}}/item/showBelowThreshold",
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Logging",
+			"description": "",
+			"item": [
+				{
+					"name": "Show logs",
+					"request": {
+						"url": "{{api-url}}/log/show",
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": "If a parameter limit is supplied, the number of log entries will be limited; default is 20. The returning JSON is sorted by descending time. "
+					},
+					"response": []
+				},
+				{
+					"name": "Filter logs",
+					"request": {
+						"url": "{{api-url}}/log/filter",
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"limit\": 40,\n\t\"init_user\": \"Mike\",\n\t\"rec_user\": \"Json\",\n\t\"item\": \"chip\"\n}"
+						},
+						"description": "The method returns the list of logs associated with search queries. Due to potentially high volume of log data, limit field is required. "
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Requests",
+			"description": "This is the set of methods that simplify making requests.",
+			"item": [
+				{
+					"name": "Show requests",
+					"request": {
+						"url": "{{api-url}}/request/show",
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": "This method can be used to show requests"
+					},
+					"response": []
+				},
+				{
+					"name": "Add a request",
+					"request": {
+						"url": "{{api-url}}/request/add",
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reason\": \"i want this\",\n\t\"items\":[\n\t\t{\n\t\t\t\"item\": \"58f5fa3d928bd2d317aa50c1\",\n\t\t\t\"quantity_requested\": 3\n\t\t}]\n}"
+						},
+						"description": "This method is used to create a request. Note that reason field is optional. If a user id is inputted in the \"user\" field, it makes a direct disbursal. Also, for the convenience of front end, the API was made such that to submit a request, there has to be at least one item in the cart."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a request",
+					"request": {
+						"url": "{{api-url}}/request/del",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"_id\": \"58f5b83182ca03b372ef532c\"\n}"
+						},
+						"description": "This method fully deletes a request. ONLY TO BE USED BY THE DEV TEAM."
+					},
+					"response": []
+				},
+				{
+					"name": "Update an existing request",
+					"request": {
+						"url": "{{api-url}}/request/update",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"_id\": \"58f5b9dfc32a35b3dcf94e2c\",\n\t\"items\":[\n\t\t{\n\t\t\t\"item\": \"58f5b1c7b26775b22a791e59\",\n\t\t\t\"_id\": \"58f5b9dfc32a35b3dcf94e2d\",\n\t\t\t\"quantity_outstanding_deny\": 11,\n\t\t\t\"quantity_outstanding_disburse\": 0,\n\t\t\t\"quantity_outstanding_backfill\": 0,\n\t\t\t\"quantity_outstanding_loan\": 0,\n\t\t\t\"quantity_requested\": 11,\n\t\t\t\"quantity_return\": 0,\n\t\t\t\"quantity_cancel\": 0,\n\t\t\t\"quantity_deny\": 0,\n\t\t\t\"quantity_disburse\": 0,\n\t\t\t\"quantity_loan\":0,\n\t\t\t\"quantity_loan_backfill\":0,\n\t\t\t\"quantity_loan_disburse\":0,\n\t\t\t\"quantity_loan_return\":0\n\t\t}],\n\t\"currentNote\": \"testAPI\",\n\t\"reason\": \"ok if you really do...\",\n\t\"type\": \"disburse\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"description": "These are the requests to do with users.",
+			"item": [
+				{
+					"name": "Show all users",
+					"request": {
+						"url": "{{api-url}}/user/show",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"x-key\": \"c9cc68b9c50d343750c7d97dc50d66a3083d7fa66ff49ba3a4025dbb64e64ee2\r\na6540c2ba415a156f98260d055c8b88558f35677f5925a46bf187896174dd0db\"\r\n}"
+						},
+						"description": "This request allows a manager or an admin to see the list of users. Requires admin or manager privilege. "
+					},
+					"response": []
+				},
+				{
+					"name": "Get current user information",
+					"request": {
+						"url": "{{api-url}}/user",
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {},
+						"description": "This method allows getting the current user information"
+					},
+					"response": []
+				},
+				{
+					"name": "Adding a new user",
+					"request": {
+						"url": "{{api-url}}/user/add",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"test1234\",\r\n  \"name\": \"Test User\",\r\n  \"password\": \"12345\",\r\n  \"netId\": \"\",\r\n  \"email\": \"test@example.com\",\r\n  \"status\": \"user\",\r\n  \"active\": true\r\n}"
+						},
+						"description": "This allows for an admin or a manager to add a new user."
+					},
+					"response": []
+				},
+				{
+					"name": "Update a user",
+					"request": {
+						"url": "{{api-url}}/user/update",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n  \"_id\": \"58f284ed66a50a3a755ac256\",\n  \"username\": \"test_updated\",\n  \"name\": \"Test User\",\n  \"password\": \"12345\",\n  \"netId\": \"\",\n  \"email\": \"test@example.com\",\n  \"status\": \"user\",\n  \"active\": true\n}"
+						},
+						"description": "This allows updating a user"
+					},
+					"response": []
+				},
+				{
+					"name": "Deleting a user",
+					"request": {
+						"url": "{{api-url}}/user/del",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "x-key",
+								"value": "{{api-key}}",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\n{\n  \"_id\": \"58f2844566a50a3a755ac258\"\n}"
+						},
+						"description": "This method deletes a user identified by their ID. Requires an admin or manager privilege."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
