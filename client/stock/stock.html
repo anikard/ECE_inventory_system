@@ -1,0 +1,57 @@
+<html ng-app="stock_app">
+<head>
+  <title>Minimum Stock</title>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <script type="text/javascript" src="./stock_factory.js"></script>
+  <link rel="stylesheet" href="./stock_style.css">
+
+</head>
+
+<body ng-controller="stockController">
+  <div><span id="navBar"></span><a href="" ng-click="logout()">logout {{myName}}</a></div>
+
+
+  <h1>MINIMUM STOCK</h1>
+  <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search items">
+
+  <div class="customerTable" id = "cTable" style="height:30em; margin: 0px 5%; width: 90%;">
+    <table id = "myItemTable">
+      <tr>
+        <td> Name </td>
+        <td> Available </td>
+        <td> Minimum Stock </td>
+        <td> Enabled </td>
+      </tr>
+
+      <tr ng-repeat="product in products | filter: filter_name | orderBy:'-date' | limitTo: paginationLimit()">
+        <td ng-bind="product.name"></td>
+        <td ng-bind="product.quantity_available"></td>
+        <td ng-bind="product.min_quantity"></td>
+        <td><input type="checkbox" ng-bind="product.min_enabled"></td>
+      </tr>
+    </table>
+  </div>
+  <p>
+    <label><b>Tags:  </b><label>
+    <span>
+      &nbsp;
+      <div class="tag-class hack-inline" ng-repeat="cTag in currentTags">
+        <span ng-bind="cTag"></span>
+        <button ng-show="editing" ng-click="currentTags.splice($index, 1)"><span aria-hidden="true">&times;</span></button>
+      </div>
+      &nbsp;
+    </span>
+    <br>
+  </p>
+  <p>
+    <select id="tag_select_main" class="feedback-input" id="tagList" name="tagOptions" ng-change="tagClicked()" ng-model="tagSelected">
+      <option value="">Add a Tag</option>
+      <option value="createNewTag">Create New Tag</option>
+      <option ng-repeat="tag in tags" ng-bind="tag.name" value="{{tag.name}}"></option>
+    </select>
+  </p>

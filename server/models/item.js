@@ -10,6 +10,7 @@ var ItemSchema = new Schema({
   quantity: {type: Number, default: 0},
   quantity_available: {type: Number, default: 0},
   min_quantity: {type: Number, default: 0},
+  min_enabled: {type: Boolean, default: false},
   last_check_date: {type: Date, default: Date.now() - 25 * 3600 * 1000 },
   model: {type: String, default: ""},
   description: {type: String, default: ""},

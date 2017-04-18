@@ -15,15 +15,20 @@ var _ = require('lodash');
 module.exports = (app) => {
 
 	app.get('/api/request/show', util.requireLogin, show);
-	app.post('/api/request/findOne', util.requireLogin, findOneRequest);
+	app.all('/api/request/findOne', util.requireLogin, findOneRequest);
 	app.post('/api/request/add', util.requireLogin, add);
 	app.post('/api/request/close', util.requireLogin, close);
 	app.post('/api/request/del', util.requirePrivileged, del);
 	app.post('/api/request/update', util.requirePrivileged, update);
 }
 
+/*
+GET request
+optional parameters: user, type
+*/
 function show (req, res) {
 	let query = (req.user.status === "admin" || req.user.status === "manager") ? {} : { user : req.user._id };
+	_.assign(_.pick(req.query, ['user','type']));
 	Request.find(query)
 	// .limit(parseInt(req.query.limit) || 20)
  	.populate('items.item user')
@@ -43,8 +48,16 @@ function show (req, res) {
     });
 }
 
+/*
+GET or POST
+parameter: 
+request: request id
+Return: one request that matches the id
+*/
 function findOneRequest(req, res, next) {
-	Request.findOne({_id:req.body._id||req.body.id||req.body.request})
+	let id = req.body._id||req.body.id||req.body.request
+				|| req.query._id||req.query.id||req.query.request;
+	Request.findOne({_id:id})
 	.exec((err,request)=>{
 		if(err) return next(err);
 		if(!request) return next({status:400,error:"No such request"});
@@ -58,9 +71,13 @@ function findOneRequest(req, res, next) {
 	})
 }
 
+/*
+POST
+parameter: 
+user: id of the user which direct disbursal is given to
+type: string of request type
+*/
 function add (req, res) {
-	console.log("BEGIN ADD");
-	console.log(req.body);
 	var direct = true;
 	let id = req.body.user || req.body.userId || req.body._id;
 
@@ -186,9 +203,14 @@ function add (req, res) {
 	});
 }
 
+/*
+POST
+parameter: 
+id: id of the request
+*/
 function close (req, res)  {
 	Request.findByIdAndUpdate(
-		req.body._id,
+		req.body._id || req.body.id || req.body.request,
 		{ $set: {
 			status: "closed",
 		}},
@@ -200,8 +222,13 @@ function close (req, res)  {
 	);
 }
 
+/*
+POST
+parameter: 
+id: id of the request
+*/
 function del (req, res) {
-	Request.findOne({ _id: req.body._id})
+	Request.findOne({ _id: req.body._id || req.body.id || req.body.request})
 	.populate('user items.item')
 	.exec(function (err, request) {
 		if (err) return next(err);
@@ -230,8 +257,14 @@ function del (req, res) {
 
 	});
 }
+
+/*
+POST
+parameter: 
+id: id of the request
+*/
 function update (req, res) {
-	Request.findOne({ '_id': req.body._id })
+	Request.findOne({ '_id': req.body._id || req.body.id || req.body.request })
 	.populate('items.item backfills')
 	.exec( function (err, request) {
 		if (err) return res.status(500).send({ error: err});
