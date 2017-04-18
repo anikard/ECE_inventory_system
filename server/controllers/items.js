@@ -36,6 +36,7 @@ module.exports = (app) => {
         assetTag: tag,
         fields: req.body.fields,
       })
+      console.log(asset);
       let assets = [];
       if(item.assets && item.assets.length)
         assets = item.assets;
@@ -124,16 +125,18 @@ module.exports = (app) => {
     Item.findOne({name: name})
     .exec((err,item) => {
       if(err) return next(err);
-      // if(item.isAsset) return next({status: 400, error: `${item.name} is already an asset.`});
+      if(item.assets && item.assets.length) return next({status: 400, error: `${item.name} is already an asset.`});
       item.isAsset = true;
       let start = randomInt(0, 1000000);
       let assets = [];
 
       let assetsFields = {};
+      if(req.body.assetFields){
         for (var i = 0; i < req.body.assetFields.length; i++) {
           assetsFields[req.body.assetFields[i].name] = "";
         }
-
+      }
+      
       for(let i=0;i<item.quantity;i++){
         let tag = start*10000+i;
         let asset = new Asset({
@@ -164,7 +167,7 @@ module.exports = (app) => {
 
     if(!name) return next({status: 400, error: `Item name is not supplied`});
     Item.findOne({name: name})
-    .populate(assets)
+    .populate('assets')
     .exec((err,item) => {
       if(err) return next(err);
       if(!item.isAsset) return next({status: 400, error: `${item.name} is not an asset.`});
