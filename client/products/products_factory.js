@@ -73,6 +73,19 @@ products_app.factory('ProductsFactory', function($http) {
     })
   }
 
+  factory.setMinThreshold = function(info, callback) {
+   $http.post('/api/item/updateAllMinQuantity', info)
+      .success(function(output) {
+        callback(output);
+      })
+      .error(function(error){
+        console.log("ERROR FOUND FOR MIN Q: ");
+        console.log(error);
+        callback(error);
+      })
+
+  }
+
    factory.addAsset = function(info, callback) {
     $http.post('/api/asset/add', info)
       .success(function(output) {
@@ -93,6 +106,7 @@ products_app.factory('ProductsFactory', function($http) {
       return;
     }
     if (info.min_quantity) {
+      console.log("SETTING MIN Q = " + info.min_quantity);
       info.min_enabled = true;
     }
     $http.post('/api/item/add', info)
@@ -182,7 +196,6 @@ products_app.factory('ProductsFactory', function($http) {
       // TODO
       console.log("product Successfully updated in factory");
 
-      // fix
       if (info.isAsset && info.convertedToAsset) {
         console.log("converting to asset = " + info.name);
         $http.post('/api/asset/toAsset', {item_name: info.name, assetFields: info.assetFields}).success(function(output) {
@@ -197,7 +210,6 @@ products_app.factory('ProductsFactory', function($http) {
             console.log(output);
         })
       }
-
     })
   }
 
@@ -275,6 +287,7 @@ products_app.controller('productsController', function($scope, $window, $http, /
 
 
       $scope.currentTags = [];
+      $scope.currentMinThrItems = [];
       $scope.searchTags = [];
       $scope.excludeTags = [];
 
@@ -479,6 +492,7 @@ products_app.controller('productsController', function($scope, $window, $http, /
         }
       });
     $scope.currentTags = [];
+    $scope.currentMinThrItems = [];
 
     $('#deleteConfirmModal').modal('hide');
     $('#productModal').modal('hide');
@@ -708,6 +722,72 @@ products_app.controller('productsController', function($scope, $window, $http, /
     })
   }
 
+  $scope.selectAllItems = function() {
+    $('#item_select_modal option').prop('selected', true);
+    var selectedItems = $.map($('#item_select_modal option') ,function(option) {
+        return option.value;
+    });
+
+    if (!$scope.minThr) {
+      $scope.minThr = {};
+    }
+
+    $scope.minThr.itemsSelected = selectedItems;
+
+    console.log(selectedItems);
+  } 
+
+  $scope.selectNoItems = function() {
+    $('#item_select_modal option').prop('selected', false);
+   
+    if (!$scope.minThr) { $scope.minThr = {}; }
+    $scope.minThr.itemsSelected = [];
+  } 
+
+
+  $scope.setMinThreshold = function() {
+    if (!$scope.minThr.min_quantity) {
+      alert("Please enter a valid threshold.");
+      return;
+    }
+
+    console.log("SETTING MIN THRESHOLD = " + $scope.minThr.min_quantity + " FOR ITEMS: ");
+    console.log($scope.minThr.itemsSelected);
+
+    var minThrObj = {items: $scope.minThr.itemsSelected, min_quantity: $scope.minThr.min_quantity, min_enabled: true};
+    console.log(minThrObj);
+
+     ProductsFactory.setMinThreshold(minThrObj, function(data) {
+        if (data.error) {
+          alert(error);
+          
+        }
+        else if (data.errmsg) {
+          alert(data.errmsg);
+        }
+        else {
+          alert("Successfully set minimum threshold.")
+          $scope.minThr.itemsSelected = [];
+          $scope.minThr.min_quantity = 0;
+          $scope.refreshProducts();
+          window.location.assign("/dispProducts");
+        }
+    });
+
+
+    // console.log("itemClicked");
+    // console.log($scope.currentMinThrItems);
+    // if($scope.itemSelected === "") {
+
+    // }
+    // else {
+    //   if($scope.currentMinThrItems.indexOf($scope.itemSelected) == -1) {
+    //     $scope.currentMinThrItems.push($scope.itemSelected);
+    //   }
+    // }
+    // console.log($scope.currentMinThrItems);
+  }
+
 
   $scope.viewProduct = function(product) {
     console.log("View product selected");
@@ -912,6 +992,7 @@ products_app.controller('productsController', function($scope, $window, $http, /
 
   $scope.closeItemModal = function() {
     $scope.currentTags = [];
+    $scope.currentMinThrItems = [];
   }
 
   $scope.refreshProducts = function() {
@@ -920,6 +1001,7 @@ products_app.controller('productsController', function($scope, $window, $http, /
         $scope.originalProducts = data;
 
         $scope.currentTags = [];
+        $scope.currentMinThrItems = [];
         $scope.searchTags = [];
         $scope.excludeTags = [];
       });

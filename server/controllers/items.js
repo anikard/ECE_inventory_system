@@ -11,7 +11,7 @@ var async = require("async");
 var Request = mongoose.model('Request');
 var Backfill = mongoose.model('Backfill');
 
-const allFields = ['name','quantity', 'model','description','tags','image','fields', 'min_quantity', "last_check_date", "isAsset", "assets"];
+const allFields = ['name','quantity', 'model','description','tags','image','fields', 'min_quantity', 'min_enabled', "last_check_date", "isAsset", "assets"];
 
 module.exports = (app) => {
   app.post('/api/asset/add', util.requireLogin, function(req, res, next) {
@@ -230,6 +230,7 @@ module.exports = (app) => {
       if (err) return next(err);
       Field.find({}, (err, fields)=> {
         if (err) return next(err);
+       
         async.map(items, (i,cb)=> processItem(i, req.user, fields, cb), (err, results)=>{
           if (err) return next(err);
           res.status(200).send(results);
@@ -339,7 +340,7 @@ module.exports = (app) => {
     let min = req.body.min_quantity ? req.body.min_quantity : 0;
     min = req.body.min_enabled === false ? 0 : min;
     async.each(req.body.items, (i, cb) => {
-      Item.update({ _id: i }, { $set: { min_quantity: min}}, cb);
+      Item.update({ name: i }, { $set: { min_quantity: min}}, cb);
     },
       (err) => {
         if (err) return next(err);
@@ -478,6 +479,7 @@ function randomInt (low, high) {
 }
 
 function processItem (item, user, fields, cb) {
+
   item = item.toObject();
   let isAdmin = user && user.status && (user.status==='admin' || user.status==='manager');
   if(!isAdmin){
