@@ -14,7 +14,6 @@ var RequestSchema = new mongoose.Schema({
     quantity_loan: {type: Number, default: 0},
     quantity_deny: {type: Number, default: 0},
     quantity_return: {type: Number, default: 0},
-    quantity_backfill: {type: Number, default: 0},
     quantity_cancel: {type: Number, default: 0},
 
     quantity_outstanding_disburse: {type: Number, default: 0},
@@ -27,7 +26,7 @@ var RequestSchema = new mongoose.Schema({
     quantity_loan_backfill: {type: Number, default: 0}
   }],
   //assets:[{type:Schema.ObjectId, ref:'Asset', autopopulate: true}],
-  backfills:[{type:Schema.ObjectId, ref:'Backfill', autopopulate: true}],
+  backfills:[{type:Schema.ObjectId, ref:'Backfill'}],
   notes: [{type: String, default:""}],
   //status: {type: String, default:"outstanding", enum: ['outstanding', 'onLoan', 'disbursed', 'returned', 'closed', 'approved', 'converted', 'denied']},
   type: {type: String, default: "disburse", enum: ['disburse', 'loan', 'backfill']},

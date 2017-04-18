@@ -24,6 +24,7 @@ module.exports = function(req, res, next) {
           User.findOne({ '_id': decoded._id }, function (err, user) {
             if (err) return res.status(500).json({"error":err});
             if (user) {
+              delete user.hash;
               req.user = user;
             }
             next();
@@ -36,6 +37,7 @@ module.exports = function(req, res, next) {
     User.findOne({ 'status': 'admin' }, function (err, user) {
       if (err) return res.status(500).json({"error":err});
       if (user) {
+        delete user.hash;
         req.user = user;
       }
       next();
@@ -45,6 +47,7 @@ module.exports = function(req, res, next) {
     User.findOne({ 'apiKey': key }, function (err, user) {
       if (err) return res.status(500).json({"error":err});
       if (user) {
+        delete user.hash;
         req.user = user;
       }
       next();
