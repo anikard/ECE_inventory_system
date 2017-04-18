@@ -127,9 +127,10 @@
 
     <!--<textarea class = "feedback-input" ng-model="new_product.tags" placeholder="tags (comma separated)"></textarea>-->
 
-
-    <input class = "feedback-input" type="number" min="1" ng-model="new_product.quantity" placeholder="quantity" required>
-
+    <br>
+    <input class = "feedback-input" style = "display: inline; width: 24%;" type="number" min="1" ng-model="new_product.quantity" placeholder="quantity" required>
+    <input class = "feedback-input" style = "display: inline; width: 24%; margin-left: 2%" type="number" min="0" ng-model="new_product.min_quantity" placeholder="minimum threshold">
+    <br>
     <!-- REQUIREMENT: assets -->
      <!-- <input class = "feedback-input" type="number" min="1" ng-model="new_product.assetTag" placeholder="Add an asset tag if you wish to configure this item as assets."> -->
      <select id="asset_select" class="feedback-input" name="assetOptions" ng-change="assetClicked()" ng-model="assetOption">
@@ -149,6 +150,7 @@
     </div>
 
     <br>
+    <h3>Tags</h3>
 
     <span>
       &nbsp;
@@ -160,7 +162,7 @@
     </span>
     <br>
 
-    <select id="tag_select_modal" class="feedback-input" id="tagList" name="tagOptions" ng-change="tagClicked()" ng-model="tagSelected">
+    <select id="tag_select_modal" class="feedback-input" id="tagList" name="tagOptions" style="margin-top:0.5em;" ng-change="tagClicked()" ng-model="tagSelected">
       <option value="">Add a Tag</option>
       <option value="createNewTag">Create New Tag</option>
       <option ng-repeat="tag in tags" ng-bind="tag.name" value="{{tag.name}}"></option>
@@ -201,6 +203,18 @@
             <label><b>Quantity Available:  </b></label>
             <span ng-bind="currentProduct.quantity_available" />
           </p>
+
+
+          <p ng-show="authorized">
+            <label style = "display:inline;"><b>Minimum threshold:  </b></label>
+              <input type="number" step="1" style = "width: 4em;" ng-readonly="!editing" ng-model="currentProduct.min_quantity">
+              <label style = "display:inline; margin-left: 1em;"><b>Enabled:  </b></label>
+
+              <input id="checkbox-1" class="checkbox-custom" type="checkbox" style = "visibility: visible;" ng-disabled="!editing" ng-model="currentProduct.min_enabled" ng-bind="currentProduct.min_enabled">
+              <label for="checkbox-1" class="checkbox-custom-label"></label>
+          </p>
+
+
           <p ng-show="authorized">
             <label><b>Total on Loan:  </b></label>
             <span ng-bind="currentProduct.quantity - currentProduct.quantity_available" />

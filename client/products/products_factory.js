@@ -92,6 +92,9 @@ products_app.factory('ProductsFactory', function($http) {
       console.log("Add item form incomplete");
       return;
     }
+    if (info.min_quantity) {
+      info.min_enabled = true;
+    }
     $http.post('/api/item/add', info)
       .success(function(output) {
         products = output;
