@@ -176,9 +176,15 @@ products_app.factory('ProductsFactory', function($http) {
       // fix
       if (info.isAsset && info.convertedToAsset) {
         console.log("converting to asset = " + info.name);
-        alert(info);
         $http.post('/api/asset/toAsset', {item_name: info.name, assetFields: info.assetFields}).success(function(output) {
             console.log("added asset");
+            console.log(output);
+        })
+      }
+      else if (info.convertedFromAsset) {
+        console.log("converting from asset = " + info.name);
+        $http.post('/api/asset/fromAsset', {item_name: info.name}).success(function(output) {
+            console.log("converted from asset");
             console.log(output);
         })
       }
@@ -475,13 +481,14 @@ products_app.controller('productsController', function($scope, $window, $http, /
     $('#deleteConfirmAssetModal').modal('hide');
     $('#assetModal').modal('hide');
     $scope.refreshProducts();
-    //window.location.assign("/dispProducts");
+    window.location.assign("/dispProducts");
     //$('#createItemForm').reset();
   }
 
   $scope.cancelDeleteModal = function() {
     console.log("cancel Delete");
     $('#deleteConfirmModal').modal('hide');
+    $('#productModal').modal('hide');
   }
 
   $scope.editProduct = function(product) {
@@ -567,12 +574,18 @@ products_app.controller('productsController', function($scope, $window, $http, /
 
     console.log(product);
     product.tags = $scope.currentTags;
-    if (!originalProduct.isAsset) {
+    if (!originalProduct.isAsset && product.isAsset) {
       product.convertedToAsset = true;
       product.assetFields = $scope.assetFields;
+      $scope.converted_to_asset = true;
+    }
+    else if (originalProduct.isAsset && !product.isAsset) {
+      product.convertedFromAsset = true;
+      
     }
     ProductsFactory.updateProduct(product, function (data) {
       console.log("confirm edit calling factory");
+      $scope.converted_to_asset = false;
     })
     $scope.refreshProducts();
     window.location.assign("/dispProducts");
@@ -586,12 +599,12 @@ products_app.controller('productsController', function($scope, $window, $http, /
     $scope.currentProduct = angular.copy(originalProduct);
     console.log($scope.currentProduct);
     $('#editConfirmModal').modal('hide');
+    $('#productModal').modal('hide');
   }
 
   // assets
   $scope.confirmEditAssetModal = function(asset) {
     console.log("confirm edit asset");
-
     console.log(asset);
     ProductsFactory.updateAsset(asset, function (data) {
       console.log("confirm edit asset calling factory");
