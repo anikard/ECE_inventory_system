@@ -176,7 +176,7 @@
           </span>
           <br>
 
-          <select id="tag_select_modal" class="feedback-input" id="tagList" name="tagOptions" style="margin-top:0.5em;" ng-change="tagClicked()" ng-model="tagSelected">
+          <select id="tag_select_modal" class="feedback-input" id="tagList" name="tagOptions" style="margin-top:0.5em;" ng-change="tagClicked()" ng-model="tagSelected" ng-disabled="!editing">
             <option value="">Add a Tag</option>
             <option value="createNewTag">Create New Tag</option>
             <option ng-repeat="tag in tags" ng-bind="tag.name" value="{{tag.name}}"></option>
@@ -339,7 +339,7 @@
             <br>
           </p>
           <p>
-            <select id="tag_select_main" class="feedback-input" id="tagList" name="tagOptions" ng-change="tagClicked()" ng-model="tagSelected">
+            <select id="tag_select_main" class="feedback-input" id="tagList" name="tagOptions" ng-change="tagClicked()" ng-model="tagSelected" ng-disabled="!editing">
               <option value="">Add a Tag</option>
               <option value="createNewTag">Create New Tag</option>
               <option ng-repeat="tag in tags" ng-bind="tag.name" value="{{tag.name}}"></option>
