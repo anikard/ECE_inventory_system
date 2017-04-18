@@ -117,6 +117,9 @@ var orders_app = angular.module('orders_app', []);
           $scope.thisOrder = {};
           console.log("ORDERS");
           console.log($scope.orders);
+
+
+
           /** PAGINATION **/
           // show more functionality source: http://www.angulartutorial.net/2014/04/angular-js-client-side-show-more.html
           var pagesShown = 1;
@@ -286,6 +289,81 @@ var orders_app = angular.module('orders_app', []);
 
       $scope.backfillStatuses = ['requested', 'inTransit', 'denied', 'failed', 'fulfilled', 'closed'];
 
+
+
+      // FILE UPLOAD
+
+        //   $('.upload-btn').on('click', function (){
+        //     $('#upload-input').click();
+        //     $('.progress-bar').text('0%');
+        //     $('.progress-bar').width('0%');
+        // });
+
+        // $('#upload-input').on('change', function(){
+
+        //   var files = $(this).get(0).files;
+
+        //   if (files.length > 0){
+        //     // create a FormData object which will be sent as the data payload in the
+        //     // AJAX request
+        //     var formData = new FormData();
+
+        //     // loop through all the selected files and add them to the formData object
+        //     for (var i = 0; i < files.length; i++) {
+        //       var file = files[i];
+
+        //       // add the files to formData object for the data payload
+        //       formData.append('uploads[]', file, file.name);
+        //       console.log(document.getElementById("backfillID").innerHTML);
+        //     }
+
+        //     $.ajax({
+        //       url: '/api/backfill/upload',
+        //       type: 'POST',
+        //       data: formData,
+        //       backfill: document.getElementById("backfillID").innerHTML,
+        //       processData: false,
+        //       contentType: false,
+        //       success: function(data){
+        //           console.log('upload successful!\n' + data);
+        //           alert("Upload successful!");
+        //       },
+        //       xhr: function() {
+        //         // create an XMLHttpRequest
+        //         var xhr = new XMLHttpRequest();
+
+        //         // listen to the 'progress' event
+        //         xhr.upload.addEventListener('progress', function(evt) {
+
+        //           if (evt.lengthComputable) {
+        //             // calculate the percentage of upload completed
+        //             var percentComplete = evt.loaded / evt.total;
+        //             percentComplete = parseInt(percentComplete * 100);
+
+        //             // update the Bootstrap progress bar with the new percentage
+        //             $('.progress-bar').text(percentComplete + '%');
+        //             $('.progress-bar').width(percentComplete + '%');
+
+        //             // once the upload reaches 100%, set the progress bar text to done
+        //             if (percentComplete === 100) {
+        //               $('.progress-bar').html('Done');
+        //             }
+
+        //           }
+
+        //         }, false);
+
+        //         return xhr;
+        //       }
+        //     });
+
+        //   }
+        // });
+
+      // ******
+
+
+
       $scope.viewOrder = function(order) {
         //$scope.backfillStatuses = ['requested', 'inTransit', 'denied', 'failed', 'fulfilled', 'closed'];
         OrderFactory.viewOrder(order, function(data) {
@@ -295,7 +373,13 @@ var orders_app = angular.module('orders_app', []);
           $scope.copyStatus();
           $scope.orderId = order.user._id;
           $scope.isMe = $scope.orderId == $scope.myId;
+
           $('#orderModal').modal('show');
+          // console.log("SAVING DATA = " + $scope.thisBackfillID);
+          // sessionStorage.setItem('backfillIDstored', $scope.thisBackfillID);
+          // $window.localStorage['backfillIDstored'] = document.getElementById("backfillID").innerHTML;
+          // console.log($window.localStorage['backfillIDstored']);
+          // document.getElementById("fileUploadDiv").innerHTML='<object type="text/html" data="upload2.html" ></object>';
         });
       }
 
