@@ -497,7 +497,7 @@ products_app.controller('productsController', function($scope, $window, $http, /
     $('#deleteConfirmModal').modal('hide');
     $('#productModal').modal('hide');
     $scope.refreshProducts();
-    //window.location.assign("/dispProducts");
+    window.location.assign("/dispProducts");
     //$('#createItemForm').reset();
   }
 
@@ -847,6 +847,7 @@ products_app.controller('productsController', function($scope, $window, $http, /
   $scope.clearFields = function() {
     $("#filterItems").val("");
     $scope.products = $scope.originalProducts;
+    window.location.assign("/dispProducts");
   }
 
   // TODO: refactor to combine tagClicked and searchTag to be tagClicked(tag, tagList);
@@ -1105,6 +1106,7 @@ products_app.controller('productsController', function($scope, $window, $http, /
       $('#deltaQuantityModal').modal('hide');
       $('#productModal').modal('hide');
       $scope.refreshProducts();
+      window.location.assign("/dispProducts");
     }
   }
 
