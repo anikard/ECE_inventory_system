@@ -73,6 +73,12 @@ products_app.factory('ProductsFactory', function($http) {
     })
   }
 
+   factory.addAsset = function(info, callback) {
+    $http.post('/api/asset/add', info).success(function(output) {
+      callback(output);
+    })
+  }
+
   factory.addProduct = function(info, callback) {
     console.log("aP info");
     console.log(info);
@@ -623,6 +629,7 @@ products_app.controller('productsController', function($scope, $window, $http, /
 
   $scope.viewAsset = function(asset) {
     console.log("View asset selected");
+    $('#productModal').modal('hide');
     console.log(asset);
     // var sampleAsset = {"assetTag": 2, "fields": [{"name": 1, "value": 2}, {"name": 3, "value": 4}]};
     $scope.currentAsset = angular.copy(asset);
@@ -855,6 +862,50 @@ products_app.controller('productsController', function($scope, $window, $http, /
         $scope.searchTags = [];
         $scope.excludeTags = [];
       });
+  }
+
+  $scope.addAnAsset = function(product) {
+    $scope.currentAsset = {};
+    $('#assetCreationModal').modal('show');
+    $('#productModal').modal('hide');
+  }
+
+  $scope.closeassetCreationModal = function(product) {
+    $('#assetCreationModal').modal('hide');
+    // $("#assetCreationModal").css("z-index", "-1");
+    // $('#productModal').modal('hide');
+   
+    // $("#productModal").css("tabindex", "-2");
+     // $('#productModal').modal('show');
+     // $("#productModal").css("display", "block");
+  }
+
+  $scope.closeAssetModal = function(product) {
+    $('#assetModal').modal('hide');
+    // $("#assetModal").css("z-index", "-2");
+   // $("#productModal").css("tabindex", "-2");
+     // $('#productModal').modal('show');
+  }
+
+  $scope.createAsset = function(currentAsset) {
+    console.log("adding asset for product");
+    console.log($scope.currentProduct);
+    console.log("this asset = ");
+    console.log(currentAsset);
+    currentAsset.item_name = $scope.currentProduct.name;
+    // $scope.currentTags.push($scope.newTag.name);
+
+    ProductsFactory.addAsset(currentAsset, function(data) {
+      $scope.currentAsset = {};
+      $('#assetCreationModal').modal('hide');
+      $scope.refreshProducts();
+      window.location.assign("/dispProducts");
+    });
+
+      
+      // $("#productModal").css("z-index", "-1");
+     // $('#productModal').modal('show');
+
   }
 
   $scope.deltaQuantity = function(product) {

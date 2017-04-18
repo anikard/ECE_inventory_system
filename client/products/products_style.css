@@ -134,7 +134,7 @@
       border:1px solid #a8e0e0;
       border-width:0px 1px 1px 0px;
       text-align:center;
-      padding:8px;
+      padding:5px;
       font-size:13px;
       font-family:Arial;
       font-weight:normal;
@@ -274,6 +274,10 @@
   }
 
 
+
+.modal-dialog {
+  width: 55%;
+}
 
 
 

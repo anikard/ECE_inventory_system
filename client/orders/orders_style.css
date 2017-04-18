@@ -230,6 +230,11 @@ body {
         color:#4c4c4c;
     }
 
+    
+.modal-dialog {
+  width: 55%;
+}
+
     /*----- Content of Tabs -----*/
     .tab-content {
         padding:15px;
