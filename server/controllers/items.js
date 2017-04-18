@@ -11,7 +11,7 @@ var async = require("async");
 var Request = mongoose.model('Request');
 var Backfill = mongoose.model('Backfill');
 
-const allFields = ['name','quantity', 'model','description','tags','image','fields', 'min_quantity', 'min_enabled', "last_check_date", "isAsset", "assets"];
+const allFields = ['name','quantity', 'model','description','tags','image','fields', 'min_quantity', "last_check_date", "isAsset", "assets"];
 
 module.exports = (app) => {
   app.post('/api/asset/add', util.requireLogin, function(req, res, next) {
@@ -328,6 +328,19 @@ module.exports = (app) => {
   app.post('/api/item/updateAll', util.requirePrivileged, function(req, res, next) {
     if(!req.body || !req.body.length) return res.status(400).send({ error: "Malformatted item array" });
     async.each(req.body, (i, cb) => update(req.user, i, cb),
+      (err) => {
+        if (err) return next(err);
+        res.status(200).send("success");
+      });
+  });
+
+  app.post('/api/item/updateAllMinQuantity', util.requirePrivileged, function(req, res, next) {
+    if(!req.body || !req.body.items || !req.body.items.length) return res.status(400).send({ error: "Malformatted item array" });
+    let min = req.body.min_quantity ? req.body.min_quantity : 0;
+    min = req.body.min_enabled === false ? 0 : min;
+    async.each(req.body.items, (i, cb) => {
+      Item.update({ _id: i }, { $set: { min_quantity: min}}, cb);
+    },
       (err) => {
         if (err) return next(err);
         res.status(200).send("success");
