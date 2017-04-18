@@ -224,7 +224,7 @@ module.exports = (app) => {
     let id = req.query._id || req.query.id || req.query.item;
     let query = id ? {_id:id} : {};
     Item.find(query)
-    // .limit(parseInt(req.query.limit) || 200)
+    .limit(parseInt(req.query.limit) || 200)
     .populate('assets')
     .exec((err, items) => {
       if (err) return next(err);
@@ -243,7 +243,7 @@ module.exports = (app) => {
     let id = req.query._id || req.query.id || req.query.item;
     let query = id ? {_id:id} : {};
     Item.find(query)
-    // .limit(parseInt(req.query.limit) || 200)
+    .limit(parseInt(req.query.limit) || 200)
     .exec((err, items) => {
       if (err) return next(err);
       Field.find({}, (err, fields)=> {
