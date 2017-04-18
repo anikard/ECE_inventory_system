@@ -4,7 +4,7 @@
 OS: Ubuntu 14 or 16
 Framework: MEAN (Node 6.x, MongoDB 3.4). 
 
-For a full list of package dependencies, check the [ECE_inventory_system/package.json](package.json) file found in the main page of this project
+For a full list of package dependencies, check the [package.json](ECE_inventory_system/package.json) file found in the main page of this project
 
 ## Setup:
 
