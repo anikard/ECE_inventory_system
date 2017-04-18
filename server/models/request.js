@@ -43,9 +43,6 @@ var RequestSchema = new mongoose.Schema({
   backfills:[{type:Schema.ObjectId, ref:'Backfill', autopopulate: true}],
   notes: [{type: String, default: ""}],
 
-  backfills:[{type:Schema.ObjectId, ref:'Backfill'}],
-  notes: [{type: String, default:""}],
-
   //status: {type: String, default:"outstanding", enum: ['outstanding', 'onLoan', 'disbursed', 'returned', 'closed', 'approved', 'converted', 'denied']},
   type: {type: String, default: "disburse", enum: ['disburse', 'loan', 'backfill']},
   date: { type : Date, default: Date.now },
