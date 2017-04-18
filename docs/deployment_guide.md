@@ -80,8 +80,8 @@ https://localhost:8443
 
 Put `nodeapp.service` in /etc/systemd/system. Then type
 ```
-# sudo systemctl daemon-reload
-# sudo systemctl start nodeapp
+### sudo systemctl daemon-reload
+### sudo systemctl start nodeapp
 ```
 Watch the logs at `sudo journalctl --follow -u nodeapp`
 
