@@ -93,7 +93,7 @@
             </p>
             <p>
               <label><b>Type:  </b></label>
-              <select id="type_select" ng-readonly="!editing" ng-model="currentField.type">
+              <select id="type_select" ng-readonly="!editing" ng-disabled="!editing" ng-model="currentField.type">
                 <option value = "" disabled selected>Select Type</option>
                 <option value="short-form">Short Form Text</option>
                 <option value="long-form">Long Form Text</option>
@@ -103,11 +103,11 @@
             </p>
             <p>
               <label><b>Private access?  </b></label>
-              <input type="checkbox" ng-readonly="!editing" ng-model="currentField.access" ng-true-value="private" ng-false-value="public"/>
+              <input type="checkbox" ng-disabled="!editing" ng-model="currentField.access" ng-true-value="private" ng-false-value="public"/>
             </p>
              <p>
               <label><b>Per-asset?  </b></label>
-              <input type="checkbox" ng-readonly="!editing" ng-model="currentField.perAsset" ng-true-value="per-asset" ng-false-value="general"/>
+              <input type="checkbox" ng-disabled="!editing" ng-model="currentField.perAsset" ng-true-value="per-asset" ng-false-value="general"/>
             </p>
 
         </div>
