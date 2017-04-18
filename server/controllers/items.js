@@ -8,8 +8,10 @@ var Log = mongoose.model('Log');
 var Tag = mongoose.model('Tag');
 var util = require('./util.js');
 var async = require("async");
+var Request = mongoose.model('Request');
+var Backfill = mongoose.model('Backfill');
 
-const allFields = ['name','quantity', 'model','description','tags','image','fields', 'min_quantity', "last_check_date", "isAsset", "assets"];
+const allFields = ['name','quantity', 'model','description','tags','image','fields', 'min_quantity', 'min_enabled', "last_check_date", "isAsset", "assets"];
 
 module.exports = (app) => {
   app.post('/api/asset/add', util.requireLogin, function(req, res, next) {
@@ -219,16 +221,40 @@ module.exports = (app) => {
   });
 
   app.get('/api/item/show', util.requireLogin, function(req, res, next) {
-    Item.find({})
+    let id = req.query._id || req.query.id || req.query.item;
+    let query = id ? {_id:id} : {};
+    Item.find(query)
     // .limit(parseInt(req.query.limit) || 200)
     .populate('assets')
-    .exec((err, results) => {
-      if(err) {
-        res.status(500).send({ error: err });
-      } else {
-        res.status(200).json(results);
-      }
-    })
+    .exec((err, items) => {
+      if (err) return next(err);
+      Field.find({}, (err, fields)=> {
+        if (err) return next(err);
+       
+        async.map(items, (i,cb)=> processItem(i, req.user, fields, cb), (err, results)=>{
+          if (err) return next(err);
+          res.status(200).send(results);
+        })
+      });
+    });
+  });
+
+  app.get('/api/item/showBelowThreshold', util.requireLogin, function(req, res, next) {
+    let id = req.query._id || req.query.id || req.query.item;
+    let query = id ? {_id:id} : {};
+    Item.find(query)
+    // .limit(parseInt(req.query.limit) || 200)
+    .exec((err, items) => {
+      if (err) return next(err);
+      Field.find({}, (err, fields)=> {
+        if (err) return next(err);
+       
+        async.map(items, (i,cb)=> processItem(i, req.user, fields, cb), (err, results)=>{
+          if (err) return next(err);
+          res.status(200).send(results.filter(r=>r.quantity_available<r.min_quantity));
+        })
+      });
+    });
   });
 
   app.post('/api/item/add', util.requirePrivileged, function(req, res, next) {
@@ -321,6 +347,19 @@ module.exports = (app) => {
   app.post('/api/item/updateAll', util.requirePrivileged, function(req, res, next) {
     if(!req.body || !req.body.length) return res.status(400).send({ error: "Malformatted item array" });
     async.each(req.body, (i, cb) => update(req.user, i, cb),
+      (err) => {
+        if (err) return next(err);
+        res.status(200).send("success");
+      });
+  });
+
+  app.post('/api/item/updateAllMinQuantity', util.requirePrivileged, function(req, res, next) {
+    if(!req.body || !req.body.items || !req.body.items.length) return res.status(400).send({ error: "Malformatted item array" });
+    let min = req.body.min_quantity ? req.body.min_quantity : 0;
+    min = req.body.min_enabled === false ? 0 : min;
+    async.each(req.body.items, (i, cb) => {
+      Item.update({ name: i }, { $set: { min_quantity: min}}, cb);
+    },
       (err) => {
         if (err) return next(err);
         res.status(200).send("success");
@@ -455,4 +494,54 @@ function addTag(name) {
 
 function randomInt (low, high) {
   return Math.floor(Math.random() * (high - low) + low);
+}
+
+function processItem (item, user, fields, cb) {
+
+  item = item.toObject();
+  let isAdmin = user && user.status && (user.status==='admin' || user.status==='manager');
+  if(!isAdmin){
+    fields.forEach(f=>{
+      if(f.access==='private' && f.name in item)
+        delete item[f.name];
+    })
+  }
+  let query = isAdmin? {'items.item': item._id} : { 'user' :user._id, 'items.item': item._id};
+  Request.find(query)
+  .populate('items.item')
+  .exec((err, requests)=>{
+    if(err) cb(err);
+    let arr = [];
+    requests.forEach(r=>arr.push(r._id));
+    Backfill.find( { request : { $in : arr } } )
+    .exec((err, backfills)=>{
+      let total_loan = 0;
+      let total_requested = 0;
+      let total_backfill_requested = 0;
+      let total_backfill_transit = 0;
+      requests.forEach(r=>{
+        r.items.forEach(i=>{
+          if(i.item._id.equals(item._id)){
+            total_loan += i.quantity_loan;
+            total_requested += i.quantity_requested;
+          }
+        });
+      });
+      backfills.forEach(b=>{
+        b.items.forEach(i=>{
+          if(i.item._id.equals(item._id)){
+            if(b.status==='requested') total_backfill_requested+=i.quantity;
+            if(b.status==='inTransit') total_backfill_transit+=i.quantity;
+          }
+        })
+      })
+      _.assign(item,{
+        quantity_loan: total_loan,
+        quantity_requested: total_requested,
+        quantity_backfill_requested: total_backfill_requested,
+        quantity_backfill_transit: total_backfill_transit,
+      });
+      cb(null, item);
+    })
+  });
 }

@@ -20,6 +20,7 @@ var RequestSchema = new mongoose.Schema({
     quantity_backfill: {type: Number, default: 0},
 
     // MANUALLY INPUT
+
     quantity_cancel: {type: Number, default: 0},
 
     // MANUALLY INPUT ON UPDATE
@@ -33,6 +34,7 @@ var RequestSchema = new mongoose.Schema({
     quantity_loan_return: {type: Number, default: 0},
     quantity_loan_backfill: {type: Number, default: 0}
   }],
+
   assets:[{
     item: {type:Schema.ObjectId, ref:'Item', autopopulate: true},
     assetTag: {type: String, default: ""},
@@ -40,6 +42,10 @@ var RequestSchema = new mongoose.Schema({
   }],
   backfills:[{type:Schema.ObjectId, ref:'Backfill', autopopulate: true}],
   notes: [{type: String, default: ""}],
+
+  backfills:[{type:Schema.ObjectId, ref:'Backfill'}],
+  notes: [{type: String, default:""}],
+
   //status: {type: String, default:"outstanding", enum: ['outstanding', 'onLoan', 'disbursed', 'returned', 'closed', 'approved', 'converted', 'denied']},
   type: {type: String, default: "disburse", enum: ['disburse', 'loan', 'backfill']},
   date: { type : Date, default: Date.now },

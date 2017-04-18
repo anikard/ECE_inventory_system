@@ -19,7 +19,47 @@ module.exports = (app) => {
 	app.post('/api/request/add', util.requireLogin, add);
 	app.post('/api/request/close', util.requireLogin, close);
 	app.post('/api/request/del', util.requirePrivileged, del);
-	app.post('/api/request/update', util.requirePrivileged, update);
+	app.post('/api/request/update', util.requireLogin, update);
+
+	app.get('/api/request/showbackfillrequested', util.requireLogin, (req, res, next)=>{
+		let query = {status: 'requested'};
+		let isAdmin = req.user.status=='admin' || req.user.status=='manager';
+		Backfill.find(query)
+		.populate('request')
+		.exec((err, bfs)=>{
+			if(err)return next(err);
+			let requests = new Set();
+			bfs.forEach(b=>{if(isAdmin || b.request.user.equals(req.user._id))requests.add(b.request)});
+			let arr = [];
+			requests.forEach(r=>arr.push(r));
+			res.status(200).send(arr);
+		})
+		// Request.find({ backfills: { $exists: true, $not: {$size: 0} } })
+		// .populate('backfills')
+		// .exec((err, requests)=>{
+		// 	if (err) return next(err);
+		// 	res.status(200).send(requests.filter(r=>{
+		// 		let flag = false;
+		// 		r.backfills.forEach(b=>flag = flag || b.status==='requested');
+		// 		return flag;
+		// 	}))
+		// })
+	});
+
+	app.get('/api/request/showbackfilltransit', util.requireLogin, (req, res, next)=>{
+		let query = {status: 'inTransit'};
+		let isAdmin = req.user.status=='admin' || req.user.status=='manager';
+		Backfill.find(query)
+		.populate('request')
+		.exec((err, bfs)=>{
+			if(err)return next(err);
+			let requests = new Set();
+			bfs.forEach(b=>{if(isAdmin || b.request.user.equals(req.user._id))requests.add(b.request)});
+			let arr = [];
+			requests.forEach(r=>arr.push(r));
+			res.status(200).send(arr);
+		})
+	})
 }
 
 /*
@@ -96,7 +136,6 @@ function add (req, res) {
 
 	if(!id) {
 		// User request
-		console.log("USER REQ");
 		id = req.user._id;
 		direct = false;
 	}
@@ -128,15 +167,12 @@ function add (req, res) {
 
 		var promise = newRequest.save();
 		promise.then(function(requestPromise) {
-			console.log("IN PROMISE");
-			console.log(requestPromise);
 
 			Request.findById(requestPromise._id)
 			.populate('items.item')
 			.exec(function (err, request){
 
 				for (var i = 0; i < request.items.length; i++) {
-					console.log("Check: " + request.items[i]);
 					request.items[i].item.quantity_available -= request.items[i].quantity_disburse + request.items[i].quantity_loan;
 					request.items[i].item.quantity -= request.items[i].quantity_disburse;
 					request.items[i].item.save((err, success) => {
@@ -283,9 +319,7 @@ function update (req, res) {
 		updateItemQuantities(request, req);
 		req.body.items = refreshRequestQuantities(req);
 
-		console.log("REQUESTE BEFORE: " + request)
 		_.assign(request,_.pick(req.body,['user', 'reason', 'items', 'notes', 'dateUpdated']));
-		console.log("REQUEST AFTER: " + request);
 		request.save(function (err) {
 
 			if (err) return res.status(500).send({ error: err});
@@ -298,8 +332,6 @@ function update (req, res) {
 function updateCheck(request, newItems) {
 	for (var i = 0; i < request.items.length; i++) {
 		var quantityAvailable = request.items[i].item.quantity_available;
-		console.log("QA");
-		console.log(quantityAvailable);
 
 		var quantityMadeUnavailable = newItems[i].quantity_outstanding_disburse + newItems[i].quantity_loan_disburse
 		if (quantityMadeUnavailable > quantityAvailable) {
@@ -327,11 +359,6 @@ function updateItemQuantities(request, req) {
 		var quantity_only_delta = 0 - req.body.items[i].quantity_loan_disburse;
 		var quantity_available_only_delta =
 			(req.body.items[i].quantity_loan_return - req.body.items[i].quantity_outstanding_loan);
-		console.log("log stats");
-		console.log(request.items[i].item.name);
-		console.log(quantity_and_available_delta);
-		console.log(quantity_only_delta);
-		console.log(quantity_available_only_delta);
 		request.items[i].item.quantity += quantity_and_available_delta + quantity_only_delta;
 		request.items[i].item.quantity_available +=
 			(quantity_and_available_delta + quantity_available_only_delta);

@@ -73,10 +73,29 @@ products_app.factory('ProductsFactory', function($http) {
     })
   }
 
+  factory.setMinThreshold = function(info, callback) {
+   $http.post('/api/item/updateAllMinQuantity', info)
+      .success(function(output) {
+        callback(output);
+      })
+      .error(function(error){
+        console.log("ERROR FOUND FOR MIN Q: ");
+        console.log(error);
+        callback(error);
+      })
+
+  }
+
    factory.addAsset = function(info, callback) {
-    $http.post('/api/asset/add', info).success(function(output) {
-      callback(output);
-    })
+    $http.post('/api/asset/add', info)
+      .success(function(output) {
+        callback(output);
+      })
+      .error(function(error){
+        console.log("ERROR FOUND: ");
+        console.log(error);
+        callback(error);
+      })
   }
 
   factory.addProduct = function(info, callback) {
@@ -85,6 +104,10 @@ products_app.factory('ProductsFactory', function($http) {
     if (!info.name || !info.quantity) {
       console.log("Add item form incomplete");
       return;
+    }
+    if (info.min_quantity) {
+      console.log("SETTING MIN Q = " + info.min_quantity);
+      info.min_enabled = true;
     }
     $http.post('/api/item/add', info)
       .success(function(output) {
@@ -173,7 +196,6 @@ products_app.factory('ProductsFactory', function($http) {
       // TODO
       console.log("product Successfully updated in factory");
 
-      // fix
       if (info.isAsset && info.convertedToAsset) {
         console.log("converting to asset = " + info.name);
         $http.post('/api/asset/toAsset', {item_name: info.name, assetFields: info.assetFields}).success(function(output) {
@@ -188,7 +210,6 @@ products_app.factory('ProductsFactory', function($http) {
             console.log(output);
         })
       }
-
     })
   }
 
@@ -198,9 +219,15 @@ products_app.factory('ProductsFactory', function($http) {
       console.log("Update asset form incomplete");
       return;
     }
-    $http.post('/api/asset/update', info).success(function(output) {
-      console.log("asset Successfully updated in factory");
-    })
+    $http.post('/api/asset/update', info)
+      .success(function(output) {
+        callback(output);
+      })
+      .error(function(error){
+        console.log("ERROR FOUND IN UPDATE: ");
+        alert(error);
+        callback(error);
+      })
   }
 
   factory.deleteAsset = function(asset, callback) {
@@ -260,6 +287,7 @@ products_app.controller('productsController', function($scope, $window, $http, /
 
 
       $scope.currentTags = [];
+      $scope.currentMinThrItems = [];
       $scope.searchTags = [];
       $scope.excludeTags = [];
 
@@ -464,6 +492,7 @@ products_app.controller('productsController', function($scope, $window, $http, /
         }
       });
     $scope.currentTags = [];
+    $scope.currentMinThrItems = [];
 
     $('#deleteConfirmModal').modal('hide');
     $('#productModal').modal('hide');
@@ -608,10 +637,23 @@ products_app.controller('productsController', function($scope, $window, $http, /
     console.log(asset);
     ProductsFactory.updateAsset(asset, function (data) {
       console.log("confirm edit asset calling factory");
-    })
-    $scope.refreshProducts();
-    window.location.assign("/dispProducts");
 
+      if (data.error) {
+        alert(error);
+        if(data.error.errmsg.includes("duplicate")) {
+          alert("Please enter a unique asset tag.");
+        }
+      }
+      else if (data.errmsg) {
+        alert(data.errmsg);
+      }
+      else {
+        alert("Updated asset with tag " + data.assetTag + ".")
+        $scope.currentAsset = {};
+        $scope.refreshProducts();
+        window.location.assign("/dispProducts");
+      }
+    })
   }
 
   $scope.cancelEditAssetModal = function(asset) {
@@ -680,6 +722,72 @@ products_app.controller('productsController', function($scope, $window, $http, /
     })
   }
 
+  $scope.selectAllItems = function() {
+    $('#item_select_modal option').prop('selected', true);
+    var selectedItems = $.map($('#item_select_modal option') ,function(option) {
+        return option.value;
+    });
+
+    if (!$scope.minThr) {
+      $scope.minThr = {};
+    }
+
+    $scope.minThr.itemsSelected = selectedItems;
+
+    console.log(selectedItems);
+  } 
+
+  $scope.selectNoItems = function() {
+    $('#item_select_modal option').prop('selected', false);
+   
+    if (!$scope.minThr) { $scope.minThr = {}; }
+    $scope.minThr.itemsSelected = [];
+  } 
+
+
+  $scope.setMinThreshold = function() {
+    if (!$scope.minThr.min_quantity) {
+      alert("Please enter a valid threshold.");
+      return;
+    }
+
+    console.log("SETTING MIN THRESHOLD = " + $scope.minThr.min_quantity + " FOR ITEMS: ");
+    console.log($scope.minThr.itemsSelected);
+
+    var minThrObj = {items: $scope.minThr.itemsSelected, min_quantity: $scope.minThr.min_quantity, min_enabled: true};
+    console.log(minThrObj);
+
+     ProductsFactory.setMinThreshold(minThrObj, function(data) {
+        if (data.error) {
+          alert(error);
+          
+        }
+        else if (data.errmsg) {
+          alert(data.errmsg);
+        }
+        else {
+          alert("Successfully set minimum threshold.")
+          $scope.minThr.itemsSelected = [];
+          $scope.minThr.min_quantity = 0;
+          $scope.refreshProducts();
+          window.location.assign("/dispProducts");
+        }
+    });
+
+
+    // console.log("itemClicked");
+    // console.log($scope.currentMinThrItems);
+    // if($scope.itemSelected === "") {
+
+    // }
+    // else {
+    //   if($scope.currentMinThrItems.indexOf($scope.itemSelected) == -1) {
+    //     $scope.currentMinThrItems.push($scope.itemSelected);
+    //   }
+    // }
+    // console.log($scope.currentMinThrItems);
+  }
+
 
   $scope.viewProduct = function(product) {
     console.log("View product selected");
@@ -723,6 +831,22 @@ products_app.controller('productsController', function($scope, $window, $http, /
       }
     }
     console.log($scope.currentTags);
+  }
+
+  $scope.belowThreshold = function() {
+    $scope.belowThresholdProducts = [];
+    for (var i = 0; i < $scope.products.length; i++) {
+      if ($scope.products[i].quantity_available < $scope.products[i].min_quantity) {
+        $scope.belowThresholdProducts.push($scope.products[i]);
+      }
+    }
+    $scope.originalProducts = $scope.products;
+    $scope.products = $scope.belowThresholdProducts;
+  }
+
+  $scope.clearFields = function() {
+    $("#filterItems").val("");
+    $scope.products = $scope.originalProducts;
   }
 
   // TODO: refactor to combine tagClicked and searchTag to be tagClicked(tag, tagList);
@@ -884,6 +1008,7 @@ products_app.controller('productsController', function($scope, $window, $http, /
 
   $scope.closeItemModal = function() {
     $scope.currentTags = [];
+    $scope.currentMinThrItems = [];
   }
 
   $scope.refreshProducts = function() {
@@ -892,6 +1017,7 @@ products_app.controller('productsController', function($scope, $window, $http, /
         $scope.originalProducts = data;
 
         $scope.currentTags = [];
+        $scope.currentMinThrItems = [];
         $scope.searchTags = [];
         $scope.excludeTags = [];
       });
@@ -929,9 +1055,25 @@ products_app.controller('productsController', function($scope, $window, $http, /
     // $scope.currentTags.push($scope.newTag.name);
 
     ProductsFactory.addAsset(currentAsset, function(data) {
-      $scope.currentAsset = {};
-      $('#assetCreationModal').modal('hide');
-      $scope.refreshProducts();
+      console.log("results of add asset");
+      console.log(data);
+
+      if (data.error) {
+        if(data.error.errmsg.includes("duplicate")) {
+          alert("Please enter a unique asset tag.");
+        }
+      }
+      else if (data.errmsg) {
+        alert(data.errmsg);
+      }
+      else {
+        alert("Created new asset with tag " + data.assetTag + ".")
+        $scope.currentAsset = {};
+        $('#assetCreationModal').modal('hide');
+        $scope.refreshProducts();
+      }
+
+      
       // window.location.assign("/dispProducts");
     });
 
