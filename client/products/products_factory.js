@@ -798,8 +798,10 @@ products_app.controller('productsController', function($scope, $window, $http, /
     console.log(product._id);
     console.log("Current user id: ");
 
+
     $scope.currentProduct = angular.copy(product);
     originalProduct = angular.copy(product);
+    // $scope.currentProduct.assets = product.assets.slice(0, product.quantity_available);
     $scope.currentTags = product.tags;
     ProductsFactory.viewProduct(/*$scope.myID, */product, function(data, orders) {
       $scope.orders = orders;
