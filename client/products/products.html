@@ -40,7 +40,7 @@
   <br>
 
   <h3 style = "margin-top: 0px;">Exclude Tags</h3>
-  <select id="exclude-tag" class = "feedback-input" id = "tagList" name="tagOptions" ng-change="excludeTag()" ng-model="excludeTagSelected">
+  <select id="exclude-tag" class = "feedback-input" id = "tagList2" name="tagOptions" ng-change="excludeTag()" ng-model="excludeTagSelected">
     <option value="" disabled selected>Exclude Tags</option>
     <option ng-repeat="tag in tags" ng-bind="tag.name" value="{{tag.name}}"></option>
   </select>
@@ -331,7 +331,7 @@
             <br>
           </p>
           <p>
-            <select id="tag_select_main" class="feedback-input" id="tagList" name="tagOptions" ng-change="tagClicked()" ng-model="tagSelected" ng-disabled="!editing" ng-show="authorized">
+            <select id="tag_select_main" class="feedback-input" id="tagList3" name="tagOptions" ng-change="tagClicked()" ng-model="tagSelected" ng-disabled="!editing" ng-show="authorized">
               <option value="">Add a Tag</option>
               <option value="createNewTag">Create New Tag</option>
               <option ng-repeat="tag in tags" ng-bind="tag.name" value="{{tag.name}}"></option>
