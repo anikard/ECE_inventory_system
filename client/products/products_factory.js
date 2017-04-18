@@ -209,8 +209,8 @@ products_app.factory('ProductsFactory', function($http) {
         callback(output);
       })
       .error(function(error){
-        console.log("ERROR FOUND: ");
-        console.log(error);
+        console.log("ERROR FOUND IN UPDATE: ");
+        alert(error);
         callback(error);
       })
   }
@@ -622,6 +622,7 @@ products_app.controller('productsController', function($scope, $window, $http, /
       console.log("confirm edit asset calling factory");
 
       if (data.error) {
+        alert(error);
         if(data.error.errmsg.includes("duplicate")) {
           alert("Please enter a unique asset tag.");
         }
