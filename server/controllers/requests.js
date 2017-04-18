@@ -441,6 +441,9 @@ function generateNewBackfill(request, backfillItems) {
 	console.log(backfillItems);
 	var backfillOrigin = backfillItems[0].origin;
 	var backfillStatus = backfillOrigin === 'loan' ? 'requested' : 'inTransit';
+	if(backfillOrigin === 'outstanding') {
+		decrementItemAvailable(backfillItems);
+	}
 	Backfill.create({
 		 items: backfillItems,
 		 request: request._id,
@@ -454,6 +457,17 @@ function generateNewBackfill(request, backfillItems) {
 			console.log("BF SUCC: " + bf);
 		}
 	});
+}
+
+function decrementItemAvailable(backfillItems) {
+	for (var i = 0; i < backfillItems.length; i++) {
+		Item.findOne({_id: backfillItems[i].item._id})
+		.exec((err, item) =>{
+			item.quantity_available -= backfillItems[i - 1].quantity;
+			item.save(function (err, success) {
+			});
+		})
+	}
 }
 
 function saveBackfills(request, req) {
@@ -522,7 +536,7 @@ function determineBackfillSignMultiplier(backfill, newStatus) {
 	if (backfill.status === 'requested' && newStatus === 'inTransit' && backfill.origin === 'outstanding') {
 		return -1;
 	}
-	else if (backfill.status === 'inTransit' && newStatus === 'fulfilled') {
+	else if (backfill.status === 'inTransit' && newStatus === 'fulfilled') {// && backfill.origin === 'loan') {
 		return 1;
 	}
 	else if (backfill.status === 'requested' && newStatus === 'denied'){
