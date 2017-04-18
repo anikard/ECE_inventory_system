@@ -125,6 +125,7 @@ module.exports = (app) => {
     Item.findOne({name: name})
     .exec((err,item) => {
       if(err) return next(err);
+      if(!item) return next({status: 400, error: `Item does not exist`});
       if(item.assets && item.assets.length) return next({status: 400, error: `${item.name} is already an asset.`});
       item.isAsset = true;
       let start = randomInt(0, 1000000);
@@ -170,6 +171,7 @@ module.exports = (app) => {
     .populate('assets')
     .exec((err,item) => {
       if(err) return next(err);
+      if(!item) return next({status: 400, error: `Item does not exist`});
       if(!item.isAsset) return next({status: 400, error: `${item.name} is not an asset.`});
       item.isAsset = false;
       if(item.assets && item.assets.length) {
