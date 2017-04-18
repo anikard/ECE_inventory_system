@@ -137,6 +137,37 @@
                </tr>
              </table>
            </span>
+
+           <span id="asset" ng-show="hasAssets()">
+             <h5>Assets Table</h5>
+             <table id="assetTable" class="small table">
+               <tr>
+                 <td> Item </td>
+                 <td> Asset Tag </td>
+                 <td> Status </td>
+               </tr>
+               <tr ng-repeat="asset in thisOrder.assets">
+                 <td ng-bind="asset.item.name || '[Deleted item]'"></td>
+                 <td ng-show="asset.copyStatus != 'outstanding' " ng-bind="asset.assetTag"></td>
+                 <td ng-show="asset.copyStatus === 'outstanding'">
+                   <select id="asset-tag" class="feedback-input" id="assetTagList" name='assetTagOptions' ng-model="asset.assetTag">
+                     <option ng-repeat="asset in asset.item.assets" ng-bind="asset" value="{{asset}}"></option>
+                   </select>
+                 </td>
+                 <td ng-show="!isAuthorized" ng-bind="asset.status"></td>
+                 <!--<td ng-show="isAuthorized" ng-bind="asset.status"></td>-->
+
+                 <td ng-show="isAuthorized">
+                   <select id="asset-status" class="feedback-input" id="assetStatusList" name="statusOptions" ng-model="asset.status">
+                    <option value="{{asset.copyStatus}}">{{asset.copyStatus}}</option>
+                    <option ng-repeat="status in validAssetStatuses(asset)" ng-bind="status" value="{{status}}"></option>
+                  </select>
+                 </td>
+
+               </tr>
+             </table>
+           </span>
+
            <span ng-show="hasBackfill()" id="backfill">
              <h5> Backfills </h5>
              <span ng-repeat="backfill in thisOrder.backfills">
