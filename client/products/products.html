@@ -79,7 +79,7 @@
         <td ng-bind="product.model"></td>
         <td ng-bind="product.quantity"></td>
         <td ng-bind="product.quantity_available"></td>
-        <td ng-bind="product.min_quantity"></td>
+        <td ng-show="authorized" ng-bind="product.min_quantity"></td>
 
         <td ng-show="authorized" ng-bind="product.quantity - product.quantity_available"></td>
 
@@ -168,7 +168,7 @@
           </span>
           <br>
 
-          <select id="tag_select_modal" class="feedback-input" id="tagList" name="tagOptions" style="margin-top:0.5em;" ng-change="tagClicked()" ng-model="tagSelected" ng-disabled="!editing">
+          <select id="tag_select_modal" class="feedback-input" id="tagList" name="tagOptions" style="margin-top:0.5em;" ng-change="tagClicked()" ng-model="tagSelected" >
             <option value="">Add a Tag</option>
             <option value="createNewTag">Create New Tag</option>
             <option ng-repeat="tag in tags" ng-bind="tag.name" value="{{tag.name}}"></option>
@@ -331,7 +331,7 @@
             <br>
           </p>
           <p>
-            <select id="tag_select_main" class="feedback-input" id="tagList" name="tagOptions" ng-change="tagClicked()" ng-model="tagSelected" ng-disabled="!editing">
+            <select id="tag_select_main" class="feedback-input" id="tagList" name="tagOptions" ng-change="tagClicked()" ng-model="tagSelected" ng-disabled="!editing" ng-show="authorized">
               <option value="">Add a Tag</option>
               <option value="createNewTag">Create New Tag</option>
               <option ng-repeat="tag in tags" ng-bind="tag.name" value="{{tag.name}}"></option>
@@ -388,7 +388,7 @@
         <!-- todo: make assets -->
         <!-- <p style="display:none;">{{sampleAssets = [{"assetTag": 1, "fieldVal": 11}, {"assetTag": 2, "fieldVal": 22}] }}</p> -->
         <!-- ASSETS -->
-        <div ng-show="currentProduct.isAsset && !editing">
+        <div ng-show="currentProduct.isAsset && !editing && authorized">
             <h2 style = "display: inline;">Assets</h2>
             <button type="button" class="btn btn-primary" ng-click="addAnAsset(currentProduct)" style = "display: inline; margin-bottom: 1em; margin-left: 1em;" ng-show="currentProduct.isAsset && authorized">+</button>
 
