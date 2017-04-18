@@ -18,7 +18,9 @@
 
 
   <h1>ITEMS</h1>
-  <input class = "feedback-input" type="text" ng-model="filter_name" placeholder="search items">
+  <input class = "feedback-input" type="text" id = "filterItems" ng-model="filter_name" placeholder="search items" style="width: 29%;">
+  <button class="btn btn-info active" ng-click="belowThreshold()" style="width: 10%; margin-left: 2em;">Stock below <br> threshold</button>
+  <button class = "btn btn-success active" style = "width: 7%; margin-left: 1em;" id="clearFields" ng-click="clearFields()">Clear <br> search </button>
 
   <h3 style = "margin-top: 0px;">Include Tags</h3>
   <select  style = "margin-bottom: 0px;" id="search-tag" class = "feedback-input" id = "tagList" name="tagOptions" ng-change="searchTag()" ng-model="searchTagSelected"> <!-- ng-model="new_product.tags[new_product.tags.length]">-->
@@ -55,6 +57,7 @@
   <br>
 
 
+
   <div class="customerTable" id = "cTable" style="height:30em; margin: 0px 2.5%; width: 95%;">
     <table id = "myItemTable">
       <tr>
@@ -62,6 +65,8 @@
         <td> Model </td>
         <td> Total </td>
         <td> Available </td>
+        <td ng-show="authorized"> Min Threshold</td>
+
         <td ng-show="authorized"> Total <br> On Loan </td>
         <td ng-show="!authorized"> On Loan <br> to Me </td>
 
@@ -71,17 +76,21 @@
         <td ng-show="authorized"> Total Backfill <br> in Transit </td>
         <td ng-show="!authorized"> My Backfill <br> in Transit </td>
 
+
+
         <td> Tags </td>
         <td> Action </td>
       </tr>
 
-      <tr ng-repeat="product in products | filter: filter_name | orderBy:'-date' | limitTo: paginationLimit()">
+      <tr ng-repeat="product in products | filter: filter_name | orderBy:'-date' | limitTo: paginationLimit()" >
         <td ng-bind="product.name"></td>
         <td ng-bind="product.model"></td>
         <td ng-bind="product.quantity"></td>
         <td ng-bind="product.quantity_available"></td>
+        <td ng-bind="product.min_quantity"></td>
 
         <td ng-show="authorized" ng-bind="product.quantity - product.quantity_available"></td>
+
         <td ng-show="!authorized" ng-bind="calculateMyLoans(product)"></td>
 
         <td ng-bind="product.tags"></td>

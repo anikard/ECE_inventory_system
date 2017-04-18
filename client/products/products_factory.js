@@ -833,6 +833,22 @@ products_app.controller('productsController', function($scope, $window, $http, /
     console.log($scope.currentTags);
   }
 
+  $scope.belowThreshold = function() {
+    $scope.belowThresholdProducts = [];
+    for (var i = 0; i < $scope.products.length; i++) {
+      if ($scope.products[i].quantity_available < $scope.products[i].min_quantity) {
+        $scope.belowThresholdProducts.push($scope.products[i]);
+      }
+    }
+    $scope.originalProducts = $scope.products;
+    $scope.products = $scope.belowThresholdProducts;
+  }
+
+  $scope.clearFields = function() {
+    $("#filterItems").val("");
+    $scope.products = $scope.originalProducts;
+  }
+
   // TODO: refactor to combine tagClicked and searchTag to be tagClicked(tag, tagList);
   $scope.searchTag = function() {
     var tag = $scope.searchTagSelected;
