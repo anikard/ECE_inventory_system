@@ -19,7 +19,10 @@ echo "deb [ arch=amd64 ] http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3
 For Ubuntu 16:
 ```
 echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list
+```
+
 Then,
+
 ```
 sudo apt-get update
 sudo apt-get install -y mongodb-org
@@ -79,9 +82,10 @@ https://localhost:8443
 { imports: '[{"name":"resistors","quantity":10, "quantity_available":10},{"name":"transistors","quantity":20, "quantity_available":20}]' }
 
 Put `nodeapp.service` in /etc/systemd/system. Then type
+
 ```
-### sudo systemctl daemon-reload
-### sudo systemctl start nodeapp
+sudo systemctl daemon-reload
+sudo systemctl start nodeapp
 ```
 Watch the logs at `sudo journalctl --follow -u nodeapp`
 
