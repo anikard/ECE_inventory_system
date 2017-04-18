@@ -80,8 +80,8 @@ https://localhost:8443
 
 Put `nodeapp.service` in /etc/systemd/system. Then type
 ```
-# sudo systemctl daemon-reload
-# sudo systemctl start nodeapp
+### sudo systemctl daemon-reload
+### sudo systemctl start nodeapp
 ```
 Watch the logs at `sudo journalctl --follow -u nodeapp`
 
@@ -96,6 +96,6 @@ Follow these steps to perform a restore:
 
 2. Type the following in the SSH terminal of the production server.
 ```
-# openssl enc -aes-256-cbc -d -k 1234567890 -in mongo.tar.gz.aes | gunzip > db.archive
-# mongorestore --archive=db.archive
+### openssl enc -aes-256-cbc -d -k 1234567890 -in mongo.tar.gz.aes | gunzip > db.archive
+### mongorestore --archive=db.archive
 ```
